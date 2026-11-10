@@ -1,6 +1,6 @@
 # AD-010 — Analysis, Reporting & Excel
 
-**Status:** Baseline approved — reconciled decisions; implementation mappings remain pending  
+**Status:** Finalised — reconciled architecture; implementation mappings remain pending  
 **Date:** 11 November 2026  
 **Related:** AD-002, AD-003, AD-004, AD-006, AD-007, AD-008, AD-009
 
