@@ -13,7 +13,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-002 | Canonical Financial Data Hierarchy | Approved | [AD-002](AD-002-canonical-financial-data-hierarchy.md) |
 | AD-003 | Bidaan Activation & Submission | Finalised | [AD-003](AD-003-bidaan-activation-and-submission.md) |
 | AD-004 | Anggaran Wizard Architecture | Baseline approved — refinable | [AD-004](AD-004-anggaran-wizard-architecture.md) |
-| AD-005 | Identity, Roles & Organisation | Proposed | — |
+| AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Proposed | — |
 | AD-007 | Program/ Aktiviti | Proposed | — |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
@@ -22,7 +22,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 4 documents committed (including one baseline); 8 topics proposed.
+**Progress:** 5 documents committed (including one baseline); 7 topics proposed.
 
 ## Status definitions
 
@@ -46,4 +46,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next proposed discussion:** AD-005 — Identity, Roles & Organisation.
+**Next proposed discussion:** AD-006 — Kitaran ABM & Administration.
