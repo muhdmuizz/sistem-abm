@@ -50,9 +50,15 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - Bidaan aktif tanpa OS boleh kekal dalam penyediaan, tetapi tidak boleh dihantar.
 - Syarat ini dikuatkuasakan di pelayan, bukan sekadar keadaan butang UI.
 
+## Keputusan tambahan diluluskan — Pengasingan peranan
+
+- **Penyedia Bidaan** boleh mengaktifkan dan menghantar Bidaan, tetapi tidak mendapat hak mengaktifkan atau mengedit Anggaran secara automatik.
+- **Penyedia Anggaran** boleh mengaktifkan OS serta memasukkan dan mengedit Anggaran dan Butiran Anggaran, tetapi tidak mendapat hak mengaktifkan atau menghantar Bidaan secara automatik.
+- Seorang pengguna boleh diberikan **kedua-dua peranan**, tertakluk kepada PTJ dan Aktiviti Kewangan yang dibenarkan.
+- Kedua-dua peranan boleh melihat status kesediaan penghantaran bagi skop yang dibenarkan.
+
 ## Perkara dicadangkan tetapi belum dimuktamadkan
 
-- Perincian kebenaran Penyedia Bidaan untuk turut mengedit OS.
 - Polisi nyahaktif, buang OS aktif, kunci selepas penghantaran, pindaan dan penghantaran semula.
 - Peraturan pengiraan, struktur input, import Excel dan prestasi bagi wizard Anggaran.
 
