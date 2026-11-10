@@ -1,70 +1,133 @@
 # AD-004 — Anggaran Wizard Architecture
 
-**Status:** Baseline reka bentuk dipersetujui (boleh diperhalus semasa pembangunan)  
-**Skop:** Pengalaman Penyedia Anggaran dan interaksi ruang kerja Anggaran/Butiran Anggaran  
-**Rujukan:** AD-001, AD-002, AD-003
+**Status:** Approved expanded baseline — OS-specific specialisation deferred  
+**Scope:** Senarai Anggaran (OS), shared wizard framework, Butiran Anggaran editing and navigation  
+**References:** AD-001, AD-002, AD-003, AD-005, AD-006, AD-007  
+**Updated:** 10 November 2026
 
-## 1. Tujuan
+## 1. Purpose and canonical structure
 
-Mewujudkan satu ruang kerja Anggaran yang konsisten merentas OS tanpa memaksa semua OS menggunakan medan, formula atau aliran input yang sama. Dokumen ini ialah baseline permulaan, **bukan** spesifikasi UI atau wizard OS yang dimuktamadkan.
+Provide one consistent Anggaran (OS) experience while allowing different OS fields, eligibility checks and financial calculations to be specialised later.
 
-## 2. Perjalanan Penyedia Anggaran
+The canonical hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran** (AD-002). **Anggaran is the OS financial entity**, not a separate cart or additional financial layer. An Anggaran owns independently identifiable, persistently saved Butiran Anggaran. Its total is derived from its saved, valid granular financial records according to the applicable calculation rules.
 
-1. Log masuk dan buka **Bida Peruntukan**.
-2. Lihat kad Bidaan bagi Aktiviti Kewangan yang dibenarkan mengikut PTJ dan skop akses. Kad belum aktif dipaparkan malap.
-3. **Penyedia Bidaan** mengaktifkan Bidaan; Penyedia Anggaran tidak boleh mengaktifkan atau menghantar Bidaan semata-mata kerana peranannya.
-4. Buka Bidaan aktif dan lihat katalog OS yang dibenarkan, termasuk OS **Belum Aktif** yang dipaparkan malap.
-5. **Penyedia Anggaran** mengaktifkan OS yang diperlukan. Pengaktifan mewujudkan rekod Anggaran (OS), berasingan daripada status kelengkapannya.
-6. Buka ruang kerja OS, masukkan dan pinda Butiran Anggaran melalui editor khusus OS; simpan draf secara berperingkat.
-7. Semak kelengkapan, pengiraan dan jumlah. Setelah semua syarat OS dipenuhi, statusnya **Lengkap**.
-8. Kembali ke Bidaan untuk melihat kesediaan keseluruhan. **Penyedia Bidaan** menghantar apabila sekurang-kurangnya satu OS aktif lengkap dan semua OS aktif berstatus Lengkap.
+There are two routes into the **same** OS wizard and underlying records:
+- Directly from **Senarai Anggaran (OS)** under the applicable Bidaan.
+- Through **Program/ Aktiviti**, acting as a guided workflow façade into related OS (AD-007), not a parallel financial hierarchy.
 
-## 3. Common Anggaran Workspace
+A Butiran Anggaran associated with a programme references its **unique Program/ Aktiviti ID**, not merely a matching name. This association must survive copying, editing, saving and wizard navigation; direct OS entry must not silently lose programme context.
 
-Empat kawasan fungsi yang konsisten:
-- **Maklumat** — konteks Kitaran, PTJ, Aktiviti Kewangan dan OS, serta maklumat khusus OS.
-- **Butiran Anggaran** — senarai rekod granular, penambahan dan pindaan melalui editor khusus OS.
-- **Semakan** — hasil validasi, ralat, kelengkapan dan jumlah yang dikira.
-- **Log Tindakan** — jejak perubahan data, status, pengaktifan dan tindakan pengguna.
+## 2. Roles, activation and submission boundary
 
-Empat kawasan ini **tidak semestinya empat tab tetap** atau wizard langkah demi langkah. Navigasi, susun atur dan pembahagian ruang boleh disesuaikan selepas ujian sebenar.
+1. User opens **Bida Peruntukan** and sees only authorised PTJ/Aktiviti Kewangan scope; inactive Bidaan are visually dimmed.
+2. **Penyedia Bidaan** activates the Bidaan. **Penyedia Anggaran** activates required OS, creating Anggaran records. OS not activated remain visible as applicable but dimmed.
+3. Penyedia Anggaran opens the OS wizard, creates/edits Butiran Anggaran and saves drafts independently.
+4. Anggaran completeness is evaluated automatically from its retained Butiran Anggaran (Section 5).
+5. **Penyedia Bidaan** formally submits the Bidaan only when at least one active OS is complete and **all active OS are complete** (AD-003). Activation and completeness are distinct.
+6. After formal submission, the submitted records are read-only until the governing review/return/Fasa rules permit editing. Formal resubmission creates a new immutable financial snapshot (AD-003, AD-006).
 
-## 4. Interaksi Butiran Anggaran
+Deactivating an OS before submission does not delete its data; it is excluded from active Bidaan totals/readiness and revalidated when reactivated.
 
-- **Tambah Butiran:** buka editor OS khusus untuk merekod input sumber.
-- **Simpan Butiran:** sahkan input, simpan rekod dan kira semula nilai terjejas.
-- **Pinda:** buka rekod sedia ada bersama input asal; selepas disimpan, jana semula nilai atau baris terbitan yang berkaitan.
-- **Salin:** boleh dipertimbangkan untuk memudahkan entri berulang; rekod baharu mesti mempunyai identiti tersendiri.
-- **Buang:** tindakan yang dibenarkan perlu disahkan dan direkod dalam audit; jangan hilangkan sejarah yang perlu dikekalkan.
-- **Senarai:** paparkan rekod dengan carian, penapisan dan pagination apabila jumlah data besar.
-- **Kembali:** kembali ke senarai tanpa kehilangan perubahan yang telah disimpan.
+## 3. Senarai Anggaran (OS) — primary hub
 
-Satu input wizard boleh menghasilkan **satu atau banyak baris Butiran Anggaran**. Pengguna mengubah input sumber, bukan mengubah amaun terbitan secara bebas. Jumlah Anggaran dikira daripada data granular yang sah.
+The main page lists OS/Anggaran within the user's authorised scope and provides the action to open each OS wizard. Proposed row information:
+- OS code and description;
+- **Aktiviti Kewangan identifier/capsule** (with an intelligible label, not code alone);
+- PTJ and Tempat Bertugas context;
+- Anggaran completeness status;
+- automatically calculated total amount;
+- number of Butiran Anggaran;
+- last edited time;
+- compact **Buka** action.
 
-## 5. Pengiraan, penyimpanan dan integriti
+The same OS code may appear in different Aktiviti Kewangan or PTJ/Bidaan contexts: **OS code alone is not an Anggaran identifier**. Opening an OS must carry its actual Anggaran/Bidaan identity and authorised context.
 
-- Medan, kadar, kelayakan, formula, kaedah pengisian dan bilangan baris berbeza mengikut OS.
-- Pengiraan semula hanya menyentuh data berkaitan dan mengemas kini jumlah serta status kelengkapan.
-- Penyimpanan perubahan dan pengiraan terbitan hendaklah atomik/transactional supaya tiada rekod kewangan separa dikemas kini.
-- Log Tindakan menyimpan identiti pengguna, masa, tindakan dan perubahan relevan.
-- Lindungi pindaan serentak daripada menimpa perubahan pengguna lain tanpa disedari.
-- Draf boleh disimpan sebelum lengkap; pengaktifan OS tidak bermaksud OS sudah lengkap.
-- Nyahaktifkan OS sebelum penghantaran tidak memadam data; data dikecualikan daripada jumlah dan semakan Bidaan, dan divalidasi semula apabila diaktifkan.
-- Selepas penghantaran, Bidaan dan OS terlibat baca sahaja. Jika dikembalikan untuk pembetulan, semua OS aktif boleh dipinda; penghantaran semula menghasilkan snapshot kewangan baharu. Ikut AD-003.
+### 3.1 Approved filter hierarchy
 
-## 6. OS14000 sebagai kes rujukan awal
+Filters appear and constrain results in this exact order:
 
-OS14000 (Elaun Lebih Masa) digunakan untuk menguji fleksibiliti seni bina: input pegawai, jawatan, gred, tujuan, tempoh dan kadar; satu set input mungkin menghasilkan banyak baris granular. **Contoh nama, amaun dan formula dalam mockup terdahulu hanyalah ilustrasi**, bukan formula kewangan yang diluluskan. Perincian sebenar OS14000 dan OS lain akan ditentukan semasa pembangunan.
+1. **Aktiviti Kewangan** — primary constraint.
+2. **PTJ** — constrained by selected Aktiviti Kewangan and permissions.
+3. **Tempat Bertugas** — constrained by upstream selections and permissions.
+4. **Status Anggaran** — Belum Mula, Belum Lengkap, Lengkap (and applicable activation state where shown).
 
-## 7. Perkara yang sengaja belum dibekukan
+Also provide a text search for OS code/name and **Set Semula**. Dropdowns derive from existing database records and the user's actual permissions, not hardcoded sample values. Upstream changes refresh dependent options and reset downstream selections that cease to be valid. Filters narrow visibility; **they never confer access**. PTJ and Tempat Bertugas are separate attributes even if their displayed names happen to match.
 
-- Sama ada editor menggunakan paparan sebaris, panel, dialog atau halaman penuh bagi OS kompleks.
-- Medan dan formula tepat bagi setiap OS, termasuk sumber kadar.
-- Susun atur desktop/mudah alih, interaksi bulk dan import Excel.
-- Bentuk akhir paparan dan kaedah navigasi kawasan fungsi.
+The Aktiviti Kewangan capsule remains visible on each OS row even when a single activity is filtered, to avoid ambiguity for multi-activity users.
 
-Perincian ini boleh diperhalus tanpa menambah cabang keputusan seni bina yang tidak diperlukan.
+## 4. Shared Anggaran wizard framework
 
-## 8. Prinsip kesinambungan
+Every OS uses **one common wizard framework**, not dozens of independent implementations. Shared capabilities:
+- OS/context header and summary, including total and completeness;
+- Senarai Butiran Anggaran;
+- Butiran editor, validation and calculated results;
+- Semakan and Log Tindakan;
+- persistent draft saving, autosave and failure handling;
+- bulk row creation, row duplication, editing and deletion;
+- navigation across applicable OS;
+- auditing, permissions and concurrency safeguards.
 
-AD-004 melaksanakan hierarki **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran** daripada AD-002 dan pemisahan kuasa serta peraturan penghantaran daripada AD-003. Tiada **Bakul Bidaan**. Nama dalaman Anggaran dan paparan OS merujuk entiti yang sama.
+These are functional areas, **not a mandatory four-tab or four-step UI**. Layout can adapt to desktop/mobile. OS-specific input fields, rates, formulas, eligibility and specialised calculations are **deferred** to later work (principally AD-008). OS14000 may be used for end-to-end testing but its illustrative inputs/formulas are not deemed approved financial policy.
+
+A single wizard session may create or edit **multiple Butiran Anggaran**; one source input may produce one or more granular calculated output rows. Users edit source inputs, not arbitrary derived amounts.
+
+## 5. Butiran Anggaran editing and completeness
+
+### 5.1 Entry and productivity
+- **Tambah Butiran** creates an editable row/record.
+- **Tambah XX Baris** supports batch additions, for example +5, +10, +20, +50, so users need not click fifty times. No universal 50-row total cap; large batches should be processed efficiently.
+- **Salin Baris** copies applicable source inputs into a **new Butiran Anggaran identity**; the duplicate remains editable, recalculates derived values and does not automatically become complete. Preserve the applicable Program/ Aktiviti association.
+- For OS suited to tabular entry, provide **spreadsheet-style inline editing**, Tab navigation and multi-cell paste, with per-row validation and recalculation. Complex OS can use structured forms within the same shared framework.
+- Blank newly inserted rows do not count as completed Butiran and do not contribute to financial totals. They must be handled clearly before formal submission.
+
+### 5.2 Drafts, validation and completion
+- **Incomplete Butiran Anggaran can be saved as Draf**, including during a multi-row editing session. Saving a draft never implies completeness.
+- Butiran can be considered **Lengkap** only when its applicable inputs and validations pass.
+- **Anggaran status is automatic**; there is no separate *Tandakan Lengkap* button:
+  - **Belum Mula:** no retained Butiran Anggaran;
+  - **Belum Lengkap:** one or more retained Butiran are incomplete/invalid (or there are no qualifying complete records);
+  - **Lengkap:** at least one retained Butiran exists and **all retained Butiran are complete and valid**.
+- Revalidate after edits, deletion, duplication, activation changes or applicable data/rule changes. A previously complete Anggaran returns to **Belum Lengkap** if an edit makes any retained Butiran invalid.
+- Totals derive from applicable saved valid granular records; incomplete/blank drafts must not inflate totals.
+
+### 5.3 Saving and safety
+- **Autosave** after a short pause, with visible **Menyimpan / Disimpan / Gagal Disimpan** states and manual **Simpan** fallback.
+- Do not navigate away while there are unresolved unsaved changes. OS switching must await a successful save or explicitly block and explain failure.
+- Saving and dependent recalculation should be transactional/atomic.
+- Protect against concurrent edits overwriting another user's changes without notice.
+- Audit attribution includes user, timestamp, operation and relevant changes.
+
+### 5.4 Deletion
+- A blank, never-saved row can be removed immediately.
+- Deleting a saved draft that has never been formally submitted requires confirmation and audit.
+- A previously submitted Butiran may be removed from the **current editable version** only when authorised, but remains in earlier immutable submission snapshots; the subsequent Pindaan comparison records **Dipadam**.
+- Recalculate totals and completeness after deletion. Deletion does not rewrite historical snapshots.
+
+## 6. Navigating between OS wizards
+
+Within the **same Bidaan**, users can navigate without repeatedly returning to the Senarai Anggaran page:
+
+1. An **OS selector** at the top allows direct jumps to **all applicable OS**, including those with no Butiran yet (subject to activation/access rules).
+2. **Sebelumnya** and **Seterusnya** move sequentially through the applicable OS order.
+3. **Kembali ke Senarai Anggaran** returns to the main OS list.
+
+Each switch retains the correct Anggaran ID, Bidaan, Aktiviti Kewangan, PTJ and—where entry was programme-led—the **Program/ Aktiviti association**. For programme-led entry, the navigation scope is the OS associated with that programme, not unrelated OS. A failed autosave blocks switching until resolved; navigation must not silently discard unsaved inputs.
+
+## 7. Audit, history and compatibility
+
+- Keep immutable submitted snapshots and granular Butiran IDs for version comparisons under AD-006 (Ditambah, Dipinda, Dipadam, Tiada Perubahan).
+- Apply role and scope checks on both listing and opening/editing a record; UI filters alone are not security controls.
+- Maintain Log Tindakan for editing, copying, deletion, activation and relevant status changes.
+- Follow Fasa Dibuka/Ditutup and returned-submission editability rules from AD-003/AD-006.
+- No **Bakul Bidaan** or duplicate Program/ Aktiviti financial store.
+
+## 8. Deferred implementation details
+
+The following are **not** approved OS-specific specifications in AD-004:
+- individual OS fields, rates, formulas, eligibility or source data;
+- exact responsive layout of editor cells/panels and optional keyboard shortcuts;
+- OS-specific Excel imports and specialised calculations;
+- detailed Program/ Aktiviti guided workflow (AD-007);
+- review/approval mechanics (AD-009).
+
+**Decision status:** The shared wizard behaviour, navigation, list context and ordered filters above are approved and recorded. The document is a committed architecture baseline, **not a claim that these features have been implemented or deployed**.
