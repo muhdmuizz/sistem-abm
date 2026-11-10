@@ -1,6 +1,6 @@
 # AD-004 — Anggaran Wizard Architecture
 
-**Status:** Approved expanded baseline — OS-specific specialisation deferred  
+**Status:** Finalised — OS-specific specialisation deferred  
 **Scope:** Senarai Anggaran (OS), shared wizard framework, Butiran Anggaran editing and navigation  
 **References:** AD-001, AD-002, AD-003, AD-005, AD-006, AD-007  
 **Updated:** 10 November 2026
@@ -130,4 +130,4 @@ The following are **not** approved OS-specific specifications in AD-004:
 - detailed Program/ Aktiviti guided workflow (AD-007);
 - review/approval mechanics (AD-009).
 
-**Decision status:** The shared wizard behaviour, navigation, list context and ordered filters above are approved and recorded. The document is a committed architecture baseline, **not a claim that these features have been implemented or deployed**.
+**Decision status:** AD-004 is formally finalised and closed. OS-specific specialisation belongs to AD-008, and the detailed Program/ Aktiviti workflow belongs to AD-007. This records architecture decisions, **not implementation or deployment**.
