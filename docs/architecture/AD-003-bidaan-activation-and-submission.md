@@ -35,10 +35,16 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - Status kelengkapan dan kebenaran penghantaran ditentukan oleh pengesahan sistem di bahagian pelayan, bukan oleh pilihan manual pada UI.
 - Tiada Bakul Bidaan; penyediaan OS berlaku terus dalam Bidaan yang aktif.
 
+## Keputusan tambahan diluluskan — Pengaktifan OS dan katalog
+
+1. Penyedia Anggaran **mengaktifkan OS secara eksplisit** sebelum memasukkan Anggaran dan Butiran Anggaran; pengaktifan mewujudkan rekod Anggaran dalam Bidaan aktif.
+2. Semua OS yang dibenarkan bagi Aktiviti Kewangan dipaparkan dalam **katalog kad OS**. Kad yang belum aktif dipaparkan dimmed dengan label **Belum Aktif**.
+3. OS yang diaktifkan bermula dengan status **Dalam Penyediaan** dan menjadi **Lengkap** apabila data wajib dan pengiraannya lulus pengesahan.
+4. OS belum aktif tidak menghalang penghantaran; **setiap OS aktif mesti Lengkap** sebelum Bidaan boleh dihantar.
+5. Tidak wajib mengaktifkan semua OS yang tersedia.
+
 ## Perkara dicadangkan tetapi belum dimuktamadkan
 
-- Sama ada OS yang dipilih melalui Tambah OS dianggap terus aktif, atau memerlukan pengaktifan berasingan.
-- Reka bentuk katalog OS (termasuk cadangan OS tidak aktif dipaparkan dimmed).
 - Sama ada Bidaan tanpa Anggaran lengkap boleh dihantar melalui proses khas Bidaan Sifar.
 - Perincian kebenaran Penyedia Bidaan untuk turut mengedit OS.
 - Polisi nyahaktif, buang OS aktif, kunci selepas penghantaran, pindaan dan penghantaran semula.
