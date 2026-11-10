@@ -12,7 +12,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-001 | Anggaran & Bidaan Workflow | Approved | [AD-001](AD-001-anggaran-bidaan-workflow.md) |
 | AD-002 | Canonical Financial Data Hierarchy | Approved | [AD-002](AD-002-canonical-financial-data-hierarchy.md) |
 | AD-003 | Bidaan Activation & Submission | Finalised | [AD-003](AD-003-bidaan-activation-and-submission.md) |
-| AD-004 | Anggaran Wizard Architecture | Expanded baseline approved — OS specialisation deferred | [AD-004](AD-004-anggaran-wizard-architecture.md) |
+| AD-004 | Anggaran Wizard Architecture | Finalised | [AD-004](AD-004-anggaran-wizard-architecture.md) |
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
 | AD-007 | Program/ Aktiviti | In progress — principle recorded | [AD-007](AD-007-program-aktiviti.md) |
@@ -46,4 +46,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next work:** AD-004 expanded baseline is recorded; resume AD-007 — Program/ Aktiviti, with OS specialisation deferred to AD-008.
+**Next work:** AD-007 — Program/ Aktiviti (detailed design); OS specialisation deferred to AD-008.
