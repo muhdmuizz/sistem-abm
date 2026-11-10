@@ -2,7 +2,7 @@
 
 **Projek:** Sistem ABM  
 **Tarikh:** 10 November 2026  
-**Status:** Keputusan reka bentuk dipersetujui; butiran pelaksanaan tertakluk kepada perbincangan lanjut  
+**Status:** Dimuktamadkan — tujuh keputusan diluluskan; perincian wizard OS boleh diperhalus semasa pembangunan  
 **Berkaitan:** [AD-001](AD-001-anggaran-bidaan-workflow.md), [AD-002](AD-002-canonical-financial-data-hierarchy.md)
 
 ## Tujuan
@@ -76,8 +76,17 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - Setiap penghantaran rasmi mengekalkan **snapshot kewangan** dan sejarahnya; pembetulan tidak menulis ganti nilai penghantaran terdahulu.
 - Reka bentuk teknikal log bagi data granular yang besar perlu mengelakkan salinan penuh pada setiap ketukan; rekod perubahan berstruktur dan snapshot ketika penghantaran disyorkan.
 
-## Perkara dicadangkan tetapi belum dimuktamadkan
+## Keputusan 7 diluluskan — Ruang kerja Anggaran bersama
 
-- Peraturan pengiraan, struktur input, import Excel dan prestasi bagi wizard Anggaran.
+- Semua Anggaran (OS) menggunakan **ruang kerja Anggaran bersama** yang konsisten.
+- Empat tanggungjawab fungsian dikongsi: **Maklumat**, **Butiran Anggaran**, **Semakan**, dan **Log Tindakan**.
+- Ini **bukan** keputusan untuk mewajibkan empat tab tetap atau wizard langkah demi langkah; susun atur dan navigasi boleh diperhalus.
+- Setiap OS boleh mempunyai medan input, kaedah kemasukan butiran, peraturan pengiraan, pengesahan dan komponen khusus yang berbeza.
+- Penghalusan wizard individu dibuat semasa reka bentuk dan pembangunan OS sebenar, tanpa menambah cabang keputusan AD-003.
+- Penyimpanan draf dan pengesahan kelengkapan mesti mematuhi aliran AD-001 dan syarat penghantaran AD-003.
+
+## Perincian pelaksanaan untuk penghalusan kemudian
+
+- Peraturan pengiraan, struktur input, import Excel dan prestasi bagi setiap wizard Anggaran diperhalus semasa pembangunan, bukan keputusan tambahan AD-003.
 
 **Nota:** Contoh status, jumlah OS dan jumlah kewangan dalam lakaran UI terdahulu ialah ilustrasi sahaja, bukan data atau peraturan sistem yang telah disahkan.
