@@ -18,11 +18,11 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-007 | Program/ Aktiviti | Finalised | [AD-007](AD-007-program-aktiviti.md) |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
 | AD-009 | Submission, Review & Finalisation | Finalised | [AD-009](AD-009-submission-review-finalisation.md) |
-| AD-010 | Analysis, Reporting & Excel | Baseline approved | [AD-010](AD-010-analysis-reporting-and-excel.md) |
+| AD-010 | Analysis, Reporting & Excel | Finalised | [AD-010](AD-010-analysis-reporting-and-excel.md) |
 | AD-011 | Data Integrity, Audit & Security | Finalised | [AD-011](AD-011-data-integrity-audit-security.md) |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 10 ADs approved/finalised/baseline approved; 2 topics proposed.
+**Progress:** 10 ADs approved/finalised; 2 topics proposed.
 
 ## Status definitions
 
@@ -50,7 +50,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**AD-010:** Reconciled reporting, historical expenditure, Analisis and official Excel requirements; no unsolicited export filters or new worksheet rules. Exact payroll export template and OS calculations remain pending.
+**AD-010:** Finalised and closed. Reconciled reporting, historical expenditure, Analisis and official Excel requirements; no unsolicited export filters or new worksheet rules. Pending implementation inputs do not reopen this AD. Exact payroll export template and OS calculations remain pending.
 
 **AD-011:** Finalised technical safeguards for canonical data, immutable financial versions, audit, authorisation and concurrency; no new functional workflow or OS-specific calculations.
 
