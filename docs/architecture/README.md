@@ -15,14 +15,14 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-004 | Anggaran Wizard Architecture | Finalised | [AD-004](AD-004-anggaran-wizard-architecture.md) |
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
-| AD-007 | Program/ Aktiviti | In progress — principle recorded | [AD-007](AD-007-program-aktiviti.md) |
+| AD-007 | Program/ Aktiviti | Finalised | [AD-007](AD-007-program-aktiviti.md) |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
 | AD-009 | Submission, Review & Finalisation | Proposed | — |
 | AD-010 | Analysis, Reporting & Excel | Proposed | — |
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 6 ADs approved; AD-007 principle recorded (detailed design pending); 5 topics proposed.
+**Progress:** 7 ADs approved/finalised; 5 topics proposed.
 
 ## Status definitions
 
@@ -38,6 +38,8 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 - **AD-003:** Separate Penyedia Bidaan and Penyedia Anggaran permissions, activation, completeness, submission, correction, snapshots and audit.
 - **AD-004:** Approved shared OS wizard, multi-row editing, bulk addition, duplication, autosave, automatic completeness, deletion/history, OS-to-OS navigation, and Senarai Anggaran filters ordered Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran. OS-specific fields/calculations deferred.
 
+- **AD-007:** Finalised programme façade, four-section form, headcount classifications, OS checklist and safeguards, automatic programme completion, complete inheritance and draft recalculation contract; OS-specific implementation deferred to AD-008.
+
 ## Tracking rules
 
 1. **One AD = one individual Markdown file** once substantive work begins; never consolidate future AD specifications into this index.
@@ -46,4 +48,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next work:** AD-007 — Program/ Aktiviti (detailed design); OS specialisation deferred to AD-008.
+**Next work:** AD-008 — OS Catalogue & Calculation Framework; specify each OS page, required fields, rates, calculations, inheritance mappings and change dependencies.
