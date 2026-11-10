@@ -3,7 +3,7 @@
 This is the **single master index** for architecture decisions (ADs). Each AD has its own Markdown document when drafted and approved. Planned ADs are tracked here only; they are **not approved specifications**.
 
 **Repository:** `muhdmuizz/sistem-abm` · **Branch:** `main`  
-**Last updated:** 10 November 2026
+**Last updated:** 11 November 2026
 
 ## Architecture decision tracker
 
@@ -17,12 +17,12 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
 | AD-007 | Program/ Aktiviti | Finalised | [AD-007](AD-007-program-aktiviti.md) |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
-| AD-009 | Submission, Review & Finalisation | Proposed | — |
+| AD-009 | Submission, Review & Finalisation | Finalised | [AD-009](AD-009-submission-review-finalisation.md) |
 | AD-010 | Analysis, Reporting & Excel | Proposed | — |
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 7 ADs approved/finalised; 5 topics proposed.
+**Progress:** 8 ADs approved/finalised; 4 topics proposed.
 
 ## Status definitions
 
@@ -40,6 +40,8 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 - **AD-007:** Finalised programme façade, four-section form, headcount classifications, OS checklist and safeguards, automatic programme completion, complete inheritance and draft recalculation contract; OS-specific implementation deferred to AD-008.
 
+- **AD-009:** Finalised whole-Bidaan decision, parallel Penyelia/Ketua review, Ketua-only finalisation, shared comments, return/resubmission, bulk finalisation, four workflow statuses and Superadmin-only reopening.
+
 ## Tracking rules
 
 1. **One AD = one individual Markdown file** once substantive work begins; never consolidate future AD specifications into this index.
@@ -48,4 +50,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next work:** AD-008 — OS Catalogue & Calculation Framework; specify each OS page, required fields, rates, calculations, inheritance mappings and change dependencies.
+**Next work:** AD-008 — OS Catalogue & Calculation Framework (when OS-specific references are available); alternatively AD-010 — Analysis, Reporting & Excel for AFK-friendly architecture discussion.
