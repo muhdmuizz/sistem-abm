@@ -16,13 +16,13 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
 | AD-007 | Program/ Aktiviti | Finalised | [AD-007](AD-007-program-aktiviti.md) |
-| AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
+| AD-008 | OS Catalogue & Calculation Framework | Draft | [AD-008](AD-008-os-catalogue-calculation-framework.md) |
 | AD-009 | Submission, Review & Finalisation | Finalised | [AD-009](AD-009-submission-review-finalisation.md) |
 | AD-010 | Analysis, Reporting & Excel | Finalised | [AD-010](AD-010-analysis-reporting-and-excel.md) |
 | AD-011 | Data Integrity, Audit & Security | Finalised | [AD-011](AD-011-data-integrity-audit-security.md) |
 | AD-012 | Deployment & Operational Readiness | Finalised | [AD-012](AD-012-deployment-operational-readiness.md) |
 
-**Progress:** 11 ADs approved/finalised; 1 topic proposed/deferred (AD-008).
+**Progress:** 11 ADs approved/finalised; 1 AD drafted pending authoritative OS-specific references (AD-008).
 
 ## Status definitions
 
@@ -56,4 +56,6 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 **AD-012:** Finalised technical deployment, backup/recovery, release verification and operational safeguards; no claim of application deployment or production readiness.
 
-**Next work:** AD-008 — OS Catalogue & Calculation Framework remains deferred until OS-specific references are available. All other architecture subjects are closed.
+**AD-008:** Shared OS catalogue/calculation contract drafted; individual OS rates, formulas, mappings and official templates remain unverified and are not approved.
+
+**Next work:** Reconcile authoritative OS templates, financial rates and source mappings within AD-008; do not invent policies or declare AD-008 finalised prematurely. All other architecture subjects are closed.
