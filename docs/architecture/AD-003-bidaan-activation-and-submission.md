@@ -43,9 +43,15 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 4. OS belum aktif tidak menghalang penghantaran; **setiap OS aktif mesti Lengkap** sebelum Bidaan boleh dihantar.
 5. Tidak wajib mengaktifkan semua OS yang tersedia.
 
+## Keputusan tambahan diluluskan — Tiada Bidaan Sifar
+
+- **Bidaan Sifar tidak dibenarkan.** Bidaan perlu mengandungi sekurang-kurangnya satu Anggaran (OS) aktif dan berstatus **Lengkap** sebelum penghantaran.
+- Semua Anggaran aktif yang lain juga wajib Lengkap.
+- Bidaan aktif tanpa OS boleh kekal dalam penyediaan, tetapi tidak boleh dihantar.
+- Syarat ini dikuatkuasakan di pelayan, bukan sekadar keadaan butang UI.
+
 ## Perkara dicadangkan tetapi belum dimuktamadkan
 
-- Sama ada Bidaan tanpa Anggaran lengkap boleh dihantar melalui proses khas Bidaan Sifar.
 - Perincian kebenaran Penyedia Bidaan untuk turut mengedit OS.
 - Polisi nyahaktif, buang OS aktif, kunci selepas penghantaran, pindaan dan penghantaran semula.
 - Peraturan pengiraan, struktur input, import Excel dan prestasi bagi wizard Anggaran.
