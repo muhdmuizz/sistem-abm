@@ -12,7 +12,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-001 | Anggaran & Bidaan Workflow | Approved | [AD-001](AD-001-anggaran-bidaan-workflow.md) |
 | AD-002 | Canonical Financial Data Hierarchy | Approved | [AD-002](AD-002-canonical-financial-data-hierarchy.md) |
 | AD-003 | Bidaan Activation & Submission | Finalised | [AD-003](AD-003-bidaan-activation-and-submission.md) |
-| AD-004 | Anggaran Wizard Architecture | Baseline approved — refinable | [AD-004](AD-004-anggaran-wizard-architecture.md) |
+| AD-004 | Anggaran Wizard Architecture | Expanded baseline approved — OS specialisation deferred | [AD-004](AD-004-anggaran-wizard-architecture.md) |
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
 | AD-007 | Program/ Aktiviti | In progress — principle recorded | [AD-007](AD-007-program-aktiviti.md) |
@@ -36,7 +36,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 - **AD-001:** Anggaran is the unit of financial preparation; Bidaan is the formal submission unit. Drafts can be saved independently. No Bakul Bidaan.
 - **AD-002:** `PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran`. Anggaran and OS are the same domain entity.
 - **AD-003:** Separate Penyedia Bidaan and Penyedia Anggaran permissions, activation, completeness, submission, correction, snapshots and audit.
-- **AD-004:** Common Anggaran Workspace (Maklumat, Butiran Anggaran, Semakan, Log Tindakan), with OS-specific inputs and calculation rules. UI is a refinable baseline.
+- **AD-004:** Approved shared OS wizard, multi-row editing, bulk addition, duplication, autosave, automatic completeness, deletion/history, OS-to-OS navigation, and Senarai Anggaran filters ordered Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran. OS-specific fields/calculations deferred.
 
 ## Tracking rules
 
@@ -46,4 +46,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next work:** Finalise AD-004 — Anggaran Wizard Architecture, then resume AD-007 — Program/ Aktiviti.
+**Next work:** AD-004 expanded baseline is recorded; resume AD-007 — Program/ Aktiviti, with OS specialisation deferred to AD-008.
