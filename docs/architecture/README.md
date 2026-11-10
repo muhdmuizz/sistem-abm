@@ -18,11 +18,11 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-007 | Program/ Aktiviti | Finalised | [AD-007](AD-007-program-aktiviti.md) |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
 | AD-009 | Submission, Review & Finalisation | Finalised | [AD-009](AD-009-submission-review-finalisation.md) |
-| AD-010 | Analysis, Reporting & Excel | Proposed | — |
+| AD-010 | Analysis, Reporting & Excel | Baseline approved | [AD-010](AD-010-analysis-reporting-and-excel.md) |
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 8 ADs approved/finalised; 4 topics proposed.
+**Progress:** 9 ADs approved/finalised/baseline approved; 3 topics proposed.
 
 ## Status definitions
 
@@ -49,5 +49,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 3. Proposed subjects and numbering are planning aids, not approved architectural decisions.
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
+
+**AD-010:** Reconciled reporting, historical expenditure, Analisis and official Excel requirements; no unsolicited export filters or new worksheet rules. Exact payroll export template and OS calculations remain pending.
 
 **Next work:** AD-008 — OS Catalogue & Calculation Framework (when OS-specific references are available); alternatively AD-010 — Analysis, Reporting & Excel for AFK-friendly architecture discussion.
