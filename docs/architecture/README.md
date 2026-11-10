@@ -22,7 +22,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 5 documents committed (including one baseline); 7 topics proposed.
+**Progress:** 6 documents committed (including one baseline); 6 topics proposed.
 
 ## Status definitions
 
