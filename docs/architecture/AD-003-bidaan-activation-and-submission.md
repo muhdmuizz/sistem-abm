@@ -66,9 +66,18 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - **Status pengaktifan** dan **status kelengkapan** ialah dua dimensi berasingan dalam model data.
 - Pemadaman kekal bukan tindakan pengguna biasa bagi aliran ini.
 
+## Keputusan tambahan diluluskan — Penguncian, pembetulan dan Log Tindakan
+
+- Selepas **Hantar Bidaan**, Bidaan dan Anggaran yang disertakan menjadi **baca sahaja**.
+- Apabila penyemak **mengembalikan Bidaan untuk pembetulan**, **semua Anggaran aktif** dibuka semula untuk suntingan oleh Penyedia Anggaran yang diberi kuasa, bukan hanya OS yang disebut penyemak.
+- Setiap perubahan penting direkodkan dalam **Log Tindakan** supaya dapat dikenal pasti siapa mengubah apa dan bila, termasuk rekod/medan terlibat serta nilai sebelum dan selepas untuk perubahan data kewangan.
+- Log meliputi peristiwa peringkat Bidaan (pengaktifan, penghantaran, pemulangan, penghantaran semula, keputusan penyemak) dan Anggaran (pengaktifan/nyahaktif, tambah/pinda/buang butiran, pengiraan semula dan perubahan status).
+- Penghantaran semula dilakukan oleh Penyedia Bidaan selepas semua Anggaran aktif lengkap dan sah.
+- Setiap penghantaran rasmi mengekalkan **snapshot kewangan** dan sejarahnya; pembetulan tidak menulis ganti nilai penghantaran terdahulu.
+- Reka bentuk teknikal log bagi data granular yang besar perlu mengelakkan salinan penuh pada setiap ketukan; rekod perubahan berstruktur dan snapshot ketika penghantaran disyorkan.
+
 ## Perkara dicadangkan tetapi belum dimuktamadkan
 
-- Polisi kunci selepas penghantaran, pindaan dan penghantaran semula.
 - Peraturan pengiraan, struktur input, import Excel dan prestasi bagi wizard Anggaran.
 
 **Nota:** Contoh status, jumlah OS dan jumlah kewangan dalam lakaran UI terdahulu ialah ilustrasi sahaja, bukan data atau peraturan sistem yang telah disahkan.
