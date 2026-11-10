@@ -57,9 +57,18 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - Seorang pengguna boleh diberikan **kedua-dua peranan**, tertakluk kepada PTJ dan Aktiviti Kewangan yang dibenarkan.
 - Kedua-dua peranan boleh melihat status kesediaan penghantaran bagi skop yang dibenarkan.
 
+## Keputusan tambahan diluluskan — Nyahaktif OS secara boleh balik
+
+- Sebelum Bidaan dihantar, Penyedia Anggaran yang diberi kuasa boleh **Nyahaktifkan OS** tanpa memadam rekod Anggaran atau Butiran Anggaran.
+- OS tidak aktif dikecualikan daripada jumlah Bidaan dan semakan kelengkapan penghantaran.
+- **Aktifkan Semula OS** memulihkan akses kepada data yang telah disimpan untuk disemak atau disunting.
+- Pengaktifan semula wajib menjalankan pengesahan terkini; status Lengkap terdahulu tidak dianggap sah secara automatik.
+- **Status pengaktifan** dan **status kelengkapan** ialah dua dimensi berasingan dalam model data.
+- Pemadaman kekal bukan tindakan pengguna biasa bagi aliran ini.
+
 ## Perkara dicadangkan tetapi belum dimuktamadkan
 
-- Polisi nyahaktif, buang OS aktif, kunci selepas penghantaran, pindaan dan penghantaran semula.
+- Polisi kunci selepas penghantaran, pindaan dan penghantaran semula.
 - Peraturan pengiraan, struktur input, import Excel dan prestasi bagi wizard Anggaran.
 
 **Nota:** Contoh status, jumlah OS dan jumlah kewangan dalam lakaran UI terdahulu ialah ilustrasi sahaja, bukan data atau peraturan sistem yang telah disahkan.
