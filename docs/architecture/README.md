@@ -15,14 +15,14 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-004 | Anggaran Wizard Architecture | Baseline approved — refinable | [AD-004](AD-004-anggaran-wizard-architecture.md) |
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
 | AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
-| AD-007 | Program/ Aktiviti | Proposed | — |
+| AD-007 | Program/ Aktiviti | In progress — principle recorded | [AD-007](AD-007-program-aktiviti.md) |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
 | AD-009 | Submission, Review & Finalisation | Proposed | — |
 | AD-010 | Analysis, Reporting & Excel | Proposed | — |
 | AD-011 | Data Integrity, Audit & Security | Proposed | — |
 | AD-012 | Deployment & Operational Readiness | Proposed | — |
 
-**Progress:** 6 documents committed (including one baseline); 6 topics proposed.
+**Progress:** 6 ADs approved; AD-007 principle recorded (detailed design pending); 5 topics proposed.
 
 ## Status definitions
 
@@ -46,4 +46,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next proposed discussion:** AD-007 — Program/ Aktiviti.
+**Next work:** Finalise AD-004 — Anggaran Wizard Architecture, then resume AD-007 — Program/ Aktiviti.
