@@ -14,7 +14,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-003 | Bidaan Activation & Submission | Finalised | [AD-003](AD-003-bidaan-activation-and-submission.md) |
 | AD-004 | Anggaran Wizard Architecture | Baseline approved — refinable | [AD-004](AD-004-anggaran-wizard-architecture.md) |
 | AD-005 | Identity, Roles & Organisation | Approved | [AD-005](AD-005-identity-roles-organisation.md) |
-| AD-006 | Kitaran ABM & Administration | Proposed | — |
+| AD-006 | Kitaran ABM & Administration | Approved | [AD-006](AD-006-kitaran-abm-administration.md) |
 | AD-007 | Program/ Aktiviti | Proposed | — |
 | AD-008 | OS Catalogue & Calculation Framework | Proposed | — |
 | AD-009 | Submission, Review & Finalisation | Proposed | — |
@@ -46,4 +46,4 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 4. Preserve prior decisions and cross-reference related ADs; avoid unnecessary branching or duplicate specifications.
 5. Keep implementation refinements within the appropriate AD without inventing additional decision workstreams.
 
-**Next proposed discussion:** AD-006 — Kitaran ABM & Administration.
+**Next proposed discussion:** AD-007 — Program/ Aktiviti.
