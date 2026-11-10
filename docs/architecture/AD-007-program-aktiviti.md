@@ -1,6 +1,6 @@
 # AD-007 — Program/ Aktiviti
 
-**Status:** In progress — approved workflow, form and participant breakdown rules recorded; further design pending  
+**Status:** Finalised — approved architectural contract; OS-specific specialisation deferred to AD-008  
 **Date:** 10 November 2026  
 **Related:** AD-002 — Canonical Financial Data Hierarchy; AD-004 — Anggaran Wizard Architecture; AD-008 — OS Catalogue & Calculation Framework
 
@@ -107,8 +107,17 @@ Headcounts are **financial estimation inputs**, not merely descriptive metadata.
 
 **Aktiviti Kewangan, PTJ and Tempat Bertugas** come from the user's authorised, database-backed context rather than being redundantly re-entered. Users may progressively **Simpan Draf** with incomplete programme fields; however, the programme cannot be **Lengkap** until all required programme fields, both positive headcount groups and selected OS/Butiran validations pass.
 
-## 6. Design boundary and outstanding matters
+## 6. Complete programme inheritance and change management
+
+- **Every field and value available in Program/ Aktiviti is inherited by its associated Anggaran (OS) wizard**, including identity, objectives, classifications, implementation dates, Pakej components, both detailed headcount breakdowns and authorised organisational context.
+- Program/ Aktiviti is the **single authoritative source** for programme-owned values. The wizard must not require duplicate entry or permit independent editing of inherited programme fields; changes occur in Program/ Aktiviti.
+- All inherited information is available to the wizard, but only contextually relevant fields need to be displayed; inheritance does not imply every field participates in every OS calculation.
+- For **draft** Anggaran, programme changes synchronise automatically, triggering recalculation or revalidation of affected estimates while preserving unrelated OS-specific inputs where valid. Financial amount changes must be clearly indicated to users.
+- **Submitted financial snapshots are immutable**. Later changes belong to the authorised Pindaan workflow and cannot rewrite historical submissions.
+- The **exact inheritance-to-OS mappings, calculation dependencies, eligibility rules, rates, formulas, and specialised OS requirements must be specified for every applicable OS in AD-008 before implementing the complete inheritance/recalculation engine**. This is an explicit implementation dependency, not an unresolved AD-007 decision.
+
+## 7. Design boundary and closure
 
 - **AD-004 is finalised**; this document reuses its shared wizard, autosave, row validation, safe navigation, deletion and audit rules.
 - **AD-008** will determine precise OS mapping, package eligibility, automatic prepopulation, rates, calculation formulas and specialised OS wizard behaviour.
-- AD-007 remains **in progress** until remaining programme-specific design decisions are settled; approval of the recorded rules does not mean the entire AD is finalised.
+- **AD-007 is finalised.** Its programme workflow, data contract, validations and change-management principles are approved. Detailed OS pages and their calculation mappings are the next design task under AD-008.
