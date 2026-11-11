@@ -248,9 +248,20 @@ Both **Ketua Aktiviti** and **Penyelia Aktiviti** may initiate and reply to thre
 
 Keep the UI compact: a discussion timeline, clear anchored-record context, reply composer and reviewer-controlled close/reopen. Use Laravel/PostgreSQL, indexed lookups and pagination rather than live sockets or extra infrastructure, based on approximately **300 Bidaan per cycle**. These are approved experience and lightweight architecture constraints, not implemented screens.
 
-### 10.3–10.4 (Pending)
+### 10.3 Review Page Layout (Approved)
 
-Refine review queue columns and filters against the canonical model, placement of thread controls versus formal review actions, confirmation wording and error states, and responsive presentation. **Section 10 remains in discussion** until these details are approved.
+Use **two tabs** within the single unified review workspace:
+
+1. **Anggaran & Butiran** — the primary financial examination view, with direct indicators and links to review threads anchored to the relevant Bidaan, Anggaran or Butiran Anggaran.
+2. **Semakan** — the consolidated review-thread view for the current Bidaan, including **Terbuka** and **Ditutup** threads.
+
+**Semakan** is the approved tab label; do not use **Perbincangan** as its name. Do not duplicate thread data or introduce a separate workflow for each tab. When a user opens a review indicator beside a financial record, display the associated thread in a **contextual side panel on desktop** or **full-screen panel on mobile**, without forcing unnecessary tab switching. Preserve the selected record and return context.
+
+The review page may display the existing Bidaan summary and count of open threads, without combining Jumlah Anggaran Semasa with Jumlah Muktamad. Keep formal return/finalisation controls separate from comments and thread closure.
+
+### 10.4 (Pending)
+
+Refine canonical review queue fields/filters, placement of formal role-specific actions, confirmation wording, validation/error states and responsive edge cases. **Section 10 remains in discussion** until these details are approved.
 
 ## Pending design discussion — not yet approved
 
