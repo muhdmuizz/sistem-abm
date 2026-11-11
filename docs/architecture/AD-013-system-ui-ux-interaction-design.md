@@ -62,11 +62,26 @@ The following is the agreed **scope and discussion order**, not approval of each
 - Replace skeletons with loaded content, empty states or explicit errors; never leave indefinite skeletons after failures.
 - Skeletons do not substitute for actual performance optimisation, and loading states must not conceal unsaved edits or interfere with autosave.
 
+## Section 01 — Visual Design System (Approved; complete)
+
+1. **Typography:** Inter; weights 400 (regular), 500 (medium), 600 (semibold). Avoid excessive bold.
+2. **Colour:** neutral grey and white surfaces, muted blue primary accent; semantic green, amber and red only for meaningful states and actions.
+3. **Spacing and density:** compact but comfortable, based on a 4 px scale; 8–16 px for most component spacing.
+4. **Borders and corners:** subtle 1 px borders, approximately 6–8 px corner radius; avoid decorative outlines and excessive rounding.
+5. **Shadows and elevation:** minimal; prefer borders. Reserve shadows for floating menus, dialogs and overlays.
+6. **Icons:** Lucide, consistently 16–20 px; use for meaningful actions/information, not decoration.
+
+These are approved design standards. Exact token values may be specified during implementation without silently changing the agreed visual direction or business workflows.
+
+## Section 02 — Application Shell & Navigation (In discussion)
+
+Already approved: persistent collapsible desktop sidebar, mobile navigation drawer, and remembered desktop expanded/collapsed preference across navigation. Pending: shell regions, sidebar grouping based on existing actual modules, active/expanded state, header contents, breadcrumbs, role and Kitaran context, keyboard/mobile navigation. No renaming or new functional routes without separate approval.
+
 ## Pending design discussion — not yet approved
 
 - Detailed navigation grouping and module labels.
 - Fluid versus constrained content width and per-screen exceptions (working recommendation: fluid workspace with readable constrained form sections; not yet approved).
-- Design tokens: precise typography, colour palette, spacing, borders and component dimensions.
+- Section 01 visual foundation approved; implementation-level tokens and component dimensions to be specified consistently.
 - Detailed form patterns and action placement (hybrid responsive table strategy approved).
 - Interaction feedback, validation, save states and page-specific layouts (contextual skeleton loading required).
 
