@@ -96,9 +96,21 @@ These are approved design standards. Exact token values may be specified during 
 
 Preserve the previously approved hybrid responsive table strategy. These layout standards do not introduce or change any functional fields, filters, permissions, actions or business workflows.
 
-## Section 04 — Buttons & Action Controls (In discussion)
+## Section 04 — Buttons & Action Controls (Approved; complete)
 
-To settle: action hierarchy, semantic colour, icon-only versus labelled actions, dimensions and touch targets, placement and consistency, disabled/loading states, destructive confirmation, keyboard/accessibility feedback. Existing approved workflows and permissions remain authoritative.
+1. **Action hierarchy:** One clearly dominant primary action per context; visually quieter secondary and tertiary actions.
+2. **Semantic colours:** Muted blue for primary actions, green for positive confirmation, amber for caution, red for destructive actions; use colours consistently and meaningfully.
+3. **Labels and icons:** Labelled buttons for primary actions; compact Lucide icon-only controls for row actions, with accessible names and tooltips.
+4. **Dimensions:** Consistent button heights and minimum widths; compact desktop presentation with adequate mobile touch targets.
+5. **Placement:** Page-level actions near headings, form actions at the relevant footer and row actions beside their records.
+6. **Interaction states:** Visible hover, focus, pressed, disabled and processing states; prevent duplicate submissions while processing.
+7. **Destructive actions:** Clear record-specific confirmation for consequential deletion and irreversible actions; avoid unnecessary confirmation for routine actions.
+
+These standards do not introduce new functions, change role permissions or override approved business workflows.
+
+## Section 05 — Forms & Data Entry (In discussion)
+
+To settle: form grouping and field layout; field labels and required markers; dropdown, search and dependent selection behaviour; input formatting and financial precision; validation and error recovery; multi-row and spreadsheet-style data entry; save feedback, autosave and navigation safety. Preserve AD-004 shared wizard behaviour, AD-007 Program/ Aktiviti, and approved financial data model.
 
 
 ## Pending design discussion — not yet approved
