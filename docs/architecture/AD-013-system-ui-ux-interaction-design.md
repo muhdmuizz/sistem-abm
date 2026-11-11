@@ -108,9 +108,22 @@ Preserve the previously approved hybrid responsive table strategy. These layout 
 
 These standards do not introduce new functions, change role permissions or override approved business workflows.
 
-## Section 05 — Forms & Data Entry (In discussion)
+## Section 05 — Forms & Data Entry (Approved; complete)
 
-To settle: form grouping and field layout; field labels and required markers; dropdown, search and dependent selection behaviour; input formatting and financial precision; validation and error recovery; multi-row and spreadsheet-style data entry; save feedback, autosave and navigation safety. Preserve AD-004 shared wizard behaviour, AD-007 Program/ Aktiviti, and approved financial data model.
+1. **Form structure:** Group fields by logical purpose with concise section headings; avoid unnecessary nested containers.
+2. **Labels and required fields:** Persistent labels above inputs; red asterisk for required fields; placeholders are not labels.
+3. **Dropdowns and autocomplete:** Searchable selectors for long lists, clear selected and empty states, and existing database reference values.
+4. **Dependent fields:** Update dependent choices when parent values change; clearly indicate unavailable and disabled choices.
+5. **Financial input formatting:** Right-align numeric values; consistent currency formatting and appropriate decimal precision; no premature rounding of intermediate calculations.
+6. **Validation:** Inline field errors, concise summary where useful, and preservation of user-entered values.
+7. **Multi-row data entry:** Efficient add/edit/duplicate/remove consistent with AD-004; each Butiran Anggaran retains a distinct stable identity.
+8. **Saving and navigation safety:** Clear save status, autosave where supported, manual save fallback and protection against unsaved-data loss.
+
+These are shared interaction standards, not changes to AD-004 wizard persistence, AD-007 Program/ Aktiviti or financial calculation rules.
+
+## Section 06 — Tables & Data Presentation (In discussion)
+
+To settle: table density and hierarchy, column alignment and financial formatting, sorting and filtering presentation, pagination, row actions and selection, horizontal overflow, responsive table-to-card choices and empty/loading/error presentation. The approved hybrid responsive table strategy and contextual skeleton loading remain in force.
 
 
 ## Pending design discussion — not yet approved
