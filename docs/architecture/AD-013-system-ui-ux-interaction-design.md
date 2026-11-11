@@ -295,12 +295,25 @@ Use a compact, **single-page** official Excel extraction interface, **separate f
 - The complete workbook uses the two approved worksheets: **Gaji & Emolumen** (OS11000–OS13000, official column template still pending) and **Perbelanjaan** (OS14000–OS29000/OS42000, official 27-column granular structure). Selected OS exports contain only selected OS in applicable worksheet format.
 - Do not invent additional export filters, worksheet-presence rules, filenames, calculation rules or Program/ Aktiviti export selections. This is a **UI presentation decision**, not an amendment to AD-010.
 
-### 11.3 Pentadbiran (Pending)
+### 11.3 Pentadbiran — Granular PTJ, Aktiviti Kewangan, OS and User Permissions (Approved model; remaining administration screens in discussion)
 
-Continue with Kitaran ABM management, users, roles and authorised configuration, preserving established permissions and workflows. Section 11 is not yet complete.
+Organise administration around existing **Kitaran ABM**, **Pengguna & Peranan**, **Pengurusan Aktiviti Kewangan/PTJ/OS**, and authorised **Konfigurasi**, without adding unrelated modules.
 
-Continue with the official Excel extraction interface and administration screens, preserving AD-010 export scopes and two-sheet workbook and existing Kitaran/roles/permissions. Section 11 is not yet complete.
+**Approved effective access model:**
+- Superadmin manages the centrally authorised **PTJ × Aktiviti Kewangan × OS** combinations. An Aktiviti Kewangan may be available to a PTJ while only a **subset of OS** is permitted. Checking an Aktiviti Kewangan does **not** implicitly grant every OS.
+- Assign **Pengguna × Peranan × Aktiviti Kewangan × PTJ** scope. Multiple roles and multiple scoped assignments may coexist, but cannot be cross-combined to manufacture an unassigned role–activity–PTJ tuple.
+- For ordinary users, effective access is the intersection of **role-scoped user assignments** with the centrally permitted **PTJ–Aktiviti Kewangan–OS** relationships, plus existing role-specific actions. Neither a user role nor an activity assignment bypasses the PTJ/OS boundary.
+- Example: **Penyedia Bidaan** assigned to **SMK PTJ A** for **PPN** can access PPN only for SMK PTJ A and only the OS centrally permitted to that SMK PTJ under PPN; cannot access other PTJ, other activities or disallowed OS.
+- Maintain OS permissions **primarily at PTJ–Aktiviti Kewangan level**, not duplicated for every individual user. Changing central PTJ–activity OS permissions updates the effective authorisation of affected users, subject to normal server-side enforcement.
+- Apply permissions to record queries, form choices, direct URLs, API endpoints and Excel exports; client-side visibility alone is insufficient. Preserve already-established Superadmin exceptional administration rights.
 
+**Approved UI direction:**
+- Compact **table-like expandable rows/cards** for each PTJ and each Pengguna, with clear parent–child checkbox hierarchy and selected counts.
+- PTJ row: check permitted Aktiviti Kewangan and the **individual OS under each activity**. Pengguna row: check roles and their **specific Aktiviti Kewangan + PTJ** scope. Use searchable lists and responsive presentation.
+- Do not make checking a parent activity automatically check all OS; distinguish enabling the parent assignment from granular child permissions.
+- Show truthful save/error feedback and avoid silently claiming permission changes before server confirmation. The exact save mechanics and remaining Kitaran/Konfigurasi screens will be refined separately.
+
+**Section 11.3 remains open** for remaining administrative interface details; the permission model and the matrix/expandable-row direction above are approved.
 
 ## Pending design discussion — not yet approved
 
