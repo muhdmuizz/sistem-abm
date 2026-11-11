@@ -21,9 +21,9 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-010 | Analysis, Reporting & Excel | Finalised | [AD-010](AD-010-analysis-reporting-and-excel.md) |
 | AD-011 | Data Integrity, Audit & Security | Finalised | [AD-011](AD-011-data-integrity-audit-security.md) |
 | AD-012 | Deployment & Operational Readiness | Finalised | [AD-012](AD-012-deployment-operational-readiness.md) |
-| AD-013 | System UI/UX & Interaction Design | Draft | [AD-013](AD-013-system-ui-ux-interaction-design.md) |
+| AD-013 | System UI/UX & Interaction Design | Finalised | [AD-013](AD-013-system-ui-ux-interaction-design.md) |
 
-**Progress:** 11 ADs approved/finalised; 2 ADs in draft (AD-008 and AD-013).
+**Progress:** 12 ADs approved/finalised; 1 AD in draft (AD-008).
 
 ## Status definitions
 
@@ -59,6 +59,6 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 **AD-008:** Shared OS catalogue/calculation contract drafted; individual OS rates, formulas, mappings and official templates remain unverified and are not approved.
 
-**AD-013:** Draft design specification; Clean Enterprise, collapsible sidebar and mandatory anti-slop principles approved. Other layout and component details remain under discussion.
+**AD-013:** Finalised UI/UX specification; all 12 sections approved, including accessibility, responsiveness and QA acceptance standards. This is design approval, not implementation or test certification.
 
-**Next work:** Continue AD-013 screen-grounded design discussion; reconcile authoritative OS references separately within AD-008. Neither draft is finalised.
+**Next work:** Implement and verify AD-013 against the actual application when source is available; reconcile authoritative OS references separately within draft AD-008. Architecture approval does not establish implementation readiness.
