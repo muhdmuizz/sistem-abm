@@ -313,7 +313,20 @@ Organise administration around existing **Kitaran ABM**, **Pengguna & Peranan**,
 - Do not make checking a parent activity automatically check all OS; distinguish enabling the parent assignment from granular child permissions.
 - Show truthful save/error feedback and avoid silently claiming permission changes before server confirmation. The exact save mechanics and remaining Kitaran/Konfigurasi screens will be refined separately.
 
-**Section 11.3 remains open** for remaining administrative interface details; the permission model and the matrix/expandable-row direction above are approved.
+### 11.3.1 Pengurusan Kitaran ABM — Approved UI
+
+This UI implements the existing rules in **AD-006 — Kitaran ABM & Administration**; AD-006 remains authoritative for operational semantics.
+
+- Use a **table-first, expandable Kitaran row** layout. Each Kitaran is identified by its unique **Tahun Kitaran**; the create form requires only that year, with no redundant mandatory name.
+- Expand a Kitaran to display **compact Fasa records**. Each record shows **Jenis Fasa** (Bidaan Awal or automatically numbered Pindaan), **Tarikh Mula**, **Tarikh Tamat**, **Skop Pembukaan**, and **Dibuka / Ditutup**.
+- Within the expanded Kitaran, provide **Tambah Fasa** and contextual **Pinda**, **Lanjutkan**, **Buka**, **Tutup**, or **Buka Semula** controls as valid for the record. Do not display contradictory status actions simultaneously. Changes require server confirmation and are audited.
+- The Fasa form uses only AD-006 fields: **Jenis Fasa, Tarikh Mula, Tarikh Tamat, Skop Pembukaan** (global, PTJ, Aktiviti Kewangan or a specific combination). Dates must fall within the Kitaran year. A new Fasa begins **Ditutup** and is not opened automatically when its start date arrives.
+- Apply **AD-013 Section 04 button conventions consistently**: Lucide icon + text for primary/consequential actions (e.g. Tambah Kitaran, Tambah Fasa, Buka, Tutup, Lanjutkan, Buka Semula), icon-only compact row edit action with tooltip and accessible name, and chevron for row expansion. Use consistent sizes, spacing and semantic colors.
+- Preserve AD-006's selective Fasa scope, multiple Pindaan, no invented exclusive-active-Fasa/overlap restriction, single Bidaan identity across amendments, historical snapshot protection, audited changes, and deletion only of an empty Kitaran.
+- No additional **Tetingkap Penghantaran** field, page, or UI label. Use the approved **Fasa**, **Skop Pembukaan**, and **Dibuka / Ditutup** concepts.
+- Example years, dates, statuses and scope assignments in the UI discussion are **illustrative only**; live screens must use database records.
+
+**Kitaran ABM interface approved.** Section 11.3 remains open only for the remaining administrative interface details, including Konfigurasi; no functional implementation is claimed.
 
 ## Pending design discussion — not yet approved
 
