@@ -73,9 +73,22 @@ The following is the agreed **scope and discussion order**, not approval of each
 
 These are approved design standards. Exact token values may be specified during implementation without silently changing the agreed visual direction or business workflows.
 
-## Section 02 — Application Shell & Navigation (In discussion)
+## Section 02 — Application Shell & Navigation (Approved; complete)
 
-Already approved: persistent collapsible desktop sidebar, mobile navigation drawer, and remembered desktop expanded/collapsed preference across navigation. Pending: shell regions, sidebar grouping based on existing actual modules, active/expanded state, header contents, breadcrumbs, role and Kitaran context, keyboard/mobile navigation. No renaming or new functional routes without separate approval.
+1. **Sidebar organisation:** Group existing modules by function; show only modules authorised for the current user. Do not introduce unapproved routes or module renaming.
+2. **Active navigation:** Use subtle background highlighting and a clear active indicator; automatically expand the sidebar group containing the active page.
+3. **Application header:** Compact, containing system identity, active Kitaran context and user account access; avoid redundant controls.
+4. **Breadcrumbs:** Show on nested pages when they aid orientation and navigation; omit where redundant.
+5. **Mobile navigation:** Header-triggered drawer; close after navigation, without permanently consuming mobile workspace width.
+
+**Previously approved and retained:** Persistent, collapsible desktop sidebar; remember expanded/collapsed preference across page navigation.
+
+**Unified navigation for multiple roles:** A user with multiple authorised roles and Aktiviti Kewangan assignments sees one unified navigation shell with access to authorised modules; no separate role-specific application shells. Navigation visibility is not an authorisation boundary: server-side permission enforcement and the functional rules in AD-005/AD-009 remain authoritative.
+
+## Section 03 — Page Layout & Information Density (In discussion)
+
+To settle: workspace width and sensible constraints for ordinary forms, page header and action placement, section hierarchy, information density, filter placement, table overflow and mobile page layout. The already-approved hybrid responsive table strategy remains in force. No unapproved feature or workflow changes.
+
 
 ## Pending design discussion — not yet approved
 
