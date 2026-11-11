@@ -121,9 +121,22 @@ These standards do not introduce new functions, change role permissions or overr
 
 These are shared interaction standards, not changes to AD-004 wizard persistence, AD-007 Program/ Aktiviti or financial calculation rules.
 
-## Section 06 — Tables & Data Presentation (In discussion)
+## Section 06 — Tables & Data Presentation (Approved; complete)
 
-To settle: table density and hierarchy, column alignment and financial formatting, sorting and filtering presentation, pagination, row actions and selection, horizontal overflow, responsive table-to-card choices and empty/loading/error presentation. The approved hybrid responsive table strategy and contextual skeleton loading remain in force.
+1. **Table structure:** Compact rows, distinguished headers and subtle horizontal dividers; avoid unnecessary gridlines and zebra striping.
+2. **Column alignment:** Text left; numbers, financial amounts and percentages right; consistent decimal precision and tabular numerals.
+3. **Sorting:** Controls only on sortable columns; clearly show active sort direction.
+4. **Filtering and search:** Controls above the relevant table; preserve filters across pagination and sorting.
+5. **Pagination:** Compact navigation with record counts and previous/next controls; avoid long page-number lists.
+6. **Row actions and selection:** Consistent row action location; checkboxes only for already-supported bulk operations, without inventing new bulk capabilities.
+7. **Responsive presentation:** Previously approved hybrid strategy: compact cards for suitable mobile listings; horizontal scrolling for granular financial tables.
+8. **Table states:** Contextual skeleton rows, meaningful empty states and explicit error/retry feedback.
+
+Column sets, business actions and financial data structures remain governed by the relevant approved functional ADs.
+
+## Section 07 — Loading, Feedback & System States (In discussion)
+
+To settle: loading scope and timing, navigation and content skeletons, saving/autosave feedback, form validation, success and error notifications, empty states, confirmation and processing states, accessibility/reduced motion, recovery after failed requests. Previously approved contextual skeleton loading remains mandatory.
 
 
 ## Pending design discussion — not yet approved
