@@ -21,8 +21,9 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 | AD-010 | Analysis, Reporting & Excel | Finalised | [AD-010](AD-010-analysis-reporting-and-excel.md) |
 | AD-011 | Data Integrity, Audit & Security | Finalised | [AD-011](AD-011-data-integrity-audit-security.md) |
 | AD-012 | Deployment & Operational Readiness | Finalised | [AD-012](AD-012-deployment-operational-readiness.md) |
+| AD-013 | System UI/UX & Interaction Design | Draft | [AD-013](AD-013-system-ui-ux-interaction-design.md) |
 
-**Progress:** 11 ADs approved/finalised; 1 AD drafted pending authoritative OS-specific references (AD-008).
+**Progress:** 11 ADs approved/finalised; 2 ADs in draft (AD-008 and AD-013).
 
 ## Status definitions
 
@@ -58,4 +59,6 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 **AD-008:** Shared OS catalogue/calculation contract drafted; individual OS rates, formulas, mappings and official templates remain unverified and are not approved.
 
-**Next work:** Reconcile authoritative OS templates, financial rates and source mappings within AD-008; do not invent policies or declare AD-008 finalised prematurely. All other architecture subjects are closed.
+**AD-013:** Draft design specification; Clean Enterprise, collapsible sidebar and mandatory anti-slop principles approved. Other layout and component details remain under discussion.
+
+**Next work:** Continue AD-013 screen-grounded design discussion; reconcile authoritative OS references separately within AD-008. Neither draft is finalised.
