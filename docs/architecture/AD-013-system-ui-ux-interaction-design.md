@@ -270,6 +270,25 @@ Place **formal Bidaan decisions** in a clearly separated action area at the bott
 
 **Section 10 (10.1–10.4) approved.** Final review queue columns and filters must be verified against the canonical model during implementation, not invented in this design document.
 
+## Section 11 — Analisis, Reporting & Administration (In discussion)
+
+### 11.1 Analisis Workspace (Approved — reconciled with AD-010)
+
+Use a **table-first Analisis workspace** with expandable OS rows, not a dashboard of charts or decorative KPI cards. This approval confirms the presentation approach and **does not reopen AD-010's already-finalised analysis requirements**:
+
+- Use exactly the approved cascading filter chain **Aktiviti Kewangan → PTJ → OS**. Kitaran ABM and Fasa/Pusingan are contextual; **Tempat Bertugas** and an additional **Status Bidaan** filter are not part of this Analisis chain.
+- Show only two financial amount cards: **Jumlah Anggaran Semasa** and **Jumlah Muktamad**, separately, never added together.
+- The analysis table has **OS rows**, eligible **complete/verified historical expenditure years** as columns, a switchable right-side ABM amount column (**Anggaran Semasa** by default or **Jumlah Muktamad**), and a **% difference** against a user-selected eligible historical year. Use AD-010's approved percentage formula and zero/missing denominator handling.
+- Expand an OS **directly to Butiran Perbelanjaan**, retaining relevant Kod Objek and descriptions; do **not** insert a separate Kod Objek navigation tier.
+- Historical expenditure is a **separate, read-only analytical reference** for ordinary authorised users, **imported and maintained by Superadmin** from the approved Excel source. Only verified complete years are eligible. Its source is at **PTJ level**, not Tempat Bertugas, and imports/corrections cannot mutate canonical Bidaan/Anggaran or immutable snapshots.
+- **Do not add Ekstrak Excel to Analisis**. Official extraction is a separate interface governed by AD-010.
+- Illustrative amounts, OS codes, extra filter fields and drilldown levels from preliminary mockups are **not approved requirements** where they differ from AD-010.
+
+### 11.2–11.3 (Pending)
+
+Continue with the official Excel extraction interface and administration screens, preserving AD-010 export scopes and two-sheet workbook and existing Kitaran/roles/permissions. Section 11 is not yet complete.
+
+
 ## Pending design discussion — not yet approved
 
 - Detailed navigation grouping and module labels.
