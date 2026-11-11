@@ -86,6 +86,10 @@ For each OS, complete an evidence-backed specification containing its authoritat
 
 This is an **approved OS14000-specific design decision within an otherwise Draft AD-008**, not approval or closure of the entire AD.
 
+### Row identity clarification — applies to every OS (approved)
+
+Each saved **Butiran Anggaran row** has a unique stable Butiran ID **even if multiple rows name the same officer or contain identical source values**. Officer identity is a data attribute, not the Butiran primary key. Every generated granular calculation/output row must be traceable to its exact originating Butiran ID. Do not deduplicate or aggregate separate source rows merely because their officer details match. This is a shared AD-004 rule; OS14000 is only one example.
+
 ## 07 — Export compatibility
 
 - Preserve AD-010 official scopes: **Keseluruhan Data**, **Bidaan Lengkap**, **OS Terpilih**.
