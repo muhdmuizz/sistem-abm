@@ -1,12 +1,12 @@
 # AD-013 — System UI/UX & Interaction Design
 
-**Status:** Draft — approved foundations recorded; screen-level design discussion ongoing  
+**Status:** Finalised — all 12 design sections approved; implementation and QA evidence pending  
 **Date:** 11 November 2026  
 **Related:** AD-001–AD-012
 
 ## Approved discussion roadmap (12 sections)
 
-The following is the agreed **scope and discussion order**, not approval of each section's detailed standards. Discuss each section, consolidate decisions, then move to the next; do not create ad hoc sub-workstreams.
+The following records the **12 approved design sections** and their consolidated scope. Implementation details must respect the relevant authoritative functional ADs; do not create ad hoc sub-workstreams.
 
 | No. | Design area | Coverage |
 | --- | --- | --- |
@@ -20,10 +20,10 @@ The following is the agreed **scope and discussion order**, not approval of each
 | 08 | Dashboard & Financial Summaries | Financial information hierarchy, meaningful KPIs, summaries, dashboard presentation |
 | 09 | Bida Peruntukan & Anggaran Interface | Program/ Aktiviti, Senarai Anggaran, shared OS wizard, Butiran Anggaran, inline editing, submission interface |
 | 10 | Semakan & Kelulusan Interface | Review queues, submission details, financial comparisons, comments, return actions, finalisation controls |
-| 11 | Analisis, Reporting & Administration | Analisis, financial reporting, Excel extraction interface, Kitaran management, users, roles, configuration |
+| 11 | Analisis, Reporting & Administration | Analisis, financial reporting, Excel extraction interface, Kitaran management, users, roles, PTJ–Aktiviti Kewangan–OS permissions; no standalone Konfigurasi page |
 | 12 | Accessibility, Responsiveness & Quality Assurance | Keyboard navigation, contrast, focus, mobile ergonomics, performance, consistency, UI regression |
 
-**Process:** Work in numerical order; consolidate each section before proceeding. Preserve the business architecture approved in AD-001–AD-012. Ground module-specific design in actual workflows and screens. The deliverable is one consolidated AD-013 design specification. No section is deemed complete merely because a cross-cutting foundation was approved.
+**Design closure:** All 12 sections have been reviewed and approved. Preserve the functional architecture in AD-001–AD-012. Design approval does not imply a working Laravel implementation or completed QA.
 
 ## Approved foundations
 
@@ -270,7 +270,7 @@ Place **formal Bidaan decisions** in a clearly separated action area at the bott
 
 **Section 10 (10.1–10.4) approved.** Final review queue columns and filters must be verified against the canonical model during implementation, not invented in this design document.
 
-## Section 11 — Analisis, Reporting & Administration (In discussion)
+## Section 11 — Analisis, Reporting & Administration (Approved; complete)
 
 ### 11.1 Analisis Workspace (Approved — reconciled with AD-010)
 
@@ -328,12 +328,40 @@ This UI implements the existing rules in **AD-006 — Kitaran ABM & Administrati
 
 **Kitaran ABM interface approved.** The approved PTJ/user permission matrices and Kitaran interface complete Section 11.3. There is no standalone Konfigurasi page. No functional implementation is claimed.
 
-## Pending design discussion — not yet approved
+## Section 12 — Accessibility, Responsiveness & Quality Assurance (Approved; complete)
 
-- Detailed navigation grouping and module labels.
-- Fluid versus constrained content width and per-screen exceptions (working recommendation: fluid workspace with readable constrained form sections; not yet approved).
-- Section 01 visual foundation approved; implementation-level tokens and component dimensions to be specified consistently.
-- Detailed form patterns and action placement (hybrid responsive table strategy approved).
-- Interaction feedback, validation, save states and page-specific layouts (contextual skeleton loading required).
+Section 12 is a **system-wide design and acceptance standard**, not a new workflow, module, financial rule, or claim of completed application testing.
 
-**Boundary:** This AD is a design discussion draft, not a claim of implemented UI or an approval of the pending choices. No functional architecture in AD-001–AD-012 is reopened.
+### 12.1 Accessibility
+
+- All menus, expandable rows, forms, tables, permission matrices, search/multi-select dropdowns and financial editing controls must support meaningful keyboard operation.
+- Provide visible focus, accessible names for icon-only controls, persistent field labels, status announcements and actionable field-level validation messages. Do not rely on colour alone to convey meaning.
+- Target **WCAG 2.2 AA** contrast and relevant accessibility requirements; respect reduced-motion preferences and maintain legible, operable interactive states.
+- Apply these standards to the existing AD-013 Section 04 buttons and Section 05 forms without inventing additional actions or business fields.
+
+### 12.2 Responsiveness
+
+- Preserve the approved **hybrid responsive data presentation**: desktop tables; compact mobile cards where suitable for management/listing records; horizontally scrollable tables for granular Butiran Anggaran and financial grids where column relationships must be preserved.
+- Maintain financial precision, tabular alignment, essential record context and available authorised actions at every supported viewport.
+- Mobile navigation uses the approved drawer; touch targets and focus/interaction affordances must be usable without unnecessarily reducing financial information density.
+- No universal card conversion or new fixed breakpoint requirement is introduced.
+
+### 12.3 Quality assurance acceptance categories
+
+1. **Visual consistency:** approved Inter typography, spacing, restrained colours, Lucide icon conventions, button hierarchy and reusable components.
+2. **Functional integrity:** UI follows AD-001–AD-012 authority, status transitions, roles, PTJ/Aktiviti Kewangan/OS scope and approved submission/review flows.
+3. **Financial accuracy:** correct amounts, decimal precision, totals, immutable snapshots, historical comparison and official export semantics.
+4. **Responsive behaviour:** desktop/tablet/mobile navigation, controls, filters, forms and data presentation retain meaning and operability.
+5. **Accessibility:** keyboard, focus, assistive-technology semantics, contrast, touch interaction and reduced-motion behaviour.
+6. **Performance and regression:** stable loading, no unnecessary skeleton/arrow flashes, duplicate actions, lost edits, broken navigation or stale/false save confirmations.
+
+Each major implemented interface must be checked against the applicable categories before declaring it **UI-complete**. Record and repair failures without altering approved functional rules to accommodate a visual implementation. **No QA tests or application implementation are certified by this document.**
+
+## Consolidation and authority boundaries
+
+- **All Sections 01–12 are approved** as design specifications. This finalisation does not certify application implementation, data migration, security verification, accessibility conformance or production readiness.
+- **AD-009 is authoritative for the later-approved parallel Penyelia Aktiviti/Ketua Aktiviti review and Ketua-only Muktamadkan flow**, notwithstanding older sequential-review descriptions in AD-005/AD-006. Do not reintroduce a required Penyelia sign-off or older Lulus/Tolak/Kemukakan workflow via UI.
+- **AD-006** controls Kitaran/Fasa rules; **AD-010** controls Analisis, historical expenditure and Excel; **AD-008** remains draft for OS-specific rates, formulas and official source mappings. Do not treat unresolved financial policy as approved by AD-013.
+- Detailed implementation tokens, exact screen columns and component measurements must be verified against actual source and authoritative data; they are **implementation refinements**, not pending design-section approvals.
+- No new standalone Konfigurasi page, Tetingkap Penghantaran concept, unapproved filters, additional export sheets or extra workflow statuses are introduced.
+- The repository's architecture documentation is not evidence of a functional Laravel application. Implementation, testing and release gates remain outstanding.
