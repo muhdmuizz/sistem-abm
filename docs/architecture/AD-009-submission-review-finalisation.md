@@ -103,6 +103,20 @@ Submission version, OS completeness, activation state, comments and audit histor
 5. The revised Bidaan must be submitted, reviewed and finalised through the **normal workflow** again.
 6. **Buka Semula** is distinct from ordinary **Kembalikan untuk Pembetulan** during review.
 
+
+## Approved extension — Collaborative review threads (11 November 2026)
+
+This extension supplements Decisions 01–08 without changing the formal Bidaan workflow, parallel review, submission snapshots or exclusive Ketua Aktiviti finalisation authority.
+
+- A **review thread** is a distinct, persistent discussion with one immutable anchor at creation: the entire **Bidaan**, a specific **Anggaran (OS)**, or a specific **Butiran Anggaran**. Multiple threads may refer to the same anchor. Each thread owns its chronological chain of comments/replies; replies do not create a separate thread. Use canonical entity identifiers, especially the stable source **Butiran Anggaran ID**, not row positions or derived Excel rows.
+- Authorised **Ketua Aktiviti** and **Penyelia Aktiviti** may open threads, reply, view all threads within their permitted scope and mark threads **Terbuka** or **Ditutup** when addressed. Authorised **Penyedia Bidaan** and **Penyedia Anggaran** may view and reply to threads relevant to the records they can access, but do not close them. Scope is enforced server-side for both thread access and parent financial records.
+- Every message and thread status transition records actor, role, timestamp, anchor and relevant submission/revision context. Preserve a chronological, attributable audit history; do not silently overwrite or erase previous messages or transitions. Existing formal submission snapshots remain immutable.
+- Reviewer dashboards show a count and navigable list of **open threads**, not the number of comments. Use authorised scope and efficient indexed queries.
+- Thread states **Terbuka** and **Ditutup** are **not Bidaan workflow statuses**. Closing a thread does not approve, return, amend or finalise a Bidaan. Formal **Kembalikan** and **Muktamadkan** remain separate actions under Decisions 03 and 05. Replies alone do not change a submitted financial snapshot; corrections use the established return/resubmission or reopening flow.
+- For approximately **300 Bidaan per cycle**, prefer native Laravel/PostgreSQL storage, indexed parent/status lookups, paginated messages and standard request/response interactions. No WebSockets, new services, discussion attachments or notification infrastructure are required by this decision. This is a capacity design assumption, not a measured benchmark.
+
+**Implementation status:** Approved architectural extension; no implementation or deployment claimed.
+
 ## Cross-cutting safeguards and implementation boundary
 
 - All transitions must validate the acting user's role and authorised organisational scope **on the server**, including bulk operations.
