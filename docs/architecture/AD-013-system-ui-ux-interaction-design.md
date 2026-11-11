@@ -284,7 +284,20 @@ Use a **table-first Analisis workspace** with expandable OS rows, not a dashboar
 - **Do not add Ekstrak Excel to Analisis**. Official extraction is a separate interface governed by AD-010.
 - Illustrative amounts, OS codes, extra filter fields and drilldown levels from preliminary mockups are **not approved requirements** where they differ from AD-010.
 
-### 11.2–11.3 (Pending)
+### 11.2 Pelaporan & Ekstrak Excel Interface (Approved)
+
+Use a compact, **single-page** official Excel extraction interface, **separate from Analisis**, governed strictly by AD-010.
+
+- Preserve exactly three existing export scopes: **Keseluruhan Data**, **Bidaan Lengkap**, **OS Terpilih**.
+- **Keseluruhan Data** requires no manual selection. **Bidaan Lengkap** permits selection of **one or more Bidaan**; **OS Terpilih** permits **one or more OS**.
+- Use a **searchable multi-select dropdown with checkboxes** for Bidaan and OS selections, showing the **number selected**. Populate from actual authorised records/catalogue, not illustrative placeholder values.
+- Provide a clear **Ekstrak Excel** action with generation/loading feedback, duplicate-submit protection, retained selections and actionable errors on failure. Enforce authorisation and financial versioning server-side.
+- The complete workbook uses the two approved worksheets: **Gaji & Emolumen** (OS11000–OS13000, official column template still pending) and **Perbelanjaan** (OS14000–OS29000/OS42000, official 27-column granular structure). Selected OS exports contain only selected OS in applicable worksheet format.
+- Do not invent additional export filters, worksheet-presence rules, filenames, calculation rules or Program/ Aktiviti export selections. This is a **UI presentation decision**, not an amendment to AD-010.
+
+### 11.3 Pentadbiran (Pending)
+
+Continue with Kitaran ABM management, users, roles and authorised configuration, preserving established permissions and workflows. Section 11 is not yet complete.
 
 Continue with the official Excel extraction interface and administration screens, preserving AD-010 export scopes and two-sheet workbook and existing Kitaran/roles/permissions. Section 11 is not yet complete.
 
