@@ -215,13 +215,19 @@ Implement **three reusable editor presentation patterns** under **one canonical 
 
 The appropriate design is selected **by OS subtype configuration**, not by an end-user choosing a layout. The OS-to-design mapping is explicitly **deferred** until the OS catalogue and specific field needs are reviewed. Do not hardcode presentation selection across disparate Laravel screens or create an administration module solely for this mapping. Keep OS-specific fields, validation and approved AD-008 calculations separate from presentation; changing a design assignment must not migrate, duplicate or otherwise change canonical financial data. Preserve unique stable source Butiran Anggaran IDs, the single shared editor, consistent save states, completeness and navigation, and established permissions. This approves presentation architecture, **not** unverified example fields or formulas.
 
-### 09.4 Butiran Anggaran (In discussion)
+### 09.4 Butiran Anggaran (Approved)
 
-Define multi-row add/edit/duplicate/remove, stable per-source-row identity, spreadsheet editing interactions, error handling and saving within the approved shared wizard.
+**The three OS editor patterns differ only in user experience and presentation, never in how canonical financial data is stored, read, calculated or interpreted.** Prioritise simple, meaningful, intuitive entry with minimal clicks, repetition and unnecessary complexity.
 
-### 09.5 Submission Interface (Pending)
+- **Design A:** structured form for straightforward individual source entries.
+- **Design B:** direct spreadsheet-like inline editing by default for repeated rows. Offer an expanded record editor **only** when OS-specific fields are too complex to fit comfortably in the grid; do not require a dialog for every row. Support familiar Tab/Shift+Tab navigation, with arrow-key navigation only where it does not interfere with text or dropdown editing. Do not create blank records merely on Enter.
+- **Design C:** component-based editor; individual components may contain inline grids where repeated records warrant them.
 
-Preserve established AD-004 and AD-009 submission and review behaviour.
+Across all patterns, support the established add/edit/duplicate/remove lifecycle. Each saved source Butiran Anggaran has a stable unique Butiran ID; duplication creates a distinct new source record rather than reusing identity. Preserve input on validation failure, display errors beside the affected fields/rows, calculate only through approved OS-specific rules, and do not inflate totals with incomplete rows. Use truthful save status and protect unsaved work during navigation. Persisted deletion requires appropriate confirmation; unsaved drafts can be discarded without implying a persisted deletion. OS-to-pattern remapping must require **no financial-data migration** and must not change stored records or the canonical data contract. These are interaction standards, not new calculation or permission rules.
+
+### 09.5 Submission Interface (In discussion)
+
+Specify submission readiness, incomplete-record feedback, activity-level submission, confirmation and immutable submitted snapshot presentation while preserving established AD-004 and AD-009 submission/review behaviour.
 
 
 ## Pending design discussion — not yet approved
