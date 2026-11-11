@@ -147,9 +147,55 @@ Column sets, business actions and financial data structures remain governed by t
 
 These standards complement previously approved contextual skeleton loading and saving principles, without changing business logic.
 
-## Section 08 — Dashboard & Financial Summaries (In discussion)
+## Section 08 — Dashboard & Financial Summaries (Approved; complete)
 
-To settle: dashboard information hierarchy, distinction between current Anggaran and finalised amounts, meaningful financial summary presentation, financial number formatting, role-relevant content, navigation to source records, empty/loading/error states and responsive summary layouts. Preserve AD-010 reporting semantics: Jumlah Anggaran Semasa and Jumlah Muktamad are distinct and must not be summed. Avoid decorative KPI cards or charts.
+1. **Information hierarchy:** Prioritise financial position, records requiring attention and relevant workflow progress; no decorative metrics.
+2. **Financial amounts:** Display Jumlah Anggaran Semasa and Jumlah Muktamad separately; never add them together (AD-010).
+3. **Summary presentation:** Compact blocks or direct figures where helpful; avoid unnecessary KPI card grids.
+4. **Status presentation:** Meaningful text statuses with restrained semantic colour, never colour alone.
+5. **Role relevance:** Display information appropriate to authorised roles and Aktiviti Kewangan assignments without changing permissions.
+6. **Traceability:** Where supported, enable navigation from summaries to corresponding detailed records while preserving context.
+7. **Charts:** Only for meaningful trends/comparisons better communicated visually than in tables; no decorative charts.
+8. **Responsive and loading:** Preserve financial meaning on mobile; contextual skeletons, meaningful empty states and explicit errors.
+
+## Cross-cutting anti-slop checklist (20 rules; adopted as design quality guidance)
+
+This checklist applies across all 12 sections, without creating another workstream or changing previously approved functional architecture. Its intent is to evaluate real interfaces, not to mandate decorative patterns.
+
+### Typography & copy
+
+1. Remove filler badges that do not convey meaningful status or information.
+2. Remove redundant labels and repeated microcopy, while retaining labels needed for accessibility and clarity.
+3. Avoid arbitrary italic emphasis in headings.
+4. Reserve monospace for technical content (code, IDs, timestamps) where beneficial; use Inter with tabular numerals for ordinary financial figures rather than automatically making all currency values monospace.
+5. Use concrete, task-specific headings and labels; preserve approved Malay terms.
+6. Balance headline wrapping where it improves readability; avoid awkward orphan words, without imposing marketing-style hero typography.
+7. Use tabular numerals for aligned and dynamically changing amounts, counters and financial metrics.
+
+### Layout, hierarchy & colour
+
+8. Use approved design tokens and components consistently; no arbitrary ad hoc values.
+9. Show actual product UI and real workflow evidence when presenting the system; avoid generic stock/abstract illustrations.
+10. Give the primary task or interactive financial workspace the available visual priority.
+11. Group with proximity and spacing before introducing unnecessary bordered/shadowed containers; keep data-dense forms and tables compact and readable.
+12. Clearly distinguish the primary contextual action from secondary actions without multiplying competing CTAs.
+13. Use one intentional muted-blue primary accent with restrained semantic colours; no generic gradients.
+14. Ensure sufficient contrast for primary and secondary text, including disabled/error/status contexts.
+
+### Geometry, polish & motion
+
+15. Use the approved Lucide icon system with consistent stroke, sizing and optical alignment.
+16. Remove ornamental gradients, glows, floating objects and other irrelevant embellishments.
+17. Use visually concentric nested radii, accounting for padding and border thickness; do not apply a rigid arithmetic rule when it conflicts with component geometry.
+18. Apply optical adjustments where needed to make icons and text appear visually centred.
+19. Provide contextual skeletons and truthful loading/disabled/saving feedback; avoid unnecessary shimmer and flashes.
+20. Use purposeful micro-interactions for action feedback, transitions and state changes; respect reduced-motion preferences.
+
+**Interpretation safeguards:** These rules do not require oversized whitespace, new marketing sections, extra cards, or decorative motion. Preserve established workflow density, approved typography and financial precision. Assess them against actual Sistem ABM screens during Section 12 quality assurance.
+
+## Section 09 — Bida Peruntukan & Anggaran Interface (Pending discussion)
+
+Review actual Program/ Aktiviti, Senarai Anggaran, shared OS wizard, Butiran Anggaran and submission interface patterns. Preserve the AD-004/AD-007 canonical model, independently identified source rows, and existing workflow decisions. Do not finalise module-specific design without reviewing real workflows and screens.
 
 
 ## Pending design discussion — not yet approved
