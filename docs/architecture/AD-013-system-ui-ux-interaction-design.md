@@ -259,9 +259,16 @@ Use **two tabs** within the single unified review workspace:
 
 The review page may display the existing Bidaan summary and count of open threads, without combining Jumlah Anggaran Semasa with Jumlah Muktamad. Keep formal return/finalisation controls separate from comments and thread closure.
 
-### 10.4 (Pending)
+### 10.4 Formal Review Actions (Approved)
 
-Refine canonical review queue fields/filters, placement of formal role-specific actions, confirmation wording, validation/error states and responsive edge cases. **Section 10 remains in discussion** until these details are approved.
+Place **formal Bidaan decisions** in a clearly separated action area at the bottom of the shared review workspace, distinct from thread replies, closing/reopening review threads and ordinary comments.
+
+- **Kembalikan untuk Pembetulan:** available to authorised **Penyelia Aktiviti** and **Ketua Aktiviti** for the entire Bidaan, with a **mandatory reason** and explicit confirmation. Preserve existing return and correction/resubmission rules.
+- **Muktamadkan Bidaan:** available only to authorised **Ketua Aktiviti**, with explicit confirmation and all existing AD-009 eligibility, current-version and server-side permission checks. Do not require separate Penyelia sign-off.
+- Prevent duplicate submissions while processing; retain user input and display actionable errors on failure. Reflect a changed status only after the server confirms the transition.
+- Thread status **Ditutup** is not equivalent to formal approval, and closing all threads does not automatically finalise the Bidaan. Do not introduce new review outcomes or eligibility rules through the UI.
+
+**Section 10 (10.1–10.4) approved.** Final review queue columns and filters must be verified against the canonical model during implementation, not invented in this design document.
 
 ## Pending design discussion — not yet approved
 
