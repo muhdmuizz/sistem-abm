@@ -26,12 +26,27 @@
 - Use existing Lucide icon conventions; icons must be intelligible and have accessible names where icon-only.
 - Keep the approved slash typography **Program/ Aktiviti**.
 
+
+## Approved responsive data presentation
+
+- **Hybrid responsive table strategy.** Desktop retains data tables. On mobile, management/listing tables may switch to compact cards showing essential fields, relevant actions and accessible additional details; detailed granular financial and calculation grids retain tabular column relationships with horizontal scrolling.
+- Preserve financial precision, numeric alignment, source row identity, and meaningful column headers. Do not convert detailed financial grids to long cards merely to avoid scrolling.
+- Select the presentation based on the actual workflow and dataset, not a universal mobile breakpoint transformation.
+
+## Required contextual skeleton loading
+
+- Provide skeleton placeholders for meaningful asynchronous initial content loads, module transitions, filtered data retrieval and wizard initialisation, shaped to match the actual content (table rows, form fields or summary content).
+- Keep the application shell stable during content loading. Do not needlessly blank populated data during background refreshes; use local progress feedback where appropriate.
+- Avoid skeleton flashes for near-instant responses. Use restrained animation and respect reduced-motion preferences.
+- Replace skeletons with loaded content, empty states or explicit errors; never leave indefinite skeletons after failures.
+- Skeletons do not substitute for actual performance optimisation, and loading states must not conceal unsaved edits or interfere with autosave.
+
 ## Pending design discussion — not yet approved
 
 - Detailed navigation grouping and module labels.
 - Fluid versus constrained content width and per-screen exceptions (working recommendation: fluid workspace with readable constrained form sections; not yet approved).
 - Design tokens: precise typography, colour palette, spacing, borders and component dimensions.
-- Responsive table/form patterns and action placement.
-- Interaction feedback, validation, save states and page-specific layouts.
+- Detailed form patterns and action placement (hybrid responsive table strategy approved).
+- Interaction feedback, validation, save states and page-specific layouts (contextual skeleton loading required).
 
 **Boundary:** This AD is a design discussion draft, not a claim of implemented UI or an approval of the pending choices. No functional architecture in AD-001–AD-012 is reopened.
