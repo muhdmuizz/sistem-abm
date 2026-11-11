@@ -110,3 +110,67 @@ Each saved **Butiran Anggaran row** has a unique stable Butiran ID **even if mul
 ## Status and next action
 
 The shared technical framework is documented; the **OS-specific catalogue and calculation policies remain unverified**. Do not describe AD-008 as approved/finalised or the application as implemented. Next action is to obtain and reconcile authoritative OS templates and rate/reference sources, then complete the individual OS mappings inside this same AD rather than creating extra architectural branches.
+
+## Confirmed workbook column classification and OS14000 applicability — 11 November 2026
+
+**Decision status:** Confirmed by system owner for column classification and OS14000 applicability only. **AD-008 remains Draft.** This is a documentation baseline, not implementation approval or financial-policy verification.
+
+### Standardised Perbelanjaan dataset
+
+The owner designed one standardised set of **27 headers**, in the order below, for the applicable Perbelanjaan OS. Column meaning is **contextual by OS**, and **not every column is active for every OS**. In particular, `KATEGORI1`–`KATEGORI3` do not have universal meanings across OS.
+
+These positions describe the 27-column canonical financial dataset; a source workbook worksheet may include additional presentation columns (for example, `BIL.`). Do not infer the official export worksheet position from a template's ancillary columns. AD-010 export structure remains unchanged.
+
+| No. | Canonical header | Confirmed primary classification | OS14000 applicability |
+| ---: | --- | --- | --- |
+| 1 | OBJEK SEBAGAI | Shared reference | Active |
+| 2 | JPNT/ PPD | Shared reference | Active |
+| 3 | SEKTOR/ SEKOLAH | Shared reference | Active |
+| 4 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Input / Inherited | Active |
+| 5 | TARIKH MULA | Input / Inherited | Active |
+| 6 | TARIKH TAMAT | Input / Inherited | Active |
+| 7 | TEMPOH | Calculated | Active |
+| 8 | NAMA | Input / Inherited | Active |
+| 9 | JAWATAN | Shared reference | Active |
+| 10 | GRED | Shared reference | Active |
+| 11 | KATEGORI1 | OS-specific reference | Inactive |
+| 12 | KATEGORI2 | OS-specific reference | Inactive |
+| 13 | KATEGORI3 | OS-specific reference | Inactive |
+| 14 | UNIT | OS-specific reference | Inactive |
+| 15 | GRED PENCERAMAH/ FASILITATOR | Shared reference | Inactive |
+| 16 | BIL. UNIT | Input / Inherited | Inactive |
+| 17 | LOKASI URUSAN RASMI | Shared reference | Inactive |
+| 18 | KADAR | OS-specific reference | Active |
+| 19 | JARAK | Input / Inherited | Inactive |
+| 20 | KEKERAPAN | Input / Inherited | Active |
+| 21 | JAM | Input / Inherited | Active |
+| 22 | BILANGAN HARI | Input / Inherited | Active |
+| 23 | BILANGAN BULAN | Input / Inherited | Active |
+| 24 | ANGGARAN JUMLAH SETAHUN | Calculated | Active |
+| 25 | KATEGORI SUMBER PERUNTUKAN | Shared reference | Active |
+| 26 | KATEGORI PROGRAM | Shared reference | Active |
+| 27 | KATEGORI PESERTA | Shared reference | Active |
+
+**Classification totals:** 10 Shared reference; 5 OS-specific reference; 10 Input / Inherited; 2 Calculated. **OS14000 applicability totals:** 19 Active; 8 Inactive; no Conditional or Unverified columns in the owner's confirmation.
+
+The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATAN, SEMUA HURUF BESAR)`; headers 5 and 6 display `(hh/bb/tttt)`. These are part of the template's explanatory header text and are recorded here without expanding validation policies.
+
+### Interpretation and limits of approval
+
+- **Shared reference** means the listed column can draw from a common reference dataset where applicable across OS. This confirmation does **not** approve any particular underlying dataset, consolidation operation, mandatory status, or OS-specific filtering/eligibility rule.
+- **OS-specific reference** means its reference context can differ by OS. It does not establish an exact workbook `Ref.` worksheet, lookup formula, rate source, or financial rule.
+- **Input / Inherited** is a primary column classification, not a declaration that values must always be manually entered. Preserve AD-007 programme ownership and inheritance.
+- **Calculated** identifies a derived column, but does not approve the calculation algorithm, rounding, rate, or precision for any OS.
+- Applicability is independent from classification: a shared-reference column may be inactive for an OS; an active column is not automatically mandatory. Inactive is not automatically hidden.
+- Only OS14000 has a user-confirmed 27-column applicability mapping in this record; do not infer the other OS mappings.
+- Preserve AD-004's single shared Anggaran wizard, stable Butiran IDs, source-to-generated-output traceability, and AD-010's separately approved Excel extraction contract.
+- Actual reference-sheet relationships, OS-specific field meaning, formula validation, effective rates, and granular mapping remain **pending workbook/financial verification**. No database, UI, or code implementation is authorised by these classifications.
+
+### Working sequence (analysis, not a new architecture decision)
+
+1. Confirm per-OS active/inactive/conditional applicability against the 27 canonical headers.
+2. Analyse shared and OS-specific references using worksheet validations, named ranges and formula relationships.
+3. Document OS-specific inputs, calculations, inherited values, and granular output mapping; flag unverified policy.
+4. Review discrepancies and proposed refinements before any further AD-008 decision or implementation.
+
+**Change-control note:** This addition records only decisions explicitly confirmed in the conversation on 11 November 2026; the remainder of this Draft AD remains unchanged.
