@@ -201,13 +201,17 @@ Design these interfaces from the approved architecture; an actual Laravel screen
 
 Use a **single-page form** with four existing AD-007 sections: **A. Objektif; B. Maklumat Program/ Aktiviti; C. Pelaksanaan; D. Jemputan/Urus Setia & Peserta.** Provide compact section navigation to jump among sections without enforcing a four-step progression. Use the Section 01–07 visual, form, validation and save-state standards. The shared OS wizard remains separate. This is a presentation decision only: no change to fields, OS selection, dependencies, participant calculations, permissions or persistence.
 
-### 09.2 Senarai Anggaran (In discussion)
+### 09.2 Senarai Anggaran (Approved; column-level verification pending)
 
-Specify the listing's information hierarchy, the AD-004 cascading filters (Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran), text search and reset, completeness status, amount presentation, row actions, mobile cards and navigation into the shared OS wizard. Do not introduce new actions or financial totals.
+Use a compact, full-width financial listing rather than dashboard-style cards. Place the existing cascading filters directly above the records in their AD-004 order: **Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran**; provide one text-search input and **Set Semula**. Preserve the statuses **Belum Mula**, **Belum Lengkap** and **Lengkap**. Align RM amounts to the right using tabular numerals; incomplete records must not inflate totals. Use compact Lucide row actions with accessible labels and open the **same shared OS wizard**. On mobile, use compact management record cards; granular financial tables may scroll horizontally. Apply contextual skeletons and retain existing content during refresh where possible. **Final columns and actions must be checked against the canonical Anggaran model**; illustrative sample rows and values are not requirements. No new statuses, calculations, permissions or actions are authorised by this design decision.
 
-### 09.3–09.5 (Pending)
+### 09.3 Shared OS Wizard (In discussion)
 
-Shared OS wizard; Butiran Anggaran; submission interface. Preserve established AD-004 and AD-009 behaviour.
+Design the single canonical OS editor, with OS-specific fields and formulas as already defined in AD-004/AD-008; preserve independent source Butiran Anggaran records and save/validation semantics.
+
+### 09.4–09.5 (Pending)
+
+Butiran Anggaran and submission interface. Preserve established AD-004 and AD-009 behaviour.
 
 
 ## Pending design discussion — not yet approved
