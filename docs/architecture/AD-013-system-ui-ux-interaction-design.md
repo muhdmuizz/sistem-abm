@@ -193,7 +193,7 @@ This checklist applies across all 12 sections, without creating another workstre
 
 **Interpretation safeguards:** These rules do not require oversized whitespace, new marketing sections, extra cards, or decorative motion. Preserve established workflow density, approved typography and financial precision. Assess them against actual Sistem ABM screens during Section 12 quality assurance.
 
-## Section 09 — Bida Peruntukan & Anggaran Interface (In discussion)
+## Section 09 — Bida Peruntukan & Anggaran Interface (Approved; noted verification items deferred)
 
 Design these interfaces from the approved architecture; an actual Laravel screen or source implementation has **not** been established in the accessible repository. Do not claim to have audited working screens. Preserve AD-004/AD-007 canonical model, independently identified source rows and approved workflow rules.
 
@@ -225,9 +225,11 @@ The appropriate design is selected **by OS subtype configuration**, not by an en
 
 Across all patterns, support the established add/edit/duplicate/remove lifecycle. Each saved source Butiran Anggaran has a stable unique Butiran ID; duplication creates a distinct new source record rather than reusing identity. Preserve input on validation failure, display errors beside the affected fields/rows, calculate only through approved OS-specific rules, and do not inflate totals with incomplete rows. Use truthful save status and protect unsaved work during navigation. Persisted deletion requires appropriate confirmation; unsaved drafts can be discarded without implying a persisted deletion. OS-to-pattern remapping must require **no financial-data migration** and must not change stored records or the canonical data contract. These are interaction standards, not new calculation or permission rules.
 
-### 09.5 Submission Interface (In discussion)
+### 09.5 Submission Interface (Approved)
 
-Specify submission readiness, incomplete-record feedback, activity-level submission, confirmation and immutable submitted snapshot presentation while preserving established AD-004 and AD-009 submission/review behaviour.
+Embed submission readiness and the **Hantar Bidaan** action within the existing **Bidaan workspace**; do **not** create a separate submission page or wizard. The experience follows **Prepare → Check → Submit**: show a compact readiness summary with the current **Jumlah Anggaran Semasa** (never combine with Jumlah Muktamad), completeness and only genuinely blocking issues under existing eligibility rules. Link actionable issues directly to their relevant Anggaran/Butiran. When eligible, show **one concise confirmation dialog** describing the activity-level submission scope and the read-only nature of the submitted snapshot. Show the resulting status only after the server confirms persistence; prevent duplicate submissions while processing and preserve unsent work on failure. Preserve the established submission window, roles, parallel review routing, immutable submitted snapshot and Superadmin reopening rules; no per-OS submission or new completeness criteria.
+
+**Section 09 (09.1–09.5) approved**, with the OS-to-editor mapping and final Senarai Anggaran columns deferred for verification against the canonical model.
 
 
 ## Pending design discussion — not yet approved
