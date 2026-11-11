@@ -80,3 +80,13 @@ Maintain a recovery runbook covering application rollback/forward-fix, database 
 ## Architecture closure and dependencies
 
 AD-012 finalises **technical operating principles only**. Concrete hosting, pipeline, credentials, backup schedule and recovery targets are implementation/operations inputs and must be verified rather than invented. AD-008 remains deferred; its calculation rules are not filled in here. AD-010 remains finalised and unchanged. No code, migrations, test executions or deployment are claimed by this document.
+
+## Initial hosting decision — shared VPS with Sistem e-Nota Minta (11 November 2026)
+
+**Decision status:** Initial direction approved; detailed deployment design and operational verification deferred.
+
+- **Sistem ABM is intended to be deployed on the same VPS used or designated for Sistem e-Nota Minta.** This is a shared hosting decision, **not** a decision to merge the two applications.
+- Keep each Laravel application independent: its own application source/release lifecycle, environment secrets, PostgreSQL database and credentials, application-managed storage, and deployment/recovery controls. Separate domains or subdomains and process/queue configuration will be determined during implementation.
+- Deployment must avoid unintended interruption or cross-access between the applications. Shared host resources and operational dependencies require explicit verification before rollout.
+- **Not yet verified or decided:** VPS capacity and operating system/runtime versions, present e-Nota Minta deployment status, network/DNS/TLS configuration, process isolation, web-server routing, backup schedule, monitoring, CI/CD, and exact deployment procedure. No claim of ABM deployment or production readiness is made.
+- **Deferred next action:** Inspect the real VPS and both application codebases, assess capacity and isolation, then complete the deployment plan and acceptance checks in this AD without inventing a separate architecture workstream.
