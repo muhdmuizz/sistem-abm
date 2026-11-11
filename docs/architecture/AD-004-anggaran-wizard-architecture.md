@@ -79,6 +79,15 @@ A single wizard session may create or edit **multiple Butiran Anggaran**; one so
 - This is a **shared wizard data and interaction contract**, not an assertion that every OS must generate multiple output rows. An OS may generate one row or more as its verified specification requires.
 - Submitted snapshots retain the source inputs and generated outputs as immutable evidence. OS-specific source field types, rates, formulas and row-expansion mappings remain under AD-008.
 
+### Row-level identity — approved clarification (11 November 2026)
+
+**Every saved Butiran Anggaran row has its own unique, stable Butiran ID, even when the same officer, person, programme, purpose or other source value appears in multiple rows.** Source values (including officer identity) are not the financial record's primary key and do not cause rows to be merged or overwritten.
+
+- Each newly added, pasted or duplicated row receives a distinct Butiran ID. Editing a saved row preserves that row's ID.
+- Generated granular calculation/output rows are individually distinguishable and traceable to the exact originating Butiran ID. The OS-specific mapping may produce one or more outputs per Butiran; it does not merge independent source rows.
+- Separate rows for the same officer remain separately editable, validatable, recalculable and auditable. Their amounts contribute independently where valid and eligible.
+- Submitted snapshots preserve row identities and their associated calculated outputs; later amendments compare the corresponding stable Butiran IDs.
+
 ## 5. Butiran Anggaran editing and completeness
 
 ### 5.1 Entry and productivity
