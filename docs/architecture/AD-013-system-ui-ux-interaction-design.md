@@ -232,6 +232,19 @@ Embed submission readiness and the **Hantar Bidaan** action within the existing 
 **Section 09 (09.1–09.5) approved**, with the OS-to-editor mapping and final Senarai Anggaran columns deferred for verification against the canonical model.
 
 
+## Section 10 — Semakan & Kelulusan Interface (In discussion)
+
+### 10.1 Unified Review Workspace (Approved)
+
+Use **one shared review workspace** for **Penyelia Bidaan** and **Ketua Bidaan**, with the same authorised financial details, OS breakdown and review history. The visible, enabled actions depend on the user's effective role, assigned Aktiviti Kewangan and the Bidaan's current workflow state; **server-side authorisation remains authoritative**. Avoid separate role-specific page implementations and duplicated financial data views.
+
+Preserve AD-009's **parallel review routing**. Both reviewing roles retain their existing authority to return the entire Bidaan for correction; **only an authorised Ketua Bidaan** can finalise under the existing eligibility rules. Do not change snapshot immutability or Superadmin-only reopening authority. The example queue status labels, record amounts and OS figures in the conceptual UI are illustrative and do not establish new workflow statuses.
+
+### 10.2–10.4 (Pending)
+
+Refine review queue fields and filters against the canonical model, role-specific action placement, comments and history presentation, return-for-correction and finalisation confirmations, error handling and responsive behaviour. These details remain open; **Section 10 as a whole is not yet approved**.
+
+
 ## Pending design discussion — not yet approved
 
 - Detailed navigation grouping and module labels.
