@@ -71,6 +71,14 @@ These are functional areas, **not a mandatory four-tab or four-step UI**. Layout
 
 A single wizard session may create or edit **multiple Butiran Anggaran**; one source input may produce one or more granular calculated output rows. Users edit source inputs, not arbitrary derived amounts.
 
+### Approved shared source-to-output principle (11 November 2026)
+
+- **Each logical source entry is independently saved as a Butiran Anggaran with its own stable identity** within the applicable Anggaran (OS), irrespective of entry through Senarai Anggaran or Program/ Aktiviti.
+- The shared wizard supports **one-to-many generation of granular financial calculation/output rows** from a validated source entry, according to the relevant OS-specific rules. Each generated row remains traceably associated with its originating Butiran Anggaran.
+- Source entries can be independently edited, duplicated (with a new identity), deleted when authorised, and recalculated. Recalculation updates the affected editable outputs and dependent totals without silently changing unrelated source entries.
+- This is a **shared wizard data and interaction contract**, not an assertion that every OS must generate multiple output rows. An OS may generate one row or more as its verified specification requires.
+- Submitted snapshots retain the source inputs and generated outputs as immutable evidence. OS-specific source field types, rates, formulas and row-expansion mappings remain under AD-008.
+
 ## 5. Butiran Anggaran editing and completeness
 
 ### 5.1 Entry and productivity
