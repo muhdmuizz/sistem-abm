@@ -193,9 +193,21 @@ This checklist applies across all 12 sections, without creating another workstre
 
 **Interpretation safeguards:** These rules do not require oversized whitespace, new marketing sections, extra cards, or decorative motion. Preserve established workflow density, approved typography and financial precision. Assess them against actual Sistem ABM screens during Section 12 quality assurance.
 
-## Section 09 — Bida Peruntukan & Anggaran Interface (Pending discussion)
+## Section 09 — Bida Peruntukan & Anggaran Interface (In discussion)
 
-Review actual Program/ Aktiviti, Senarai Anggaran, shared OS wizard, Butiran Anggaran and submission interface patterns. Preserve the AD-004/AD-007 canonical model, independently identified source rows, and existing workflow decisions. Do not finalise module-specific design without reviewing real workflows and screens.
+Design these interfaces from the approved architecture; an actual Laravel screen or source implementation has **not** been established in the accessible repository. Do not claim to have audited working screens. Preserve AD-004/AD-007 canonical model, independently identified source rows and approved workflow rules.
+
+### 09.1 Program/ Aktiviti (Approved)
+
+Use a **single-page form** with four existing AD-007 sections: **A. Objektif; B. Maklumat Program/ Aktiviti; C. Pelaksanaan; D. Jemputan/Urus Setia & Peserta.** Provide compact section navigation to jump among sections without enforcing a four-step progression. Use the Section 01–07 visual, form, validation and save-state standards. The shared OS wizard remains separate. This is a presentation decision only: no change to fields, OS selection, dependencies, participant calculations, permissions or persistence.
+
+### 09.2 Senarai Anggaran (In discussion)
+
+Specify the listing's information hierarchy, the AD-004 cascading filters (Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran), text search and reset, completeness status, amount presentation, row actions, mobile cards and navigation into the shared OS wizard. Do not introduce new actions or financial totals.
+
+### 09.3–09.5 (Pending)
+
+Shared OS wizard; Butiran Anggaran; submission interface. Preserve established AD-004 and AD-009 behaviour.
 
 
 ## Pending design discussion — not yet approved
