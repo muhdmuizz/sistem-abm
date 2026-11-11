@@ -73,6 +73,19 @@ Known previously discussed specialisation requiring verification:
 
 For each OS, complete an evidence-backed specification containing its authoritative source, effective policy, input/derived fields, calculation examples, inheritance dependencies, validation, granular output mapping and tests. Missing policy or reference data is an explicit **blocked** item, not a guessed default.
 
+## Confirmed OS14000 design decision — officer-level source records
+
+**Decision:** Approved by the system owner on 11 November 2026.
+
+- **Each officer is independently saved as a Butiran Anggaran source record** within the applicable OS14000 Anggaran. The record has its own stable identity and is individually editable and recalculable, subject to existing permissions and submission-state restrictions.
+- The system generates the required **granular financial calculation/output rows** from that officer's validated inputs. Every generated row remains traceably linked to the originating officer-level Butiran Anggaran record.
+- Recalculating one officer's inputs updates only the affected current editable calculated outputs and dependent totals, without silently changing unrelated officers' records.
+- Multiple officers can be entered and saved within the shared AD-004 wizard. Copying an officer record creates a new source identity, never reuses the original identity.
+- Historical submitted snapshots preserve the officer inputs and their generated financial outputs; subsequent editing or deletion in an authorised revision cannot rewrite earlier submissions.
+- **Not decided by this approval:** the exact OS14000 formula, salary reference, grade/rate mapping, granular expansion count, or export column mapping. Those remain subject to authoritative financial-reference verification.
+
+This is an **approved OS14000-specific design decision within an otherwise Draft AD-008**, not approval or closure of the entire AD.
+
 ## 07 — Export compatibility
 
 - Preserve AD-010 official scopes: **Keseluruhan Data**, **Bidaan Lengkap**, **OS Terpilih**.
