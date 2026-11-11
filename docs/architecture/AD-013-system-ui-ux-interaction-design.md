@@ -240,10 +240,17 @@ Use **one shared review workspace** for **Penyelia Bidaan** and **Ketua Bidaan**
 
 Preserve AD-009's **parallel review routing**. Both reviewing roles retain their existing authority to return the entire Bidaan for correction; **only an authorised Ketua Bidaan** can finalise under the existing eligibility rules. Do not change snapshot immutability or Superadmin-only reopening authority. The example queue status labels, record amounts and OS figures in the conceptual UI are illustrative and do not establish new workflow statuses.
 
-### 10.2–10.4 (Pending)
+### 10.2 Collaborative Review Threads (Approved)
 
-Refine review queue fields and filters against the canonical model, role-specific action placement, comments and history presentation, return-for-correction and finalisation confirmations, error handling and responsive behaviour. These details remain open; **Section 10 as a whole is not yet approved**.
+Adopt a lightweight GitHub Issues-inspired **shared discussion timeline**, without developer issue-management features. A review thread begins at one canonical parent: **Bidaan**, **Anggaran (OS)** or **Butiran Anggaran**; the parent is the starting point of that thread's chain of replies. Allow multiple threads on the same parent. Show the parent context and a direct link to the corresponding record; use the stable canonical Butiran ID rather than a visible grid row number.
 
+Both **Ketua Aktiviti** and **Penyelia Aktiviti** may initiate and reply to threads and mark them **Terbuka** or **Ditutup**. **Penyedia Bidaan** and **Penyedia Anggaran** can read and reply where their existing record access permits; they cannot close threads. Show author, role, timestamp, discussion entries and auditable close/reopen events. Reviewer dashboards display counts and links for open threads, not comment counts. Keep thread actions distinct from formal Kembalikan/Muktamadkan actions. Closing all threads does **not** itself finalise the Bidaan; replies do not modify submitted snapshots.
+
+Keep the UI compact: a discussion timeline, clear anchored-record context, reply composer and reviewer-controlled close/reopen. Use Laravel/PostgreSQL, indexed lookups and pagination rather than live sockets or extra infrastructure, based on approximately **300 Bidaan per cycle**. These are approved experience and lightweight architecture constraints, not implemented screens.
+
+### 10.3–10.4 (Pending)
+
+Refine review queue columns and filters against the canonical model, placement of thread controls versus formal review actions, confirmation wording and error states, and responsive presentation. **Section 10 remains in discussion** until these details are approved.
 
 ## Pending design discussion — not yet approved
 
