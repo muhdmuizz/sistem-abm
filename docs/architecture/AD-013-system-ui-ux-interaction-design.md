@@ -205,13 +205,23 @@ Use a **single-page form** with four existing AD-007 sections: **A. Objektif; B.
 
 Use a compact, full-width financial listing rather than dashboard-style cards. Place the existing cascading filters directly above the records in their AD-004 order: **Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran**; provide one text-search input and **Set Semula**. Preserve the statuses **Belum Mula**, **Belum Lengkap** and **Lengkap**. Align RM amounts to the right using tabular numerals; incomplete records must not inflate totals. Use compact Lucide row actions with accessible labels and open the **same shared OS wizard**. On mobile, use compact management record cards; granular financial tables may scroll horizontally. Apply contextual skeletons and retain existing content during refresh where possible. **Final columns and actions must be checked against the canonical Anggaran model**; illustrative sample rows and values are not requirements. No new statuses, calculations, permissions or actions are authorised by this design decision.
 
-### 09.3 Shared OS Wizard (In discussion)
+### 09.3 Shared OS Wizard (Approved — presentation patterns; OS mapping deferred)
 
-Design the single canonical OS editor, with OS-specific fields and formulas as already defined in AD-004/AD-008; preserve independent source Butiran Anggaran records and save/validation semantics.
+Implement **three reusable editor presentation patterns** under **one canonical shared OS wizard**:
 
-### 09.4–09.5 (Pending)
+- **Design A — Structured Form:** compact, straightforward entry with a limited number of fields.
+- **Design B — Spreadsheet-like Grid:** repeated source rows, efficient high-volume inline entry and editing.
+- **Design C — Component-based Editor:** multiple independently calculated OS components. Component sections may themselves use spreadsheet-like grids when repeated entries are required; this does not create a fourth wizard.
 
-Butiran Anggaran and submission interface. Preserve established AD-004 and AD-009 behaviour.
+The appropriate design is selected **by OS subtype configuration**, not by an end-user choosing a layout. The OS-to-design mapping is explicitly **deferred** until the OS catalogue and specific field needs are reviewed. Do not hardcode presentation selection across disparate Laravel screens or create an administration module solely for this mapping. Keep OS-specific fields, validation and approved AD-008 calculations separate from presentation; changing a design assignment must not migrate, duplicate or otherwise change canonical financial data. Preserve unique stable source Butiran Anggaran IDs, the single shared editor, consistent save states, completeness and navigation, and established permissions. This approves presentation architecture, **not** unverified example fields or formulas.
+
+### 09.4 Butiran Anggaran (In discussion)
+
+Define multi-row add/edit/duplicate/remove, stable per-source-row identity, spreadsheet editing interactions, error handling and saving within the approved shared wizard.
+
+### 09.5 Submission Interface (Pending)
+
+Preserve established AD-004 and AD-009 submission and review behaviour.
 
 
 ## Pending design discussion — not yet approved
