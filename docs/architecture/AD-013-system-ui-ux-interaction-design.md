@@ -8,7 +8,8 @@
 
 1. **Visual direction: Clean Enterprise.** Light, restrained, readable, professional, information-dense; functional content takes priority over decoration.
 2. **Navigation: Persistent, collapsible desktop sidebar; mobile navigation drawer.** Respect existing authorised module structure and roles; no unapproved module renaming.
-3. **Mandatory anti-AI-slop design principle.** Each UI element must earn its place by improving comprehension, task execution, feedback or accessibility. A generic dashboard aesthetic is not a design requirement.
+3. **Desktop sidebar preference persists across page navigation.** Collapsed/expanded state is a user interface preference, not a role, permission or workflow state. Restore it on subsequent navigation; mobile navigation remains a drawer.
+4. **Mandatory anti-AI-slop design principle.** Each UI element must earn its place by improving comprehension, task execution, feedback or accessibility. A generic dashboard aesthetic is not a design requirement.
 
 ## Mandatory anti-slop design rules
 
@@ -28,7 +29,7 @@
 ## Pending design discussion — not yet approved
 
 - Detailed navigation grouping and module labels.
-- Fluid versus constrained content width and per-screen exceptions.
+- Fluid versus constrained content width and per-screen exceptions (working recommendation: fluid workspace with readable constrained form sections; not yet approved).
 - Design tokens: precise typography, colour palette, spacing, borders and component dimensions.
 - Responsive table/form patterns and action placement.
 - Interaction feedback, validation, save states and page-specific layouts.
