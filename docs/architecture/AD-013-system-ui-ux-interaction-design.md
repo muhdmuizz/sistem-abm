@@ -295,9 +295,9 @@ Use a compact, **single-page** official Excel extraction interface, **separate f
 - The complete workbook uses the two approved worksheets: **Gaji & Emolumen** (OS11000–OS13000, official column template still pending) and **Perbelanjaan** (OS14000–OS29000/OS42000, official 27-column granular structure). Selected OS exports contain only selected OS in applicable worksheet format.
 - Do not invent additional export filters, worksheet-presence rules, filenames, calculation rules or Program/ Aktiviti export selections. This is a **UI presentation decision**, not an amendment to AD-010.
 
-### 11.3 Pentadbiran — Granular PTJ, Aktiviti Kewangan, OS and User Permissions (Approved model; remaining administration screens in discussion)
+### 11.3 Pentadbiran — Approved
 
-Organise administration around existing **Kitaran ABM**, **Pengguna & Peranan**, **Pengurusan Aktiviti Kewangan/PTJ/OS**, and authorised **Konfigurasi**, without adding unrelated modules.
+Pentadbiran contains exactly three management areas: **Kitaran ABM**, **Pengguna & Peranan**, and **Pengurusan Aktiviti Kewangan** (PTJ–Aktiviti Kewangan–OS). **Do not create a standalone Konfigurasi page.** Existing technical, operational and financial configuration responsibilities remain governed by their authoritative architecture documents, particularly AD-008 and AD-012.
 
 **Approved effective access model:**
 - Superadmin manages the centrally authorised **PTJ × Aktiviti Kewangan × OS** combinations. An Aktiviti Kewangan may be available to a PTJ while only a **subset of OS** is permitted. Checking an Aktiviti Kewangan does **not** implicitly grant every OS.
@@ -311,7 +311,7 @@ Organise administration around existing **Kitaran ABM**, **Pengguna & Peranan**,
 - Compact **table-like expandable rows/cards** for each PTJ and each Pengguna, with clear parent–child checkbox hierarchy and selected counts.
 - PTJ row: check permitted Aktiviti Kewangan and the **individual OS under each activity**. Pengguna row: check roles and their **specific Aktiviti Kewangan + PTJ** scope. Use searchable lists and responsive presentation.
 - Do not make checking a parent activity automatically check all OS; distinguish enabling the parent assignment from granular child permissions.
-- Show truthful save/error feedback and avoid silently claiming permission changes before server confirmation. The exact save mechanics and remaining Kitaran/Konfigurasi screens will be refined separately.
+- Show truthful save/error feedback and avoid silently claiming permission changes before server confirmation. Detailed save mechanics must follow the approved AD-013 feedback and server-validation conventions.
 
 ### 11.3.1 Pengurusan Kitaran ABM — Approved UI
 
@@ -326,7 +326,7 @@ This UI implements the existing rules in **AD-006 — Kitaran ABM & Administrati
 - No additional **Tetingkap Penghantaran** field, page, or UI label. Use the approved **Fasa**, **Skop Pembukaan**, and **Dibuka / Ditutup** concepts.
 - Example years, dates, statuses and scope assignments in the UI discussion are **illustrative only**; live screens must use database records.
 
-**Kitaran ABM interface approved.** Section 11.3 remains open only for the remaining administrative interface details, including Konfigurasi; no functional implementation is claimed.
+**Kitaran ABM interface approved.** The approved PTJ/user permission matrices and Kitaran interface complete Section 11.3. There is no standalone Konfigurasi page. No functional implementation is claimed.
 
 ## Pending design discussion — not yet approved
 
