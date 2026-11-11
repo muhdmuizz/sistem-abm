@@ -134,9 +134,22 @@ These are shared interaction standards, not changes to AD-004 wizard persistence
 
 Column sets, business actions and financial data structures remain governed by the relevant approved functional ADs.
 
-## Section 07 — Loading, Feedback & System States (In discussion)
+## Section 07 — Loading, Feedback & System States (Approved; complete)
 
-To settle: loading scope and timing, navigation and content skeletons, saving/autosave feedback, form validation, success and error notifications, empty states, confirmation and processing states, accessibility/reduced motion, recovery after failed requests. Previously approved contextual skeleton loading remains mandatory.
+1. **Skeleton loading:** Contextual skeletons match the actual content layout; application shell remains visible and stable.
+2. **Loading transitions:** Avoid skeleton flashes on quick requests; preserve existing content during background refreshes with local loading indicators.
+3. **Saving feedback:** Distinguish *Belum Disimpan*, *Menyimpan*, *Disimpan* and *Gagal Disimpan*; never report success until persistence is confirmed.
+4. **Success notifications:** Brief, unobtrusive feedback for completed actions; avoid routine success dialogs.
+5. **Error handling:** Understandable errors, appropriate recovery/retry actions, and preservation of entered data.
+6. **Empty states:** Distinguish truly empty datasets from filtered-out results; show relevant next action only when permitted.
+7. **Confirmation and progress:** Confirm consequential actions, show processing and prevent duplicate submissions; no unnecessary routine confirmations.
+8. **Motion and accessibility:** Restrained transitions, visible focus, accessible status announcements and reduced-motion support.
+
+These standards complement previously approved contextual skeleton loading and saving principles, without changing business logic.
+
+## Section 08 — Dashboard & Financial Summaries (In discussion)
+
+To settle: dashboard information hierarchy, distinction between current Anggaran and finalised amounts, meaningful financial summary presentation, financial number formatting, role-relevant content, navigation to source records, empty/loading/error states and responsive summary layouts. Preserve AD-010 reporting semantics: Jumlah Anggaran Semasa and Jumlah Muktamad are distinct and must not be summed. Avoid decorative KPI cards or charts.
 
 
 ## Pending design discussion — not yet approved
