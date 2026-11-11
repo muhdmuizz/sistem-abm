@@ -85,9 +85,20 @@ These are approved design standards. Exact token values may be specified during 
 
 **Unified navigation for multiple roles:** A user with multiple authorised roles and Aktiviti Kewangan assignments sees one unified navigation shell with access to authorised modules; no separate role-specific application shells. Navigation visibility is not an authorisation boundary: server-side permission enforcement and the functional rules in AD-005/AD-009 remain authoritative.
 
-## Section 03 — Page Layout & Information Density (In discussion)
+## Section 03 — Page Layout & Information Density (Approved; complete)
 
-To settle: workspace width and sensible constraints for ordinary forms, page header and action placement, section hierarchy, information density, filter placement, table overflow and mobile page layout. The already-approved hybrid responsive table strategy remains in force. No unapproved feature or workflow changes.
+1. **Workspace width:** Fluid main workspace using available horizontal space with consistent page padding.
+2. **Form width:** Constrain ordinary forms to readable widths; allow detailed financial grids to use the full workspace.
+3. **Page headers:** One clear page title, optional contextual description and relevant primary action; avoid duplicated headings.
+4. **Section hierarchy:** Prefer headings, spacing and subtle dividers; use cards only for genuinely distinct content or interactions.
+5. **Information density:** Compact but comfortable; prioritise relevant financial information and minimise unnecessary scrolling.
+6. **Filter placement:** Place filters directly above the information they control, logically grouped, with Set Semula where applicable.
+
+Preserve the previously approved hybrid responsive table strategy. These layout standards do not introduce or change any functional fields, filters, permissions, actions or business workflows.
+
+## Section 04 — Buttons & Action Controls (In discussion)
+
+To settle: action hierarchy, semantic colour, icon-only versus labelled actions, dimensions and touch targets, placement and consistency, disabled/loading states, destructive confirmation, keyboard/accessibility feedback. Existing approved workflows and permissions remain authoritative.
 
 
 ## Pending design discussion — not yet approved
