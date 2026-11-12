@@ -38,3 +38,13 @@ This follows Reference 04's identification of Anggaran (OS) by `Kod Objek + cano
 - The user previously approved shared **Jawatan + full SSPA Gred** input where personnel attributes are relevant. The source's special grade `C` is preserved without guessing a mapping.
 - Existing `anggaran-os-catalogue.csv` and `kod-aktiviti-anggaran-os-mapping.csv` have Umum/Perjalanan Sara Hidup and Sukan entries, but **a separate Kokurikulum canonical entry and its Kod Aktiviti mapping have not been verified in those committed files**. This is flagged for reconciliation, **not silently added or assigned a guessed activity code**. The standalone reference reflects the user's approved labels.
 - No decisions made here about rate formulas, vehicle bands, unit basis, other WP 1.4 categories, eligibility, Laravel, PostgreSQL, or Architecture Decisions.
+
+## Catalogue reconciliation — 12 November 2026
+
+The confirmed OS21000 variant labels are now represented in the master `anggaran-os-catalogue.csv`:
+
+- **Umum:** the existing `Perjalanan Sara Hidup` entry is now labelled `Perjalanan Sara Hidup (Umum)`. Its verified PPN Kod Aktiviti `010801` is retained. In `kod-aktiviti-anggaran-os-mapping.csv`, only the **canonical** description is updated; the **original** source text remains `Perjalanan Sara Hidup`.
+- **Sukan:** the existing `Perjalanan Sara Hidup (Sukan)` entry and PPN Kod Aktiviti `010803` remain unchanged.
+- **Kokurikulum:** a **reference-only pending-mapping** catalogue entry now captures the user-approved label. **No Kod Aktiviti or Aktiviti Kewangan has been assigned**; the transaction mapping CSV is deliberately unchanged for this variant until source evidence is available.
+
+The catalogue now contains **32 entries rather than 31**, because an approved variant label is recorded separately. This is a transparent reconciliation of the older 31-item source catalogue and not evidence that Kokurikulum has been mapped or authorised for implementation. Review the overall catalogue count when the missing mapping is established. The mapping CSV still contains 103 supplied activity-to-OS records, with no fabricated rows. No rate calculations, application/database changes, or AD changes have been made.
