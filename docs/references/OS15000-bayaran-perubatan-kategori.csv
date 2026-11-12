@@ -1,0 +1,10 @@
+Kod Objek,Butiran Perbelanjaan,Kod Aktiviti,Kategori1,Kategori2,Kategori3,Kadar (RM),Kadar Mode
+15000,Bayaran Perubatan,010804,Pembekalan Ubat,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Pembekalan Alat,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Perkhidmatan Perubatan,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan Penyakit Buah Pinggang,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan Kemandulan,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan Kepakaran,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan di Institut Jantung Negara (IJN) Sdn. Bhd.,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan Kecemasan,,,,USER_INPUT_KADAR
+15000,Bayaran Perubatan,010804,Rawatan di Luar Negeri,,,,USER_INPUT_KADAR
