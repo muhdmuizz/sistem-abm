@@ -22,7 +22,7 @@ The user requires a hierarchy of `Kategori`, `Kategori1`, `Kategori2`, `Kategori
 | Tambang Ziarah Wilayah | Wilayah Asal | Sabah |
 | Tambang Ziarah Wilayah | Wilayah Asal | Sarawak |
 
-**Kadar:** No Kadar or calculation rule for Tambang Ziarah Wilayah has been supplied yet. Do not invent one or assume a prescribed rate.
+**Kadar:** **User-entered for both Sabah and Sarawak.** No predefined rate lookup or fixed prescribed rate is used for Tambang Ziarah Wilayah.
 
 ### Bayaran Insentif Berasaskan Prestasi (BIPs)
 
@@ -65,7 +65,7 @@ These previously agreed rules continue to apply:
 ## 4. Current boundary and outstanding information
 
 - The original 125 source rows are not rewritten, renamed or reclassified by this consolidation. Mapping their flat `Jenis Kemudahan` rows to category fields can be defined without changing the source evidence.
-- Tambang Ziarah Wilayah's Kadar treatment remains unspecified.
+- Tambang Ziarah Wilayah's Kadar is entered by the user for the selected Wilayah Asal (Sabah or Sarawak).
 - BIPs' rate derives from KGT; no independent rate schedule is introduced.
 - No additional HPA qualification levels are inferred.
 - No new operational restrictions, eligibility tests, calculations, database changes, Laravel code changes, or changes to existing Architecture Decisions are authorized by this reference commit.
