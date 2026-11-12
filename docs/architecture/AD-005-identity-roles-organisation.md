@@ -9,6 +9,22 @@
 
 Sistem ABM uses **exactly six functional roles**, with explicit organisational and financial access scopes. Users may hold multiple roles and multiple assignments. Authentication identifies the user; authorisation determines permitted actions and data scope.
 
+## Approved Google sign-in flow — 13 November 2026
+
+**Authentication UX decision:** The sign-in page must be publicly reachable on desktop and mobile **without first authenticating or satisfying a MyGovUC-only pre-login restriction**. Access to protected Sistem ABM functionality remains restricted.
+
+1. An unauthenticated visitor may open the sign-in page (e.g. `/login`).
+2. Show the button labelled **Log masuk dengan Google**.
+3. On selection, redirect to Google's supported authentication/account-chooser flow. Request account selection so users can select their **MyGovUC Google account**, including on mobile and on devices with multiple Google accounts.
+4. Password entry and any required MFA occur **at Google**, not in Sistem ABM. Google may use an existing signed-in session and therefore may not always prompt for a password.
+5. After Google returns, the application **verifies the authentication response**, then checks the account against Sistem ABM's **active, registered user** and authorised organisational identity requirements.
+6. Only then establish a protected application session and apply the six roles and their assigned PTJ, Aktiviti Kewangan and Tempat Bertugas scopes. A Google sign-in alone **does not automatically create a user account or grant access**.
+7. An unauthorised Google identity receives a comprehensible access-denied result; avoid redirect loops, inaccessible mobile sign-in pages or premature pre-login domain blocks.
+
+**Security boundary:** The account chooser is for user experience; it is **not** authorisation. Identity-provider account/domain eligibility must be enforced on the server after authentication alongside registered-user status. Do not rely on client-side checks, email text alone or a Google domain hint as access control. Keep the login page accessible while protecting all application pages, APIs and financial data. The Google integration must use approved OAuth 2.0/OpenID Connect application configuration, validated callback/token handling and secure server-managed sessions; provider availability and tenant approval are operational prerequisites to verify.
+
+This decision changes **login access and authentication presentation**, not the previously approved six roles, assignment scopes or financial workflows. No alternative password login, automatic provisioning or special MyGovUC portal restriction is approved here.
+
 ## Roles
 
 | Role | Authority |
