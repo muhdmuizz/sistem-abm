@@ -18,7 +18,7 @@ The user directed that `Column1` be **removed**, because it is just a concatenat
 ## Reference files (separate historical values from planning rates)
 
 - [OS26000-bahan-mentah-kadar-source.csv](OS26000-bahan-mentah-kadar-source.csv) — **42 original numerical costs** as supplied, with `Column1` excluded.
-- [OS26000-bahan-mentah-kategori-kadar.csv](OS26000-bahan-mentah-kategori-kadar.csv) — **42 proposed planning Kadar values**: the four petroleum/diesel items use the owner's agreed **2027 unsubsidised estimates**; all 38 other entries retain the supplied numerical costs.
+- [OS26000-bahan-mentah-kategori-kadar.csv](OS26000-bahan-mentah-kategori-kadar.csv) — **42 proposed planning Kadar values**: the five petrol/diesel items use the owner's agreed **2027 unsubsidised estimates**; all 37 other entries retain the supplied numerical costs.
 - [OS26000-bahan-mentah-2027-fuel-planning.csv](OS26000-bahan-mentah-2027-fuel-planning.csv) — **two fuel-type assumptions** for reuse, distinct from observed pump prices.
 
 ## Approved fuel planning assumptions
