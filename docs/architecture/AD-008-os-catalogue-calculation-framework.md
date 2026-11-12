@@ -174,3 +174,39 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 4. Review discrepancies and proposed refinements before any further AD-008 decision or implementation.
 
 **Change-control note:** This addition records only decisions explicitly confirmed in the conversation on 11 November 2026; the remainder of this Draft AD remains unchanged.
+
+## #P7OS — Seven-Step OS Design Protocol (confirmed 12 November 2026)
+
+**Reusable instruction:** `#P7OS OS14000`, `Use #P7OS for [OS]`, or `Continue #P7OS`.
+
+**Purpose:** Apply one repeatable, ordered design and specification process to each applicable OS under AD-008. This is an agreed process, **not an approval of any individual OS financial policy, formula, database design, or implementation**. AD-008 remains **Draft**.
+
+| Step | Stage | Output |
+| --- | --- | --- |
+| **01** | **Understand the OS** | OS Functional Profile — purpose, expenditure scope, relevant users, and whether entries originate from Program/ Aktiviti, direct entry, or both. |
+| **02** | **Decide the Input Design** | Approved OS Interaction Design — select and refine form, spreadsheet-style, hybrid, or specialised interaction *within* the existing shared AD-004 Anggaran wizard; clarify multiple entries, Program/ Aktiviti inheritance, and Senarai Butiran. |
+| **03** | **Confirm Active Columns** | OS × 27-Column Applicability Matrix — classify each column Active, Inactive, or Conditional and determine OS-contextual meaning. |
+| **04** | **Define Fields and References** | OS Field & Reference Specification — input types, requiredness, conditional fields, inherited values, shared/OS-specific reference sources, dropdown and lookup dependencies. |
+| **05** | **Define Financial Calculations** | OS Calculation Specification — source inputs, verified rates and eligibility, exact formulas, effective dates, rounding/precision and representative test cases. Workbook behaviour alone does not approve policy. |
+| **06** | **Define Granular Financial Outputs** | OS Output Mapping — map each saved Butiran Anggaran to its attributable generated 27-column Perbelanjaan output rows, preserving stable originating Butiran ID and reconcilable totals. |
+| **07** | **Review and Finalise the OS Specification** | Owner-confirmed complete OS specification within Draft AD-008, recording verified evidence and unresolved issues. Confirmation of one OS does **not** finalise AD-008. |
+
+### #P7OS operating rules
+
+1. Follow the sequence **Understand → Design → Active Columns → Fields/References → Calculations → Granular Outputs → Review**, rather than choosing fields, formulas or references before the user journey and design.
+2. Work **one OS at a time**, except when necessary to verify an actual shared reference across OS.
+3. Preserve all earlier owner-confirmed decisions and map them into their #P7OS stage. Do not discard, silently amend or needlessly reopen those decisions merely because they were agreed out of sequence.
+4. Preserve AD-004's **single shared wizard**, stable and independently saved Butiran IDs, one-to-many traceable granular outputs, AD-007 Program/ Aktiviti inheritance, AD-010 approved export structure, and AD-011 financial safeguards. Do not introduce Bakul Bidaan or additional financial transaction layers.
+5. Distinguish **workbook evidence**, **previously approved architecture**, **owner-confirmed design**, and **unverified financial policy**. Do not invent rate, formula, eligibility, mandatory-field, or mapping rules.
+6. Present decisions in manageable checkpoints for owner review. **Do not modify GitHub again without explicit authorisation**; commit consolidated approved findings only at authorised checkpoints.
+7. Keep AD-008 **Draft** until its remaining catalogue, financial policies, mappings and verification gates have been completed and approved.
+
+### Current OS14000 #P7OS position
+
+- **Step 01:** Operational profile partially discussed; not yet completed.
+- **Step 02:** Form-based, spreadsheet-style, and hybrid approaches discussed; **no input design selected or approved**.
+- **Step 03:** **Confirmed** — 19 Active and 8 Inactive columns in the 27-column structure (see the earlier confirmed matrix).
+- **Step 04:** Partially analysed. Owner **confirmed** `JAWATAN → GRED` as dependent selection: select JAWATAN first and display only applicable GRED options. Rate reference and remaining field rules require verification.
+- **Steps 05–07:** Not completed; workbook formula observations are not approved financial calculations.
+
+**Next action when invoking `#P7OS OS14000`: resume at Step 01 and then Step 02, retaining confirmed Step 03 and Step 04 results.**
