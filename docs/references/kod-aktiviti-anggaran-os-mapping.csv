@@ -1,0 +1,104 @@
+Aktiviti Kewangan,Singkatan Sumber,Kod Aktiviti,Kod Objek,Butiran Perbelanjaan (Canonical),Butiran Perbelanjaan (Original),Status Implementasi
+Pengurusan Pentadbiran Negeri,PPN,010801,11000,Gaji dan Upahan,Gaji dan Upahan,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,12000,Elaun/ Imbuhan Tetap,Elaun/ Imbuhan Tetap,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,13000,Sumbangan Berkanun Untuk Kakitangan,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,14000,Bayaran Lebih Masa,Bayaran Lebih Masa,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,15000,Faedah-faedah Kewangan Yang Lain,Faedah-faedah Kewangan Yang Lain,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,21000,Perjalanan Sara Hidup,Perjalanan Sara Hidup,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,23000,Perhubungan dan Utiliti,Perhubungan dan Utiliti,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,24000,Sewaan,Sewaan,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,25000,Bahan-bahan Makanan dan Minuman,Bahan-bahan Makanan dan Minuman,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,26000,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,27000,Bekalan Alat Pejabat,Bekalan Alat Pejabat,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,28000,Penyelenggaraan dan Pembaikan Kecil Yang Dibeli,Penyelenggaraan dan Pembaikan Kecil Yang Dibeli,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010801,29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010803,21000,Perjalanan Sara Hidup (Sukan),Perjalanan Sara Hidup (Sukan),Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010804,15000,Bayaran Perubatan,Bayaran Perubatan,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010805,21000,Tuntutan Perbelanjaan Pertukaran,Tuntutan Perbelanjaan Pertukaran,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010807,24000,Sewaan Mesin Fotostat dan Riso,Sewaan Mesin Fotostat dan Riso,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010807,29000,Bacaan Meter Mesin Fotostat,Bacaan Meter Mesin Fotostat,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010808,27000,Pakaian Seragam,Pakaian Seragam,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010809,23000,Utiliti Pukal,Utiliti Pukal,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010809,26000,Bahan Mentah Pukal,Bahan Mentah Pukal,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010809,27000,Bekalan dan Bahan-bahan Lain,Bekalan dan Bahan-bahan Lain,Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010810,29000,Pakej (Mesyuarat/ Bengkel/ Kursus),Pakej (Mesyuarat/ Bengkel/ Kursus),Eligible reference
+Pengurusan Pentadbiran Negeri,PPN,010812,29000,MySTEP,MySTEP,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,11000,Gaji dan Upahan,Gaji dan Upahan,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,12000,Elaun/ Imbuhan Tetap,Elaun/ Imbuhan Tetap,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,13000,Sumbangan Berkanun Untuk Kakitangan,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,14000,Bayaran Lebih Masa,Bayaran Lebih Masa,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,23000,Perhubungan dan Utiliti,Perhubungan dan Utiliti,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,24000,Sewaan,Sewaan,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,25000,Bahan-bahan Makanan dan Minuman,Bahan-bahan Makanan dan Minuman,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,26000,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,27000,Bekalan Alat Pejabat,Bekalan Alat Pejabat,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030219,29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030220,21000,Tuntutan Perbelanjaan Pertukaran,Tuntutan Perbelanjaan Pertukaran,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030220,22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030221,24000,Sewaan Mesin Fotostat dan Riso,Sewaan Mesin Fotostat & Riso,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030221,29000,Bacaan Meter Mesin Fotostat,Bacaan Meter Mesin Fotostat,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030222,23000,Utiliti Pukal,Utiliti Pukal,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030222,26000,Bahan Mentah Pukal,Bahan Mentah Pukal,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030223,29000,MySTEP - Guru Ganti,MySTEP - Guru Ganti,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030225,29000,Pakej (Mesyuarat/ Bengkel/ Kursus),Pakej (Mesyuarat/ Bengkel/ Kursus),Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030226,29000,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,Eligible reference
+Pendidikan Rendah,Pendidikan Rendah,030228,42000,Bayaran Bil Utiliti Sekolah Bantuan Kerajaan (SBK),Bayaran Bil Utiliti Sekolah Bantuan Kerajaan (SBK),Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,11000,Gaji dan Upahan,Gaji dan Upahan,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,12000,Elaun/ Imbuhan Tetap,Elaun/Imbuhan Tetap,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,13000,Sumbangan Berkanun Untuk Kakitangan,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,24000,Sewaan,Sewaan,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,25000,Bahan-bahan Makanan dan Minuman,Bahan-bahan Makanan dan Minuman,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,26000,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,27000,Bekalan Alat Pejabat,Bekalan Alat Pejabat,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030101,29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030102,21000,Tuntutan Perbelanjaan Pertukaran,Tuntutan Perbelanjaan Pertukaran,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030102,22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030104,29000,Pakej (Mesyuarat/ Bengkel/ Kursus),Pakej (Mesyuarat/ Bengkel/ Kursus),Eligible reference
+Pendidikan Awal,Pendidikan Awal,030105,29000,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,Eligible reference
+Pendidikan Awal,Pendidikan Awal,030106,29000,MySTEP - Guru Ganti,MySTEP - Guru Ganti,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,11000,Gaji dan Upahan,Gajl dan Upahan,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,12000,Elaun/ Imbuhan Tetap,Elaun/ lmbuhan Tetap,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,13000,Sumbangan Berkanun Untuk Kakitangan,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,14000,Bayaran Lebih Masa,Bayaran Lebih Masa,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,15000,Faedah-faedah Kewangan Yang Lain,Faedah-faedah Kewangan Yang Lain,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,22000,Pengangkutan Barang-barang,Pengangkutan Barang-barang,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,23000,Perhubungan dan Utiliti,Perhubungan dan Utiliti,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,24000,Sewaan,Sewaan,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,25000,Bahan-bahan Makanan dan Minuman,Bahan-bahan Makanan dan Minuman,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,26000,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,27000,Bekalan Alat Pejabat,Bekalan Alat Pejabat,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030301,29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030302,21000,Tuntutan Perbelanjaan Pertukaran,Tuntutan Perbelanjaan Pertukaran,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030302,22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030303,24000,Sewaan Mesin Fotostat dan Riso,Sewaan Mesin Fotostat & Riso,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030303,29000,Bacaan Meter Mesin Fotostat,Bacaan Meter Mesin Fotostat,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030304,23000,Utiliti Pukal,Utiliti Pukal,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030304,26000,Bahan Mentah Pukal,Bahan Mentah Pukal,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030304,27000,Bekalan dan Bahan-bahan Lain,Bekalan dan Bahan-bahan Lain,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030305,29000,MySTEP - Guru Ganti,MySTEP - Guru Ganti,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030306,29000,Pengajaran Bahasa Yang Diluluskan (POL),Pengajaran Bahasa Yang Diluluskan (POL),Excluded — reference only
+Pendidikan Menengah,Pendidikan Menengah,030307,29000,Pakej (Mesyuarat/ Bengkel/ Kursus),Pakej (Mesyuarat/ Bengkel/ Kursus),Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030309,29000,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,MySTEP - Pembantu Pengurusan Murid (PPM) Ganti,Eligible reference
+Pendidikan Menengah,Pendidikan Menengah,030310,42000,Bayaran Bil Utiliti Sekolah Bantuan Kerajaan (SBK),Bayaran Bit Utiliti Sekolah Bantuan Kerajaan (SBK),Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,11000,Gaji dan Upahan,Gajl dan Upahan,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,12000,Elaun/ Imbuhan Tetap,Elaun/ lmbuhan Tetap,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,13000,Sumbangan Berkanun Untuk Kakitangan,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,14000,Bayaran Lebih Masa,Bayaran Lebih Masa,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,15000,Faedah-faedah Kewangan Yang Lain,Faedah-faedah Kewangan Yang Lain,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,22000,Pengangkutan Barang-barang,Pengangkutan Barang-barang,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,23000,Perhubungan dan Utiliti,Perhubungan dan Utiliti,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,24000,Sewaan,Sewaan,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,25000,Bahan-bahan Makanan dan Minuman,Bahan-bahan Makanan dan Minuman,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,26000,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,27000,Bekalan Alat Pejabat,Bekalan Alat Pejabat,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030313,29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Perkhidmatan lktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030314,21000,Tuntutan Perbelanjaan Pertukaran,Tuntutan Perbelanjaan Pertukaran,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030314,22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030315,24000,Sewaan Mesin Fotostat dan Riso,Sewaan Mesin Fotostat & Riso,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030315,29000,Bacaan Meter Mesin Fotostat,Bacaan Meter Mesin Fotostat,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030316,23000,Utiliti Pukal,Utiliti Pukal,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030316,26000,Bahan Mentah Pukal,Bahan Mentah Pukal,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030316,27000,Bekalan dan Bahan-bahan Lain,Bekalan dan Bahan-bahan Lain,Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030317,29000,Pakej (Mesyuarat/ Bengkel/ Kursus),Pakej (Mesyuarat/ Bengkel/ Kursus),Eligible reference
+Pengurusan Asrama,Pengurusan Asrama,030318,42000,Asrama Malaysia (AMal),Asrama Malaysia (AMal),Excluded — reference only
