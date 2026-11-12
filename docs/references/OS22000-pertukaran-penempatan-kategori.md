@@ -1,5 +1,7 @@
 # OS22000 — Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula
 
+> **Historical reference notice (12 November 2026):** The later [unified OS22000 decision](OS22000-unified-kategori-decisions.md) supersedes this file's former *separate-OS identity and category-level interpretation*. Preserve the data below as supplied; it must not be used to populate the new Kategori1 = Pengangkutan Barang branch automatically. The owner placed the earlier reference material under Pertukaran/ Penempatan. This notice makes no data or calculation changes.
+
 **Recorded:** 12 November 2026. **Status:** User-approved Kategori1–Kategori4 reference. Documentation only; not application implementation.
 
 ## Identity
