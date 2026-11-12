@@ -3,6 +3,17 @@
 **Recorded:** 12 November 2026  
 **Status:** Consolidated from user-provided references and decisions. Reference documentation only, not implementation.
 
+## Machine-readable reference data
+
+This Markdown document preserves decisions and exceptions. The associated **CSV references** preserve structured records for future reference-data import/use:
+
+- [OS15000-kemudahan-gred-kadar.csv](OS15000-kemudahan-gred-kadar.csv) — 125 grade/rate source rows, including the deliberately blank Bayaran Balik Yuran Kadar.
+- [OS15000-faedah-faedah-kewangan-yang-lain-kategori.csv](OS15000-faedah-faedah-kewangan-yang-lain-kategori.csv) — 17 category/rate-mode records (10 legacy Kemudahan + 2 Tambang Ziarah Wilayah selections + BIPs + 4 HPA qualifications).
+
+**Rate modes:** `GRADE_RATE_LOOKUP` = consult the 125-row reference; `USER_INPUT_DESCRIPTION_AND_KADAR` = require both fields; `USER_INPUT_KADAR` = user-entered rate; `KGT_REFERENCE` = derive from Jawatan/Gred KGT; `FIXED_RATE` = use the prescribed RM rate.
+
+The CSV `Kategori1` assignment for each legacy Kemudahan is a **machine-readable representation of its source Jenis Kemudahan name**, not a new policy or extra category level. Source rows remain preserved separately. Empty Kategori2/Kategori3 fields mean no subordinate values supplied; they are not synthetic defaults. This documentation does not create or update PostgreSQL tables.
+
 ## 1. Anggaran (OS) identity and scope
 
 **Anggaran (OS) = Kod Objek + canonical Butiran Perbelanjaan** (Reference 04). Therefore:
