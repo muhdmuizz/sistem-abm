@@ -4,7 +4,7 @@ Kod Objek,Butiran Perbelanjaan (Canonical),Status Implementasi
 13000,Sumbangan Berkanun Untuk Kakitangan,Eligible reference
 14000,Bayaran Lebih Masa,Eligible reference
 15000,Faedah-faedah Kewangan Yang Lain,Eligible reference
-21000,Perjalanan Sara Hidup,Eligible reference
+21000,Perjalanan Sara Hidup (Umum),Eligible reference
 22000,Tuntutan Perbelanjaan Pertukaran/ Penempatan Baharu/ Penempatan Semula,Eligible reference
 23000,Perhubungan dan Utiliti,Eligible reference
 24000,Sewaan,Eligible reference
@@ -14,6 +14,7 @@ Kod Objek,Butiran Perbelanjaan (Canonical),Status Implementasi
 28000,Penyelenggaraan dan Pembaikan Kecil Yang Dibeli,Eligible reference
 29000,Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti,Eligible reference
 21000,Perjalanan Sara Hidup (Sukan),Eligible reference
+21000,Perjalanan Sara Hidup (Kokurikulum),Pending Kod Aktiviti mapping — reference label only
 15000,Bayaran Perubatan,Eligible reference
 21000,Tuntutan Perbelanjaan Pertukaran,Eligible reference
 24000,Sewaan Mesin Fotostat dan Riso,Eligible reference
