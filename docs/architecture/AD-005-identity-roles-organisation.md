@@ -30,8 +30,8 @@ This decision changes **login access and authentication presentation**, not the 
 | Role | Authority |
 | --- | --- |
 | **Superadmin** | Full functional and administrative authority across the system, all PTJ and Aktiviti Kewangan, including operational actions, configuration, testing and justified overrides; all actions audited. |
-| **Ketua Bidaan** | JPNT officers only; corresponds to **Ketua Aktiviti**. Views, comments/queries and makes the final **Lulus / Tolak** decision for Bidaan within assigned Aktiviti Kewangan, after formal Penyelia Bidaan review. |
-| **Penyelia Bidaan** | Views, comments/queries and formally reviews Bidaan, then **Kemukakan** to Ketua Bidaan; no independent final approval/rejection authority. |
+| **Ketua Bidaan** | JPNT officers only; corresponds to **Ketua Aktiviti**. Reviews and comments on submitted Bidaan within assigned Aktiviti Kewangan, may **Kembalikan untuk Pembetulan**, and has exclusive **Muktamadkan Bidaan** and bulk-finalisation authority under AD-009. Penyelia sign-off is not a prerequisite. |
+| **Penyelia Bidaan** | Reviews and comments on submitted Bidaan within assigned Aktiviti Kewangan in the **shared parallel review** under AD-009; may **Kembalikan untuk Pembetulan** with a reason, but may not finalise or bulk-finalise. |
 | **Penyedia Bidaan** | Activates and submits Bidaan within explicitly assigned PTJ + Aktiviti Kewangan; does not automatically acquire OS-editing authority. |
 | **Penyedia Anggaran** | Activates/deactivates OS and prepares, edits and completes Anggaran and Butiran Anggaran within explicitly assigned PTJ + Aktiviti Kewangan; does not automatically acquire Bidaan activation/submission authority. |
 | **Pemantau Bidaan** | Read-only monitoring, financial data and reporting within explicitly assigned viewing scope; cannot create, edit, activate, submit, forward, approve or reject. |
@@ -62,18 +62,18 @@ Multiple scoped assignments may be granted to a single user; they do not automat
 - Authorise viewing, creating, editing, bulk operations and direct access **on the server**, including the Tempat Bertugas restriction. A user cannot bypass their own-workplace restriction by choosing another dropdown value or record ID. **Superadmin's existing system-wide authority is unchanged.**
 - These are **scope distinctions inside the existing six roles**, not additional functional roles, Sektor-level financial entities or independent approval workflows.
 
-## Formal review sequence
+## Approved review workflow — aligned with AD-009
 
-1. **Penyedia Anggaran** prepares and completes active OS estimates.
-2. **Penyedia Bidaan** submits the Bidaan when AD-003 completeness conditions are met.
-3. **Penyelia Bidaan** performs a **formal review**, may provide **Ulasan/ Kuiri**, and **Kemukakan** to Ketua Bidaan.
-4. **Ketua Bidaan** (JPNT officer / Ketua Aktiviti) reviews and decides **Lulus / Tolak**.
+1. **Penyedia Anggaran** prepares and completes active Anggaran (OS).
+2. **Penyedia Bidaan** submits the entire eligible Bidaan under AD-003 completeness rules.
+3. **Penyelia Bidaan** and **Ketua Bidaan** access the same submitted Bidaan for **parallel collaborative review**. Either may comment or **Kembalikan untuk Pembetulan** with a mandatory reason; there is **no mandatory Penyelia forwarding or sign-off step**.
+4. **Only Ketua Bidaan** may **Muktamadkan Bidaan** (including eligible bulk finalisation) after the applicable AD-009 conditions and explicit confirmation.
 
-Ketua Bidaan cannot make the final decision before Penyelia Bidaan has completed the formal review and forwarded the Bidaan. Detailed review states, returns and correction mechanics belong in AD-009 and must remain consistent with AD-003.
+AD-009 remains the authoritative source for statuses, return/resubmission, review threads and finalisation. This alignment corrects superseded sequencing text; it does **not** approve a new workflow.
 
 ## Ulasan/ Kuiri
 
-**Ulasan/ Kuiri is one function**, not two separate processes. Both Ketua Bidaan and Penyelia Bidaan may view, comment and query. Comments/queries may eventually target a specific **Butiran Anggaran** through its unique ID. The UI, response mechanism and workflow effects will be determined later under AD-009; do not prematurely impose separate status flows.
+**Ulasan/ Kuiri** is a shared review capability, not separate approval paths. Under the finalised AD-009, authorised reviewers may open/reply to attributable threads anchored to **Bidaan**, **Anggaran (OS)** or **Butiran Anggaran** (stable ID), while authorised preparers may view and reply to relevant threads. Review-thread **Terbuka / Ditutup** states do not independently change the Bidaan's formal status.
 
 ## Superadmin
 
