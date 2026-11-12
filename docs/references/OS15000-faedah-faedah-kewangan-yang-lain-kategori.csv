@@ -1,0 +1,18 @@
+Kod Objek,Butiran Perbelanjaan,Kategori1,Kategori2,Kategori3,Kadar (RM),Gred,Kadar Mode,Nota,Rujukan
+15000,Faedah-faedah Kewangan Yang Lain,Bantuan Baju Kot,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bantuan Pakaian Panas Tempat Kerja,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Pakaian Istiadat,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bantuan Bayaran Pakaian Black Tie,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Pakaian Menghadiri Upacara Rasmi (Pegawai),,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Pakaian Menghadiri Upacara Rasmi (Pasangan),,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Pembaharuan Lesen Memandu,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Kemudahan Pembelian Alat Komunikasi Mudah Alih,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Elaun Pakaian Panas,,,,,GRADE_RATE_LOOKUP,Lookup by source grade; special C mapping not assumed,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Balik Yuran,,,,,USER_INPUT_DESCRIPTION_AND_KADAR,Description and Kadar required,OS15000-kemudahan-gred-kadar.csv
+15000,Faedah-faedah Kewangan Yang Lain,Tambang Ziarah Wilayah,Wilayah Asal,Sabah,,,USER_INPUT_KADAR,Kadar entered by user,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
+15000,Faedah-faedah Kewangan Yang Lain,Tambang Ziarah Wilayah,Wilayah Asal,Sarawak,,,USER_INPUT_KADAR,Kadar entered by user,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
+15000,Faedah-faedah Kewangan Yang Lain,Bayaran Insentif Berasaskan Prestasi (BIPs),,,,,KGT_REFERENCE,Kadar equals KGT per Jawatan and full SSPA Gred; percentage-based rules remain subject to documented unresolved details,jawatan-gred-gaji-kgt.csv
+15000,Faedah-faedah Kewangan Yang Lain,Hadiah Pengiktirafan Akademik (HPA),Ijazah Kedoktoran (PhD),,1250.00,,FIXED_RATE,Predefined rate,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
+15000,Faedah-faedah Kewangan Yang Lain,Hadiah Pengiktirafan Akademik (HPA),Ijazah Sarjana (Master),,1000.00,,FIXED_RATE,Predefined rate,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
+15000,Faedah-faedah Kewangan Yang Lain,Hadiah Pengiktirafan Akademik (HPA),Ijazah Sarjana Muda,,750.00,,FIXED_RATE,Predefined rate,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
+15000,Faedah-faedah Kewangan Yang Lain,Hadiah Pengiktirafan Akademik (HPA),Diploma/ Setaraf,,500.00,,FIXED_RATE,Predefined rate,OS15000-faedah-faedah-kewangan-yang-lain-consolidated.md
