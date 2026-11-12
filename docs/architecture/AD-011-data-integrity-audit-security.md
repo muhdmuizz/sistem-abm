@@ -53,6 +53,13 @@ Specify enforceable technical safeguards for the existing approved financial hie
 - Scope historical analysis and Excel extracts to authorised financial records. Historical PTJ-level data cannot imply Tempat Bertugas-level permissions or fabricated allocation.
 - Apply framework-standard CSRF/session protection, input validation, output escaping, secret management, least-privilege database credentials and rate limiting to sensitive endpoints. Avoid secrets or unnecessary personal data in logs.
 
+### Confirmed workplace-level authorisation and attribution — 12 November 2026
+
+- Apply the AD-005 **PTJ-level versus Tempat Bertugas-level Penyedia Anggaran** scope when authorising lists, individual Butiran Anggaran, writes, bulk operations and exports. PTJ-level preparers may act across permitted workplaces under their assigned PTJ/Aktiviti Kewangan; workplace-level preparers are restricted to their own registered workplace and the assigned PTJ/Aktiviti Kewangan.
+- Validate that each saved **Butiran Anggaran** refers to a permitted specific **Tempat Bertugas** belonging to the relevant PTJ context; reject generic **JPNT/PPD** as a selected Tempat Bertugas. A Sektor has no independent Kod PTJ; it references its parent organisational context without creating separate financial ownership.
+- Keep the **actual authenticated actor**, their registered organisational identity and the **chosen Butiran Tempat Bertugas** distinguishable in authorisation/audit processes. No selection or filter expands the user's authority; preserve the stable Butiran ID and immutable submitted history.
+- This implements the approved organisational scope clarification without changing existing six-role architecture, workflow statuses, financial calculation policy or AD-004 filter order.
+
 ## 05 — Import, reporting and failure safeguards
 
 - Historical expenditure imports remain Superadmin-managed, read-only to other roles and separate from transactional Anggaran/Bidaan.
