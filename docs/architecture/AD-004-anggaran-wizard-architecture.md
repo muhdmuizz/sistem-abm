@@ -55,6 +55,14 @@ Also provide a text search for OS code/name and **Set Semula**. Dropdowns derive
 
 The Aktiviti Kewangan capsule remains visible on each OS row even when a single activity is filtered, to avoid ambiguity for multi-activity users.
 
+### Confirmed Tempat Bertugas selection and filter behaviour — 12 November 2026
+
+- **Each Butiran Anggaran independently records a selected Tempat Bertugas** from permitted, database-backed workplace references. It is not merely inferred from the author of the entry. Editing an existing Butiran preserves its stable Butiran ID and the selected workplace unless an authorised change is saved.
+- **JPNT and all PPD are not selectable as generic Tempat Bertugas**. For their Bidaan, the selection is a specific permitted Sektor or school/workplace reference under the parent PTJ. Sektor is a non-PTJ organisational subdivision of JPNT/PPD.
+- A **PTJ-level Penyedia Anggaran** may select and work across the permitted Tempat Bertugas under the explicitly assigned PTJ + Aktiviti Kewangan. A **Tempat Bertugas-level Penyedia Anggaran** is restricted to the assigned own Tempat Bertugas for preparing/managing Butiran. All restrictions apply server-side (AD-005, AD-011).
+- Preserve the existing approved filter order **Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran**. A Sektor selectable as Tempat Bertugas is found through the existing Tempat Bertugas filter; **do not add a separate Sektor filter** or infer editing permission from filter visibility.
+- These rules concern financial attribution and permitted workplace selection; they do not create separate Anggaran per Sektor, change the common wizard, or approve OS-specific calculations.
+
 ## 4. Shared Anggaran wizard framework
 
 Every OS uses **one common wizard framework**, not dozens of independent implementations. Shared capabilities:
