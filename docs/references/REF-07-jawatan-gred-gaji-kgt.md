@@ -4,6 +4,15 @@
 **Data:** [jawatan-gred-gaji-kgt.csv](jawatan-gred-gaji-kgt.csv) (131 unique rows).  
 **Scope:** Reference decisions and source catalogue only; no application/database modification is implied.
 
+## Universal applicability across Anggaran (OS)
+
+**User-confirmed, 12 November 2026:** This **single shared** `Jawatan, Gred, Gaji dan KGT` reference applies to **every Anggaran (OS) where its personnel/salary attributes are relevant**; it is **not an OS14000-only reference**. Reuse the 131-record CSV rather than duplicating it for each OS.
+
+- **Jawatan and full SSPA Gred** are separate personnel-reference attributes, **never `Kategori1`, `Kategori2`, `Kategori3` or any other category level**.
+- Where relevant, OS-specific rules may reference `Gaji Minimum`, `Gaji Maksimum`, `Gaji Median` or `KGT`. Do **not** assume every field or formula applies to every OS.
+- For **OS14000 — Bayaran Lebih Masa**, the owner separately confirmed `Kadar = Gaji Median × 12 ÷ 2504`; see [OS14000-reference-consolidated.md](OS14000-reference-consolidated.md).
+- Other OS-specific uses, grade mappings and calculations continue to require their own confirmed reference rules. Preserve special source grade `C` without assuming an equivalence.
+
 ## 1. Authoritative source and cleanup
 
 The user's **second, KGT-inclusive** Jawatan/Gred dataset supersedes the earlier submission.
