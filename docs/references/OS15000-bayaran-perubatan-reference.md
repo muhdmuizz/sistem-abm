@@ -6,11 +6,15 @@
 **Kod Objek:** `15000`  
 **Butiran Perbelanjaan:** Bayaran Perubatan
 
-## Jenis Bayaran Perubatan
+## Jenis Kemudahan Perubatan — Kategori1
 
-The user supplied the following nine selectable categories, reproduced in the original order:
+**User-confirmed classification:** Each of the following nine Jenis Kemudahan Perubatan is a selectable **Kategori1** under the distinct Anggaran (OS) **OS15000 — Bayaran Perubatan**. The nine labels remain exactly as supplied, in the original order; no Kategori2 or Kategori3 values have been supplied.
 
-| No. | Jenis Bayaran Perubatan |
+**Machine-readable reference:** [OS15000-bayaran-perubatan-kategori.csv](OS15000-bayaran-perubatan-kategori.csv). Kadar mode: `USER_INPUT_KADAR` for all nine Kategori1 values.
+
+
+
+| No. | Kategori1 — Jenis Kemudahan Perubatan |
 | ---: | --- |
 | 1 | Pembekalan Ubat |
 | 2 | Pembekalan Alat |
