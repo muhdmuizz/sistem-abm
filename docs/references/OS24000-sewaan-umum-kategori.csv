@@ -1,0 +1,65 @@
+Kategori1,Kategori2,Kategori3,Kadar Mode
+Berkontrak,Tanah,,USER_INPUT_KADAR
+Berkontrak,Bangunan,Bangunan Kediaman,USER_INPUT_KADAR
+Berkontrak,Bangunan,Bangunan Pejabat,USER_INPUT_KADAR
+Berkontrak,Bangunan,Bangunan Perusahaan,USER_INPUT_KADAR
+Berkontrak,Bangunan,Bangunan Penyetoran,USER_INPUT_KADAR
+Berkontrak,Bangunan,Bangunan-bangunan Lain,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Van,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Bas,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Kereta,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Lori dan Kenderaan Pengangkutan Barang Bermotor Yang Lain,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Kapal/ Bot,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Kapal Terbang,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Kenderaan-kenderaan Lain,USER_INPUT_KADAR
+Berkontrak,Kenderaan,Kenderaan Konsesi SPANCO,USER_INPUT_KADAR
+Berkontrak,Jentera,Jentera Perkilangan,USER_INPUT_KADAR
+Berkontrak,Jentera,Jentera Pertanian,USER_INPUT_KADAR
+Berkontrak,Jentera,Jentera Pembinaan,USER_INPUT_KADAR
+Berkontrak,Jentera,Jentera-jentera Lain,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Alat Kelengkapan Pejabat,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Perabot & Lengkapan,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektronik,Komputer dan Alat Kelengkapan Prosesan Data Elektronik Yang Lain,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektronik,Alat Kelengkapan Elektronik Yang Lain,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektrik,Motor Janakuasa,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektrik,Alat Litar Elektrik,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Elektrik Yang Lain,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Penyiaran,Alat Kelengkapan Penyiaran,USER_INPUT_KADAR
+Berkontrak,Pelbagai,Infrastruktur,USER_INPUT_KADAR
+Berkontrak,Pelbagai,Dewan (Venue),USER_INPUT_KADAR
+Berkontrak,Pelbagai,Kerusi/ Meja,USER_INPUT_KADAR
+Berkontrak,Pelbagai,Khemah,USER_INPUT_KADAR
+Berkontrak,Pelbagai,Bayaran Sewa Yang Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Tanah,,USER_INPUT_KADAR
+Tidak Berkontrak,Bangunan,Bangunan Kediaman,USER_INPUT_KADAR
+Tidak Berkontrak,Bangunan,Bangunan Pejabat,USER_INPUT_KADAR
+Tidak Berkontrak,Bangunan,Bangunan Perusahaan,USER_INPUT_KADAR
+Tidak Berkontrak,Bangunan,Bangunan Penyetoran,USER_INPUT_KADAR
+Tidak Berkontrak,Bangunan,Bangunan-bangunan Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Van,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Bas,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Kereta,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Lori dan Kenderaan Pengangkutan Barang Bermotor Yang Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Kapal/ Bot,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Kapal Terbang,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Kenderaan-kenderaan Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Kenderaan,Kenderaan Konsesi SPANCO,USER_INPUT_KADAR
+Tidak Berkontrak,Jentera,Jentera Perkilangan,USER_INPUT_KADAR
+Tidak Berkontrak,Jentera,Jentera Pertanian,USER_INPUT_KADAR
+Tidak Berkontrak,Jentera,Jentera Pembinaan,USER_INPUT_KADAR
+Tidak Berkontrak,Jentera,Jentera-jentera Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Alat Kelengkapan Pejabat,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Perabot & Lengkapan,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektronik,Komputer dan Alat Kelengkapan Prosesan Data Elektronik Yang Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektronik,Alat Kelengkapan Elektronik Yang Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektrik,Motor Janakuasa,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Litar Elektrik,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Elektrik Yang Lain,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Penyiaran,Alat Kelengkapan Penyiaran,USER_INPUT_KADAR
+Tidak Berkontrak,Pelbagai,Infrastruktur,USER_INPUT_KADAR
+Tidak Berkontrak,Pelbagai,Dewan (Venue),USER_INPUT_KADAR
+Tidak Berkontrak,Pelbagai,Kerusi/ Meja,USER_INPUT_KADAR
+Tidak Berkontrak,Pelbagai,Khemah,USER_INPUT_KADAR
+Tidak Berkontrak,Pelbagai,Bayaran Sewa Yang Lain,USER_INPUT_KADAR
