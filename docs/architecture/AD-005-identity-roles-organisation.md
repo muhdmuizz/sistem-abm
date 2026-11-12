@@ -35,6 +35,17 @@ These functional roles replace earlier proposed names such as Pengurusan, Pengur
 
 Multiple scoped assignments may be granted to a single user; they do not automatically expand authority to unassigned PTJ or activities. PTJ, organisational identity and Aktiviti Kewangan are distinct concepts.
 
+## Confirmed PTJ, Sektor and Tempat Bertugas assignments — 12 November 2026
+
+- **Penyedia Bidaan is a PTJ-level responsibility**: the assigned user activates/submits the Bidaan for the authorised **PTJ + Aktiviti Kewangan**. Sektor and non-PTJ schools **do not create independent Bidaan**. A person from a Sektor may also act as Penyedia Bidaan **only when explicitly assigned that role**; the two roles remain separate.
+- **Sektor** is a subordinate organisational identity of **JPNT or PPD**, has **no individual Kod PTJ**, and may identify the registered workplace of a **Penyedia Anggaran**. The system resolves the authenticated user's registered Sektor/Tempat Bertugas identity independently from their functional role and financial assignments; Sektor membership alone grants no financial access.
+- For **Penyedia Anggaran**, the existing explicitly assigned **PTJ + Aktiviti Kewangan** authorisation is retained, with an additional confirmed **Tempat Bertugas scope**:
+  - **PTJ-level assignment:** may prepare/manage Butiran for all permitted Tempat Bertugas under the assigned PTJ, within the assigned Aktiviti Kewangan.
+  - **Tempat Bertugas-level assignment:** may prepare/manage Butiran for **their own assigned Tempat Bertugas only**, within the authorised parent PTJ and Aktiviti Kewangan. This includes Sektor-level users and school-level users where applicable.
+- Every Butiran Anggaran selects a permitted Tempat Bertugas (AD-004). **JPNT and PPD themselves are not selectable as generic Tempat Bertugas**: specific subordinate workplaces must be used to retain Sektor/school-level attribution. An **SMK PTJ** remains a PTJ with its own code and may also be its own Tempat Bertugas.
+- Authorise viewing, creating, editing, bulk operations and direct access **on the server**, including the Tempat Bertugas restriction. A user cannot bypass their own-workplace restriction by choosing another dropdown value or record ID. **Superadmin's existing system-wide authority is unchanged.**
+- These are **scope distinctions inside the existing six roles**, not additional functional roles, Sektor-level financial entities or independent approval workflows.
+
 ## Formal review sequence
 
 1. **Penyedia Anggaran** prepares and completes active OS estimates.
