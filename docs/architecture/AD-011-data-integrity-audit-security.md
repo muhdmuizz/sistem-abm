@@ -69,7 +69,17 @@ Specify enforceable technical safeguards for the existing approved financial hie
 - **Multiple devices:** concurrent authenticated ABM sessions are permitted. Each device maintains its own application session; concurrent edits must obey AD-011 stale-write protection. Ordinary sign-out ends **the current ABM session only**, not the global Google session or other devices.
 - **Deactivation and authorisation changes:** deactivate/revoke application access for disabled accounts, including previously active sessions. Re-evaluate changed roles/scopes on subsequent protected requests and at sensitive mutations; previously cached privileges may not continue to authorise actions.
 - **Absolute session lifetime (owner-approved 13 November 2026):** a protected ABM session must expire **8 hours after its initial authentication**, even if the user remains active and explicitly extends its idle timeout. Renewal of the 30-minute idle timeout must **not** reset the eight-hour absolute deadline. After that deadline, require Google reauthentication and repeat active-user and scope checks; do not silently extend the session. AD-004 autosave and truthful save-state safeguards remain applicable.
-- **Not yet decided:** optional cross-device session management (e.g. administrator-initiated termination of specific/all active sessions). Ordinary logout continues to end only the current ABM session; existing account deactivation and permission-revalidation requirements remain unchanged.
+### Approved account and session revocation — 13 November 2026
+
+- **Nyahaktif Akaun:** Deactivating an ABM account must promptly deny further access and invalidate **all of that account's active ABM sessions**, including sessions on other devices.
+- **Superadmin — Tamatkan Semua Sesi:** Within the existing Superadmin role, allow revocation of **all active ABM sessions belonging to a selected user**, without necessarily deactivating the user's account. Enforce server-side authority and record actor, target, action, timestamp and reason where applicable.
+- **User — Log Keluar Semua Peranti:** Permit each authenticated user to invalidate **all of their own ABM sessions** across devices, with appropriate session/CSRF protection.
+- **Ordinary Log Keluar:** Ends **only the current ABM session**, not other devices or the user's global Google session.
+- **Role or scope changes:** Revalidate effective permissions on subsequent protected requests and sensitive mutations; cached authorisation cannot grant access after a scope is withdrawn.
+- **Identity distinction:** Revoking ABM sessions does **not** sign the user out of Google globally. An active, still-authorised user may be authenticated again through Google; a deactivated ABM account must remain denied after any successful Google authentication.
+- **Individual-device session termination:** Deferred; do not imply it is approved.
+
+These are security controls within the approved six-role architecture, not new roles or changes to financial workflows.
 
 This is a security/session policy update only: it does not introduce additional authentication methods, change the existing six roles, alter AD-004 autosave semantics or authorise new financial workflows.
 
