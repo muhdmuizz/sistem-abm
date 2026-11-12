@@ -27,6 +27,14 @@ The canonical hierarchy is:
 6. Totals must be calculated or reconciled from authoritative granular records: **Jumlah Anggaran = sum of its Butiran Anggaran; Jumlah Bidaan = sum of its Anggaran**.
 7. Saved drafts and formal submission are different lifecycle states, consistent with AD-001. Submission and amendment history must be preserved; exact versioning rules remain to be designed.
 
+## Confirmed organisational reference clarification — 12 November 2026
+
+- **PTJ** remains the financial owner of Bidaan in the existing PTJ + Aktiviti Kewangan + Kitaran context. **Sektor** is a subordinate organisational identity within **JPNT or PPD**, not a PTJ, and has **no separate Kod PTJ**. Sektor never owns an additional Bidaan or introduces another level into the canonical financial hierarchy.
+- **Tempat Bertugas** is a distinct organisational reference used for attribution of each **Butiran Anggaran**. Sektor under JPNT/PPD and schools under a PPD may be Tempat Bertugas without thereby becoming PTJ. An SMK PTJ retains its own PTJ identity and may also be its own Tempat Bertugas.
+- **JPNT and PPD are not selectable as generic Tempat Bertugas**. Their expenditure must be attributed to a specific permitted Tempat Bertugas beneath the relevant PTJ, so a parent organisation cannot obscure which Sektor or school requires an allocation.
+- The user preparing a Butiran and the selected Tempat Bertugas are distinct identities. Organisational association and financial access are governed by AD-005; the existing Tempat Bertugas selection/filter contract is governed by AD-004.
+- These clarifications add **no extra financial entity**, no Sektor-level Bidaan and no changes to the existing total-calculation hierarchy.
+
 ## Excel template interpretation
 
 The existing ABM Excel workbook has approximately 31 OS worksheets; some worksheets combine OS variants. **For Sistem ABM, use one logical Anggaran structure per applicable OS**, even if the original Excel worksheet combined them. Each OS may have its own wizard, input fields, validation, and calculation rules. A reference OS catalogue and wizard definitions may be separate from transactional Anggaran records.
