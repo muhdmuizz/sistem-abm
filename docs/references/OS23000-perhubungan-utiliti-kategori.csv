@@ -1,0 +1,8 @@
+Kategori1,Kategori2,Kadar Mode
+Pukal,Air,USER_INPUT_KADAR
+Pukal,Elektrik,USER_INPUT_KADAR
+Pukal,Telefon/ Faks,USER_INPUT_KADAR
+Pukal,Pembetungan,USER_INPUT_KADAR
+Bukan Pukal,Pos/ Mesin Franking,USER_INPUT_KADAR
+Bukan Pukal,Bil Telefon,USER_INPUT_KADAR
+Bukan Pukal,Lain-lain,USER_INPUT_KADAR
