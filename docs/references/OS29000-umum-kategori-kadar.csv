@@ -1,0 +1,23 @@
+Kategori1,Kategori2,Gred Penceramah/ Fasilitator,Kadar (RM; Reference),Kadar Mode
+Bayaran Penceramah/ Fasilitator,Bayaran Penceramah,Kumpulan Pengurusan Tertinggi,300.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Penceramah,Kumpulan P&P Gred 14,200.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Penceramah,Kumpulan P&P Gred 11-13,150.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Penceramah,Kumpulan P&P Gred 9-10,120.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Penceramah,Kumpulan Sokongan,80.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Fasilitator,Kumpulan Pengurusan Tertinggi,100.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Fasilitator,Kumpulan P&P Gred 14,100.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Fasilitator,Kumpulan P&P Gred 11-13,90.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Fasilitator,Kumpulan P&P Gred 9-10,80.00,AUTO_REFERENCE
+Bayaran Penceramah/ Fasilitator,Bayaran Fasilitator,Kumpulan Sokongan,60.00,AUTO_REFERENCE
+Bayaran Yuran Bengkel/ Kursus/ Taklimat/ Seminar,Bayaran Yuran,,,USER_INPUT_KADAR
+"Keraian, Hospitaliti, Honorarium dll.",Makan Minum (Mesyuarat),,8.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Makan Minum (Program),,18.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Makan Minum (Majlis Persaraan),,60.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Hadiah Penghargaan Pesara,,600.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Medal,,10.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Piala,,50.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Dobi,,,USER_INPUT_KADAR
+"Keraian, Hospitaliti, Honorarium dll.",Percetakan (Banner),,150.00,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Percetakan (Sijil),,1.90,AUTO_REFERENCE
+"Keraian, Hospitaliti, Honorarium dll.",Percetakan,,,USER_INPUT_KADAR
+"Keraian, Hospitaliti, Honorarium dll.",Lain-lain,,,USER_INPUT_KADAR
