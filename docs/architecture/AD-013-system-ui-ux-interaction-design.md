@@ -205,23 +205,23 @@ Use a **single-page form** with four existing AD-007 sections: **A. Objektif; B.
 
 Use a compact, full-width financial listing rather than dashboard-style cards. Place the existing cascading filters directly above the records in their AD-004 order: **Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran**; provide one text-search input and **Set Semula**. Preserve the statuses **Belum Mula**, **Belum Lengkap** and **Lengkap**. Align RM amounts to the right using tabular numerals; incomplete records must not inflate totals. Use compact Lucide row actions with accessible labels and open the **same shared OS wizard**. On mobile, use compact management record cards; granular financial tables may scroll horizontally. Apply contextual skeletons and retain existing content during refresh where possible. **Final columns and actions must be checked against the canonical Anggaran model**; illustrative sample rows and values are not requirements. No new statuses, calculations, permissions or actions are authorised by this design decision.
 
-### 09.3 Shared OS Wizard (Approved — presentation patterns; OS mapping deferred)
+### 09.3 Shared OS Wizard (Revised 13 November 2026 — spreadsheet-first default)
 
-Implement **three reusable editor presentation patterns** under **one canonical shared OS wizard**:
+**Superseding decision:** Every Anggaran (OS) wizard **starts with the spreadsheet-like grid presentation as its common default**. Do not pre-assign OS to the previous three editor designs. Review OS **one by one** after the common spreadsheet-like experience is established. Only an individually reviewed OS may subsequently be considered for an alternative presentation where its actual input requirements justify it; **no such reassignment is approved by this decision**.
 
-- **Design A — Structured Form:** compact, straightforward entry with a limited number of fields.
-- **Design B — Spreadsheet-like Grid:** repeated source rows, efficient high-volume inline entry and editing.
-- **Design C — Component-based Editor:** multiple independently calculated OS components. Component sections may themselves use spreadsheet-like grids when repeated entries are required; this does not create a fourth wizard.
+The previously discussed alternative presentation patterns remain **options for later OS-by-OS review**, not initial OS assignments:
 
-The appropriate design is selected **by OS subtype configuration**, not by an end-user choosing a layout. The OS-to-design mapping is explicitly **deferred** until the OS catalogue and specific field needs are reviewed. Do not hardcode presentation selection across disparate Laravel screens or create an administration module solely for this mapping. Keep OS-specific fields, validation and approved AD-008 calculations separate from presentation; changing a design assignment must not migrate, duplicate or otherwise change canonical financial data. Preserve unique stable source Butiran Anggaran IDs, the single shared editor, consistent save states, completeness and navigation, and established permissions. This approves presentation architecture, **not** unverified example fields or formulas.
+- **Spreadsheet-like Grid — default for every OS:** inline source-row entry/editing, suitable controls for relevant OS-specific fields and rate references.
+- **Structured Form — possible later alternative:** for an OS found better suited to a compact form after review.
+- **Component-based Editor — possible later alternative:** for an OS found better suited to distinct component entry after review.
 
-### 09.4 Butiran Anggaran (Approved)
+Keep **one canonical shared OS wizard** and its stable Butiran Anggaran identities, save states, completeness, permissions and navigation. OS-specific fields, validation and approved AD-008 calculations are independent of presentation. The change concerns the **entry interface only**, not the canonical financial model or data migration. Do not create a new end-user layout selector or administration module merely to support future presentation assignments. This decision does **not** require showing all 27 Excel output columns at once; display applicable OS input fields while preserving the approved Excel output contract.
 
-**The three OS editor patterns differ only in user experience and presentation, never in how canonical financial data is stored, read, calculated or interpreted.** Prioritise simple, meaningful, intuitive entry with minimal clicks, repetition and unnecessary complexity.
+### 09.4 Butiran Anggaran (Approved; presentation default revised 13 November 2026)
 
-- **Design A:** structured form for straightforward individual source entries.
-- **Design B:** direct spreadsheet-like inline editing by default for repeated rows. Offer an expanded record editor **only** when OS-specific fields are too complex to fit comfortably in the grid; do not require a dialog for every row. Support familiar Tab/Shift+Tab navigation, with arrow-key navigation only where it does not interfere with text or dropdown editing. Do not create blank records merely on Enter.
-- **Design C:** component-based editor; individual components may contain inline grids where repeated records warrant them.
+**Begin with spreadsheet-like inline editing for every OS**, with OS-specific relevant input fields and automatic/user-entered Kadar behaviour following their approved references. Prefer direct inline editing rather than requiring a dialog for each row. Support familiar Tab/Shift+Tab navigation; use arrow-key navigation only where it does not interfere with text or dropdown editing. Do not create blank records merely on Enter. An expanded record editor or another presentation pattern may be considered **per OS only after review**, not pre-assigned.
+
+An alternative presentation, if later approved, may change **only user experience and presentation**, never how canonical financial data is stored, read, calculated or interpreted. Prioritise simple, meaningful entry with minimal unnecessary clicks and repetition.
 
 Across all patterns, support the established add/edit/duplicate/remove lifecycle. Each saved source Butiran Anggaran has a stable unique Butiran ID; duplication creates a distinct new source record rather than reusing identity. Preserve input on validation failure, display errors beside the affected fields/rows, calculate only through approved OS-specific rules, and do not inflate totals with incomplete rows. Use truthful save status and protect unsaved work during navigation. Persisted deletion requires appropriate confirmation; unsaved drafts can be discarded without implying a persisted deletion. OS-to-pattern remapping must require **no financial-data migration** and must not change stored records or the canonical data contract. These are interaction standards, not new calculation or permission rules.
 
