@@ -83,6 +83,14 @@ These are security controls within the approved six-role architecture, not new r
 
 This is a security/session policy update only: it does not introduce additional authentication methods, change the existing six roles, alter AD-004 autosave semantics or authorise new financial workflows.
 
+### Approved MyGovUC-managed MFA policy — 13 November 2026
+
+- **MFA authority:** Sistem ABM relies on the existing **MyGovUC / Google Workspace Two-Step Verification (2SV)** arrangements for users signing in with Google, including Superadmin. Password and 2SV challenges, configuration and account recovery belong to the identity provider, **not** to ABM.
+- **No duplicate factor:** Do **not** develop an additional ABM OTP or authenticator-app enrolment requirement solely for this authentication flow.
+- **Access control remains independent:** Google authentication is necessary but does not automatically authorise access; check active registered ABM identity and current role/organisational assignments on the server according to AD-005.
+- **Deployment verification required:** Verify the actual MyGovUC tenant's 2SV enforcement and application-integration permissions before declaring the control operational. A normal Google sign-in result does not by itself prove which MFA factor was used; do not claim a particular MFA assurance level without verifiable provider evidence.
+- This policy does not weaken the approved session-expiry, revocation, Superadmin or financial audit controls.
+
 ## 05 — Import, reporting and failure safeguards
 
 - Historical expenditure imports remain Superadmin-managed, read-only to other roles and separate from transactional Anggaran/Bidaan.
