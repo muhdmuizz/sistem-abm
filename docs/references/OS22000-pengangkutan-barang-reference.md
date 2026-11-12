@@ -31,12 +31,23 @@ The existing machine-readable dataset is [OS22000-pengangkutan-barang-kadar.csv]
 - **Gred:** Legacy grade as supplied, including special `C`. Do not infer a numeric equivalence for `C`.
 - **Kadar:** The supplied rate, when present, is indexed by the category combination and grade; no new values are introduced.
 
-## Unresolved source gaps — preserve without assumptions
+## Confirmed rate modes and SSPA grade treatment — 12 November 2026
 
-- **Gred 11** is missing from the provided rate rows. No replacement value has been approved.
-- **Six records** have blank `Kadar`. Do not treat them automatically as zero or user-entered rates; the rule for these blanks has not yet been agreed.
-- Do not invent eligibility, caps, approval steps or financial formulas beyond the source data.
+The user expressly confirmed the following rules for **OS22000 — Pengangkutan Barang-barang**.
+
+| Kategori3 — Kategori Tuntutan | Kadar treatment |
+| --- | --- |
+| Tambang Pengangkutan Barang | **Mandatory user-entered Kadar** |
+| Pemberian Pindahan | **Lookup prescribed Kadar** using the supplied reference by location, status and applicable Gred |
+| Elaun Berpindah | **Lookup prescribed Kadar** using the supplied reference by location, status and applicable Gred |
+| Belanja Pelbagai | **Mandatory user-entered Kadar** |
+
+The **six source rows with blank Kadar** (two Tambang Pengangkutan Barang and four Belanja Pelbagai) intentionally remain blank in the source CSV. The applicable **user-input** rule is encoded separately in [OS22000-pengangkutan-barang-kadar-modes.csv](OS22000-pengangkutan-barang-kadar-modes.csv). Blank does **not** mean zero or a predefined amount. No additional free-text description requirement has been approved for these OS22000 categories.
+
+**Gred 11:** The user clarified that the **SSPA Pengurusan dan Profesional tier** runs directly from **Gred 10 to Gred 12**, omitting Gred 11. Accordingly **do not fabricate a Gred 11 rate or interpolate one** for this source reference. This clarification concerns that tier and does **not** establish a general claim that Gred 11 is absent from every SSPA service group. Jawatan and Gred remain separate from all category levels, using Reference 07 as appropriate.
+
+No other eligibility, caps, approval steps or financial formulas are established by this decision.
 
 ## Commit scope
 
-This document records previously agreed facts and the approved Kategori1–Kategori3 mapping. The source CSV, master OS catalogue, Reference 07, architecture decisions, Laravel code and PostgreSQL remain unchanged.
+This document records approved Kategori1–Kategori3 mapping, rate modes, and the supplied SSPA Pengurusan dan Profesional Gred 11 clarification. The **126-row source CSV**, master OS catalogue, Reference 07, architecture decisions, Laravel code and PostgreSQL remain unchanged. A separate four-row rate-mode CSV records the confirmed manual-versus-prescribed Kadar rule.
