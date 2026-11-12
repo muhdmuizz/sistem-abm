@@ -69,7 +69,7 @@ Do not mix the Jenis and Kategori choices. **Pegawai** and **Guru** are also sep
 - **Kaedah Pelaksanaan** — Pakej; Bukan Pakej.
 - **Tarikh Mula** and **Tarikh Tamat** — valid chronological dates within the selected Kitaran ABM year.
 
-**Pakej** reveals **Komponen Pakej** with **Makan Minum, Penginapan, Dewan**; at least one applicable component must be selected. The system automatically selects and locks the relevant OS, such as OS29000 Pakej or applicable OS42000, according to rules to be specified in AD-008. Switching to **Bukan Pakej** removes the package requirement only subject to the saved-Butiran safeguards above; never silently remove financial records.
+**Pakej** reveals **Komponen Pakej** with **Penginapan, Makan Minum, Sewaan Dewan, Sewaan Peralatan** (the owner-approved four-component list, superseding the earlier three); at least one applicable component must be selected. See [OS29000 Pakej reference](../references/OS29000-pakej-reference.md). The system automatically selects and locks the relevant OS, such as OS29000 Pakej or applicable OS42000, according to rules to be specified in AD-008. Switching to **Bukan Pakej** removes the package requirement only subject to the saved-Butiran safeguards above; never silently remove financial records.
 
 ### D. Bilangan Jemputan/ Urus Setia dan Peserta
 
