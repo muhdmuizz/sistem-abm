@@ -1,0 +1,11 @@
+Kategori1,Kategori2,Kadar (RM; Reference),Kadar Mode
+Penyelenggaraan Kenderaan Jabatan,Sedan,,USER_INPUT_KADAR
+Penyelenggaraan Kenderaan Jabatan,Pacuan Empat Roda,,USER_INPUT_KADAR
+Penyelenggaraan Kenderaan Jabatan,Van,,USER_INPUT_KADAR
+Penyelenggaraan Kenderaan Jabatan,Koster (Coaster),,USER_INPUT_KADAR
+Penyelenggaraan Kenderaan Jabatan,Bas,,USER_INPUT_KADAR
+Penyelenggaraan Kenderaan Jabatan,Bot,,USER_INPUT_KADAR
+Penyelenggaraan Aset Alih,Aset Alih,,USER_INPUT_KADAR
+Penyelenggaraan Alat Pemadam Api,Alat Pemadam Api,100.00,FIXED_REFERENCE
+Penyelenggaraan Alat Pemadam Api,Sistem Pencegahan Kebakaran,,USER_INPUT_KADAR
+Tebang Pokok,,1500.00,FIXED_REFERENCE
