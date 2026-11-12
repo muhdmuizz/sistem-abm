@@ -91,6 +91,17 @@ This is a security/session policy update only: it does not introduce additional 
 - **Deployment verification required:** Verify the actual MyGovUC tenant's 2SV enforcement and application-integration permissions before declaring the control operational. A normal Google sign-in result does not by itself prove which MFA factor was used; do not claim a particular MFA assurance level without verifiable provider evidence.
 - This policy does not weaken the approved session-expiry, revocation, Superadmin or financial audit controls.
 
+### Approved security alerts and incident notifications — 13 November 2026
+
+- **Initial security notification audience:** **Superadmin only** for administrator-directed security alerts. Do not create a new role or assign additional incident recipients without a separate decision.
+- **Initial delivery:** email alerts to eligible Superadmin recipient(s), with an internal **Security Events** view preserving event history for investigation. The authoritative event record is the protected server-side security log; a failed email must not erase or conceal the underlying event.
+- **Immediate security alerts:** repeated suspicious sign-in attempts; a Superadmin role being granted or removed; forced revocation of all user sessions; and credible indications of database intrusion, credential compromise or other critical incidents.
+- **Access-scope violations:** record attempted unauthorised PTJ/organisational access; issue an alert for repeated or serious attempts rather than emailing every isolated denial.
+- **User account deactivation:** audit the event and notify the affected user, subject to a safe verified notification channel; do not include sensitive credentials or financial details in alerts.
+- **Routine events:** retain unsuccessful individual sign-ins and ordinary login/logout events in appropriately protected logs without routine security emails.
+- **Audit content:** capture event type, timestamp, authenticated actor where known, affected account/resource, outcome and investigation context as appropriate; minimise unnecessary personal information and never log secrets.
+- **Implementation detail deferred:** concrete alert thresholds, email routing configuration, delivery escalation on failure, retention and monitoring infrastructure must be validated when the deployment environment is known. This decision is a **policy**, not a claim of deployed alerts or an operational Security Events page.
+
 ## 05 — Import, reporting and failure safeguards
 
 - Historical expenditure imports remain Superadmin-managed, read-only to other roles and separate from transactional Anggaran/Bidaan.
