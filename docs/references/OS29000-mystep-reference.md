@@ -38,9 +38,20 @@ The **Taraf Akademik** is a distinct selection attribute, not Kategori2 or Kateg
 
 See [academic rate source CSV](OS29000-mystep-taraf-akademik-kadar-source.csv).
 
+## Unified MySTEP template — owner-confirmed
+
+The owner explicitly confirmed that the following catalogue labels **are the same MySTEP template**, not different templates or different reference sets:
+
+- `MySTEP`
+- `MySTEP - Guru Ganti`
+- `MySTEP - Pembantu Pengurusan Murid (PPM) Ganti`
+
+**Use one shared MySTEP template and the same Kategori1, TUJUAN, Taraf Akademik and JUMLAH-as-Kadar references across all three.** The relevant **Aktiviti Kewangan** will distinguish their application later. Do not implement three separate templates or duplicate the references, and do not invent a new variant-specific difference or rate.
+
+The existing legacy catalogue labels and mappings are left intact for now; this decision governs template reuse and does not itself specify or revise any Aktiviti Kewangan mapping, eligibility rule, or calculation method.
+
 ## Boundaries and open questions
 
 - Applicable Kadar is mandatory per [shared rule](shared-mandatory-kadar-rule.md).
-- No basis (monthly/hourly/session), duration/quantity formula, Excel destination field for Taraf Akademik, applicable year, separate rates per Kategori1, or eligibility condition has been established by these source tables.
-- The catalogue currently lists `MySTEP`, `MySTEP - Guru Ganti` and `MySTEP - Pembantu Pengurusan Murid (PPM) Ganti` as distinct legacy variant labels. **Do not change, combine or infer cross-variant implementation or rates** merely from the Kategori1 options in this document.
-- No changes to the master OS catalogue, Kod Aktiviti mapping, ADs, Laravel, PostgreSQL or existing 27-column Excel contract are authorised by this commit.
+- No basis (monthly/hourly/session), duration/quantity formula, Excel destination field for Taraf Akademik, applicable year, or eligibility condition has been established by these source tables.
+- No changes to the master OS catalogue, Kod Aktiviti mapping, other ADs, Laravel, PostgreSQL or existing 27-column Excel contract are authorised by this commit.
