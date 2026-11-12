@@ -102,7 +102,7 @@ A single wizard session may create or edit **multiple Butiran Anggaran**; one so
 - **Tambah Butiran** creates an editable row/record.
 - **Tambah XX Baris** supports batch additions, for example +5, +10, +20, +50, so users need not click fifty times. No universal 50-row total cap; large batches should be processed efficiently.
 - **Salin Baris** copies applicable source inputs into a **new Butiran Anggaran identity**; the duplicate remains editable, recalculates derived values and does not automatically become complete. Preserve the applicable Program/ Aktiviti association.
-- For OS suited to tabular entry, provide **spreadsheet-style inline editing**, Tab navigation and multi-cell paste, with per-row validation and recalculation. Complex OS can use structured forms within the same shared framework.
+- **Spreadsheet-like inline editing is now the initial default for every OS** (revised 13 November 2026; see AD-013 §09.3–09.4), with Tab navigation, multi-cell paste, per-row validation and recalculation as applicable. Review each OS individually before approving any alternative presentation such as a structured form or component-based editor. Such a later presentation choice must not alter the shared wizard, canonical Butiran data, validation, Kadar rules or existing Excel output contract.
 - Blank newly inserted rows do not count as completed Butiran and do not contribute to financial totals. They must be handled clearly before formal submission.
 
 ### 5.2 Drafts, validation and completion
