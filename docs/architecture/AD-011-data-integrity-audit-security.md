@@ -44,7 +44,7 @@ Specify enforceable technical safeguards for the existing approved financial hie
 ## 04 — Authentication, authorisation and data isolation
 
 - Use the approved **six functional roles** and their exact AD-005 organisational scopes. Multiple assignments are additive only within explicitly granted permissions; organisational job titles do not grant functional authority.
-- Authenticate the real user through the established identity integration; do not impersonate or replace actor identity when Superadmin acts across scopes.
+- Authenticate the real user through the **AD-005 approved Google sign-in flow**: the public login page is reachable without pre-login MyGovUC account restrictions, while the Google callback and every protected operation require server-side validation of authenticated identity, active registered user and organisational eligibility. The account chooser, optional domain hints and the user's email text must not independently grant access. Password/MFA handling belongs to Google. Do not impersonate or replace actor identity when Superadmin acts across scopes.
 - Centralise Laravel policies/gates and scoped queries; enforce both record visibility and action authorisation **server-side** for UI, APIs, imports, exports, background jobs and bulk actions. Never trust client-supplied PTJ/Aktiviti Kewangan/role IDs.
 - Re-evaluate effective authorisation at the time of mutation, not solely when the page loaded. Default-deny on missing or ambiguous assignment.
 - Preserve AD-003 separation between Penyedia Bidaan (activation/submission) and Penyedia Anggaran (OS preparation).
