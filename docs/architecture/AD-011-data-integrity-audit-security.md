@@ -68,7 +68,8 @@ Specify enforceable technical safeguards for the existing approved financial hie
 - **Autosave preservation:** retain the previously approved AD-004 autosave after a short editing pause, visible **Menyimpan / Disimpan / Gagal Disimpan** indicators and manual **Simpan** fallback. Upon reauthentication, users can resume their **last successfully persisted** draft. Never describe failed or unfinished saves as successful; do not silently discard changes or assume an expired session can save data.
 - **Multiple devices:** concurrent authenticated ABM sessions are permitted. Each device maintains its own application session; concurrent edits must obey AD-011 stale-write protection. Ordinary sign-out ends **the current ABM session only**, not the global Google session or other devices.
 - **Deactivation and authorisation changes:** deactivate/revoke application access for disabled accounts, including previously active sessions. Re-evaluate changed roles/scopes on subsequent protected requests and at sensitive mutations; previously cached privileges may not continue to authorise actions.
-- **Not yet decided:** absolute session lifetime and optional cross-device session management. Do not invent values for them.
+- **Absolute session lifetime (owner-approved 13 November 2026):** a protected ABM session must expire **8 hours after its initial authentication**, even if the user remains active and explicitly extends its idle timeout. Renewal of the 30-minute idle timeout must **not** reset the eight-hour absolute deadline. After that deadline, require Google reauthentication and repeat active-user and scope checks; do not silently extend the session. AD-004 autosave and truthful save-state safeguards remain applicable.
+- **Not yet decided:** optional cross-device session management (e.g. administrator-initiated termination of specific/all active sessions). Ordinary logout continues to end only the current ABM session; existing account deactivation and permission-revalidation requirements remain unchanged.
 
 This is a security/session policy update only: it does not introduce additional authentication methods, change the existing six roles, alter AD-004 autosave semantics or authorise new financial workflows.
 
@@ -97,7 +98,7 @@ This is a security/session policy update only: it does not introduce additional 
 
 ## Security baseline and evidence — 13 November 2026
 
-The adopted [Sistem ABM Security Baseline](../security/security-baseline.md) enumerates the implementation and pre-launch verification controls (SEC-01–SEC-26) for Google sign-in, sessions, scoped access, financial protection, infrastructure, scanning and incident readiness. It **operationalises** this AD without replacing its approved financial and role rules. Every security requirement remains **unverified until supported by actual tests or operational evidence**. The approved 30-minute idle policy and five-minute warning are recorded above; absolute session lifetime remains undecided.
+The adopted [Sistem ABM Security Baseline](../security/security-baseline.md) enumerates the implementation and pre-launch verification controls (SEC-01–SEC-26) for Google sign-in, sessions, scoped access, financial protection, infrastructure, scanning and incident readiness. It **operationalises** this AD without replacing its approved financial and role rules. Every security requirement remains **unverified until supported by actual tests or operational evidence**. The approved **30-minute idle timeout, five-minute warning and eight-hour absolute session lifetime** are recorded above; implementation and verification remain outstanding.
 
 ## Deferred inputs and compatibility
 
