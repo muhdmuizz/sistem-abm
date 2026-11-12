@@ -17,11 +17,11 @@ Berkontrak,Jentera,Jentera Perkilangan,USER_INPUT_KADAR
 Berkontrak,Jentera,Jentera Pertanian,USER_INPUT_KADAR
 Berkontrak,Jentera,Jentera Pembinaan,USER_INPUT_KADAR
 Berkontrak,Jentera,Jentera-jentera Lain,USER_INPUT_KADAR
-Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Alat Kelengkapan Pejabat,USER_INPUT_KADAR
-Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Perabot & Lengkapan,USER_INPUT_KADAR
+Berkontrak,"Alat Kelengkapan Pejabat, Perabot & Lengkapan",Alat Kelengkapan Pejabat,USER_INPUT_KADAR
+Berkontrak,"Alat Kelengkapan Pejabat, Perabot & Lengkapan",Perabot & Lengkapan,USER_INPUT_KADAR
 Berkontrak,Alat Kelengkapan Elektronik,Komputer dan Alat Kelengkapan Prosesan Data Elektronik Yang Lain,USER_INPUT_KADAR
 Berkontrak,Alat Kelengkapan Elektronik,Alat Kelengkapan Elektronik Yang Lain,USER_INPUT_KADAR
-Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas,USER_INPUT_KADAR
+Berkontrak,Alat Kelengkapan Elektrik,"Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas",USER_INPUT_KADAR
 Berkontrak,Alat Kelengkapan Elektrik,Motor Janakuasa,USER_INPUT_KADAR
 Berkontrak,Alat Kelengkapan Elektrik,Alat Litar Elektrik,USER_INPUT_KADAR
 Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Elektrik Yang Lain,USER_INPUT_KADAR
@@ -49,11 +49,11 @@ Tidak Berkontrak,Jentera,Jentera Perkilangan,USER_INPUT_KADAR
 Tidak Berkontrak,Jentera,Jentera Pertanian,USER_INPUT_KADAR
 Tidak Berkontrak,Jentera,Jentera Pembinaan,USER_INPUT_KADAR
 Tidak Berkontrak,Jentera,Jentera-jentera Lain,USER_INPUT_KADAR
-Tidak Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Alat Kelengkapan Pejabat,USER_INPUT_KADAR
-Tidak Berkontrak,Alat Kelengkapan Pejabat, Perabot & Lengkapan,Perabot & Lengkapan,USER_INPUT_KADAR
+Tidak Berkontrak,"Alat Kelengkapan Pejabat, Perabot & Lengkapan",Alat Kelengkapan Pejabat,USER_INPUT_KADAR
+Tidak Berkontrak,"Alat Kelengkapan Pejabat, Perabot & Lengkapan",Perabot & Lengkapan,USER_INPUT_KADAR
 Tidak Berkontrak,Alat Kelengkapan Elektronik,Komputer dan Alat Kelengkapan Prosesan Data Elektronik Yang Lain,USER_INPUT_KADAR
 Tidak Berkontrak,Alat Kelengkapan Elektronik,Alat Kelengkapan Elektronik Yang Lain,USER_INPUT_KADAR
-Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas,USER_INPUT_KADAR
+Tidak Berkontrak,Alat Kelengkapan Elektrik,"Alat Kelengkapan Hawa Dingin, Penyejuk & Pemanas",USER_INPUT_KADAR
 Tidak Berkontrak,Alat Kelengkapan Elektrik,Motor Janakuasa,USER_INPUT_KADAR
 Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Litar Elektrik,USER_INPUT_KADAR
 Tidak Berkontrak,Alat Kelengkapan Elektrik,Alat Kelengkapan Elektrik Yang Lain,USER_INPUT_KADAR
