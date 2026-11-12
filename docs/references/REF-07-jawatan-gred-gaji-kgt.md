@@ -16,7 +16,7 @@ The user's **second, KGT-inclusive** Jawatan/Gred dataset supersedes the earlier
 
 ## 2. Pembantu Akauntan — all four records present in source catalogue
 
-The user identified **Pembantu Akauntan** as missing from the **application database**. It is **not missing from the uploaded source**. Preserve all four records:
+The supplied **reference catalogue already contains all four Pembantu Akauntan grades (W1–W4)**. Preserve the following records; no claim is made about any application database:
 
 | Jawatan | SSPA | Gaji Minimum (RM) | Gaji Maksimum (RM) | Gaji Median (RM) | KGT tetap (RM) |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -25,7 +25,7 @@ The user identified **Pembantu Akauntan** as missing from the **application data
 | Pembantu Akauntan | W3 | 2,790.00 | 6,090.00 | 4,440.00 | 125.00 |
 | Pembantu Akauntan | W4 | 2,930.00 | 6,410.00 | 4,670.00 | 130.00 |
 
-**Implementation follow-up (not completed by this commit):** check the reference-data seeder/import and Jawatan autocomplete against W1–W4 before assuming new salary reference entries must be created. This record does **not** claim a database repair.
+**Reference status:** W1–W4 are present in the committed 131-row CSV. Their presence does not establish whether a future application import, lookup or user interface is implemented.
 
 ## 3. Pengarah Pendidikan Negeri — VU7
 
@@ -53,10 +53,10 @@ The original row had a grade but no salary amounts. Populate the reference with 
 
 **Source provenance for VU7 salary range and rate:** `https://belanjawan.mof.gov.my/pdf/belanjawan2026/sp/LAMPIRAN-A.pdf` (MOF, Buku Senarai Perjawatan 2026, Lampiran A); figures and 9% rate discussed and accepted in conversation.
 
-## 4. Outstanding implementation tasks
+## 4. Future implementation considerations (not completed)
 
-1. Verify whether the existing application database lacks Pembantu Akauntan W1–W4 and repair its import/seeder if required.
-2. Implement VU7's percentage-based KGT calculation rather than fixed-KGT XLOOKUP; verify the salary base and rounding rules.
-3. Validate any application-specific calculations, reference imports and autocomplete behaviour against the 131-row catalogue.
+1. When implementing Jawatan/Gred references, use the full 131-row catalogue, including Pembantu Akauntan W1–W4. **No assertion is made about the current contents of an application database.**
+2. Implement VU7's percentage-based KGT calculation rather than fixed-KGT XLOOKUP; verify the salary base and rounding rules before implementation.
+3. Validate future reference imports, calculations and Jawatan/Gred selection against the committed catalogue.
 
 **Not performed by this commit:** changes to Laravel code, database data/schema, AD documents, deployment or any payroll calculation engine.
