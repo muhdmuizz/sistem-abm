@@ -83,6 +83,10 @@ Specify enforceable technical safeguards for the existing approved financial hie
 9. Aggregated financial reports reconcile with eligible canonical granular data and correct version.
 10. Large data operations remain bounded and recoverable; failure paths preserve financial integrity.
 
+## Security baseline and evidence — 13 November 2026
+
+The adopted [Sistem ABM Security Baseline](../security/security-baseline.md) enumerates the implementation and pre-launch verification controls (SEC-01–SEC-26) for Google sign-in, sessions, scoped access, financial protection, infrastructure, scanning and incident readiness. It **operationalises** this AD without replacing its approved financial and role rules. Every security requirement remains **unverified until supported by actual tests or operational evidence**. Session timeout and related policy details remain for separate review.
+
 ## Deferred inputs and compatibility
 
 - AD-008 alone determines OS-specific field eligibility, calculations, rates, rounding and completeness mappings.
