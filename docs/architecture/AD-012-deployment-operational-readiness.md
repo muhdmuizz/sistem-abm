@@ -71,6 +71,10 @@ A deployment candidate must pass the applicable gates:
 
 Where OS-specific calculations or official payroll template mappings are not yet implemented (AD-008 and pending official template), record those gates as **not met**, not silently waived or assumed passed. An architecture-complete system is not automatically production-ready.
 
+### Security release gate — adopted 13 November 2026
+
+Before production launch, complete the [Sistem ABM Security Baseline](../security/security-baseline.md) checks (SEC-01–SEC-26) and record reproducible evidence, responsible owner, outcome and outstanding issues. Applicable critical controls must pass, and material blockers must be resolved; a document-only approval or build success is not proof of security readiness. This augments, and does not replace, the eight deployment acceptance gates above. No tests or production deployment are claimed complete.
+
 ## 07 — Operational handover and release records
 
 Maintain a concise release checklist/runbook with: environment identifier, deployed Git SHA, migration list, build artefact reference, backup checkpoint, test results, outstanding known limitations, operator, date/time and post-deployment verification.
