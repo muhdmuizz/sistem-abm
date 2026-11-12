@@ -60,6 +60,18 @@ Specify enforceable technical safeguards for the existing approved financial hie
 - Keep the **actual authenticated actor**, their registered organisational identity and the **chosen Butiran Tempat Bertugas** distinguishable in authorisation/audit processes. No selection or filter expands the user's authority; preserve the stable Butiran ID and immutable submitted history.
 - This implements the approved organisational scope clarification without changing existing six-role architecture, workflow statuses, financial calculation policy or AD-004 filter order.
 
+### Approved session policy — 13 November 2026
+
+- **Idle timeout:** terminate the protected Sistem ABM session after **30 minutes of genuine user inactivity**, enforced by the server. Typing, editing or navigating as an authenticated user may count as activity; automated autosave, polling and background refresh must not indefinitely refresh idle expiry.
+- **Warning:** show **Sesi Hampir Tamat** approximately **5 minutes before** the idle deadline, with an explicit **Teruskan Sesi** action to renew the current authorised session.
+- **Expiry:** block further protected requests and financial mutations after expiry. Require Google reauthentication and recheck the registered active user and current permissions.
+- **Autosave preservation:** retain the previously approved AD-004 autosave after a short editing pause, visible **Menyimpan / Disimpan / Gagal Disimpan** indicators and manual **Simpan** fallback. Upon reauthentication, users can resume their **last successfully persisted** draft. Never describe failed or unfinished saves as successful; do not silently discard changes or assume an expired session can save data.
+- **Multiple devices:** concurrent authenticated ABM sessions are permitted. Each device maintains its own application session; concurrent edits must obey AD-011 stale-write protection. Ordinary sign-out ends **the current ABM session only**, not the global Google session or other devices.
+- **Deactivation and authorisation changes:** deactivate/revoke application access for disabled accounts, including previously active sessions. Re-evaluate changed roles/scopes on subsequent protected requests and at sensitive mutations; previously cached privileges may not continue to authorise actions.
+- **Not yet decided:** absolute session lifetime and optional cross-device session management. Do not invent values for them.
+
+This is a security/session policy update only: it does not introduce additional authentication methods, change the existing six roles, alter AD-004 autosave semantics or authorise new financial workflows.
+
 ## 05 — Import, reporting and failure safeguards
 
 - Historical expenditure imports remain Superadmin-managed, read-only to other roles and separate from transactional Anggaran/Bidaan.
@@ -85,7 +97,7 @@ Specify enforceable technical safeguards for the existing approved financial hie
 
 ## Security baseline and evidence — 13 November 2026
 
-The adopted [Sistem ABM Security Baseline](../security/security-baseline.md) enumerates the implementation and pre-launch verification controls (SEC-01–SEC-26) for Google sign-in, sessions, scoped access, financial protection, infrastructure, scanning and incident readiness. It **operationalises** this AD without replacing its approved financial and role rules. Every security requirement remains **unverified until supported by actual tests or operational evidence**. Session timeout and related policy details remain for separate review.
+The adopted [Sistem ABM Security Baseline](../security/security-baseline.md) enumerates the implementation and pre-launch verification controls (SEC-01–SEC-26) for Google sign-in, sessions, scoped access, financial protection, infrastructure, scanning and incident readiness. It **operationalises** this AD without replacing its approved financial and role rules. Every security requirement remains **unverified until supported by actual tests or operational evidence**. The approved 30-minute idle policy and five-minute warning are recorded above; absolute session lifetime remains undecided.
 
 ## Deferred inputs and compatibility
 
