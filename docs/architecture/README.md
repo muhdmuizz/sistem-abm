@@ -2,8 +2,12 @@
 
 This is the **single master index** for architecture decisions (ADs). Each AD has its own Markdown document when drafted and approved. Planned ADs are tracked here only; they are **not approved specifications**.
 
-**Repository:** `muhdmuizz/sistem-abm` · **Branch:** `main`  
-**Last updated:** 11 November 2026
+**Repository:** `muhdmuizz/sistem-abm` · **Development branch:** `dev`  
+**Status reconciliation:** 13 November 2026
+
+## Implementation progress is tracked separately
+
+Batches 001–007 are implemented and merged, with the latest application checkpoint `54ae2f7`; local synchronisation is user-confirmed. This does **not** mean the approved ADs are fully implemented. Read the [development progress register](../development/README.md) for per-batch scope, actual CI evidence, merge checkpoints, local status and pending work. The AD status table below remains a design-approval tracker.
 
 ## Architecture decision tracker
 
@@ -76,4 +80,4 @@ This records the **existing six-step development plan** without introducing anot
 
 **Scope for Step 05:** Validate the full applicable OS catalogue against each OS's approved fields, references, Kadar, calculation/validation and output requirements, alongside shared Anggaran persistence, editor and submission behaviour. Representative OS can be used to sequence testing, but **none may replace coverage of all applicable OS**. Maintain previously approved exclusions and defer any unresolved OS-specific rules to their authoritative references/AD-008; do not invent rates, formulas or field mappings.
 
-**Next work:** Begin Step 02 implementation from the established architecture, without inventing a source-code recovery phase. Architecture approval does not establish implementation or test completion.
+**Current implementation reconciliation — 13 November 2026:** The table above describes the existing functional workstreams, not the delivery sequence of the clean rebuild. Foundation Batches 001–007 are complete; transactional Anggaran persistence and the listed financial/UI/submission workstreams are still pending. Do not restart the foundations or treat their completion as completion of Step 02. Current delivery status and proposed next work are recorded only in the [development register](../development/README.md). No new architecture or additional workstream is approved by this status note.

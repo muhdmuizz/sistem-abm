@@ -33,3 +33,14 @@ No public route, audit viewer/export, grant/revoke/activation API, automatic obs
 ## Local synchronisation after verified merge
 
 Pull clean `dev` with fast-forward only, clear configuration and verify the actual PostgreSQL database is `sistem_abm`, then run `php artisan migrate`. There is no audit seeder. Do not run fresh/reset migrations against development data.
+
+## Verified close-out — 13 November 2026
+
+- **Status:** Implemented, verified, merged and locally synchronised (user-confirmed).
+- **Merge:** [PR #8](https://github.com/muhdmuizz/sistem-abm/pull/8), `54ae2f7500941bdb6a42e8c92f3467dc1e93551b`.
+- **Actual tested head:** `695638e7380627ca74d59600b7c2aeec216fbf46`.
+- **Runtime evidence:** [successful PostgreSQL CI run](https://github.com/muhdmuizz/sistem-abm/actions/runs/43405028148); PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; **108 tests passed, 837 assertions** (full-suite totals).
+- **Local evidence:** user reported “Clean” after the supplied PowerShell synchronisation instructions. This is not an independent cloud inspection of Windows/database state.
+- **Remaining limitations:** the implementation boundaries above still apply; completion does not certify unimplemented screens, authentication, business workflows or production controls.
+
+See [the development register](README.md) for the current application checkpoint and later changes.

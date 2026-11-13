@@ -1,4 +1,6 @@
-# Sistem ABM — Organisational Reference Register (confirmed 12 November 2026)
+# Sistem ABM — Organisational Reference Register
+
+**Source decisions confirmed:** 12 November 2026. **Implementation status reconciled:** 13 November 2026.
 
 **Authority:** user-supplied PTJ master list, JPNT/PPD Sektor list, complete school list and explicit reconciliations in the 12 November 2026 conversation. This is reference-data provenance and implementation tracking, **not an additional Architecture Decision**.
 
@@ -49,9 +51,17 @@ See the committed clarifications in **AD-002, AD-004, AD-005, and AD-011**:
 - **Penyedia Bidaan** acts at PTJ level. **Penyedia Anggaran** at PTJ level may act across permitted workplaces within its authorised PTJ/Aktiviti Kewangan; at Tempat Bertugas level, access is restricted to that user's own workplace.
 - Preserve the existing **Aktiviti Kewangan → PTJ → Tempat Bertugas → Status Anggaran** filter order; do not introduce a Sektor filter or financial hierarchy layer.
 
+## Current implementation and evidence
+
+- [ptj-master.csv](ptj-master.csv) contains the 69-PTJ roster. Batch 002 implemented its reference import with five Aktiviti Kewangan and initially 37 Kod Aktiviti.
+- [sektor-master.csv](sektor-master.csv) contains 15 JPNT organisational entries and 56 PPD Sektor entries. Batch 003 implemented their workplace references, 448 non-PTJ schools and 60 SMK PTJ self-workplaces: 579 total.
+- The owner-confirmed TASKA correction adds Kod Aktiviti `010102` under PPN; the current code inventory is 38. Batch 004 imports 33 OS catalogue entries and 105 source mappings, retaining POL/AMal as exclusions.
+- Category/activity permission defaults and configuration resolution are implemented by Batch 005; no OS default choices or individual PTJ exceptions were selected/seeded.
+- Imports and constraints were tested in isolated PostgreSQL CI; local migrations/seeding were user-confirmed. See the [development progress register](../development/README.md) and batch records for exact checkpoints, test counts and evidence provenance.
+- The former statements that PTJ/Sektor machine-readable rosters were missing are superseded by the committed files and implemented imports above.
+
 ## Data limitations / pending verification
 
-- The 60 SMK PTJ codes/names and 69-PTJ source roster were supplied in conversation, but **the full machine-readable PTJ roster is not yet stored in this reference directory**. Do not claim it is imported or seeded.
-- The JPNT/PPD Sektor names were supplied in conversation, but **the full machine-readable Sektor roster is not yet stored in this reference directory**.
-- The complete school source lacked school codes; check these with an authoritative dataset when available.
-- **No application database import, migrations, or system deployment is claimed by this register.**
+- The complete non-PTJ school source lacks verified institutional codes; check them against an authoritative dataset when available. Do not fabricate codes.
+- Reference import does not establish complete financial workflows, authentication, user assignment administration, per-Butiran enforcement or production deployment.
+- No production deployment or release/security certification is claimed.

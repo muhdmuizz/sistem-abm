@@ -1,7 +1,7 @@
 # Reference 04 — Aktiviti Kewangan and Anggaran (OS): Confirmed Decisions
 
 **Confirmed:** 12 November 2026  
-**Status:** Approved reference-modelling decisions; no application implementation or database import authorised by this record.  
+**Status:** Approved reference-modelling decisions. Reference persistence was subsequently implemented in Batch 004; this record does not approve financial calculations or workflows.  
 **Source:** User-supplied table with columns `Aktiviti`, `Kod Aktiviti`, `Kod Objek`, `Butiran Perbelanjaan`, and explicit subsequent decisions.
 
 ## 1. Aktiviti Kewangan names
@@ -59,10 +59,11 @@ Keep the following items in the **reference data**, but **exclude them from Angg
 
 Their presence in an official or source reference list does **not** re-authorise any corresponding wizard, calculation or entry workflow.
 
-## 6. Scope and status
+## 6. Scope and status — reconciled 13 November 2026
 
-- The conversation's preliminary tally was **106 raw mapping rows**, **103 after removing three exact duplicates**.
-- A preliminary estimate of **31 distinct Anggaran (OS)** following five wording consolidations was discussed. **This is a derived count, not a replacement for a validated catalogue**; verify against the actual consolidated output before treating it as final.
-- This file captures **approved decisions only**. The full source table, the derived reference CSVs, and the implementation-specific active/excluded flags have **not** been committed by this action.
-- **Reference 05 — PTJ ↔ Aktiviti Kewangan applicability** is still to be established; do not infer PTJ mappings from this record.
-- No modifications are made to AD-008 or other Architecture Decisions by creating this record.
+- **Historical preliminary counts:** the conversation initially tallied 106 raw mapping rows / 103 after exact-duplicate removal and estimated 31 distinct OS. These were preliminary, not the final current reference inventory.
+- **Current committed source:** [anggaran-os-catalogue.csv](anggaran-os-catalogue.csv) contains 33 identities (31 eligible references and two exclusions); [kod-aktiviti-anggaran-os-mapping.csv](kod-aktiviti-anggaran-os-mapping.csv) contains 105 mappings. Preserve the approved identity/wording/duplicate/exclusion rules above.
+- Batch 004 implements and tests catalogue/mapping persistence. The owner subsequently assigned TASKA Kod Aktiviti `010102` under PPN; [the TASKA reference](OS42000-subsidi-yuran-taska-reference.md) records that correction. Current Kod Aktiviti inventory is 38.
+- [Reference 05](REF-05-ptj-aktiviti-kewangan-anggaran-os-permissions.md) now records the confirmed applicability/permission framework. Do not infer individual PTJ OS selections from this catalogue.
+- [Development progress and verification evidence](../development/README.md) record the actual implementation checkpoints. Import completion does not finalise Draft AD-008 or implement OS calculations, transaction workflows or permission administration.
+- This reconciliation changes status reporting only; it does not amend the approved modelling rules or AD decisions.
