@@ -12,7 +12,7 @@ Laravel application for JPNT's approved ABM architecture. Active development is 
 
 ## Current delivery boundary
 
-Batches 001–007 provide database/reference foundations, PTJ permission resolution, user/role-scope storage and evaluation, and the transactional audit primitive. They do not yet provide the ABM application interface, Google sign-in, complete administration services, financial preparation/review workflows or production readiness. See the progress register for the exact evidence and limitations.
+Batches 001–007 provide database/reference foundations, PTJ permission resolution, user/role-scope storage and evaluation, and the transactional audit primitive. Batch 008 adds the first sign-in/shell/read-only reference interface and Google code-flow preparation. Real OAuth configuration, initial registered-account setup and local sign-in remain pending. Complete administration services, financial preparation/review workflows and production readiness are not delivered by this interface slice. See the progress register for the exact evidence and limitations.
 
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
