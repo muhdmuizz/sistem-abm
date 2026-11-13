@@ -15,7 +15,7 @@ class EnsureAbmSession
         $authenticated = $request->session()->get('abm_authenticated_at');
         $active = $request->session()->get('abm_last_activity');
         if ($user === null || ! $user->is_active || $user->ptj_id === null || $user->google_subject === null ||
-            ! $user->penugasanPeranan()->exists() || ! is_int($authenticated) || ! is_int($active) ||
+            ! $user->penugasanPeranan()->exists() || $request->session()->get('abm_access_revision') !== $user->access_revision || ! is_int($authenticated) || ! is_int($active) ||
             $now - $authenticated >= 28800 || $now - $active >= 1800) {
             Auth::logout();
             $request->session()->invalidate();

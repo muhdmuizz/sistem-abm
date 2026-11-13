@@ -13,6 +13,78 @@
     const navigation = document.getElementById('mobile-navigation');
     document.getElementById('mobile-open')?.addEventListener('click', () => navigation.showModal());
     document.getElementById('mobile-close')?.addEventListener('click', () => navigation.close());
+    const refreshSelectors = (clearInvalid = false) => {
+        const identityPtj = document.getElementById('identity-ptj')?.value;
+        const identityWorkplace = document.getElementById('identity-workplace');
+        if (identityWorkplace) {
+            for (const option of identityWorkplace.options) {
+                const invalid = !!option.value && option.dataset.parent !== identityPtj;
+                option.hidden = invalid;
+                option.disabled = invalid;
+            }
+            if (clearInvalid && identityWorkplace.selectedOptions[0]?.disabled) identityWorkplace.value = '';
+        }
+        document.querySelectorAll('[data-own-workplace]').forEach(select => {
+            for (const option of select.options) {
+                const invalid = !!option.value && option.value !== identityWorkplace?.value;
+                option.hidden = invalid;
+                option.disabled = invalid;
+            }
+            if (clearInvalid && select.selectedOptions[0]?.disabled) select.value = '';
+        });
+        document.querySelectorAll('.role-group').forEach(group => {
+            const enabled = group.querySelector('.role-enabled').checked;
+            const count = group.querySelectorAll('[data-assignment-row] input[type=checkbox]:checked').length;
+            group.querySelector('.assignment-count').textContent = enabled ? (group.dataset.role === 'superadmin' ? 'Seluruh sistem' : count + ' dipilih') : 'Tidak diberi';
+        });
+    };
+    let nextRow = 100000;
+    document.addEventListener('click', event => {
+        const add = event.target.closest('.add-assignment');
+        if (add) {
+            const group = add.closest('.role-group');
+            const html = group.querySelector('template').innerHTML.replaceAll('NEWROW', String(nextRow++));
+            group.querySelector('.assignment-rows').insertAdjacentHTML('beforeend', html);
+            refreshSelectors();
+        }
+        const remove = event.target.closest('.remove-assignment');
+        if (remove) {
+            remove.closest('[data-assignment-row]').remove();
+            refreshSelectors();
+        }
+    });
+    document.addEventListener('change', event => {
+        if (event.target.matches('#identity-ptj, #identity-workplace')) refreshSelectors(true);
+        else refreshSelectors();
+    });
+    document.addEventListener('input', event => {
+        const id = event.target.dataset.searchSelect;
+        if (!id) return;
+        const select = document.getElementById(id);
+        const query = event.target.value.toLocaleLowerCase();
+        for (const option of select.options) {
+            const invalidParent = id === 'identity-workplace' && !!option.value && option.dataset.parent !== document.getElementById('identity-ptj')?.value;
+            option.hidden = invalidParent || (!!option.value && !option.selected && !option.text.toLocaleLowerCase().includes(query));
+            option.disabled = invalidParent;
+        }
+    });
+    refreshSelectors();
+    let dirty = false;
+    document.querySelectorAll('[data-track-unsaved]').forEach(form => {
+        form.addEventListener('input', () => { dirty = true; });
+        form.addEventListener('change', () => { dirty = true; });
+        form.addEventListener('click', event => { if (event.target.closest('.add-assignment, .remove-assignment')) dirty = true; });
+    });
+    window.addEventListener('beforeunload', event => {
+        if (dirty) { event.preventDefault(); event.returnValue = ''; }
+    });
+    document.querySelectorAll('form').forEach(form => form.addEventListener('submit', event => {
+        if (form.dataset.confirm && !window.confirm(form.dataset.confirm)) { event.preventDefault(); return; }
+        if (form.dataset.submitting === 'yes') { event.preventDefault(); return; }
+        form.dataset.submitting = 'yes';
+        dirty = false;
+        form.querySelectorAll('button[type=submit]').forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); });
+    }));
     const deadline = Number(document.body.dataset.deadline) * 1000;
     if (deadline > 0) {
         const warning = document.getElementById('session-warning');
