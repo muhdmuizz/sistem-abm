@@ -289,7 +289,7 @@ class PengurusanPenggunaTest extends TestCase
         try {
             app(PengurusanPengguna::class)->simpan(null, $this->registrationInput());
             $this->fail('Revoked session performed a mutation.');
-        } catch (\\Symfony\\Component\\HttpKernel\\Exception\\HttpException $exception) {
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertSame(403, $exception->getStatusCode());
         }
         $this->assertDatabaseMissing('users', ['email' => 'new@example.test']);
