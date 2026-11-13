@@ -259,6 +259,42 @@ class PengurusanPenggunaTest extends TestCase
         $this->assertDatabaseCount('rekod_audit', 0);
     }
 
+    public function test_audit_failure_restores_account_roles_revision_and_deleted_device_sessions(): void
+    {
+        $target = $this->registeredUser(Peranan::PemantauBidaan);
+        $roleId = $target->penugasanPeranan()->sole()->id;
+        DB::table('sessions')->insert(['id' => 'target-device', 'user_id' => $target->id, 'payload' => '', 'last_activity' => now()->timestamp]);
+        $this->mock(JejakAudit::class, function ($mock) {
+            $mock->shouldReceive('jalankan')->once()->andReturnUsing(function ($role, $operation) {
+                $operation();
+                throw new RuntimeException('Audit unavailable.');
+            });
+        });
+        try {
+            app(PengurusanPengguna::class)->simpan($target->id, $this->editInput($target, ['is_active' => 0, 'roles' => []]));
+            $this->fail('Audit failure was ignored.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame('Audit unavailable.', $exception->getMessage());
+        }
+        $this->assertTrue($target->fresh()->is_active);
+        $this->assertSame(0, $target->fresh()->access_revision);
+        $this->assertSame($roleId, $target->penugasanPeranan()->sole()->id);
+        $this->assertDatabaseHas('sessions', ['id' => 'target-device']);
+        $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
+    public function test_inflight_mutation_cannot_continue_with_revoked_session_revision(): void
+    {
+        $this->admin->increment('access_revision');
+        try {
+            app(PengurusanPengguna::class)->simpan(null, $this->registrationInput());
+            $this->fail('Revoked session performed a mutation.');
+        } catch (\\Symfony\\Component\\HttpKernel\\Exception\\HttpException $exception) {
+            $this->assertSame(403, $exception->getStatusCode());
+        }
+        $this->assertDatabaseMissing('users', ['email' => 'new@example.test']);
+    }
+
     public function test_case_insensitive_email_uniqueness_and_sensitive_field_injection_are_rejected_or_ignored(): void
     {
         $this->post('/pentadbiran/pengguna', $this->registrationInput(['email' => strtoupper($this->admin->email)]))->assertSessionHasErrors('email');

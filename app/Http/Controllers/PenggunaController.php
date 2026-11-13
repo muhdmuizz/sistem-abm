@@ -81,6 +81,6 @@ class PenggunaController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login')->withErrors(['login' => $message]);
+        return redirect()->route('login')->with('status', $message);
     }
 }
