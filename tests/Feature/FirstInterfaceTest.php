@@ -45,7 +45,7 @@ class FirstInterfaceTest extends TestCase
         ]);
     }
 
-    private function callback(string $state = 'valid-state')
+    private function googleCallback(string $state = 'valid-state')
     {
         return $this->withSession(['google_flow' => ['state' => 'valid-state', 'verifier' => str_repeat('a', 64), 'issued_at' => now()->timestamp]])
             ->get('/auth/google/callback?code=server-code&state='.$state);
@@ -78,7 +78,7 @@ class FirstInterfaceTest extends TestCase
     {
         $user = $this->registered();
         $this->google();
-        $this->callback()->assertRedirect('/utama');
+        $this->googleCallback()->assertRedirect('/utama');
         $this->assertAuthenticatedAs($user);
         $this->assertSame('verified-subject', $user->fresh()->google_subject);
         $this->assertDatabaseHas('rekod_audit', ['pelaku_id' => $user->id, 'tindakan' => 'auth.google.signed_in']);
@@ -90,7 +90,7 @@ class FirstInterfaceTest extends TestCase
     public function test_invalid_state_does_not_exchange_code_or_create_accounts(): void
     {
         $this->google();
-        $this->callback('forged')->assertRedirect('/login');
+        $this->googleCallback('forged')->assertRedirect('/login');
         Http::assertNothingSent();
         $this->assertDatabaseCount('users', 0);
     }
@@ -98,11 +98,11 @@ class FirstInterfaceTest extends TestCase
     public function test_unregistered_or_disabled_accounts_are_denied_without_provisioning(): void
     {
         $this->google();
-        $this->callback()->assertRedirect('/login');
+        $this->googleCallback()->assertRedirect('/login');
         $this->assertDatabaseCount('users', 0);
         $user = $this->registered();
         $user->forceFill(['is_active' => false])->save();
-        $this->callback()->assertRedirect('/login');
+        $this->googleCallback()->assertRedirect('/login');
         $this->assertGuest();
         $this->assertNull($user->fresh()->google_subject);
     }
@@ -111,7 +111,7 @@ class FirstInterfaceTest extends TestCase
     {
         $this->registered();
         $this->google(['email_verified' => false, 'hd' => 'other.test']);
-        $this->callback()->assertRedirect('/login');
+        $this->googleCallback()->assertRedirect('/login');
         $this->assertGuest();
         $this->assertDatabaseCount('rekod_audit', 0);
     }
@@ -121,10 +121,10 @@ class FirstInterfaceTest extends TestCase
         $user = $this->registered();
         $this->google();
         $user->forceFill(['google_subject' => 'another-subject'])->save();
-        $this->callback()->assertRedirect('/login');
+        $this->googleCallback()->assertRedirect('/login');
         $user->forceFill(['google_subject' => null])->save();
         $user->penugasanPeranan()->delete();
-        $this->callback()->assertRedirect('/login');
+        $this->googleCallback()->assertRedirect('/login');
         $this->assertGuest();
     }
 
