@@ -1,6 +1,6 @@
 # Batch 009 — Pengguna & Peranan and Session Revocation
 
-**Status:** Code/tests/build/browser verification passed; merge and local application pending.
+**Status:** Code/tests/build/browser verification passed and merged; local application pending.
 **Baseline:** `c76f52d5cf0dbe43c713a6af27ecdf3ccf806153` on dev.
 **Authorisation:** User requested “Let's continue” after confirming the first interface, reference totals, logout/re-login and narrow-window checks. Implement the next bounded access-administration dependency within approved AD-005/AD-011/AD-013.
 **Authority:** AD-005 six roles/exact scope tuples and registered organisational identity; AD-011 attributable transactional changes, stale-write protection and all-device revocation; AD-013 Section 11.3 expandable user/role controls and form/accessibility rules.
@@ -17,7 +17,7 @@ This is a bounded administration slice, not complete security/production deliver
 
 ## Verification and local acceptance
 
-Full isolated suite, build/browser checks and visual review passed; see close-out evidence below. Merge checkpoint and local migration/UI confirmation remain pending.
+Full isolated suite, build/browser checks and visual review passed; see close-out evidence below. Merged in PR #17 at `22476277c47bcdfdb22aa6b428441528e6b182ec`; local migration/UI confirmation remain pending.
 
 Batch 008 remains partially manually accepted. Its known code/merge/local evidence is already recorded; pending actual-device, pagination, unregistered-account and session-timing manual checks are not silently marked passed by starting Batch 009.
 
@@ -29,5 +29,9 @@ Batch 008 remains partially manually accepted. Its known code/merge/local eviden
 - Browser checks cover dynamic unique row names/IDs, add/remove actions, PTJ search, own-workplace choices, required explicit scope reselection after organisation changes, and mobile overflow, alongside the existing navigation checks.
 - [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43427826563/artifacts/14037643488): final desktop/mobile form and mobile user-list images downloaded and visually inspected. Screenshot capture resets scrolling before full-page images; user-card layout and status/action sizing were refined after review.
 - Earlier CI exposed a role-label rendering error and an escaped test exception namespace; corrected before final verification. No failing application revision was merged.
-- [PR #17](https://github.com/muhdmuizz/sistem-abm/pull/17); merge checkpoint pending at this evidence commit. Later evidence-only commits do not change tested application source.
+- [PR #17](https://github.com/muhdmuizz/sistem-abm/pull/17); merged at `22476277c47bcdfdb22aa6b428441528e6b182ec`. Later evidence-only commits do not change tested application source.
 - Local migration and administration/real-device manual acceptance: pending. Existing sessions require one fresh Google login after the access-revision migration. No real users, roles or OS defaults were seeded by this batch.
+
+## Local handoff
+
+Provide a clean-dev fast-forward pull guarded by the application merge ancestor, verify APP_ENV local and PostgreSQL's actual database sistem_abm, then run normal pending migrations (never fresh/reset). No new package, seeder, OAuth client or credential change is required. Restart the local server and complete Google sign-in once, then open Pentadbiran > Pengguna & Peranan. Confirm the existing operator identity and Superadmin assignment without changing them; inspect the add-user form and test own Log Keluar Semua Peranti followed by Google re-login. Record only what the user actually confirms. Do not mark registration of other real users, role mutations or simultaneous physical-device revocation manually accepted without corresponding evidence.
