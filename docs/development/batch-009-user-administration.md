@@ -1,6 +1,6 @@
 # Batch 009 — Pengguna & Peranan and Session Revocation
 
-**Status:** Code/tests/build/browser verification passed and merged; local application pending.
+**Status:** Code/tests/build/browser verification passed and merged; local migration and requested smoke checks user-confirmed. Other manual mutations/device checks remain unverified locally.
 **Baseline:** `c76f52d5cf0dbe43c713a6af27ecdf3ccf806153` on dev.
 **Authorisation:** User requested “Let's continue” after confirming the first interface, reference totals, logout/re-login and narrow-window checks. Implement the next bounded access-administration dependency within approved AD-005/AD-011/AD-013.
 **Authority:** AD-005 six roles/exact scope tuples and registered organisational identity; AD-011 attributable transactional changes, stale-write protection and all-device revocation; AD-013 Section 11.3 expandable user/role controls and form/accessibility rules.
@@ -17,7 +17,7 @@ This is a bounded administration slice, not complete security/production deliver
 
 ## Verification and local acceptance
 
-Full isolated suite, build/browser checks and visual review passed; see close-out evidence below. Merged in PR #17 at `22476277c47bcdfdb22aa6b428441528e6b182ec`; local migration/UI confirmation remain pending.
+Full isolated suite, build/browser checks and visual review passed; see close-out evidence below. Merged in PR #17 at `22476277c47bcdfdb22aa6b428441528e6b182ec`; local migration and requested UI/own-logout smoke checks are now user-confirmed (see acceptance record below).
 
 Batch 008 remains partially manually accepted. Its known code/merge/local evidence is already recorded; pending actual-device, pagination, unregistered-account and session-timing manual checks are not silently marked passed by starting Batch 009.
 
@@ -30,8 +30,14 @@ Batch 008 remains partially manually accepted. Its known code/merge/local eviden
 - [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43427826563/artifacts/14037643488): final desktop/mobile form and mobile user-list images downloaded and visually inspected. Screenshot capture resets scrolling before full-page images; user-card layout and status/action sizing were refined after review.
 - Earlier CI exposed a role-label rendering error and an escaped test exception namespace; corrected before final verification. No failing application revision was merged.
 - [PR #17](https://github.com/muhdmuizz/sistem-abm/pull/17); merged at `22476277c47bcdfdb22aa6b428441528e6b182ec`. Later evidence-only commits do not change tested application source.
-- Local migration and administration/real-device manual acceptance: pending. Existing sessions require one fresh Google login after the access-revision migration. No real users, roles or OS defaults were seeded by this batch.
+- Local migration and requested inspection/own-logout smoke checks: user-confirmed. Other administration mutations and real-device manual acceptance: unverified locally. Existing sessions require one fresh Google login after the access-revision migration. No real users, roles or OS defaults were seeded by this batch.
 
 ## Local handoff
 
 Provide a clean-dev fast-forward pull guarded by the application merge ancestor, verify APP_ENV local and PostgreSQL's actual database sistem_abm, then run normal pending migrations (never fresh/reset). No new package, seeder, OAuth client or credential change is required. Restart the local server and complete Google sign-in once, then open Pentadbiran > Pengguna & Peranan. Confirm the existing operator identity and Superadmin assignment without changing them; inspect the add-user form and test own Log Keluar Semua Peranti followed by Google re-login. Record only what the user actually confirms. Do not mark registration of other real users, role mutations or simultaneous physical-device revocation manually accepted without corresponding evidence.
+
+## User-confirmed Batch 009 local smoke checks — 13 November 2026
+
+The user replied **“Clean.”** after the supplied guarded dev pull/database verification/migration/server instructions and the requested checks: open Pengguna & Peranan; inspect the existing operator's JPNT / Sektor Pengurusan / Superadmin record; inspect Tambah Pengguna; use own Log Keluar Semua Peranti from Utama; then sign in through Google again. Record local synchronisation/migration and those specific smoke checks as passed by user report. No direct cloud inspection of Windows, local audit rows or browser trace is claimed.
+
+This does not establish manual creation of another real account, role/status mutations, simultaneous physical-device revocation, forced revocation of another user, stale concurrent browser editors, or notification delivery. Those remain unverified locally; their applicable automated cases are supported separately by CI 43427826563 (153 tests / 1143 assertions at b8ea428). Security email/notification operations and other out-of-scope work remain pending. No application changes or new test execution are claimed by this documentation update.
