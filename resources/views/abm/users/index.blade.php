@@ -13,7 +13,7 @@
 <td data-label="Status"><span class="status-pill {{ $account->is_active ? 'positive' : '' }}">{{ $account->is_active ? 'Aktif' : 'Tidak Aktif' }}</span></td>
 <td data-label="Peranan & Skop"><details class="scope-details"><summary>{{ $account->penugasanPeranan->count() }} penugasan</summary><ul>
 @forelse($account->penugasanPeranan as $assignment)
-<li>{{ IlluminateSupportStr::headline($assignment->peranan->value) }}<span class="small"> · PTJ {{ $assignment->ptj?->nama ?? 'semua' }} · Aktiviti {{ $assignment->aktivitiKewangan?->nama ?? 'semua' }}@if($assignment->tempat_bertugas_id) · Tempat Bertugas {{ $assignment->tempatBertugas?->nama }}@endif</span></li>
+<li>{{ str($assignment->peranan->value)->headline() }}<span class="small"> · PTJ {{ $assignment->ptj?->nama ?? 'semua' }} · Aktiviti {{ $assignment->aktivitiKewangan?->nama ?? 'semua' }}@if($assignment->tempat_bertugas_id) · Tempat Bertugas {{ $assignment->tempatBertugas?->nama }}@endif</span></li>
 @empty<li>Tiada penugasan. Akses dilindungi tidak dibenarkan.</li>@endforelse
 </ul></details></td>
 <td data-label="Tindakan"><a class="button icon-button" href="{{ route('users.edit', $account) }}" aria-label="Pinda {{ $account->name }}" title="Pinda pengguna"><x-abm-icon name="pencil"/></a></td></tr>
