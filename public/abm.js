@@ -77,7 +77,7 @@
     document.querySelectorAll('[data-track-unsaved]').forEach(form => {
         form.addEventListener('input', () => { dirtyForms.add(form); });
         form.addEventListener('change', () => { dirtyForms.add(form); });
-        form.addEventListener('click', event => { if (event.target.closest('.add-assignment, .remove-assignment')) dirtyForms.add(form); });
+        form.addEventListener('click', event => { if (event.target.closest('.add-assignment, .remove-assignment, .add-pair, .remove-pair')) dirtyForms.add(form); });
     });
     window.addEventListener('beforeunload', event => {
         if (dirtyForms.size) { event.preventDefault(); event.returnValue = ''; }

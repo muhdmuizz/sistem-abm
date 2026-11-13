@@ -1,0 +1,2 @@
+<details class="scope-details"><summary>{{ \App\Services\PengurusanKitaran::SKOP[$phase->jenis_skop] }}@if($phase->jenis_skop !== 'global') · {{ $phase->skop->count() }} dipilih @endif</summary>
+@if($phase->jenis_skop === 'global')<p class="small">Semua PTJ dan Aktiviti Kewangan.</p>@else<ul class="phase-scope-list">@foreach($phase->skop as $scope)<li>{{ $scope->ptj?->nama }}@if($scope->ptj_id && $scope->aktiviti_kewangan_id) — @endif{{ $scope->aktivitiKewangan?->nama }}</li>@endforeach</ul>@endif</details>

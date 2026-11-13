@@ -16,7 +16,7 @@
 <div class="workspace">
     <header class="app-header">
         <button class="button mobile-menu" id="mobile-open" type="button">Menu</button>
-        <span class="system-name">Sistem ABM</span><span class="cycle">Kitaran belum ditetapkan</span>
+        <span class="system-name">Sistem ABM</span><span class="cycle">@yield('cycle-context', 'Kitaran belum ditetapkan')</span>
         <div class="account"><span>{{ auth()->user()->name }}</span><form method="post" action="{{ route('logout') }}">@csrf<button class="button subtle" type="submit">Log keluar</button></form></div>
     </header>
     <main id="content" tabindex="-1">

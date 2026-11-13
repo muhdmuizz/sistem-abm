@@ -114,6 +114,44 @@ if (!(await ptjParent.locator('.permission-allowed').isChecked())) throw Error('
 await page.goto('http://127.0.0.1:4173/permissions.html');
 if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile PTJ permission list overflow');
 await page.screenshot({ path: 'storage/app/ui-qa/permissions-list-mobile.png', fullPage: true });
+
+await page.goto('http://127.0.0.1:4173/cycles.html');
+await page.setViewportSize({ width: 1440, height: 1000 });
+const cycleDetails = page.locator('.cycle-record').first();
+if (!(await cycleDetails.evaluate(el => el.open))) await cycleDetails.locator(':scope > summary').click();
+if (!(await page.getByText('Bidaan Awal', { exact: true }).count())) throw Error('Cycle expansion missing phase record');
+await page.evaluate(() => scrollTo(0, 0));
+await page.screenshot({ path: 'storage/app/ui-qa/cycles-desktop.png', fullPage: true });
+await page.setViewportSize({ width: 390, height: 844 });
+if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile cycle list overflow');
+await page.screenshot({ path: 'storage/app/ui-qa/cycles-mobile.png', fullPage: true });
+await page.goto('http://127.0.0.1:4173/phase-form.html');
+await page.setViewportSize({ width: 1440, height: 1000 });
+await page.locator('#phase-kind').selectOption('pindaan');
+await page.locator('#phase-start').fill('2028-05-01');
+await page.locator('#phase-end').fill('2028-05-31');
+await page.locator('#phase-scope').selectOption('ptj');
+await page.locator('[data-filter-checklist]').fill('JPNT');
+const ptjChecks = page.locator('[data-scope-mode="ptj"] input[type=checkbox]');
+await ptjChecks.first().check();
+await page.locator('#phase-scope').selectOption('gabungan');
+if (!(await ptjChecks.first().isDisabled())) throw Error('Inactive scope fields still submitted');
+await page.locator('.add-pair').click();
+const pairRows = page.locator('[data-pair-row]');
+if (await pairRows.count() !== 2) throw Error('Pair entry not added');
+const pairIds = await pairRows.locator('[id]').evaluateAll(nodes => nodes.map(node => node.id));
+if (new Set(pairIds).size !== pairIds.length) throw Error('Pair control IDs repeated');
+await pairRows.first().locator('select[name$="[ptj_id]"]').selectOption({ label: 'JPNT' });
+await pairRows.first().locator('select[name$="[aktiviti_kewangan_id]"]').selectOption({ index: 1 });
+await pairRows.last().locator('.remove-pair').click();
+if (!(await page.locator('#pair-count').textContent()).includes('1 kombinasi lengkap')) throw Error('Pair selection count incorrect');
+await page.evaluate(() => scrollTo(0, 0));
+await page.screenshot({ path: 'storage/app/ui-qa/phase-form-desktop.png', fullPage: true });
+await page.setViewportSize({ width: 390, height: 844 });
+await page.evaluate(() => scrollTo(0, 0));
+if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile phase form overflow');
+await page.screenshot({ path: 'storage/app/ui-qa/phase-form-mobile.png', fullPage: true });
 await browser.close();
+
 
 
