@@ -1,6 +1,6 @@
 # Batch 008 — First Interface & Google Sign-in Preparation
 
-**Status:** Final verification in progress after contrast and Google-only registration-schema refinements; merge/local setup and real Google sign-in pending.
+**Status:** Code/build/browser verification passed; merge and local/provider acceptance pending.
 **Baseline:** `2d84e0c` on `dev`.
 **Authorisation:** User requested continuation after documentation reconciliation; the visible local interface is the next deliverable. User explicitly confirmed that Google OAuth is not configured yet.
 **Authority:** AD-005 Google sign-in/registered-user access; AD-011 session and audit requirements; AD-013 Clean Enterprise interface; existing reference and role rules.
@@ -25,12 +25,14 @@ Audited user/permission editing, financial modules, OS defaults, new real-user a
 
 ## Evidence and close-out
 
-- **Tested application head:** `768b5b1cff838dd932fb65b1bc863341ccbad7fe`.
-- **CI:** [run 43410640128](https://github.com/muhdmuizz/sistem-abm/actions/runs/43410640128), PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`: **124 tests passed, 933 assertions**, including 16 new HTTP cases. Existing frontend build and Chromium layout checks passed.
+- **Tested application head:** `b4af2551f9355db6d0d7821a70170cc1ad6661b5`.
+- **CI:** [run 43412032393](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393), PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`: **125 tests passed, 937 assertions**, including 17 new HTTP cases. Existing frontend build and Chromium layout checks passed.
 - Merge checkpoint: pending.
-- **Browser evidence:** [screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43410640128/artifacts/14028848406). Desktop reference table, mobile cards/header and sign-in page were downloaded and visually inspected. Sidebar persistence, accessible collapsed navigation, mobile drawer/escape and overflow checks passed. These are test-identity fixtures, not real-provider sign-in evidence.
+- **Browser evidence:** [screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393/artifacts/14029893078). Desktop reference table, mobile cards/header and sign-in page were downloaded and visually inspected. Sidebar persistence, accessible collapsed navigation, mobile drawer/escape and overflow checks passed. These are test-identity fixtures, not real-provider sign-in evidence.
 - **Earlier verification correction:** an initial PHPUnit helper collided with its final callback method; renamed before execution. The intermediate verified revision passed 120 tests / 914 assertions; final results above include subsequent cache/logging and eligibility hardening.
 - Local pull/migration: pending.
 - Actual OAuth configuration, initial registered account and real-provider login: pending (user has no configured OAuth client yet).
 
 Do not call this batch fully closed until required local/provider verification is explicitly recorded.
+
+Final source verification includes Google-only null-password registration storage, redacted failure logging, no-store responses, individual workspace/email rejection cases and measured muted-text contrast of 4.73:1. These checks do not replace real-provider/manual acceptance.
