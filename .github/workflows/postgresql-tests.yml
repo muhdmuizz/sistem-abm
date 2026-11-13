@@ -50,3 +50,21 @@ jobs:
           php artisan config:clear
           php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); if (config("database.default") !== "pgsql" || config("database.connections.pgsql.database") !== "sistem_abm_testing") { throw new RuntimeException("Unexpected test database."); }'
       - run: php artisan test
+        env:
+          ABM_UI_CAPTURE: '1'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npm run build
+      - run: npm install --no-save --package-lock=false @playwright/test
+      - run: npx playwright install --with-deps chromium
+      - name: Browser layout checks and screenshots
+        run: |
+          python3 -m http.server 4173 --directory storage/app/ui-qa > /tmp/abm-ui-server.log 2>&1 &
+          node scripts/ui-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: first-interface-screenshots
+          path: storage/app/ui-qa/*.png
+          if-no-files-found: error

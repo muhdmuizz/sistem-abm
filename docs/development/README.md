@@ -57,11 +57,11 @@ These are current source/import counts, not hardcoded application limits. Instit
 
 The foundation suite does not certify complete security controls, financial outcomes, deployed UI or production readiness. AD-008 remains Draft; catalogue import does not finalise OS financial specifications.
 
-## Proposed next work — not started or approved as a final scope
+## Batch 008 — in progress
 
-Two suggestions were discussed: audited user/access administration services, and bringing forward a first integrated local interface with reference screens and audited administration. The user asked how soon a visible app could be delivered; the recommendation was to prioritise a visible interface. This is a proposal, not evidence of an approved detailed Batch 008 scope or a completed app.
+The user's “Let's continue” instruction after reconciliation is being executed as the next visible-interface deliverable: Google sign-in preparation, a responsive application shell and protected read-only reference screens. Baseline: `2d84e0c`. Google OAuth is not configured yet (user-confirmed); real-provider/local sign-in verification and initial registered-account setup remain pending. No login bypass or guessed user/OS assignments is authorised.
 
-The current authorised task is documentation reconciliation and persistent progress tracking before moving on. Do not silently mark Batch 008 approved/in progress, implement a login bypass, invent OS permissions or change the approved architecture to satisfy the interface proposal.
+Audited user/permission editing, financial workflows and production release remain outside this first interface slice. Implementation/test/merge/local status must be updated here and in [Batch 008](batch-008-first-interface.md) as evidence arrives.
 
 ## Recording progress from now on
 
