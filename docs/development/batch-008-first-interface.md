@@ -1,6 +1,6 @@
 # Batch 008 — First Interface & Google Sign-in Preparation
 
-**Status:** Code/build/browser verification passed; merge and local/provider acceptance pending.
+**Status:** Code/build/browser verification passed and merged; local/provider acceptance pending.
 **Baseline:** `2d84e0c` on `dev`.
 **Authorisation:** User requested continuation after documentation reconciliation; the visible local interface is the next deliverable. User explicitly confirmed that Google OAuth is not configured yet.
 **Authority:** AD-005 Google sign-in/registered-user access; AD-011 session and audit requirements; AD-013 Clean Enterprise interface; existing reference and role rules.
@@ -27,7 +27,7 @@ Audited user/permission editing, financial modules, OS defaults, new real-user a
 
 - **Tested application head:** `b4af2551f9355db6d0d7821a70170cc1ad6661b5`.
 - **CI:** [run 43412032393](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393), PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`: **125 tests passed, 937 assertions**, including 17 new HTTP cases. Existing frontend build and Chromium layout checks passed.
-- Merge checkpoint: pending.
+- **Merge:** [PR #10](https://github.com/muhdmuizz/sistem-abm/pull/10), `e5a93c7ae113f2ea2e4752983d41683642ad698d`. Final evidence-only commits did not change the verified application source.
 - **Browser evidence:** [screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393/artifacts/14029893078). Desktop reference table, mobile cards/header and sign-in page were downloaded and visually inspected. Sidebar persistence, accessible collapsed navigation, mobile drawer/escape and overflow checks passed. These are test-identity fixtures, not real-provider sign-in evidence.
 - **Earlier verification correction:** an initial PHPUnit helper collided with its final callback method; renamed before execution. The intermediate verified revision passed 120 tests / 914 assertions; final results above include subsequent cache/logging and eligibility hardening.
 - Local pull/migration: pending.

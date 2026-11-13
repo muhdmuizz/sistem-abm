@@ -7,7 +7,7 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 ## Implementation progress is tracked separately
 
-Batches 001–007 are implemented and merged, with the latest application checkpoint `54ae2f7`; local synchronisation is user-confirmed. This does **not** mean the approved ADs are fully implemented. Read the [development progress register](../development/README.md) for per-batch scope, actual CI evidence, merge checkpoints, local status and pending work. The AD status table below remains a design-approval tracker.
+Foundation Batches 001–007 are implemented, merged and locally user-confirmed. Batch 008 adds the first interface and Google sign-in preparation at application checkpoint `e5a93c7`; code/build/browser verification passed, while local migration and real-provider/account acceptance remain pending. This does **not** mean the approved ADs are fully implemented. Read the [development progress register](../development/README.md) for per-batch scope, actual CI evidence, merge checkpoints, local status and pending work. The AD status table below remains a design-approval tracker.
 
 ## Architecture decision tracker
 

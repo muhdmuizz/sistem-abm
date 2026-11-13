@@ -8,6 +8,8 @@
 
 Batches 005–007 provide tested permission-resolution, user/role-scope and audit primitives. Latest application foundation CI: 108 tests / 837 assertions, [run](https://github.com/muhdmuizz/sistem-abm/actions/runs/43405028148), application merge `54ae2f7`. The [development register](../development/README.md) states exactly what is implemented and how local completion was confirmed.
 
+Batch 008 additionally provides tested code-flow/registered-account checks, limited protected read-only pages and session expiry at `e5a93c7` (125 tests / 937 assertions plus build/browser checks). Real Google configuration/sign-in, initial account provisioning and local/provider acceptance remain pending; no complete control certification is implied.
+
 This is partial foundation evidence, **not a PASS for any complete SEC control or release gate**. Google sign-in, full protected endpoints, audited administration, session revocation/expiry, production runtime privileges and operational security verification remain pending. Existing checklist boxes and release criteria are unchanged.
 
 ## Scope and boundaries
