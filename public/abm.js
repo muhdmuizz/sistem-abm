@@ -26,7 +26,8 @@
         }
         document.querySelectorAll('[data-own-workplace]').forEach(select => {
             for (const option of select.options) {
-                const invalid = !!option.value && option.value !== identityWorkplace?.value;
+                const scopePtj = select.closest('[data-assignment-row]').querySelector('select[name$="[ptj_id]"]')?.value;
+                const invalid = !!option.value && (option.value !== identityWorkplace?.value || option.dataset.parent !== scopePtj);
                 option.hidden = invalid;
                 option.disabled = invalid;
             }
@@ -54,7 +55,7 @@
         }
     });
     document.addEventListener('change', event => {
-        if (event.target.matches('#identity-ptj, #identity-workplace')) refreshSelectors(true);
+        if (event.target.matches('#identity-ptj, #identity-workplace, select[name$="[ptj_id]"]')) refreshSelectors(true);
         else refreshSelectors();
     });
     document.addEventListener('input', event => {
@@ -79,12 +80,19 @@
         if (dirty) { event.preventDefault(); event.returnValue = ''; }
     });
     document.querySelectorAll('form').forEach(form => form.addEventListener('submit', event => {
+        if (dirty && !form.hasAttribute('data-track-unsaved') && !window.confirm('Terdapat perubahan belum disimpan. Teruskan tanpa menyimpan?')) { event.preventDefault(); return; }
         if (form.dataset.confirm && !window.confirm(form.dataset.confirm)) { event.preventDefault(); return; }
         if (form.dataset.submitting === 'yes') { event.preventDefault(); return; }
         form.dataset.submitting = 'yes';
         dirty = false;
         form.querySelectorAll('button[type=submit]').forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); });
     }));
+    window.addEventListener('pageshow', () => {
+        document.querySelectorAll('form').forEach(form => {
+            delete form.dataset.submitting;
+            form.querySelectorAll('button[type=submit]').forEach(button => { button.disabled = false; button.removeAttribute('aria-busy'); });
+        });
+    });
     const deadline = Number(document.body.dataset.deadline) * 1000;
     if (deadline > 0) {
         const warning = document.getElementById('session-warning');
