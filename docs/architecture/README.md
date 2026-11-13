@@ -61,4 +61,19 @@ This is the **single master index** for architecture decisions (ADs). Each AD ha
 
 **AD-013:** Finalised UI/UX specification; all 12 sections approved, including accessibility, responsiveness and QA acceptance standards. This is design approval, not implementation or test certification.
 
-**Next work:** Implement and verify AD-013 against the actual application when source is available; reconcile authoritative OS references separately within draft AD-008. Architecture approval does not establish implementation readiness.
+## Existing six-step development plan — scope clarification (13 November 2026)
+
+This records the **existing six-step development plan** without introducing another phase or additional branches. **Step 05 is corrected to apply to all applicable OS**; OS14000 is only one potential test case, not the architecture's preferred or sole OS.
+
+| Step | Workstream | Current recorded status |
+| --- | --- | --- |
+| 01 | Canonical Model & Compatibility | Design completed; not evidence of implemented code |
+| 02 | Anggaran Persistence | Implementation not completed |
+| 03 | Senarai Anggaran & Editor UI | Not started |
+| 04 | Activity-Level Submission | Not started |
+| 05 | **OS End-to-End Validation — All Applicable OS** | Not started |
+| 06 | Regression, Cleanup & Readiness | Not started |
+
+**Scope for Step 05:** Validate the full applicable OS catalogue against each OS's approved fields, references, Kadar, calculation/validation and output requirements, alongside shared Anggaran persistence, editor and submission behaviour. Representative OS can be used to sequence testing, but **none may replace coverage of all applicable OS**. Maintain previously approved exclusions and defer any unresolved OS-specific rules to their authoritative references/AD-008; do not invent rates, formulas or field mappings.
+
+**Next work:** Begin Step 02 implementation from the established architecture, without inventing a source-code recovery phase. Architecture approval does not establish implementation or test completion.
