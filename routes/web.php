@@ -4,6 +4,7 @@ use App\Http\Controllers\GoogleSignInController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\AksesPeruntukanController;
+use App\Http\Controllers\KitaranController;
 use App\Http\Middleware\EnsureAbmSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,15 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/pentadbiran/kitaran', [KitaranController::class, 'index'])->name('cycles.index');
+    Route::get('/pentadbiran/kitaran/tambah', [KitaranController::class, 'create'])->name('cycles.create');
+    Route::post('/pentadbiran/kitaran', [KitaranController::class, 'store'])->middleware('throttle:30,1')->name('cycles.store');
+    Route::get('/pentadbiran/kitaran/{cycle}/fasa/tambah', [KitaranController::class, 'phaseForm'])->whereNumber('cycle')->name('phases.create');
+    Route::post('/pentadbiran/kitaran/{cycle}/fasa', [KitaranController::class, 'phaseSave'])->whereNumber('cycle')->middleware('throttle:30,1')->name('phases.store');
+    Route::get('/pentadbiran/kitaran/{cycle}/fasa/{phase}/pinda', [KitaranController::class, 'phaseForm'])->whereNumber(['cycle','phase'])->name('phases.edit');
+    Route::put('/pentadbiran/kitaran/{cycle}/fasa/{phase}', [KitaranController::class, 'phaseSave'])->whereNumber(['cycle','phase'])->middleware('throttle:30,1')->name('phases.update');
+    Route::get('/pentadbiran/kitaran/{cycle}/fasa/{phase}/tindakan/{action}', [KitaranController::class, 'actionForm'])->whereNumber(['cycle','phase'])->name('phases.action');
+    Route::post('/pentadbiran/kitaran/{cycle}/fasa/{phase}/tindakan/{action}', [KitaranController::class, 'actionSave'])->whereNumber(['cycle','phase'])->middleware('throttle:30,1')->name('phases.execute');
     Route::get('/pentadbiran/aktiviti-kewangan', [AksesPeruntukanController::class, 'index'])->name('permissions.index');
     Route::get('/pentadbiran/aktiviti-kewangan/{kind}/{key}', [AksesPeruntukanController::class, 'edit'])
         ->whereIn('kind', ['kategori', 'ptj'])->where('key', '[A-Za-z0-9-]+')->name('permissions.edit');
