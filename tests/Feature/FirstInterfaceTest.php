@@ -30,7 +30,7 @@ class FirstInterfaceTest extends TestCase
     private function signedIn(User $user): void
     {
         $user->forceFill(['google_subject' => 'verified-subject'])->save();
-        $this->actingAs($user)->withSession(['abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
+        $this->actingAs($user)->withSession(['abm_access_revision' => $user->fresh()->access_revision, 'abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
     }
 
     private function google(array $profile = [], bool $tokenFailure = false): void

@@ -14,6 +14,7 @@
     <section class="login-form" aria-labelledby="login-heading">
         <h2 id="login-heading">Log masuk ke akaun anda</h2>
         <p>Gunakan akaun Google MyGovUC yang berdaftar dengan Sistem ABM.</p>
+        @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
         @if ($errors->any())<div class="notice error" role="alert">{{ $errors->first() }}</div>@endif
         @if ($configured)
             <a class="button primary full" href="{{ route('google.redirect') }}">Log masuk dengan Google</a>

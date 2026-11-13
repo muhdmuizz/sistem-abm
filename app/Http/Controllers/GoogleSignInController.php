@@ -53,19 +53,21 @@ class GoogleSignInController extends Controller
             Auth::login($user);
             $role = $user->penugasanPeranan()->where('peranan', Peranan::Superadmin->value)->exists()
                 ? Peranan::Superadmin : $user->penugasanPeranan()->orderBy('id')->firstOrFail()->peranan;
-            $audit->jalankan($role, function () use ($user, $identity) {
+            $authenticatedRevision = null;
+            $audit->jalankan($role, function () use ($user, $identity, &$authenticatedRevision) {
                 $current = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
                 if (strtolower($current->email) !== $identity['email'] ||
                     ($current->google_subject !== null && $current->google_subject !== $identity['sub'])) {
                     throw new \RuntimeException('Registered identity changed.');
                 }
+                $authenticatedRevision = $current->access_revision;
                 $linked = $current->google_subject !== null;
                 $current->forceFill(['google_subject' => $identity['sub']])->save();
                 return new PeristiwaAudit('auth.google.signed_in', User::class, (string) $user->id,
                     ['google_identity_linked' => $linked], ['google_identity_linked' => true]);
             });
             $request->session()->regenerate();
-            $request->session()->put(['abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
+            $request->session()->put(['abm_access_revision' => $authenticatedRevision, 'abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
             return redirect()->route('home');
         } catch (Throwable $exception) {
             // Provider errors can contain tokens. Do not log/flash the raw exception.

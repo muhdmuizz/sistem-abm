@@ -12,4 +12,5 @@
 @endforeach
 </div></section>
 @endif
+<section class="section"><h2>Sesi Akaun</h2><p>Tamatkan semua sesi ABM anda pada semua peranti.</p><form method="post" action="{{ route('session.logout-all') }}" data-confirm="Log keluar semua peranti ABM anda?">@csrf<button class="button" type="submit"><x-abm-icon name="logout"/>Log Keluar Semua Peranti</button></form></section>
 @endsection
