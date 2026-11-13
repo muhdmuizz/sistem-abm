@@ -16,12 +16,14 @@ Batches 001–007 provide database/reference foundations, PTJ permission resolut
 
 Batch 009 adds audited Pengguna & Peranan registration/status/scope administration, stale-editor protection and all-device ABM session revocation. Its code passed 153 tests / 1143 assertions plus build/browser checks and visual review, and is merged in PR #17. Local migration, operator/add-user form inspection and own all-device logout/re-login are user-confirmed; other administrative mutations and physical-device checks remain unverified locally. Kitaran/Fasa administration, security email/notification operations, financial preparation/review workflows and production readiness remain pending. See the progress register for exact evidence and limitations.
 
-Batch 010 adds audited Pengurusan Aktiviti Kewangan editors for category defaults and individual PTJ activity/OS overrides, inheritance/reset and stale-state protection. It passed 168 tests / 1571 assertions plus build/browser checks and visual review, and is merged in PR #20. Local synchronisation/inspection and actual permission-mutation acceptance remain pending; no migration, seed or default OS selection is included.
+Batch 010 adds audited Pengurusan Aktiviti Kewangan editors for category defaults and individual PTJ activity/OS overrides, inheritance/reset and stale-state protection. It passed 168 tests / 1571 assertions plus build/browser checks and visual review, and is merged in PR #20. Local synchronisation and requested editor inspection are user-confirmed; actual local permission mutations remain unverified; no migration, seed or default OS selection is included.
 
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
 
 The user's Windows installation and PostgreSQL database are separate from cloud CI. Use isolated `sistem_abm_testing` for automated database tests. Do not commit credentials or environment files, access the abandoned legacy project, or run fresh/reset migrations against the development database. Local synchronisation is recorded only after execution evidence or the user's explicit confirmation.
+
+For routine local updates, keep the existing development server running and refresh the browser after pulling/clearing necessary caches. Restart only when the change requires it.
 
 Laravel framework licensing remains MIT; see the installed framework package for its licence.

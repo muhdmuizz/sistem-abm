@@ -26,4 +26,6 @@ Use a dedicated feature branch and PR targeting `dev`. Do not merge untested dat
 
 Do not assume cloud access to `C:\Projects\sistem-abm`. When local execution is necessary, provide consolidated PowerShell commands with appropriate branch and database checks. Do not require full successful console output when the user has opted to report only errors.
 
+For routine local updates, keep the existing development server running. Provide pull/cache commands for another terminal and ask the user to refresh the browser (Ctrl+F5 for changed assets). Request a restart only when the specific change requires it, and explain that reason. Do not include stop/start server commands as routine boilerplate.
+
 A passing foundation test suite is not proof of Google integration, administration UI, complete financial workflow, production privilege separation or release readiness. Preserve the distinction in every progress report.
