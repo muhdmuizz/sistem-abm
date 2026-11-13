@@ -314,6 +314,16 @@ class PengurusanPenggunaTest extends TestCase
         User::create(['name' => 'Duplicate', 'email' => strtoupper($this->admin->email)]);
     }
 
+    public function test_revocation_form_errors_do_not_clear_the_account_role_editor(): void
+    {
+        $target = $this->registeredUser(Peranan::PemantauBidaan);
+        $this->from('/pentadbiran/pengguna/'.$target->id.'/pinda')->post('/pentadbiran/pengguna/'.$target->id.'/tamatkan-sesi',
+            ['form_kind' => 'revoke', 'access_revision' => 0, 'reason' => ''])->assertSessionHasErrors('reason');
+        $this->get('/pentadbiran/pengguna/'.$target->id.'/pinda')->assertOk()
+            ->assertSee('name="roles[pemantau_bidaan][enabled]" value="1" checked', false);
+        $this->assertSame(0, $target->fresh()->access_revision);
+    }
+
     public function test_old_sessions_without_revision_are_invalidated_and_fresh_revision_remains_valid(): void
     {
         $this->withSession(['abm_access_revision' => null])->get('/utama')->assertRedirect('/login');

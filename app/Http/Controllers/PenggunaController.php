@@ -53,7 +53,7 @@ class PenggunaController extends Controller
             $saved = $service->simpan($user?->id, $request->all() + ['roles' => []]);
         } catch (QueryException $exception) {
             Log::notice('abm.access.save_failed', ['exception_type' => get_class($exception), 'sql_state' => $exception->getCode()]);
-            return back()->withInput($request->only(['name', 'email', 'is_active', 'ptj_id', 'tempat_bertugas_id', 'access_revision', 'reason', 'roles']))->withErrors(['save' => 'Perubahan tidak disimpan. Semak e-mel pendua atau muat semula dan cuba lagi.']);
+            return back()->withInput($request->only(['form_kind', 'name', 'email', 'is_active', 'ptj_id', 'tempat_bertugas_id', 'access_revision', 'reason', 'roles']))->withErrors(['save' => 'Perubahan tidak disimpan. Semak e-mel pendua atau muat semula dan cuba lagi.']);
         }
         if ($saved->id === $request->user()->id) {
             return $this->signedOut($request, 'Perubahan disimpan. Sila log masuk semula.');

@@ -2,13 +2,14 @@
 @section('title', $account->exists ? 'Pinda Pengguna' : 'Tambah Pengguna')
 @section('content')
 @php($roleLabels = ['superadmin'=>'Superadmin','ketua_bidaan'=>'Ketua Bidaan','penyelia_bidaan'=>'Penyelia Bidaan','penyedia_bidaan'=>'Penyedia Bidaan','penyedia_anggaran'=>'Penyedia Anggaran','pemantau_bidaan'=>'Pemantau Bidaan'])
-@php($formRoles = session()->hasOldInput() ? old('roles', []) : $roles)
+@php($accountOldInput = old('form_kind') === 'account')
+@php($formRoles = $accountOldInput ? old('roles', []) : $roles)
 <div class="page-heading"><div><p class="eyebrow">Pengguna & Peranan</p><h1>{{ $account->exists ? 'Pinda Pengguna' : 'Tambah Pengguna' }}</h1></div><a class="button" href="{{ route('users.index') }}">Kembali</a></div>
 @if(session('status'))<p class="notice" role="status">{{ session('status') }}</p>@endif
 @if($errors->any())<div class="notice error" role="alert"><strong>Perubahan belum disimpan.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
 <form method="post" action="{{ $account->exists ? route('users.update', $account) : route('users.store') }}" class="access-form" data-track-unsaved data-confirm="Simpan perubahan untuk {{ $account->exists ? $account->email : 'pengguna baharu' }}? Sesi ABM terdahulu pengguna ini akan ditamatkan.">
-@csrf @if($account->exists) @method('PUT') @endif
-<input type="hidden" name="access_revision" value="{{ old('access_revision', $account->access_revision ?? 0) }}">
+@csrf <input type="hidden" name="form_kind" value="account"> @if($account->exists) @method('PUT') @endif
+<input type="hidden" name="access_revision" value="{{ $accountOldInput ? old('access_revision', 0) : ($account->access_revision ?? 0) }}">
 <section class="form-section"><h2>Identiti & Organisasi</h2><div class="form-grid">
 <div><label for="name">Nama <span class="required">*</span></label><input id="name" name="name" required maxlength="255" value="{{ old('name', $account->name) }}">@error('name')<p class="field-error">{{ $message }}</p>@enderror</div>
 <div><label for="email">E-mel MyGovUC <span class="required">*</span></label><input id="email" name="email" type="email" required maxlength="255" value="{{ old('email', $account->email) }}">@error('email')<p class="field-error">{{ $message }}</p>@enderror</div>
@@ -38,12 +39,12 @@
 @endforeach
 @error('roles')<p class="field-error">{{ $message }}</p>@enderror
 </section>
-<section class="form-section"><label for="reason">Alasan perubahan <span class="required">*</span></label><textarea id="reason" name="reason" required maxlength="1000" rows="3">{{ old('reason') }}</textarea>
+<section class="form-section"><label for="reason">Alasan perubahan <span class="required">*</span></label><textarea id="reason" name="reason" required maxlength="1000" rows="3">{{ $accountOldInput ? old('reason') : '' }}</textarea>
 <p class="small">Perubahan direkod dalam jejak audit. Menyimpan perubahan menamatkan sesi ABM terdahulu pengguna ini.</p>
 <div class="form-actions"><button class="button primary" type="submit"><x-abm-icon name="save"/>Simpan</button><a class="button" href="{{ route('users.index') }}">Batal</a></div></section>
 </form>
 @if($account->exists)
 <section class="form-section revoke-section"><h2>Sesi Pengguna</h2><p class="small">Tamatkan semua sesi ABM tanpa menyahaktifkan akaun atau melog keluar akaun Google.</p>
-<form method="post" action="{{ route('users.revoke', $account) }}" data-confirm="Tamatkan semua sesi ABM untuk {{ $account->email }}?">@csrf<input type="hidden" name="access_revision" value="{{ $account->access_revision }}"><label for="revoke-reason">Alasan penamatan sesi <span class="required">*</span></label><input id="revoke-reason" name="reason" required maxlength="1000"><button class="button danger" type="submit"><x-abm-icon name="logout"/>Tamatkan Semua Sesi</button></form></section>
+<form method="post" action="{{ route('users.revoke', $account) }}" data-confirm="Tamatkan semua sesi ABM untuk {{ $account->email }}?">@csrf<input type="hidden" name="form_kind" value="revoke"><input type="hidden" name="access_revision" value="{{ $account->access_revision }}"><label for="revoke-reason">Alasan penamatan sesi <span class="required">*</span></label><input id="revoke-reason" name="reason" required maxlength="1000"><button class="button danger" type="submit"><x-abm-icon name="logout"/>Tamatkan Semua Sesi</button></form></section>
 @endif
 @endsection

@@ -48,9 +48,11 @@ if (await group.locator('[data-own-workplace]').first().evaluate(el => el.checkV
 await workplace.selectOption(ownId);
 await group.locator('[data-assignment-row]').last().locator('.remove-assignment').click();
 if (await group.locator('[data-assignment-row]').count() !== 1) throw Error('Assignment removal failed');
+await page.evaluate(() => window.scrollTo(0, 0));
 await page.screenshot({ path: 'storage/app/ui-qa/user-form-desktop.png', fullPage: true });
 await page.setViewportSize({ width: 390, height: 844 });
 if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile user form overflow');
+await page.evaluate(() => window.scrollTo(0, 0));
 await page.screenshot({ path: 'storage/app/ui-qa/user-form-mobile.png', fullPage: true });
 page.on('dialog', dialog => dialog.accept());
 await page.goto('http://127.0.0.1:4173/users.html');

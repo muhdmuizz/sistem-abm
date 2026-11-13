@@ -8,8 +8,8 @@
 <p class="small">{{ $users->total() }} pengguna</p>
 <div class="data-table"><table><thead><tr><th>Pengguna</th><th>Organisasi</th><th>Status</th><th>Peranan & Skop</th><th>Tindakan</th></tr></thead><tbody>
 @forelse($users as $account)
-<tr><td data-label="Pengguna"><strong>{{ $account->name }}</strong><br><span class="small">{{ $account->email }}</span></td>
-<td data-label="Organisasi">{{ $account->ptj?->nama ?? 'Belum ditetapkan' }}<br><span class="small">{{ $account->tempatBertugas?->nama }}</span></td>
+<tr><td data-label="Pengguna"><div><strong>{{ $account->name }}</strong><br><span class="small">{{ $account->email }}</span></div></td>
+<td data-label="Organisasi"><div>{{ $account->ptj?->nama ?? 'Belum ditetapkan' }}<br><span class="small">{{ $account->tempatBertugas?->nama }}</span></div></td>
 <td data-label="Status"><span class="status-pill {{ $account->is_active ? 'positive' : '' }}">{{ $account->is_active ? 'Aktif' : 'Tidak Aktif' }}</span></td>
 <td data-label="Peranan & Skop"><details class="scope-details"><summary>{{ $account->penugasanPeranan->count() }} penugasan</summary><ul>
 @forelse($account->penugasanPeranan as $assignment)

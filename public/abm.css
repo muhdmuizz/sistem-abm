@@ -11,3 +11,5 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 .notice.success{background:#edf7f0;border-color:#b7d7c2;border-left-color:#37764c;color:#285f3d}
+
+.data-table .status-pill,.data-table .icon-button{justify-self:start}.data-table .icon-button{width:38px}@media(max-width:767px){.data-table .icon-button{width:44px;min-width:44px}}
