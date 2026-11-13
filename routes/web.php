@@ -3,6 +3,7 @@
 use App\Http\Controllers\GoogleSignInController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\AksesPeruntukanController;
 use App\Http\Middleware\EnsureAbmSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,12 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/pentadbiran/aktiviti-kewangan', [AksesPeruntukanController::class, 'index'])->name('permissions.index');
+    Route::get('/pentadbiran/aktiviti-kewangan/{kind}/{key}', [AksesPeruntukanController::class, 'edit'])
+        ->whereIn('kind', ['kategori', 'ptj'])->where('key', '[A-Za-z0-9-]+')->name('permissions.edit');
+    Route::post('/pentadbiran/aktiviti-kewangan/{kind}/{key}/aktiviti/{activity}', [AksesPeruntukanController::class, 'save'])
+        ->whereIn('kind', ['kategori', 'ptj'])->whereNumber('activity')->where('key', '[A-Za-z0-9-]+')
+        ->middleware('throttle:30,1')->name('permissions.save');
     Route::get('/pentadbiran/pengguna', [PenggunaController::class, 'index'])->name('users.index');
     Route::get('/pentadbiran/pengguna/tambah', [PenggunaController::class, 'form'])->name('users.create');
     Route::post('/pentadbiran/pengguna', [PenggunaController::class, 'save'])->middleware('throttle:30,1')->name('users.store');

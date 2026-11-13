@@ -73,21 +73,21 @@
         }
     });
     refreshSelectors();
-    let dirty = false;
+    const dirtyForms = new Set();
     document.querySelectorAll('[data-track-unsaved]').forEach(form => {
-        form.addEventListener('input', () => { dirty = true; });
-        form.addEventListener('change', () => { dirty = true; });
-        form.addEventListener('click', event => { if (event.target.closest('.add-assignment, .remove-assignment')) dirty = true; });
+        form.addEventListener('input', () => { dirtyForms.add(form); });
+        form.addEventListener('change', () => { dirtyForms.add(form); });
+        form.addEventListener('click', event => { if (event.target.closest('.add-assignment, .remove-assignment')) dirtyForms.add(form); });
     });
     window.addEventListener('beforeunload', event => {
-        if (dirty) { event.preventDefault(); event.returnValue = ''; }
+        if (dirtyForms.size) { event.preventDefault(); event.returnValue = ''; }
     });
     document.querySelectorAll('form').forEach(form => form.addEventListener('submit', event => {
-        if (dirty && !form.hasAttribute('data-track-unsaved') && !window.confirm('Terdapat perubahan belum disimpan. Teruskan tanpa menyimpan?')) { event.preventDefault(); return; }
+        if ([...dirtyForms].some(other => other !== form) && !window.confirm('Terdapat perubahan lain yang belum disimpan. Teruskan tanpa menyimpan perubahan lain?')) { event.preventDefault(); return; }
         if (form.dataset.confirm && !window.confirm(form.dataset.confirm)) { event.preventDefault(); return; }
         if (form.dataset.submitting === 'yes') { event.preventDefault(); return; }
         form.dataset.submitting = 'yes';
-        dirty = false;
+        dirtyForms.clear();
         form.querySelectorAll('button[type=submit]').forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); });
     }));
     window.addEventListener('pageshow', () => {
