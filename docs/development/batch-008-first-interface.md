@@ -1,6 +1,6 @@
 # Batch 008 — First Interface & Google Sign-in Preparation
 
-**Status:** Code/build/browser verification passed and merged; first real local login user-confirmed, remaining manual checks pending.
+**Status:** Code/build/browser verification passed and merged; first real local login, reference-page totals and logout/re-login user-confirmed; remaining manual checks pending.
 **Baseline:** `2d84e0c` on `dev`.
 **Authorisation:** User requested continuation after documentation reconciliation; the visible local interface is the next deliverable. Google OAuth was initially unconfigured; later setup and first login are recorded below.
 **Authority:** AD-005 Google sign-in/registered-user access; AD-011 session and audit requirements; AD-013 Clean Enterprise interface; existing reference and role rules.
@@ -60,4 +60,8 @@ After the guarded pull/migration/bootstrap instructions for PR #12, the user rep
 
 The initial missing-account blocker is resolved for this login. Personal Gmail remains Cloud administration only. No further OAuth client or login-policy relaxation was needed. App source remains the verified PR #12 checkpoint `f6e785a` (tested head `5afed49`, CI 43422069980: 134 tests / 1002 assertions).
 
-Remaining manual checks: reference-page navigation/data/pagination, desktop/mobile behaviour on the user's devices, logout and repeat sign-in, unregistered-account rejection, idle warning/renewal/expiry and absolute expiry. Do not mark these passed or certify complete Batch 008/production readiness from the successful login alone. Next immediate check: open the four read-only reference sections and verify their expected seeded totals.
+At the first-login checkpoint, reference-page navigation/totals, pagination, device behaviour, logout/re-login, unregistered-account rejection and session checks were pending. See the subsequent confirmation below for the checks the user has since completed.
+
+## User-confirmed reference pages and repeat login — 13 November 2026
+
+The user replied **“Clean.”** to the requested checks: open all four reference sections, verify totals of PTJ **69**, Aktiviti Kewangan **5**, Tempat Bertugas **579**, OS **33**, then log out and sign in again. Record those specific checks as passed by user report. This does not establish pagination controls, mobile layout, unregistered-account rejection, idle/absolute expiry, renewal, or independent audit/database inspection. Those manual checks remain pending. No application code changed; existing CI evidence remains 134 tests / 1002 assertions at tested head `5afed49`.
