@@ -22,4 +22,15 @@ Cloud source CSV audit passed. PHP syntax, migrations and Laravel tests must be 
 
 After successful tests and merge, local synchronisation requires a clean `dev` checkout, fast-forward pull, confirmation of the `sistem_abm` development database, then `php artisan migrate` and `php artisan db:seed --class=TempatBertugasReferenceSeeder`. No fresh/reset migration is required.
 
-The older missing-roster statements in `docs/references/README.md` predate the committed PTJ/Sektor CSV files. Those historical statements have not been modified by this batch.
+The reference register's older missing-roster statements predated the committed PTJ/Sektor CSV files; they were corrected in the subsequent documentation reconciliation. This batch's implementation scope remains unchanged.
+
+## Verified close-out — 13 November 2026
+
+- **Status:** Implemented, verified, merged and locally synchronised (user-confirmed).
+- **Merge:** [PR #3](https://github.com/muhdmuizz/sistem-abm/pull/3), `3541052f252ccd73836451d956808dd99e618692`.
+- **Actual tested head:** `becb4d603e82889da25b38a6d568b6b80eece17e`.
+- **Runtime evidence:** [successful PostgreSQL CI run](https://github.com/muhdmuizz/sistem-abm/actions/runs/43367136902); PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; **25 tests passed, 274 assertions** (full-suite totals).
+- **Local evidence:** user reported “Completed without errors” after the supplied PowerShell synchronisation instructions. This is not an independent cloud inspection of Windows/database state.
+- **Remaining limitations:** the implementation boundaries above still apply; completion does not certify unimplemented screens, authentication, business workflows or production controls.
+
+See [the development register](README.md) for the current application checkpoint and later changes.

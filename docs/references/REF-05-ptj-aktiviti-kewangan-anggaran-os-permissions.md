@@ -1,6 +1,6 @@
 # Reference 05 — PTJ ↔ Aktiviti Kewangan ↔ Anggaran (OS) permissions
 
-**Status:** Confirmed general framework and initial defaults; detailed OS permissions remain undecided.  
+**Status:** Confirmed framework/defaults; storage and read-only resolution implemented in Batch 005. Detailed OS permission choices remain undecided.  
 **Confirmed:** 12 November 2026  
 **Source:** Explicit user decisions in the Sistem ABM reference-data conversation.  
 **Nature:** Reference configuration and access-control rules, **not a new financial transaction hierarchy**.
@@ -65,6 +65,10 @@ The following remain **undecided** and must not be treated as approved defaults:
 
 The user explicitly requested **general rules first**, with detailed refinement later. This record does **not** claim that OS assignments have been completed or implemented.
 
-## 6. Implementation status
+## 6. Implementation status — reconciled 13 November 2026
 
-This commit records approved reference and permission decisions only. **No database migrations, application changes, data seeding, UI deployment or OS permission assignments are implied or performed.** Existing Architecture Decisions remain unchanged.
+Batch 005 implements configuration storage for category defaults and individual PTJ overrides, together with read-only resolution for both permission dimensions. Its seeder creates the 15 approved category/activity defaults from section 1 and preserves later configuration on reruns.
+
+No OS defaults or individual PTJ overrides were chosen/seeded. The full Superadmin management UI/API and audited administrative mutation services are not implemented. Passing configuration tests does not certify complete user/role/workplace authorisation or financial workflows.
+
+See [Batch 005](../development/batch-005-ptj-permissions.md) and the [development register](../development/README.md) for actual CI/merge/local evidence. The approved rules in sections 1–5 and existing Architecture Decisions remain unchanged.

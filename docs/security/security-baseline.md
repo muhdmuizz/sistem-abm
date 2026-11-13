@@ -1,8 +1,14 @@
 # Sistem ABM — Security Baseline and Pre-launch Verification Checklist
 
 **Adopted for design and verification:** 13 November 2026  
-**Status:** Approved security baseline; **implementation and testing NOT verified**  
+**Status:** Approved security baseline; **full control implementation and pre-launch verification remain incomplete**  
 **Authority:** [AD-005 Identity, Roles & Organisation](../architecture/AD-005-identity-roles-organisation.md), [AD-011 Data Integrity, Audit & Security](../architecture/AD-011-data-integrity-audit-security.md), [AD-012 Deployment & Operational Readiness](../architecture/AD-012-deployment-operational-readiness.md). Use OWASP ASVS as a verification reference, not as a claim of certification.
+
+## Foundation implementation evidence — 13 November 2026
+
+Batches 005–007 provide tested permission-resolution, user/role-scope and audit primitives. Latest application foundation CI: 108 tests / 837 assertions, [run](https://github.com/muhdmuizz/sistem-abm/actions/runs/43405028148), application merge `54ae2f7`. The [development register](../development/README.md) states exactly what is implemented and how local completion was confirmed.
+
+This is partial foundation evidence, **not a PASS for any complete SEC control or release gate**. Google sign-in, full protected endpoints, audited administration, session revocation/expiry, production runtime privileges and operational security verification remain pending. Existing checklist boxes and release criteria are unchanged.
 
 ## Scope and boundaries
 

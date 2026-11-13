@@ -29,3 +29,14 @@ Approved architecture/reference specifications, source catalogue/mappings, rates
 ## Local synchronisation after successful CI and merge
 
 From a clean `dev` working tree, pull with fast-forward only, clear cached configuration and verify the actual PostgreSQL database is `sistem_abm`. Run `php artisan migrate`, followed by `php artisan db:seed --class=AktivitiPermissionDefaultSeeder`. Requires Batches 001–004 references already imported. No fresh/reset migration or OS selection is required.
+
+## Verified close-out — 13 November 2026
+
+- **Status:** Implemented, verified, merged and locally synchronised (user-confirmed).
+- **Merge:** [PR #6](https://github.com/muhdmuizz/sistem-abm/pull/6), `a8a8136029ca428bb842b34900e10556191fc49a`.
+- **Actual tested head:** `d37e230435da146670914387fc1b66c07a01d937`.
+- **Runtime evidence:** [successful PostgreSQL CI run](https://github.com/muhdmuizz/sistem-abm/actions/runs/43401547856); PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; **59 tests passed, 711 assertions** (full-suite totals).
+- **Local evidence:** user reported “Clean” after the supplied PowerShell synchronisation instructions. This is not an independent cloud inspection of Windows/database state.
+- **Remaining limitations:** the implementation boundaries above still apply; completion does not certify unimplemented screens, authentication, business workflows or production controls.
+
+See [the development register](README.md) for the current application checkpoint and later changes.

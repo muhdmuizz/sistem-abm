@@ -33,3 +33,15 @@ No authentication, roles, PTJ/OS permissions, financial persistence, OS fields/r
 ## Local synchronisation after tested merge
 
 On a clean `dev` working tree, pull with `git pull --ff-only origin dev`. Clear cached configuration and verify the actual PostgreSQL database is `sistem_abm` before running `php artisan migrate`, then `php artisan db:seed --class=OrganisationalReferenceSeeder` and `php artisan db:seed --class=OsReferenceSeeder`. The first seeder adds the newly assigned `010102` reference; the second upgrades any previous blank TASKA mapping in place without deleting unrelated records. Use neither fresh nor reset migrations. Cloud CI does not synchronise the Windows database.
+
+## Verified close-out — 13 November 2026
+
+- **Status:** Implemented, verified, merged and locally synchronised with the TASKA correction (user-confirmed).
+- **Original merge:** [PR #4](https://github.com/muhdmuizz/sistem-abm/pull/4), `15e5898e6068aada0927b27371d014b06d9f89e5`.
+- **Original tested head:** `371d7f0dcafe0121297f948c808bf283b2618b87`; [CI](https://github.com/muhdmuizz/sistem-abm/actions/runs/43368361719): **39 tests passed, 631 assertions**.
+- **Owner-confirmed TASKA correction:** [PR #5](https://github.com/muhdmuizz/sistem-abm/pull/5), `4352dc4313db64cc8d3fdb5cab4c18dfed6d8f10`. Tested head `c358005704b6e63c4687bf47aa19355346938b86`; [CI](https://github.com/muhdmuizz/sistem-abm/actions/runs/43368901971): **41 tests passed, 641 assertions**.
+- **Runtime:** PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Counts are full-suite totals.
+- **Local evidence:** user reported “Done” after revised commands included OrganisationalReferenceSeeder followed by OsReferenceSeeder. The original uncorrected checkpoint was not separately claimed as locally applied.
+- **Current TASKA mapping:** `010102` under PPN; 38 total Kod Aktiviti references. Upgrade of the former blank mapping retains its ID. No financial formula or OS permission choice is implied.
+
+See [the development register](README.md) for current state and remaining boundaries.
