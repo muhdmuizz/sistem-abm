@@ -1,6 +1,6 @@
 # Batch 011 — Kitaran ABM & Fasa Administration
 
-**Status:** Code verified and merged; local migration/acceptance pending.
+**Status:** Code verified and merged; local synchronisation/migration and requested inspection user-confirmed; visual defect and broader manual checks remain open.
 **Baseline:** 35db2e68d0a9e49c8b4faf83e13416acb62037af on dev.
 **Authorisation:** User approved the proposed Batch 011: year-only Kitaran creation; Bidaan Awal/automatically numbered Pindaan; dates and global/selected PTJ/activity/exact-pair scope; audited open/close/extend/reopen.
 **Authority:** AD-006 and AD-013 Section 11.3.1; AD-005 actor/role boundaries; AD-011 atomic audit, date/scope integrity and stale-write safeguards. Later AD-009 remains authoritative for review/finalisation; no earlier sequential review process is reintroduced.
@@ -29,4 +29,12 @@ Tested application head: `431486581113c0294be1e850134eb21ea4d00697`.
 
 Desktop/mobile Kitaran and Fasa screenshots were inspected on 14 November 2026 (Asia/Kuala_Lumpur); layout and visible controls passed review. [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43523750417/artifacts/14084112496). These are isolated test fixtures, not seeded local records.
 
-[PR #23](https://github.com/muhdmuizz/sistem-abm/pull/23); merged at `6c6e777b83e03d85a3ebab02eba45d5d8540fbfc`. Guarded local migration and UI acceptance remain pending. Routine local updates keep the existing server running: use another terminal, apply guarded migration/cache clears, then refresh.
+[PR #23](https://github.com/muhdmuizz/sistem-abm/pull/23); merged at `6c6e777b83e03d85a3ebab02eba45d5d8540fbfc`. Guarded local migration and requested list/year-only form inspection are user-confirmed; actual phase mutations remain unverified locally. Routine local updates keep the existing server running: use another terminal, apply guarded migration/cache clears, then refresh.
+
+## Batch 011 local confirmation and design clarification — 14 November 2026
+
+The user replied **“Clean.”** to the supplied guarded dev pull/database check/migration/cache-clear commands and requested Kitaran list/Tambah Kitaran year-only form inspection. Record those checks as user-confirmed, not direct cloud access to Windows. The attached local screenshot shows the empty Kitaran list. Actual cycle/phase creation, scope changes, opening/closing/extending/reopening and local audit/stale-editor checks remain unverified; no such mutation is inferred.
+
+The user also identified **“Tiada Kitaran ditemui.” too close to the table border** and requested stronger system-wide spacing rules while retaining the existing anti-AI-slop direction. AD-013 Sections 01.1, 06, 07 and 12 now make padding, breathing room, responsive grouping and empty/loading/error-state inspection explicit. This is an authorised design clarification, not a new functional batch or financial decision.
+
+**Open visual defect:** Kitaran empty-state padding is insufficient in the user-supplied screenshot. The earlier visual review covered populated fixture screens and did not establish zero-record-state polish. Correct the shared empty-state treatment and inspect all affected desktop/mobile states before declaring this issue resolved. This documentation-only change does not fix application CSS or certify full UI completion. Existing CI evidence remains 187 tests / 1730 assertions at `4314865`; no new test execution is claimed.

@@ -29,3 +29,7 @@ Do not assume cloud access to `C:\Projects\sistem-abm`. When local execution is 
 For routine local updates, keep the existing development server running. Provide pull/cache commands for another terminal and ask the user to refresh the browser (Ctrl+F5 for changed assets). Request a restart only when the specific change requires it, and explain that reason. Do not include stop/start server commands as routine boilerplate.
 
 A passing foundation test suite is not proof of Google integration, administration UI, complete financial workflow, production privilege separation or release readiness. Preserve the distinction in every progress report.
+
+## UI design quality
+
+Apply AD-013's Clean Enterprise direction and mandatory anti-AI-slop rules to every UI change, including Section 01.1 breathing room/padding. Compact layouts must retain comfortable internal insets and group separation. Reuse shared spacing tokens/components; do not substitute decorative cards, icons or oversized whitespace for careful composition. Inspect applicable empty, filtered-empty, loading, error/validation, populated and expanded states on desktop/mobile. Record uninspected states and unresolved visual defects; functional tests or populated screenshots alone do not justify UI-complete claims.

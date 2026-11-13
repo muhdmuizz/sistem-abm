@@ -73,6 +73,20 @@ The following records the **12 approved design sections** and their consolidated
 
 These are approved design standards. Exact token values may be specified during implementation without silently changing the agreed visual direction or business workflows.
 
+### 01.1 Breathing room and spacing discipline — clarified 14 November 2026
+
+User-directed clarification of the existing Clean Enterprise and anti-AI-slop standards. **Compact must remain comfortable and deliberately composed.** Text, icons, fields and actions must have sufficient internal padding and separation to read as a finished interface; content pressed against a container border is a visual defect.
+
+- Apply the shared 4 px spacing scale through reusable tokens/components. Keep page gutters, panel insets, table cells, form groups, alerts, dialogs and empty states consistent across screens. Do not repair each page with unrelated one-off spacing.
+- Distinguish **internal padding**, gaps between related items, and separation between sections. Keep related labels/fields/help/errors together; give separate groups more room. Maintain a clear visual rhythm rather than distributing everything with equal gaps.
+- Use comfortable panel insets (normally 16–24 px) and compact table-cell insets (normally 12–16 px horizontally, 8–12 px vertically) as implementation starting points on the existing scale. Choose shared responsive tokens after checking actual content; these are not a reason to enlarge every row or control.
+- Empty states inside bordered tables/panels require explicit padding on all sides. Start with the surrounding content's horizontal inset (normally at least 16 px) and 16–24 px vertically. Align the message with the table/panel content edge; do not let an unstyled paragraph sit directly against the border or header divider. Do not impose a tall fixed-height placeholder.
+- Preserve that inset in mobile layouts, wrapped text, validation/error states and expanded sections. Check long labels, multiline messages, dropdown values, action groups and focus outlines for clipping, crowding and collisions.
+- Give icons and button labels balanced internal spacing and optical alignment. Keep adjacent controls distinguishable and usable without packing their hit areas together.
+- Restraint and breathing room must coexist: no decorative cards, gratuitous icons, exaggerated blank areas, oversized typography, ornamental empty-state illustrations or generic SaaS embellishments to compensate for weak layout. Typography, alignment, spacing and task hierarchy provide the polish.
+
+**Concrete failure example:** the local Kitaran ABM empty table showed “Tiada Kitaran ditemui.” almost flush with its left/bottom border. This fails the spacing standard even though the message is functionally correct. Use a properly padded shared empty-state treatment; no extra card, illustration or redundant action is needed. Recording this requirement does not claim the current CSS has been corrected.
+
 ## Section 02 — Application Shell & Navigation (Approved; complete)
 
 1. **Sidebar organisation:** Group existing modules by function; show only modules authorised for the current user. Do not introduce unapproved routes or module renaming.
@@ -130,7 +144,7 @@ These are shared interaction standards, not changes to AD-004 wizard persistence
 5. **Pagination:** Compact navigation with record counts and previous/next controls; avoid long page-number lists.
 6. **Row actions and selection:** Consistent row action location; checkboxes only for already-supported bulk operations, without inventing new bulk capabilities.
 7. **Responsive presentation:** Previously approved hybrid strategy: compact cards for suitable mobile listings; horizontal scrolling for granular financial tables.
-8. **Table states:** Contextual skeleton rows, meaningful empty states and explicit error/retry feedback.
+8. **Table states:** Contextual skeleton rows, meaningful empty states and explicit error/retry feedback. Empty, loading and error content must retain deliberate cell/panel padding under Section 01.1; collapsed borders must not leave text touching an edge.
 
 Column sets, business actions and financial data structures remain governed by the relevant approved functional ADs.
 
@@ -141,7 +155,7 @@ Column sets, business actions and financial data structures remain governed by t
 3. **Saving feedback:** Distinguish *Belum Disimpan*, *Menyimpan*, *Disimpan* and *Gagal Disimpan*; never report success until persistence is confirmed.
 4. **Success notifications:** Brief, unobtrusive feedback for completed actions; avoid routine success dialogs.
 5. **Error handling:** Understandable errors, appropriate recovery/retry actions, and preservation of entered data.
-6. **Empty states:** Distinguish truly empty datasets from filtered-out results; show relevant next action only when permitted.
+6. **Empty states:** Distinguish truly empty datasets from filtered-out results; show relevant next action only when permitted. Apply Section 01.1 padding and alignment to each state; concise text alone is sufficient when no additional guidance or action is needed.
 7. **Confirmation and progress:** Confirm consequential actions, show processing and prevent duplicate submissions; no unnecessary routine confirmations.
 8. **Motion and accessibility:** Restrained transitions, visible focus, accessible status announcements and reduced-motion support.
 
@@ -354,6 +368,8 @@ Section 12 is a **system-wide design and acceptance standard**, not a new workfl
 4. **Responsive behaviour:** desktop/tablet/mobile navigation, controls, filters, forms and data presentation retain meaning and operability.
 5. **Accessibility:** keyboard, focus, assistive-technology semantics, contrast, touch interaction and reduced-motion behaviour.
 6. **Performance and regression:** stable loading, no unnecessary skeleton/arrow flashes, duplicate actions, lost edits, broken navigation or stale/false save confirmations.
+
+**Required spacing/state review:** Inspect actual populated, zero-record, filtered-no-results, loading, error/validation and expanded states wherever applicable, on desktop and mobile. Review border-to-content insets, alignment, wrapping, control gaps and section separation. A populated screenshot or passing overflow assertion does not establish empty-state quality. Record unexercised states explicitly; fix visual failures before claiming UI completion. Apply the anti-slop checklist during this review, without adding decoration or sacrificing useful financial density.
 
 Each major implemented interface must be checked against the applicable categories before declaring it **UI-complete**. Record and repair failures without altering approved functional rules to accommodate a visual implementation. **No QA tests or application implementation are certified by this document.**
 
