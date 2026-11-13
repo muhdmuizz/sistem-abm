@@ -41,6 +41,11 @@ await group.locator('[data-assignment-row]').first().locator('select[name$="[ptj
 await group.locator('[data-assignment-row]').first().locator('select[name$="[aktiviti_kewangan_id]"]').selectOption({ index: 1 });
 await group.locator('[data-own-workplace]').first().selectOption(ownId);
 if (await group.locator('[data-own-workplace]').first().locator('option:not([disabled])').count() !== 2) throw Error('Own workplace selector leaks other workplaces');
+const otherId = await workplace.locator('option').evaluateAll(options => options.find(o => o.value && !o.disabled && !o.selected)?.value);
+await workplace.selectOption(otherId);
+if (await group.locator('[data-own-workplace]').first().inputValue() !== ownId) throw Error('Workplace restriction silently broadened');
+if (await group.locator('[data-own-workplace]').first().evaluate(el => el.checkValidity())) throw Error('Invalid own-workplace scope not flagged');
+await workplace.selectOption(ownId);
 await group.locator('[data-assignment-row]').last().locator('.remove-assignment').click();
 if (await group.locator('[data-assignment-row]').count() !== 1) throw Error('Assignment removal failed');
 await page.screenshot({ path: 'storage/app/ui-qa/user-form-desktop.png', fullPage: true });

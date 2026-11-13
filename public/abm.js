@@ -25,13 +25,16 @@
             if (clearInvalid && identityWorkplace.selectedOptions[0]?.disabled) identityWorkplace.value = '';
         }
         document.querySelectorAll('[data-own-workplace]').forEach(select => {
+            let selectedInvalid = false;
             for (const option of select.options) {
                 const scopePtj = select.closest('[data-assignment-row]').querySelector('select[name$="[ptj_id]"]')?.value;
                 const invalid = !!option.value && (option.value !== identityWorkplace?.value || option.dataset.parent !== scopePtj);
-                option.hidden = invalid;
-                option.disabled = invalid;
+                if (invalid && option.selected) selectedInvalid = true;
+                option.hidden = invalid && !option.selected;
+                option.disabled = invalid && !option.selected;
             }
-            if (clearInvalid && select.selectedOptions[0]?.disabled) select.value = '';
+            // Never turn a withdrawn own-workplace restriction into an all-workplaces grant.
+            select.setCustomValidity(selectedInvalid ? 'Pilih semula skop Tempat Bertugas selepas perubahan organisasi.' : '');
         });
         document.querySelectorAll('.role-group').forEach(group => {
             const enabled = group.querySelector('.role-enabled').checked;
