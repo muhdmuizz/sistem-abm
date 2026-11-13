@@ -2,9 +2,9 @@
 
 **Updated:** 13 November 2026 (Asia/Kuala_Lumpur).  
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
-**Latest verified application-code checkpoint:** `f6e785a85367c24faee45d37a6c93c6cd6c301ae` (Batch 008 first-account correction merged in PR #12; local registration/provider acceptance pending). Documentation-only commits after this checkpoint do not represent another implementation batch.  
+**Latest verified application-code checkpoint:** `f6e785a85367c24faee45d37a6c93c6cd6c301ae` (Batch 008 first-account correction merged in PR #12; first real local login user-confirmed, remaining manual checks pending). Documentation-only commits after this checkpoint do not represent another implementation batch.  
 **Current application verification:** 134 tests passed, 1002 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
-**Local state:** Batches 001–007 remain user-confirmed. For Batch 008, user now reports local OAuth credentials/configuration, enabled Google button and Google password/consent completion for the intended MyGovUC identity; ABM callback was denied. Guarded local database query confirms no matching account. Initial registration correction is merged; successful real login and full manual acceptance remain pending. The cloud agent did not inspect Windows directly.
+**Local state:** Batches 001–007 remain user-confirmed. After Batch 008 OAuth setup and PR #12 account-registration instructions, the user reports successful entry into the local web app using the intended MyGovUC identity. Initial setup and first real login are user-confirmed; remaining page/session/manual acceptance is pending. The cloud agent did not inspect Windows or query its audit records directly.
 
 This is the implementation/execution register. [The architecture README](../architecture/README.md) remains the single master AD index; design approval is not implementation completion. Batch numbers are bounded delivery checkpoints, not replacements for the previously documented six workstreams.
 
@@ -36,7 +36,7 @@ Tests/assertions above are full-suite totals at each tested revision, not the nu
 | TASKA | OS42000, Kod Aktiviti `010102`, PPN |
 | Permission defaults seeded | 15 category/activity defaults only |
 | OS permission choices / individual PTJ exceptions | Not selected or seeded; do not guess |
-| Real user activation / role assignments | No real users activated or role assignments seeded by these batches |
+| Real user activation / role assignments | Foundation seeders create no real users/roles. First local operator registration and Google login are now user-confirmed after the PR #12 bootstrap instructions. |
 
 These are current source/import counts, not hardcoded application limits. Institutional codes for non-PTJ schools remain unverified and must not be fabricated.
 
@@ -50,16 +50,16 @@ These are current source/import counts, not hardcoded application limits. Instit
 | User/role scopes | Identity/assignment storage and read-only scope evaluation; no user activation/assignment administration service; Google preparation is part of Batch 008 |
 | Audit | Internal atomic audit primitive and model/PostgreSQL history protections; no audit viewer or automatic coverage of all future business operations |
 | Audited access administration | Not implemented; activation/deactivation, session revocation and role/permission administration remain pending |
-| ABM web interface | Batch 008 implements sign-in, shell and protected read-only references; code merged, local/provider setup pending. Financial and editable administration interfaces remain pending. |
-| Google sign-in and approved session policy | Batch 008 implements code flow, registered identity checks and idle/absolute expiry; real Google configuration/sign-in and full administrative session revocation remain pending. |
+| ABM web interface | Batch 008 implements sign-in, shell and protected read-only references; code merged; first local Google login user-confirmed, remaining manual checks pending. Financial and editable administration interfaces remain pending. |
+| Google sign-in and approved session policy | Batch 008 implements code flow, registered identity checks and idle/absolute expiry; first real local Google sign-in user-confirmed; manual session acceptance and full administrative session revocation remain pending. |
 | Financial persistence and workflows | Bidaan, transactional Anggaran/Butiran, programme workflow, calculations, submissions/reviews/snapshots and official exports remain pending |
 | Production/security release | Not certified; runtime/DDL privilege separation and other AD-012/security-baseline gates remain outstanding |
 
 The foundation suite does not certify complete security controls, financial outcomes, deployed UI or production readiness. AD-008 remains Draft; catalogue import does not finalise OS financial specifications.
 
-## Batch 008 — code merged, local/provider acceptance pending
+## Batch 008 — first local login confirmed; remaining manual acceptance pending
 
-The user's “Let's continue” instruction after reconciliation is being executed as the next visible-interface deliverable: Google sign-in preparation, a responsive application shell and protected read-only reference screens. Baseline: `2d84e0c`. [PR #10](https://github.com/muhdmuizz/sistem-abm/pull/10) has verified code: head `b4af255`, [CI](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393), 125 tests / 937 assertions plus build/browser checks and visual inspection. Code merged in PR #10 at `e5a93c7ae113f2ea2e4752983d41683642ad698d`. Local/provider setup is pending. Google OAuth was initially unconfigured; see the later local acceptance update below. Real-provider/local sign-in verification and initial registered-account setup remain pending. No login bypass or guessed user/OS assignments is authorised.
+The user's “Let's continue” instruction after reconciliation is being executed as the next visible-interface deliverable: Google sign-in preparation, a responsive application shell and protected read-only reference screens. Baseline: `2d84e0c`. [PR #10](https://github.com/muhdmuizz/sistem-abm/pull/10) has verified code: head `b4af255`, [CI](https://github.com/muhdmuizz/sistem-abm/actions/runs/43412032393), 125 tests / 937 assertions plus build/browser checks and visual inspection. Code merged in PR #10 at `e5a93c7ae113f2ea2e4752983d41683642ad698d`. Google OAuth was initially unconfigured; initial local setup and real sign-in are now user-confirmed. See the acceptance updates below for remaining manual checks. No login bypass or guessed user/OS assignments is authorised.
 
 Audited user/permission editing, financial workflows and production release remain outside this first interface slice. Build/browser checks and screenshot review passed. Local/provider acceptance must still be recorded here and in [Batch 008](batch-008-first-interface.md); do not mark the batch fully closed from a Git pull alone.
 
@@ -73,9 +73,9 @@ For the next session: verify live `dev`, read this register and the relevant bat
 
 User reports that OAuth branding/client were created in the dedicated Sistem ABM Cloud project, credentials were saved locally, the Google button is enabled, and Google password/consent completed for `muizz@moe.gov.my`. The callback returned the generic ABM denial; the redacted local log shows `RuntimeException`. A guarded read-only query against PostgreSQL `sistem_abm` returned **Matching accounts: 0**. This confirms missing local registration as a blocker; it does not exclude another identity-provider eligibility issue. Personal `suarafata@gmail.com` manages Cloud only and is not approved as an ABM login. User confirmed **Sektor Pengurusan, JPNT** for the initial operator account.
 
-A bounded correction is in progress: a local-console-only first-Superadmin registration command using an exact existing JPNT/Sektor, explicit real-operator declaration and reason, atomic account/role/audit creation, serialised first-run guard, and refusal to overwrite existing accounts or operate after any Superadmin exists. The audit labels identity assurance as local operator declaration, never as Google verification. No password, browser session, Google subject or verified-email timestamp is supplied by setup. Normal Google validation remains mandatory. No other roles/activity/OS assignments are granted. Production bootstrap and general account administration remain outside this correction.
+The merged bounded correction provides: a local-console-only first-Superadmin registration command using an exact existing JPNT/Sektor, explicit real-operator declaration and reason, atomic account/role/audit creation, serialised first-run guard, and refusal to overwrite existing accounts or operate after any Superadmin exists. The audit labels identity assurance as local operator declaration, never as Google verification. No password, browser session, Google subject or verified-email timestamp is supplied by setup. Normal Google validation remains mandatory. No other roles/activity/OS assignments are granted. Production bootstrap and general account administration remain outside this correction.
 
-Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is complete; see evidence below. Code merged in PR #12; user execution and real login remain pending.
+Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is complete; see evidence below. Code merged in PR #12; first successful local login is now user-confirmed (see subsequent acceptance record).
 
 ### Initial-account correction verification
 
@@ -84,4 +84,12 @@ Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is compl
 - Nine added bootstrap cases cover attributed initial registration, one-time closure (including removed role), existing case-variant refusal, exact organisational references, explicit declaration/reason, production denial, audit-failure rollback and normal verified-Google login after setup.
 - First CI attempt caught an inherited test-helper name collision; corrected before successful verification. No unsuccessful revision was merged.
 - [PR #12](https://github.com/muhdmuizz/sistem-abm/pull/12); merged at `f6e785a85367c24faee45d37a6c93c6cd6c301ae`. Subsequent evidence-only edits do not change tested PHP source.
-- User execution of the command and actual successful Google callback remain pending. This correction does not establish Google tenant/domain eligibility or complete Batch 008 manual acceptance.
+- First successful real local login is now user-confirmed after the supplied setup instructions. Full Batch 008 manual acceptance and broader tenant/production approval remain unverified.
+
+## User-confirmed first local login — 13 November 2026
+
+After the guarded pull/migration/bootstrap instructions for PR #12, the user reported: **“I've entered the web app.”** Record local application setup and initial-account/real Google sign-in as user-confirmed for `muizz@moe.gov.my`, JPNT / Sektor Pengurusan, intended Superadmin. This is user-reported acceptance, not cloud inspection of Windows, a database/audit query, or an independently captured browser trace.
+
+The initial missing-account blocker is resolved for this login. Personal Gmail remains Cloud administration only. No further OAuth client or login-policy relaxation was needed. App source remains the verified PR #12 checkpoint `f6e785a` (tested head `5afed49`, CI 43422069980: 134 tests / 1002 assertions).
+
+Remaining manual checks: reference-page navigation/data/pagination, desktop/mobile behaviour on the user's devices, logout and repeat sign-in, unregistered-account rejection, idle warning/renewal/expiry and absolute expiry. Do not mark these passed or certify complete Batch 008/production readiness from the successful login alone. Next immediate check: open the four read-only reference sections and verify their expected seeded totals.
