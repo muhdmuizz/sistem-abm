@@ -1,6 +1,6 @@
 # Batch 011 — Kitaran ABM & Fasa Administration
 
-**Status:** In progress; verification, merge and local acceptance pending.
+**Status:** Code verified; merge and local migration/acceptance pending.
 **Baseline:** 35db2e68d0a9e49c8b4faf83e13416acb62037af on dev.
 **Authorisation:** User approved the proposed Batch 011: year-only Kitaran creation; Bidaan Awal/automatically numbered Pindaan; dates and global/selected PTJ/activity/exact-pair scope; audited open/close/extend/reopen.
 **Authority:** AD-006 and AD-013 Section 11.3.1; AD-005 actor/role boundaries; AD-011 atomic audit, date/scope integrity and stale-write safeguards. Later AD-009 remains authoritative for review/finalisation; no earlier sequential review process is reintroduced.
@@ -23,4 +23,10 @@ This batch does not implement Bidaan/Anggaran storage, submission/version snapsh
 
 ## Verification and local handoff
 
-Pending: isolated PostgreSQL tests for migration/constraints, sequence allocation, scope/date/open-state behavior, stale conflicts, actor denial and audit rollback; build/browser checks; screenshot review; merge metadata; guarded local migration and UI verification. Routine local updates keep the existing server running: use another terminal, apply guarded migration/cache clears, then refresh.
+Tested application head: `431486581113c0294be1e850134eb21ea4d00697`.
+
+[CI 43523750417](https://github.com/muhdmuizz/sistem-abm/actions/runs/43523750417): **187 tests passed / 1730 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. The 19 added tests cover migration/constraints, per-cycle numbering, date/scope/open-state behavior, stale conflicts, nested IDs, actor/session denial and atomic audit-failure rollback. Frontend build and Chromium checks passed, including scope switching, exact-pair controls, unique row IDs and mobile overflow assertions.
+
+Desktop/mobile Kitaran and Fasa screenshots were inspected on 14 November 2026 (Asia/Kuala_Lumpur); layout and visible controls passed review. [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43523750417/artifacts/14084112496). These are isolated test fixtures, not seeded local records.
+
+[PR #23](https://github.com/muhdmuizz/sistem-abm/pull/23); actual merge checkpoint pending. Guarded local migration and UI acceptance remain pending. Routine local updates keep the existing server running: use another terminal, apply guarded migration/cache clears, then refresh.
