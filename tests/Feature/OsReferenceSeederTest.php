@@ -28,7 +28,7 @@ class OsReferenceSeederTest extends TestCase
         $this->importReferences();
         $this->assertDatabaseCount('rujukan_os', 33);
         $this->assertDatabaseCount('pemetaan_os', 105);
-        $this->assertDatabaseCount('kod_aktivitis', 37);
+        $this->assertDatabaseCount('kod_aktivitis', 38);
         $this->assertDatabaseCount('aktiviti_kewangans', 5);
         $this->assertSame(31, RujukanOs::untukPelaksanaan()->count());
         $this->assertSame(103, PemetaanOs::untukPelaksanaan()->count());
@@ -68,16 +68,52 @@ class OsReferenceSeederTest extends TestCase
         }
     }
 
-    public function test_taska_keeps_its_genuinely_unassigned_code_and_ppn_parent(): void
+    public function test_taska_uses_the_owner_confirmed_code_and_ppn_parent(): void
     {
         $this->importReferences();
         $taska = RujukanOs::where('butiran_perbelanjaan', 'Subsidi Yuran TASKA')->firstOrFail();
         $this->assertSame('42000', $taska->kod_objek);
         $mapping = $taska->pemetaan()->sole();
-        $this->assertNull($mapping->kod_aktiviti_id);
-        $this->assertNull($mapping->kodAktiviti);
+        $this->assertSame('010102', $mapping->kodAktiviti->kod_aktiviti);
+        $this->assertSame($mapping->aktiviti_kewangan_id, $mapping->kodAktiviti->aktiviti_kewangan_id);
         $this->assertSame('Pengurusan Pentadbiran Negeri', $mapping->aktivitiKewangan->nama);
-        $this->assertDatabaseCount('kod_aktivitis', 37);
+        $this->assertDatabaseCount('kod_aktivitis', 38);
+    }
+
+    public function test_existing_blank_taska_mapping_is_upgraded_in_place(): void
+    {
+        $this->importReferences();
+        $taska = RujukanOs::where('butiran_perbelanjaan', 'Subsidi Yuran TASKA')->firstOrFail();
+        $mapping = $taska->pemetaan()->sole();
+        $mapping->update(['kod_aktiviti_id' => null]);
+        $originalId = $mapping->id;
+        $this->seed(OsReferenceSeeder::class);
+        $this->seed(OsReferenceSeeder::class);
+        $updated = $taska->pemetaan()->sole();
+        $this->assertSame($originalId, $updated->id);
+        $this->assertSame('010102', $updated->kodAktiviti->kod_aktiviti);
+        $this->assertSame('Pengurusan Pentadbiran Negeri', $updated->aktivitiKewangan->nama);
+        $this->assertDatabaseCount('pemetaan_os', 105);
+        $this->assertDatabaseCount('kod_aktivitis', 38);
+    }
+
+    public function test_conflicting_taska_mappings_are_not_silently_deleted(): void
+    {
+        $this->importReferences();
+        $taska = RujukanOs::where('butiran_perbelanjaan', 'Subsidi Yuran TASKA')->firstOrFail();
+        $current = $taska->pemetaan()->sole();
+        $legacy = $current->replicate();
+        $legacy->kod_aktiviti_id = null;
+        $legacy->save();
+        try {
+            $this->seed(OsReferenceSeeder::class);
+            $this->fail('Conflicting mappings must require reconciliation.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('Conflicting TASKA mappings', $exception->getMessage());
+        }
+        $this->assertSame(2, $taska->pemetaan()->count());
+        $this->assertNull($legacy->fresh()->kod_aktiviti_id);
+        $this->assertSame($current->kod_aktiviti_id, $current->fresh()->kod_aktiviti_id);
     }
 
     public function test_original_wording_and_deduplicated_mapping_are_preserved(): void
@@ -151,7 +187,8 @@ class OsReferenceSeederTest extends TestCase
     public function test_database_rejects_duplicate_blank_code_mapping(): void
     {
         $this->importReferences();
-        $mapping = PemetaanOs::whereNull('kod_aktiviti_id')->sole();
+        $mapping = PemetaanOs::whereHas('rujukanOs', fn ($query) => $query->where('butiran_perbelanjaan', 'Subsidi Yuran TASKA'))->sole();
+        $mapping->update(['kod_aktiviti_id' => null]);
         $this->expectException(QueryException::class);
         PemetaanOs::create($mapping->only([
             'aktiviti_kewangan_id', 'kod_aktiviti_id', 'rujukan_os_id',

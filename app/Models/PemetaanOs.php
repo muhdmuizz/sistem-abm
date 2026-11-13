@@ -27,7 +27,7 @@ class PemetaanOs extends Model
         return $this->belongsTo(RujukanOs::class);
     }
 
-    /** Includes the approved blank-code TASKA mapping, without inventing a code. */
+    /** Reference eligibility only; does not grant user/PTJ permissions. */
     public function scopeUntukPelaksanaan(Builder $query): Builder
     {
         return $query->whereHas('rujukanOs', fn (Builder $os) => $os->untukPelaksanaan());

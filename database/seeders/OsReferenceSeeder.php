@@ -73,6 +73,23 @@ class OsReferenceSeeder extends Seeder
                 $ids[$key] = $reference->id;
             }
             foreach ($prepared as [$row, $key, $activityId, $codeId]) {
+                // Owner-confirmed correction: upgrade only the prior PPN TASKA
+                // blank-code mapping, retaining its stable ID and unrelated rows.
+                if ($row['Kod Aktiviti'] === '010102' &&
+                    $row['Aktiviti Kewangan'] === 'Pengurusan Pentadbiran Negeri' &&
+                    $row['Kod Objek'] === '42000' &&
+                    $row['Butiran Perbelanjaan (Canonical)'] === 'Subsidi Yuran TASKA') {
+                    $legacy = PemetaanOs::where('aktiviti_kewangan_id', $activityId)
+                        ->where('rujukan_os_id', $ids[$key])->whereNull('kod_aktiviti_id')
+                        ->lockForUpdate()->first();
+                    if ($legacy !== null) {
+                        if (PemetaanOs::where('aktiviti_kewangan_id', $activityId)
+                            ->where('rujukan_os_id', $ids[$key])->where('kod_aktiviti_id', $codeId)->exists()) {
+                            throw new RuntimeException('Conflicting TASKA mappings require reconciliation; no records were changed.');
+                        }
+                        $legacy->update(['kod_aktiviti_id' => $codeId]);
+                    }
+                }
                 PemetaanOs::updateOrCreate([
                     'aktiviti_kewangan_id' => $activityId,
                     'kod_aktiviti_id' => $codeId,
