@@ -1,6 +1,6 @@
 # Batch 010 — Pengurusan Aktiviti Kewangan
 
-**Status:** Code/tests/build/browser verification passed; merge and local acceptance pending.
+**Status:** Code/tests/build/browser verification passed; merged; local acceptance pending.
 **Baseline:** 674b80a78019dadc3ae3323c205baba1033b2eeb on dev.
 **Authorisation:** User approved Batch 010 after the explicit proposal for the central PTJ → Aktiviti Kewangan → OS permission editor.
 **Authority:** REF-04 source identities/mappings/exclusions; REF-05 category defaults, individual overrides and inheritance; AD-005 Superadmin and exact independent role scopes; AD-011 atomic audit/default deny/stale-write safeguards; AD-013 Section 11.3 expandable checkbox hierarchy.
@@ -19,7 +19,7 @@ This is central configuration administration, not financial workflow delivery or
 
 ## Verification and handoff
 
-Isolated suite, build/browser controls and screenshot review passed; see evidence below. Merge checkpoint and local inspection remain pending. Default-only inspection must not be recorded as an actual permission-mutation test.
+Isolated suite, build/browser controls and screenshot review passed; see evidence below. Merged in PR #20 at `d514ae56bd5b8e963d921f1fd38cad794b273ac5`; local inspection remains pending. Default-only inspection must not be recorded as an actual permission-mutation test.
 
 ## Verification reviewed — 14 November 2026 (Asia/Kuala_Lumpur)
 
@@ -28,5 +28,9 @@ Isolated suite, build/browser controls and screenshot review passed; see evidenc
 - Fifteen added tests cover attributed category saves, independent PTJ overrides and inheritance/reset, parent masking/restoration, unset versus false settings, same-code OS variants, incomplete/excluded/unmapped/unknown payload rejection, target/category/reference stale conflicts, all five non-admin role denials, mutation-time actor/session rechecks, audit rollback, resolver/view agreement, validation, targets, search and pagination.
 - Browser checks verify granular selection without automatic child grants, parent masking without losing OS selections, category unset/PTJ inheritance controls, protection for edits in another activity form, cancellation recovery and mobile overflow.
 - [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43432337237/artifacts/14038934423): category editor desktop/mobile and PTJ-list mobile screenshots downloaded and visually inspected; no layout blocker observed. These are isolated test fixtures, not the user's Windows installation.
-- [PR #20](https://github.com/muhdmuizz/sistem-abm/pull/20); merge checkpoint pending at this evidence commit. Later evidence-only commits do not change tested application source.
+- [PR #20](https://github.com/muhdmuizz/sistem-abm/pull/20); merged at `d514ae56bd5b8e963d921f1fd38cad794b273ac5`. Later evidence-only commits do not change tested application source.
 - Local synchronisation and inspection remain pending. No migration, seeder or permission-selection changes are required to apply the delivered code; no actual local permission mutations have been observed.
+
+## Local handoff
+
+From a clean dev branch, fast-forward pull the merged code and verify the application merge ancestor, then clear configuration/routes/views and restart the local server. No schema migration, seeder, new package, OAuth setup or automatic permission assignment is required. Inspect Pentadbiran > Pengurusan Aktiviti Kewangan, the 69-PTJ list, the three category editors and one individual PTJ editor. Confirm existing values and the unset/inherited/specific controls without saving arbitrary permission selections. Record inspection separately from actual local permission-mutation acceptance.

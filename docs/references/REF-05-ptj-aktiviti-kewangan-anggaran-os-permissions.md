@@ -1,6 +1,6 @@
 # Reference 05 — PTJ ↔ Aktiviti Kewangan ↔ Anggaran (OS) permissions
 
-**Status:** Confirmed framework/defaults; storage and read-only resolution implemented in Batch 005. Detailed OS permission choices remain undecided.  
+**Status:** Confirmed framework/defaults; Batch 005 storage/resolution and Batch 010 audited administration are implemented. Batch 010 local acceptance is pending. Detailed OS permission choices remain unselected by delivery.  
 **Confirmed:** 12 November 2026  
 **Source:** Explicit user decisions in the Sistem ABM reference-data conversation.  
 **Nature:** Reference configuration and access-control rules, **not a new financial transaction hierarchy**.
@@ -65,10 +65,10 @@ The following remain **undecided** and must not be treated as approved defaults:
 
 The user explicitly requested **general rules first**, with detailed refinement later. This record does **not** claim that OS assignments have been completed or implemented.
 
-## 6. Implementation status — reconciled 13 November 2026
+## 6. Implementation status — reconciled 14 November 2026
 
 Batch 005 implements configuration storage for category defaults and individual PTJ overrides, together with read-only resolution for both permission dimensions. Its seeder creates the 15 approved category/activity defaults from section 1 and preserves later configuration on reruns.
 
-No OS defaults or individual PTJ overrides were chosen/seeded. The full Superadmin management UI/API and audited administrative mutation services are not implemented. Passing configuration tests does not certify complete user/role/workplace authorisation or financial workflows.
+No OS defaults or individual PTJ overrides were chosen/seeded by delivery. [Batch 010](../development/batch-010-central-permissions.md) adds Superadmin-only category and individual PTJ editors, per-setting inheritance/reset, explicit activity/OS toggles and transactional audited saves with stale-state protection. Code is merged in PR #20; local inspection and actual permission-mutation acceptance remain pending. Passing these tests does not certify financial workflows or production readiness.
 
 See [Batch 005](../development/batch-005-ptj-permissions.md) and the [development register](../development/README.md) for actual CI/merge/local evidence. The approved rules in sections 1–5 and existing Architecture Decisions remain unchanged.
