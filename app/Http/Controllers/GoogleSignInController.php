@@ -9,6 +9,7 @@ use App\Services\GoogleSignIn;
 use App\Services\JejakAudit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class GoogleSignInController extends Controller
@@ -37,6 +38,7 @@ class GoogleSignInController extends Controller
             ! hash_equals($flow['state'], $request->query('state')) ||
             now()->timestamp - $flow['issued_at'] > 600 || ! is_string($request->query('code')) ||
             $request->query('code') === '' || strlen($request->query('code')) > 4096) {
+            Log::notice('abm.google.state_rejected');
             return redirect()->route('login')->withErrors(['login' => 'Sesi log masuk tidak sah atau telah tamat. Sila cuba semula.']);
         }
         try {
@@ -65,8 +67,9 @@ class GoogleSignInController extends Controller
             $request->session()->regenerate();
             $request->session()->put(['abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
             return redirect()->route('home');
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             // Provider errors can contain tokens. Do not log/flash the raw exception.
+            Log::notice('abm.google.sign_in_failed', ['exception_type' => get_class($exception)]);
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

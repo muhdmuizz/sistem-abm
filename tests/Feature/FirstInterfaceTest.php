@@ -12,6 +12,7 @@ use Database\Seeders\TempatBertugasReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FirstInterfaceTest extends TestCase
 {
@@ -32,13 +33,13 @@ class FirstInterfaceTest extends TestCase
         $this->actingAs($user)->withSession(['abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
     }
 
-    private function google(array $profile = []): void
+    private function google(array $profile = [], bool $tokenFailure = false): void
     {
         config(['google.client_id' => 'test-client', 'google.client_secret' => 'test-secret',
             'google.redirect_uri' => 'http://localhost/auth/google/callback', 'google.workspace_domains' => ['example.test']]);
         Http::preventStrayRequests();
         Http::fake([
-            'https://oauth2.googleapis.com/token' => Http::response(['access_token' => 'server-only-token']),
+            'https://oauth2.googleapis.com/token' => $tokenFailure ? Http::response(['error_description' => 'private-provider-secret'], 500) : Http::response(['access_token' => 'server-only-token']),
             'https://openidconnect.googleapis.com/v1/userinfo' => Http::response(array_replace([
                 'sub' => 'verified-subject', 'email' => 'registered@example.test', 'email_verified' => true, 'hd' => 'example.test',
             ], $profile)),
@@ -95,6 +96,24 @@ class FirstInterfaceTest extends TestCase
         $this->assertDatabaseCount('users', 0);
     }
 
+    public function test_expired_oauth_flow_is_rejected_without_provider_request(): void
+    {
+        $this->google();
+        $this->withSession(['google_flow' => ['state' => 'valid-state', 'verifier' => str_repeat('a', 64), 'issued_at' => now()->subMinutes(11)->timestamp]])
+            ->get('/auth/google/callback?code=server-code&state=valid-state')->assertRedirect('/login');
+        Http::assertNothingSent();
+    }
+
+    public function test_provider_failure_does_not_expose_tokens_or_raw_provider_messages(): void
+    {
+        $this->registered();
+        $this->google(tokenFailure: true);
+        $this->googleCallback()->assertRedirect('/login')->assertSessionHasErrors('login');
+        $this->assertStringNotContainsString('private-provider-secret', session('errors')->first('login'));
+        $this->assertGuest();
+        $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
     public function test_unregistered_or_disabled_accounts_are_denied_without_provisioning(): void
     {
         $this->google();
@@ -107,13 +126,23 @@ class FirstInterfaceTest extends TestCase
         $this->assertNull($user->fresh()->google_subject);
     }
 
-    public function test_untrusted_workspace_or_unverified_email_cannot_sign_in(): void
+    #[DataProvider('ineligibleProfiles')]
+    public function test_untrusted_workspace_or_unverified_email_cannot_sign_in(array $profile): void
     {
         $this->registered();
-        $this->google(['email_verified' => false, 'hd' => 'other.test']);
+        $this->google($profile);
         $this->googleCallback()->assertRedirect('/login');
         $this->assertGuest();
         $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
+    public static function ineligibleProfiles(): array
+    {
+        return [
+            'wrong hosted domain' => [['hd' => 'other.test']],
+            'missing hosted domain' => [['hd' => '']],
+            'unverified email' => [['email_verified' => false]],
+        ];
     }
 
     public function test_subject_mismatch_and_missing_roles_are_rejected(): void
@@ -133,6 +162,7 @@ class FirstInterfaceTest extends TestCase
         $user = $this->registered();
         $this->signedIn($user);
         $home = $this->get('/utama')->assertOk()->assertSee('Rujukan pentadbiran');
+        $this->assertStringContainsString('no-store', $home->headers->get('Cache-Control'));
         $ptj = $this->get('/pentadbiran/rujukan/ptj')->assertOk()->assertSee('69 rekod')->assertSee('Halaman 1 daripada 3');
         $this->get('/pentadbiran/rujukan/aktiviti')->assertOk()->assertSee('Pengurusan Pentadbiran Negeri');
         $this->get('/pentadbiran/rujukan/tempat-bertugas')->assertOk()->assertSee('579 rekod');

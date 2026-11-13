@@ -25,6 +25,8 @@ class EnsureAbmSession
         Auth::setUser($user);
         // These are server-rendered navigations or explicit renewal, not background polling/autosave.
         $request->session()->put('abm_last_activity', $now);
-        return $next($request);
+        $response = $next($request);
+        $response->headers->set('Cache-Control', 'no-store, private');
+        return $response;
     }
 }

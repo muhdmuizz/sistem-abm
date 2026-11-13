@@ -3,7 +3,7 @@
     @if (auth()->user()->penugasanPeranan()->where('peranan', 'superadmin')->exists())
     <p class="nav-group">Pentadbiran</p>
     @foreach (['ptj' => 'PTJ', 'aktiviti' => 'Aktiviti Kewangan', 'tempat-bertugas' => 'Tempat Bertugas', 'os' => 'OS'] as $key => $label)
-        <a aria-label="{{ $label }}" href="{{ route('references', $key) }}" @class(['nav-link', 'selected' => request()->route('section') === $key]) @if(request()->route('section') === $key) aria-current="page" @endif title="{{ $label }}"><span class="nav-short" aria-hidden="true">{{ $loop->iteration }}</span><span class="nav-label">{{ $label }}</span></a>
+        <a aria-label="{{ $label }}" href="{{ route('references', $key) }}" @class(['nav-link', 'selected' => request()->route('section') === $key]) @if(request()->route('section') === $key) aria-current="page" @endif title="{{ $label }}"><span class="nav-short" aria-hidden="true">{{ ['ptj' => 'PTJ', 'aktiviti' => 'AK', 'tempat-bertugas' => 'TB', 'os' => 'OS'][$key] }}</span><span class="nav-label">{{ $label }}</span></a>
     @endforeach
     @endif
 </nav>
