@@ -1,6 +1,6 @@
 # Batch 010 — Pengurusan Aktiviti Kewangan
 
-**Status:** Code/tests/build/browser verification passed; merged; local acceptance pending.
+**Status:** Code/tests/build/browser verification passed and merged; local synchronisation/requested inspection user-confirmed. Actual local permission mutations remain unverified.
 **Baseline:** 674b80a78019dadc3ae3323c205baba1033b2eeb on dev.
 **Authorisation:** User approved Batch 010 after the explicit proposal for the central PTJ → Aktiviti Kewangan → OS permission editor.
 **Authority:** REF-04 source identities/mappings/exclusions; REF-05 category defaults, individual overrides and inheritance; AD-005 Superadmin and exact independent role scopes; AD-011 atomic audit/default deny/stale-write safeguards; AD-013 Section 11.3 expandable checkbox hierarchy.
@@ -19,7 +19,7 @@ This is central configuration administration, not financial workflow delivery or
 
 ## Verification and handoff
 
-Isolated suite, build/browser controls and screenshot review passed; see evidence below. Merged in PR #20 at `d514ae56bd5b8e963d921f1fd38cad794b273ac5`; local inspection remains pending. Default-only inspection must not be recorded as an actual permission-mutation test.
+Isolated suite, build/browser controls and screenshot review passed; see evidence below. Merged in PR #20 at `d514ae56bd5b8e963d921f1fd38cad794b273ac5`; requested local inspection is now user-confirmed (see acceptance record below). Default-only inspection must not be recorded as an actual permission-mutation test.
 
 ## Verification reviewed — 14 November 2026 (Asia/Kuala_Lumpur)
 
@@ -29,8 +29,14 @@ Isolated suite, build/browser controls and screenshot review passed; see evidenc
 - Browser checks verify granular selection without automatic child grants, parent masking without losing OS selections, category unset/PTJ inheritance controls, protection for edits in another activity form, cancellation recovery and mobile overflow.
 - [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43432337237/artifacts/14038934423): category editor desktop/mobile and PTJ-list mobile screenshots downloaded and visually inspected; no layout blocker observed. These are isolated test fixtures, not the user's Windows installation.
 - [PR #20](https://github.com/muhdmuizz/sistem-abm/pull/20); merged at `d514ae56bd5b8e963d921f1fd38cad794b273ac5`. Later evidence-only commits do not change tested application source.
-- Local synchronisation and inspection remain pending. No migration, seeder or permission-selection changes are required to apply the delivered code; no actual local permission mutations have been observed.
+- Local synchronisation and requested inspection are user-confirmed; actual local permission mutations remain unverified. No migration, seeder or permission-selection changes are required to apply the delivered code; no actual local permission mutations have been observed.
 
 ## Local handoff
 
-From a clean dev branch, fast-forward pull the merged code and verify the application merge ancestor, then clear configuration/routes/views and restart the local server. No schema migration, seeder, new package, OAuth setup or automatic permission assignment is required. Inspect Pentadbiran > Pengurusan Aktiviti Kewangan, the 69-PTJ list, the three category editors and one individual PTJ editor. Confirm existing values and the unset/inherited/specific controls without saving arbitrary permission selections. Record inspection separately from actual local permission-mutation acceptance.
+From a clean dev branch, fast-forward pull the merged code and verify the application merge ancestor, then clear necessary configuration/routes/views from another terminal and refresh the browser while keeping the local server running (Ctrl+F5 for assets). Restart only if a specific change requires it. No schema migration, seeder, new package, OAuth setup or automatic permission assignment is required. Inspect Pentadbiran > Pengurusan Aktiviti Kewangan, the 69-PTJ list, the three category editors and one individual PTJ editor. Confirm existing values and the unset/inherited/specific controls without saving arbitrary permission selections. Record inspection separately from actual local permission-mutation acceptance.
+
+## User-confirmed local inspection — 14 November 2026 (Asia/Kuala_Lumpur)
+
+The user reported **“Batch 010 is clean.”** after the supplied local update and requested inspection of Pengurusan Aktiviti Kewangan: the 69-PTJ list, JPNT/PPD/SMK PTJ category editors, one individual PTJ's inherited settings, expandable activities and individual OS controls. Record local synchronisation and those requested inspection checks as passed by user report. The instructions asked for inspection without saving permission changes; this does not establish actual local permission writes, reset persistence, audit-row inspection, simultaneous stale editors, or physical-device checks. Applicable automated cases remain supported separately by CI 43432337237 (168 tests / 1571 assertions at 32ba5ef). No new application/test execution is claimed by this documentation update.
+
+The user also clarified that the local server remains running during routine updates: pull/clear necessary caches in another terminal and refresh the browser (Ctrl+F5 when assets change). Restart only for a concrete change that requires it, with the reason explained. This preference is recorded in AGENTS.md for later sessions.
