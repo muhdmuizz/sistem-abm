@@ -1,6 +1,6 @@
 # Batch 008 — First Interface & Google Sign-in Preparation
 
-**Status:** In progress; implementation verification pending, real Google/local sign-in pending.
+**Status:** Code verified; merge/local setup pending; real Google sign-in remains unverified.
 **Baseline:** `2d84e0c` on `dev`.
 **Authorisation:** User requested continuation after documentation reconciliation; the visible local interface is the next deliverable. User explicitly confirmed that Google OAuth is not configured yet.
 **Authority:** AD-005 Google sign-in/registered-user access; AD-011 session and audit requirements; AD-013 Clean Enterprise interface; existing reference and role rules.
@@ -25,9 +25,11 @@ Audited user/permission editing, financial modules, OS defaults, new real-user a
 
 ## Evidence and close-out
 
-- Tested head / CI: pending.
+- **Tested application head:** `768b5b1cff838dd932fb65b1bc863341ccbad7fe`.
+- **CI:** [run 43410640128](https://github.com/muhdmuizz/sistem-abm/actions/runs/43410640128), PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`: **124 tests passed, 933 assertions**, including 16 new HTTP cases. Existing frontend build and Chromium layout checks passed.
 - Merge checkpoint: pending.
-- Browser screenshots and visual review: pending.
+- **Browser evidence:** [screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43410640128/artifacts/14028848406). Desktop reference table, mobile cards/header and sign-in page were downloaded and visually inspected. Sidebar persistence, accessible collapsed navigation, mobile drawer/escape and overflow checks passed. These are test-identity fixtures, not real-provider sign-in evidence.
+- **Earlier verification correction:** an initial PHPUnit helper collided with its final callback method; renamed before execution. The intermediate verified revision passed 120 tests / 914 assertions; final results above include subsequent cache/logging and eligibility hardening.
 - Local pull/migration: pending.
 - Actual OAuth configuration, initial registered account and real-provider login: pending (user has no configured OAuth client yet).
 

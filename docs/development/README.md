@@ -47,11 +47,11 @@ These are current source/import counts, not hardcoded application limits. Instit
 | Database and reference foundations | Implemented and tested within Batches 001–004 |
 | Kitaran | Foundational model/table only; no Fasa or complete cycle administration |
 | PTJ permissions | Storage, read-only resolution and approved activity defaults; no administration interface/mutation service |
-| User/role scopes | Identity/assignment storage and read-only scope evaluation; no user activation/assignment administration service or Google integration |
+| User/role scopes | Identity/assignment storage and read-only scope evaluation; no user activation/assignment administration service; Google preparation is part of Batch 008 |
 | Audit | Internal atomic audit primitive and model/PostgreSQL history protections; no audit viewer or automatic coverage of all future business operations |
 | Audited access administration | Not implemented; activation/deactivation, session revocation and role/permission administration remain pending |
-| ABM web interface | Not implemented; current root route still renders the Laravel welcome view |
-| Google sign-in and approved session policy | Not implemented/configured/verified |
+| ABM web interface | Batch 008 candidate implements sign-in, shell and protected read-only references; merge/local setup pending. Financial and editable administration interfaces remain pending. |
+| Google sign-in and approved session policy | Batch 008 candidate implements code flow, registered identity checks and idle/absolute expiry; real Google configuration/sign-in and full administrative session revocation remain pending. |
 | Financial persistence and workflows | Bidaan, transactional Anggaran/Butiran, programme workflow, calculations, submissions/reviews/snapshots and official exports remain pending |
 | Production/security release | Not certified; runtime/DDL privilege separation and other AD-012/security-baseline gates remain outstanding |
 
@@ -59,7 +59,7 @@ The foundation suite does not certify complete security controls, financial outc
 
 ## Batch 008 — in progress
 
-The user's “Let's continue” instruction after reconciliation is being executed as the next visible-interface deliverable: Google sign-in preparation, a responsive application shell and protected read-only reference screens. Baseline: `2d84e0c`. Google OAuth is not configured yet (user-confirmed); real-provider/local sign-in verification and initial registered-account setup remain pending. No login bypass or guessed user/OS assignments is authorised.
+The user's “Let's continue” instruction after reconciliation is being executed as the next visible-interface deliverable: Google sign-in preparation, a responsive application shell and protected read-only reference screens. Baseline: `2d84e0c`. [PR #10](https://github.com/muhdmuizz/sistem-abm/pull/10) has verified code: head `768b5b1`, [CI](https://github.com/muhdmuizz/sistem-abm/actions/runs/43410640128), 124 tests / 933 assertions plus build/browser checks and visual inspection. Merge/local setup are pending. Google OAuth is not configured yet (user-confirmed); real-provider/local sign-in verification and initial registered-account setup remain pending. No login bypass or guessed user/OS assignments is authorised.
 
 Audited user/permission editing, financial workflows and production release remain outside this first interface slice. Implementation/test/merge/local status must be updated here and in [Batch 008](batch-008-first-interface.md) as evidence arrives.
 
