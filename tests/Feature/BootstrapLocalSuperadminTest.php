@@ -69,6 +69,17 @@ class BootstrapLocalSuperadminTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_removing_the_first_role_does_not_reopen_initialisation(): void
+    {
+        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(0);
+        PenugasanPeranan::query()->delete();
+        $this->artisan('abm:bootstrap-local-superadmin', $this->options(['--email' => 'second@example.test']))
+            ->expectsOutputToContain('initialisation is closed')->assertExitCode(1);
+        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseCount('penugasan_peranan', 0);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
     public function test_existing_case_variant_account_is_never_silently_activated_or_promoted(): void
     {
         $user = User::create(['name' => 'Existing account', 'email' => 'OPERATOR@example.test']);

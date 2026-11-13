@@ -6,6 +6,7 @@ use App\Audit\PeristiwaAudit;
 use App\Enums\Peranan;
 use App\Models\PenugasanPeranan;
 use App\Models\Ptj;
+use App\Models\RekodAudit;
 use App\Models\TempatBertugas;
 use App\Models\User;
 use App\Services\JejakAudit;
@@ -57,7 +58,8 @@ class BootstrapLocalSuperadmin extends Command
             DB::transaction(function () use ($audit, $guard, $email, $name, $reason, $workplace, $ptjCode) {
                 // Serialise initialisation attempts, including when the role table is empty.
                 DB::select('select pg_advisory_xact_lock(41620101, 8008)');
-                if (PenugasanPeranan::where('peranan', Peranan::Superadmin->value)->exists()) {
+                if (PenugasanPeranan::where('peranan', Peranan::Superadmin->value)->exists() ||
+                    RekodAudit::where('tindakan', 'access.local_superadmin_bootstrapped')->exists()) {
                     throw new RuntimeException('A Superadmin already exists; initialisation is closed.');
                 }
                 if (User::whereRaw('lower(email) = ?', [$email])->exists()) {
