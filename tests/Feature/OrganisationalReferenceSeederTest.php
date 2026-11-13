@@ -19,7 +19,7 @@ class OrganisationalReferenceSeederTest extends TestCase
 
         $this->assertDatabaseCount('ptjs', 69);
         $this->assertDatabaseCount('aktiviti_kewangans', 5);
-        $this->assertDatabaseCount('kod_aktivitis', 37);
+        $this->assertDatabaseCount('kod_aktivitis', 38);
 
         $this->assertSame(1, Ptj::where('kategori', 'JPNT')->count());
         $this->assertSame(8, Ptj::where('kategori', 'PPD')->count());
@@ -34,7 +34,7 @@ class OrganisationalReferenceSeederTest extends TestCase
 
         $ppn = AktivitiKewangan::where('nama', 'Pengurusan Pentadbiran Negeri')->firstOrFail();
         $this->assertSame('PPN', $ppn->singkatan);
-        $this->assertSame(9, KodAktiviti::where('aktiviti_kewangan_id', $ppn->id)->count());
+        $this->assertSame(10, KodAktiviti::where('aktiviti_kewangan_id', $ppn->id)->count());
 
         $this->assertSame(
             'Pengurusan Pentadbiran Negeri',
@@ -58,7 +58,7 @@ class OrganisationalReferenceSeederTest extends TestCase
 
         $this->assertDatabaseCount('ptjs', 70);
         $this->assertDatabaseCount('aktiviti_kewangans', 5);
-        $this->assertDatabaseCount('kod_aktivitis', 37);
+        $this->assertDatabaseCount('kod_aktivitis', 38);
         $this->assertDatabaseHas('ptjs', [
             'kod_ptj' => '99999999', 'nama' => 'Additional PTJ',
         ]);
