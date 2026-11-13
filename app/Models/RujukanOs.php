@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['kod_objek', 'butiran_perbelanjaan', 'dikecualikan'])]
 class RujukanOs extends Model
 {
+    public function anggaran(): HasMany
+    {
+        return $this->hasMany(Anggaran::class);
+    }
+
     protected $table = 'rujukan_os';
 
     protected function casts(): array
