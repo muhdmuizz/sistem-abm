@@ -1,6 +1,6 @@
 # Batch 008 — First Interface & Google Sign-in Preparation
 
-**Status:** Code/build/browser verification passed and merged; first real local login, reference-page totals and logout/re-login user-confirmed; remaining manual checks pending.
+**Status:** Code/build/browser verification passed and merged; first real local login, reference totals, logout/re-login and narrow-window layout user-confirmed; remaining manual checks pending.
 **Baseline:** `2d84e0c` on `dev`.
 **Authorisation:** User requested continuation after documentation reconciliation; the visible local interface is the next deliverable. Google OAuth was initially unconfigured; later setup and first login are recorded below.
 **Authority:** AD-005 Google sign-in/registered-user access; AD-011 session and audit requirements; AD-013 Clean Enterprise interface; existing reference and role rules.
@@ -65,3 +65,9 @@ At the first-login checkpoint, reference-page navigation/totals, pagination, dev
 ## User-confirmed reference pages and repeat login — 13 November 2026
 
 The user replied **“Clean.”** to the requested checks: open all four reference sections, verify totals of PTJ **69**, Aktiviti Kewangan **5**, Tempat Bertugas **579**, OS **33**, then log out and sign in again. Record those specific checks as passed by user report. This does not establish pagination controls, mobile layout, unregistered-account rejection, idle/absolute expiry, renewal, or independent audit/database inspection. Those manual checks remain pending. No application code changed; existing CI evidence remains 134 tests / 1002 assertions at tested head `5afed49`.
+
+## User-confirmed narrow-window layout — 13 November 2026
+
+The user replied **“Clean.”** after narrowing the browser window and checking that the mobile menu opens/closes, reference tables become cards and no horizontal overflow appears. Mark those responsive layout checks passed by user report. This is a resized desktop browser check, not proof of sign-in or layout on an actual mobile device.
+
+Current manual acceptance: initial Google login, four reference-page totals, logout/re-login and the specified narrow-window layout checks are user-confirmed. Pagination controls, actual mobile-device sign-in/layout, unregistered-account rejection and idle warning/renewal/idle/absolute expiry remain pending. Existing CI covers automated role/identity/session and browser-layout cases, but is recorded separately from manual acceptance. Batch 008 remains partially accepted; no complete security or production certification is claimed. Application source/tests are unchanged (134 tests / 1002 assertions at `5afed49`).
