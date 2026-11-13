@@ -36,3 +36,11 @@ Audited user/permission editing, financial modules, OS defaults, new real-user a
 Do not call this batch fully closed until required local/provider verification is explicitly recorded.
 
 Final source verification includes Google-only null-password registration storage, redacted failure logging, no-store responses, individual workspace/email rejection cases and measured muted-text contrast of 4.73:1. These checks do not replace real-provider/manual acceptance.
+
+## Local provider acceptance and initial-account correction — 13 November 2026
+
+User reports that OAuth branding/client were created in the dedicated Sistem ABM Cloud project, credentials were saved locally, the Google button is enabled, and Google password/consent completed for `muizz@moe.gov.my`. The callback returned the generic ABM denial; the redacted local log shows `RuntimeException`. A guarded read-only query against PostgreSQL `sistem_abm` returned **Matching accounts: 0**. This confirms missing local registration as a blocker; it does not exclude another identity-provider eligibility issue. Personal `suarafata@gmail.com` manages Cloud only and is not approved as an ABM login. User confirmed **Sektor Pengurusan, JPNT** for the initial operator account.
+
+A bounded correction is in progress: a local-console-only first-Superadmin registration command using an exact existing JPNT/Sektor, explicit real-operator declaration and reason, atomic account/role/audit creation, serialised first-run guard, and refusal to overwrite existing accounts or operate after any Superadmin exists. The audit labels identity assurance as local operator declaration, never as Google verification. No password, browser session, Google subject or verified-email timestamp is supplied by setup. Normal Google validation remains mandatory. No other roles/activity/OS assignments are granted. Production bootstrap and general account administration remain outside this correction.
+
+Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Tests, merge checkpoint, user execution and real login: pending.
