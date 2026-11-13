@@ -1,6 +1,6 @@
 # Sistem ABM — Development Progress Register
 
-**Updated:** 13 November 2026 (Asia/Kuala_Lumpur).  
+**Updated:** 14 November 2026 (Asia/Kuala_Lumpur).  
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
 **Latest verified application-code checkpoint:** `22476277c47bcdfdb22aa6b428441528e6b182ec` (Batch 009 merged in PR #17; local migration and requested smoke checks user-confirmed). Documentation-only commits after this checkpoint do not represent another implementation batch.  
 **Current application verification:** 153 tests passed, 1143 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
@@ -116,6 +116,6 @@ The user replied **“Clean.”** after the supplied guarded dev pull/database v
 
 This does not establish manual creation of another real account, role/status mutations, simultaneous physical-device revocation, forced revocation of another user, stale concurrent browser editors, or notification delivery. Those remain unverified locally; their applicable automated cases are supported separately by CI 43427826563 (153 tests / 1143 assertions at b8ea428). Security email/notification operations and other out-of-scope work remain pending. No application changes or new test execution are claimed by this documentation update.
 
-## Batch 010 — in progress
+## Batch 010 — verification passed; merge/local acceptance pending
 
-User explicitly approved the central PTJ → Aktiviti Kewangan → OS editor. [Batch 010](batch-010-central-permissions.md) implements category defaults and per-setting PTJ overrides/reset, mapped non-excluded OS choices, atomic attributable saves and content-state stale-editor checks. Baseline 674b80a. No permission selections, source mappings, roles, financial data or OAuth clients are seeded/changed by delivery. Verification, merge and local acceptance are pending. Earlier manual/security limitations remain tracked.
+User explicitly approved the central PTJ → Aktiviti Kewangan → OS editor. [Batch 010](batch-010-central-permissions.md) implements category defaults and per-setting PTJ overrides/reset, mapped non-excluded OS choices, atomic attributable saves and content-state stale-editor checks. Baseline 674b80a. No permission selections, source mappings, roles, financial data or OAuth clients are seeded/changed by delivery. Verification reviewed on 14 November: tested head `32ba5ef`, [CI 43432337237](https://github.com/muhdmuizz/sistem-abm/actions/runs/43432337237), 168 tests / 1571 assertions on PHP 8.4.27 / PostgreSQL 18.7, build/browser checks and final visual review passed. Merge and local inspection remain pending. Earlier manual/security limitations remain tracked.
