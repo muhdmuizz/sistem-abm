@@ -18,7 +18,7 @@ class BootstrapLocalSuperadminTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function options(array $overrides = []): array
+    private function bootstrapOptions(array $overrides = []): array
     {
         return array_replace([
             '--email' => 'operator@example.test', '--name' => 'Real local operator',
@@ -35,7 +35,7 @@ class BootstrapLocalSuperadminTest extends TestCase
 
     public function test_initial_registration_is_audited_without_a_password_google_identity_or_web_session(): void
     {
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(0);
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())->assertExitCode(0);
         $user = User::sole();
         $this->assertTrue($user->is_active);
         $this->assertSame('41620101', $user->ptj->kod_ptj);
@@ -60,8 +60,8 @@ class BootstrapLocalSuperadminTest extends TestCase
 
     public function test_any_existing_superadmin_closes_initialisation_and_reruns_do_not_duplicate_data(): void
     {
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(0);
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options(['--email' => 'second@example.test']))
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())->assertExitCode(0);
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions(['--email' => 'second@example.test']))
             ->expectsOutputToContain('initialisation is closed')->assertExitCode(1);
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseCount('penugasan_peranan', 1);
@@ -71,9 +71,9 @@ class BootstrapLocalSuperadminTest extends TestCase
 
     public function test_removing_the_first_role_does_not_reopen_initialisation(): void
     {
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(0);
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())->assertExitCode(0);
         PenugasanPeranan::query()->delete();
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options(['--email' => 'second@example.test']))
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions(['--email' => 'second@example.test']))
             ->expectsOutputToContain('initialisation is closed')->assertExitCode(1);
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseCount('penugasan_peranan', 0);
@@ -83,7 +83,7 @@ class BootstrapLocalSuperadminTest extends TestCase
     public function test_existing_case_variant_account_is_never_silently_activated_or_promoted(): void
     {
         $user = User::create(['name' => 'Existing account', 'email' => 'OPERATOR@example.test']);
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())
             ->expectsOutputToContain('already exists')->assertExitCode(1);
         $this->assertFalse($user->fresh()->is_active);
         $this->assertDatabaseCount('users', 1);
@@ -94,7 +94,7 @@ class BootstrapLocalSuperadminTest extends TestCase
     public function test_wrong_parent_and_missing_workplace_do_not_create_any_account_or_assignment(): void
     {
         foreach ([['--ptj-code' => '41620201'], ['--workplace' => 'Nonexistent Sektor']] as $overrides) {
-            $this->artisan('abm:bootstrap-local-superadmin', $this->options($overrides))->assertExitCode(1);
+            $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions($overrides))->assertExitCode(1);
         }
         $this->assertDatabaseCount('users', 0);
         $this->assertDatabaseCount('penugasan_peranan', 0);
@@ -104,7 +104,7 @@ class BootstrapLocalSuperadminTest extends TestCase
     public function test_explicit_operator_declaration_and_valid_identity_and_reason_are_required(): void
     {
         foreach ([['--confirm' => false], ['--email' => 'invalid'], ['--name' => ''], ['--reason' => '']] as $overrides) {
-            $this->artisan('abm:bootstrap-local-superadmin', $this->options($overrides))->assertExitCode(1);
+            $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions($overrides))->assertExitCode(1);
         }
         $this->assertDatabaseCount('users', 0);
     }
@@ -113,7 +113,7 @@ class BootstrapLocalSuperadminTest extends TestCase
     {
         $this->app['env'] = 'production';
         try {
-            $this->artisan('abm:bootstrap-local-superadmin', $this->options())
+            $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())
                 ->expectsOutputToContain('only for local development')->assertExitCode(1);
             $this->assertDatabaseCount('users', 0);
         } finally {
@@ -126,7 +126,7 @@ class BootstrapLocalSuperadminTest extends TestCase
         $this->mock(JejakAudit::class, function ($mock) {
             $mock->shouldReceive('jalankan')->once()->andThrow(new RuntimeException('Audit unavailable.'));
         });
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(1);
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())->assertExitCode(1);
         $this->assertDatabaseCount('users', 0);
         $this->assertDatabaseCount('penugasan_peranan', 0);
         $this->assertDatabaseCount('rekod_audit', 0);
@@ -135,7 +135,7 @@ class BootstrapLocalSuperadminTest extends TestCase
 
     public function test_bootstrapped_account_still_requires_verified_google_callback_before_access(): void
     {
-        $this->artisan('abm:bootstrap-local-superadmin', $this->options())->assertExitCode(0);
+        $this->artisan('abm:bootstrap-local-superadmin', $this->bootstrapOptions())->assertExitCode(0);
         config(['google.client_id' => 'test', 'google.client_secret' => 'test',
             'google.redirect_uri' => 'http://localhost/auth/google/callback', 'google.workspace_domains' => ['example.test']]);
         Http::preventStrayRequests();
