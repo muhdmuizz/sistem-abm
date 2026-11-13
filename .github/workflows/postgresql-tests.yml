@@ -1,0 +1,52 @@
+name: PostgreSQL tests
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [feature/abm-batch-003-workplaces]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: sistem_abm_testing
+          POSTGRES_USER: sistem_abm_app
+          POSTGRES_PASSWORD: ci_test_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sistem_abm_app -d sistem_abm_testing"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: sistem_abm_testing
+      DB_USERNAME: sistem_abm_app
+      DB_PASSWORD: ci_test_only
+      DB_URL: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - name: Verify isolated testing database
+        run: |
+          php artisan config:clear
+          php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); if (config("database.default") !== "pgsql" || config("database.connections.pgsql.database") !== "sistem_abm_testing") { throw new RuntimeException("Unexpected test database."); }'
+      - run: php artisan test
