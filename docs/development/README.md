@@ -2,9 +2,9 @@
 
 **Updated:** 13 November 2026 (Asia/Kuala_Lumpur).  
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
-**Latest verified application-code checkpoint:** `e5a93c7ae113f2ea2e4752983d41683642ad698d` (Batch 008 code merged; local/provider acceptance pending). Documentation-only commits after this checkpoint do not represent another implementation batch.  
+**Latest verified application-code checkpoint:** `f6e785a85367c24faee45d37a6c93c6cd6c301ae` (Batch 008 first-account correction merged in PR #12; local registration/provider acceptance pending). Documentation-only commits after this checkpoint do not represent another implementation batch.  
 **Current application verification:** 134 tests passed, 1002 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
-**Local state:** Batches 001–007 remain user-confirmed. For Batch 008, user now reports local OAuth credentials/configuration, enabled Google button and Google password/consent completion for the intended MyGovUC identity; ABM callback was denied. Guarded local database query confirms no matching account. Initial registration correction is in progress; successful real login and full manual acceptance remain pending. The cloud agent did not inspect Windows directly.
+**Local state:** Batches 001–007 remain user-confirmed. For Batch 008, user now reports local OAuth credentials/configuration, enabled Google button and Google password/consent completion for the intended MyGovUC identity; ABM callback was denied. Guarded local database query confirms no matching account. Initial registration correction is merged; successful real login and full manual acceptance remain pending. The cloud agent did not inspect Windows directly.
 
 This is the implementation/execution register. [The architecture README](../architecture/README.md) remains the single master AD index; design approval is not implementation completion. Batch numbers are bounded delivery checkpoints, not replacements for the previously documented six workstreams.
 
@@ -75,7 +75,7 @@ User reports that OAuth branding/client were created in the dedicated Sistem ABM
 
 A bounded correction is in progress: a local-console-only first-Superadmin registration command using an exact existing JPNT/Sektor, explicit real-operator declaration and reason, atomic account/role/audit creation, serialised first-run guard, and refusal to overwrite existing accounts or operate after any Superadmin exists. The audit labels identity assurance as local operator declaration, never as Google verification. No password, browser session, Google subject or verified-email timestamp is supplied by setup. Normal Google validation remains mandatory. No other roles/activity/OS assignments are granted. Production bootstrap and general account administration remain outside this correction.
 
-Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is complete; see evidence below. Merge checkpoint, user execution and real login remain pending.
+Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is complete; see evidence below. Code merged in PR #12; user execution and real login remain pending.
 
 ### Initial-account correction verification
 
@@ -83,5 +83,5 @@ Baseline: `30146d5599abd26860ecf77937748d820ebdd654`. Code verification is compl
 - [CI 43422069980](https://github.com/muhdmuizz/sistem-abm/actions/runs/43422069980): **134 tests passed / 1002 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; frontend build and existing Chromium checks passed.
 - Nine added bootstrap cases cover attributed initial registration, one-time closure (including removed role), existing case-variant refusal, exact organisational references, explicit declaration/reason, production denial, audit-failure rollback and normal verified-Google login after setup.
 - First CI attempt caught an inherited test-helper name collision; corrected before successful verification. No unsuccessful revision was merged.
-- [PR #12](https://github.com/muhdmuizz/sistem-abm/pull/12); merge checkpoint pending at this evidence commit. Subsequent evidence-only edits do not change tested PHP source.
+- [PR #12](https://github.com/muhdmuizz/sistem-abm/pull/12); merged at `f6e785a85367c24faee45d37a6c93c6cd6c301ae`. Subsequent evidence-only edits do not change tested PHP source.
 - User execution of the command and actual successful Google callback remain pending. This correction does not establish Google tenant/domain eligibility or complete Batch 008 manual acceptance.
