@@ -63,6 +63,15 @@ class FirstInterfaceTest extends TestCase
         }
     }
 
+    public function test_google_only_registration_storage_needs_no_password_and_grants_no_access(): void
+    {
+        $user = User::create(['name' => 'Registered identity', 'email' => 'pending@example.test'])->fresh();
+        $this->assertNull($user->password);
+        $this->assertFalse($user->is_active);
+        $this->assertFalse($user->isFillable('password'));
+        $this->assertDatabaseCount('penugasan_peranan', 0);
+    }
+
     public function test_authorization_redirect_uses_pkce_state_and_google_account_selection(): void
     {
         $this->google();
