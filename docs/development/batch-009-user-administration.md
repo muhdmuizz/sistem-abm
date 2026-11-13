@@ -1,6 +1,6 @@
 # Batch 009 — Pengguna & Peranan and Session Revocation
 
-**Status:** In progress; verification/merge/local application pending.
+**Status:** Code/tests/build/browser verification passed; merge and local application pending.
 **Baseline:** `c76f52d5cf0dbe43c713a6af27ecdf3ccf806153` on dev.
 **Authorisation:** User requested “Let's continue” after confirming the first interface, reference totals, logout/re-login and narrow-window checks. Implement the next bounded access-administration dependency within approved AD-005/AD-011/AD-013.
 **Authority:** AD-005 six roles/exact scope tuples and registered organisational identity; AD-011 attributable transactional changes, stale-write protection and all-device revocation; AD-013 Section 11.3 expandable user/role controls and form/accessibility rules.
@@ -17,6 +17,17 @@ This is a bounded administration slice, not complete security/production deliver
 
 ## Verification and local acceptance
 
-Pending: full isolated PostgreSQL suite; mutation/denial/scope/rollback/stale-write/session tests; frontend build; browser dynamic-row/search/own-workplace filtering and overflow checks; visual review; merge evidence; local migration and UI confirmation.
+Full isolated suite, build/browser checks and visual review passed; see close-out evidence below. Merge checkpoint and local migration/UI confirmation remain pending.
 
 Batch 008 remains partially manually accepted. Its known code/merge/local evidence is already recorded; pending actual-device, pagination, unregistered-account and session-timing manual checks are not silently marked passed by starting Batch 009.
+
+## Verification and close-out evidence
+
+- Tested application head: `b8ea428eea4edb908958eec7570f353ac7ba0a97`.
+- [CI 43427826563](https://github.com/muhdmuizz/sistem-abm/actions/runs/43427826563): **153 tests passed / 1143 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Existing frontend build and Chromium checks passed.
+- Nineteen new HTTP/service tests cover all five non-admin role denials, real-actor revalidation, exact/additive scope tuples, own-workplace/parent checks, unchanged assignment IDs, stale conflicts, registration and mutation audit rollback, deactivation/revocation across prior device-session snapshots, user all-device logout, self-edit sign-out, case-insensitive email uniqueness, sensitive-field injection, pagination/search and cross-form validation-state isolation.
+- Browser checks cover dynamic unique row names/IDs, add/remove actions, PTJ search, own-workplace choices, required explicit scope reselection after organisation changes, and mobile overflow, alongside the existing navigation checks.
+- [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43427826563/artifacts/14037643488): final desktop/mobile form and mobile user-list images downloaded and visually inspected. Screenshot capture resets scrolling before full-page images; user-card layout and status/action sizing were refined after review.
+- Earlier CI exposed a role-label rendering error and an escaped test exception namespace; corrected before final verification. No failing application revision was merged.
+- [PR #17](https://github.com/muhdmuizz/sistem-abm/pull/17); merge checkpoint pending at this evidence commit. Later evidence-only commits do not change tested application source.
+- Local migration and administration/real-device manual acceptance: pending. Existing sessions require one fresh Google login after the access-revision migration. No real users, roles or OS defaults were seeded by this batch.
