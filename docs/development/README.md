@@ -4,7 +4,7 @@
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
 **Latest verified application-code checkpoint:** `f6e785a85367c24faee45d37a6c93c6cd6c301ae` (Batch 008 first-account correction merged in PR #12; first real local login user-confirmed, remaining manual checks pending). Documentation-only commits after this checkpoint do not represent another implementation batch.  
 **Current application verification:** 134 tests passed, 1002 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
-**Local state:** Batches 001–007 remain user-confirmed. After Batch 008 OAuth setup and PR #12 account-registration instructions, the user reports successful entry into the local web app using the intended MyGovUC identity. Initial setup, real login, four reference-page totals and logout/re-login are user-confirmed; remaining device/pagination/session/manual acceptance is pending. The cloud agent did not inspect Windows or query its audit records directly.
+**Local state:** Batches 001–007 remain user-confirmed. After Batch 008 OAuth setup and PR #12 account-registration instructions, the user reports successful entry into the local web app using the intended MyGovUC identity. Initial setup, real login, four reference-page totals and logout/re-login are user-confirmed; narrow-window menu/cards/overflow are also user-confirmed; actual-device/pagination/session/manual acceptance remains pending. The cloud agent did not inspect Windows or query its audit records directly.
 
 This is the implementation/execution register. [The architecture README](../architecture/README.md) remains the single master AD index; design approval is not implementation completion. Batch numbers are bounded delivery checkpoints, not replacements for the previously documented six workstreams.
 
@@ -97,3 +97,9 @@ At the first-login checkpoint, reference-page navigation/totals, pagination, dev
 ## User-confirmed reference pages and repeat login — 13 November 2026
 
 The user replied **“Clean.”** to the requested checks: open all four reference sections, verify totals of PTJ **69**, Aktiviti Kewangan **5**, Tempat Bertugas **579**, OS **33**, then log out and sign in again. Record those specific checks as passed by user report. This does not establish pagination controls, mobile layout, unregistered-account rejection, idle/absolute expiry, renewal, or independent audit/database inspection. Those manual checks remain pending. No application code changed; existing CI evidence remains 134 tests / 1002 assertions at tested head `5afed49`.
+
+## User-confirmed narrow-window layout — 13 November 2026
+
+The user replied **“Clean.”** after narrowing the browser window and checking that the mobile menu opens/closes, reference tables become cards and no horizontal overflow appears. Mark those responsive layout checks passed by user report. This is a resized desktop browser check, not proof of sign-in or layout on an actual mobile device.
+
+Current manual acceptance: initial Google login, four reference-page totals, logout/re-login and the specified narrow-window layout checks are user-confirmed. Pagination controls, actual mobile-device sign-in/layout, unregistered-account rejection and idle warning/renewal/idle/absolute expiry remain pending. Existing CI covers automated role/identity/session and browser-layout cases, but is recorded separately from manual acceptance. Batch 008 remains partially accepted; no complete security or production certification is claimed. Application source/tests are unchanged (134 tests / 1002 assertions at `5afed49`).
