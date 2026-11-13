@@ -75,7 +75,7 @@ Every OS uses **one common wizard framework**, not dozens of independent impleme
 - navigation across applicable OS;
 - auditing, permissions and concurrency safeguards.
 
-These are functional areas, **not a mandatory four-tab or four-step UI**. Layout can adapt to desktop/mobile. OS-specific input fields, rates, formulas, eligibility and specialised calculations are **deferred** to later work (principally AD-008). OS14000 may be used for end-to-end testing but its illustrative inputs/formulas are not deemed approved financial policy.
+These are functional areas, **not a mandatory four-tab or four-step UI**. Layout can adapt to desktop/mobile. OS-specific input fields, rates, formulas, eligibility and specialised calculations are governed by the applicable approved references and AD-008 as they are finalised. **End-to-end validation covers all applicable OS**, not OS14000 alone. Individual OS may be used as representative early test cases without granting that OS special architectural status or treating illustrative inputs/formulas as approved financial policy.
 
 A single wizard session may create or edit **multiple Butiran Anggaran**; one source input may produce one or more granular calculated output rows. Users edit source inputs, not arbitrary derived amounts.
 
