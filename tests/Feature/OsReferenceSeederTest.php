@@ -201,7 +201,7 @@ class OsReferenceSeederTest extends TestCase
         $this->importReferences();
         $mapping = PemetaanOs::whereNotNull('kod_aktiviti_id')->firstOrFail();
         $this->expectException(QueryException::class);
-        $mapping->update(['aktiviti_kewangan_id' => AktivitiKewangan::where('nama', 'Pendidikan Awal')->firstOrFail()->id]);
+        $mapping->update(['aktiviti_kewangan_id' => AktivitiKewangan::whereKeyNot($mapping->aktiviti_kewangan_id)->firstOrFail()->id]);
     }
 
     public function test_database_protects_mapped_os_from_deletion(): void
