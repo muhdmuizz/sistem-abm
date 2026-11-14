@@ -31,6 +31,17 @@ class DefinisiAnggaran
                 'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar']],'width'=>160],
         ];
     }
+    public function inputHelp(): string { return 'UNIT dan KADAR diisi daripada rujukan.'; }
+
+    public function hasInput(array $row): bool
+    {
+        foreach ($this->columns() as $column) {
+            if ($column['type'] !== 'output' && !($column['context'] ?? false) &&
+                ($row[$column['key']] ?? null) !== null && $row[$column['key']] !== '') { return true; }
+        }
+        return false;
+    }
+
     public function selector(): string { return 'kategori1'; }
     public function project(stdClass $source): array
     {

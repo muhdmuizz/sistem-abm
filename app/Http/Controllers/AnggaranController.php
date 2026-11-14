@@ -62,7 +62,7 @@ class AnggaranController extends Controller
             'os' => $navigation[$index]['os'], 'navigation' => $navigation, 'sources' => $sources, 'history' => $history,
             'previous' => $index > 0 ? $navigation[$index - 1] : null,
             'next' => $navigation->get($index + 1),
-            'editorAvailable' => app(\App\Services\DefinisiAnggaran::class)->supports($navigation[$index]['os']),
+            'editorAvailable' => app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($navigation[$index]['os'],$record) !== null,
             'open' => $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id)]);
     }
 

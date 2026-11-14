@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bidaan;
-use App\Services\DefinisiAnggaran;
+use App\Services\KatalogDefinisiAnggaran;
 use App\Services\EditorAnggaran;
 use App\Services\RuangAnggaran;
 use App\Services\RuangBidaPeruntukan;
@@ -20,14 +20,15 @@ class EditorAnggaranController extends Controller
         abort_unless($workspace->canView($request->user(),$record->ptj_id,$record->aktiviti_kewangan_id),403);
         $entry=$record->anggaran()->whereKey($estimate)->firstOrFail();
         $os=$workspace->catalogue($request->user(),$record)->firstWhere('id',$entry->rujukan_os_id);
-        abort_unless($os && app(DefinisiAnggaran::class)->supports($os),404);
+        $definition=$os ? app(KatalogDefinisiAnggaran::class)->untuk($os,$record) : null;
+        abort_unless($definition,404);
         abort_unless($entry->diaktifkan,409);
-        return [$record,$entry,$os];
+        return [$record,$entry,$os,$definition];
     }
 
-    public function show(Request $request,int $bid,int $estimate,EditorAnggaran $editor,DefinisiAnggaran $definition,RuangAnggaran $scope)
+    public function show(Request $request,int $bid,int $estimate,EditorAnggaran $editor,RuangAnggaran $scope)
     {
-        [$record,$entry,$os]=$this->context($request,$bid,$estimate);
+        [$record,$entry,$os,$definition]=$this->context($request,$bid,$estimate);
         $request->validate(['page'=>'nullable|integer|min:1']);
         $sources=$scope->sources($request->user(),$record,$entry)->addSelect(['semakan','data_sumber'])
             ->orderBy('id')->paginate(25)->withQueryString();
@@ -42,7 +43,7 @@ class EditorAnggaranController extends Controller
                 'compatible'=>$valid];
         })->values();
         return view('abm.estimates.editor',['bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)

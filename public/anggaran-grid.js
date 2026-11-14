@@ -20,7 +20,7 @@
  function output(row,tr){
   const ref=references[row[selector]],values={...row};
   for(const column of columns.filter(c=>c.type==='output')){
-   let value=ref?.[column.reference];
+   let value=column.value??ref?.[column.reference];
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
@@ -35,6 +35,7 @@
    const tr=document.createElement('tr');tr.dataset.key=row.key;
    for(let i=0;i<columns.length+2;i++)tr.append(document.createElement('td'));
    const cells=tr.children;
+   columns.forEach((column,index)=>{if(column.numeric||column.type==='decimal')cells[index+2].classList.add('grid-numeric');});
    if(row.editable&&editable){
     const check=document.createElement('input');check.type='checkbox';check.dataset.rowSelect='';check.checked=!!row.selected;check.setAttribute('aria-label','Pilih '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     check.addEventListener('input',event=>event.stopPropagation());check.addEventListener('change',event=>{row.selected=check.checked;event.stopPropagation();});cells[0].append(check);
@@ -47,7 +48,7 @@
    }
    inputColumns.forEach((column,index)=>{
     const name=column.key;
-    const cell=cells[index+2];
+    const cell=cells[columns.indexOf(column)+2];
     if(!editable||!row.editable){cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:plain(row[name]);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));

@@ -425,6 +425,55 @@ if(lastPayload.padam.length!==1||!lastPayload.padam[0].butiran_id)throw Error('D
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
+
+{
+// SBK reuses the same grid controls; HTTP tests cover real persistence and activity boundaries.
+for(const name of ['sbk-empty','sbk-populated','sbk-menengah','sbk-partial','sbk-legacy','sbk-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
+  if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('SBK mobile table containment failed');
+  if(name==='sbk-readonly'&&!(await page.locator('[data-grid-body] tr').first().locator('td').nth(4).evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
+  if(name==='sbk-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('SBK read-only save exposed');
+  if(name==='sbk-legacy'&&(await page.content()).includes('SECRET_LEGACY'))throw Error('SBK legacy payload exposed');
+  await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/sbk-empty.html');
+await page.locator('[data-grid-add-count]').fill('2');await page.locator('[data-grid-add]').click();
+const first=page.locator('[data-grid-body] tr').first();
+if((await first.locator('[data-field=kategori2] option').allTextContents()).length!==5)throw Error('SBK utility choices are not four plus placeholder');
+if(!(await first.locator('[data-field=kadar]').evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Monthly rate input alignment');
+if(await first.locator('[data-field=kadar]').inputValue()!=='')throw Error('SBK manual rate was fabricated');
+await first.locator('[data-field=kategori2]').selectOption('Air');await first.locator('[data-field=kadar]').fill('123.4567');
+if(await first.locator('[data-output=kategori1]').textContent()!=='Pukal')throw Error('SBK fixed Pukal missing');
+if(await first.locator('[data-output=bil_bulan]').textContent()!=='12')throw Error('SBK fixed months missing');
+if(await first.locator('[data-output=preview]').textContent()!=='1481.4804')throw Error('SBK monthly calculation rounded');
+await first.locator('[data-field=kategori2]').focus();await page.keyboard.press('Tab');
+if(!(await first.locator('[data-field=kadar]').evaluate(el=>document.activeElement===el)))throw Error('SBK Tab does not reach manual rate');
+await first.locator('[data-field=kategori2]').evaluate(el=>{
+ const transfer=new DataTransfer();transfer.setData('text/plain','Telefon/ Faks\t9007199254740993\nElektrik\t0.001');
+ el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
+});
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='108086391056891916')throw Error('SBK pasted rate lost precision');
+if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').textContent()!=='0.012')throw Error('SBK fractional rate lost precision');
+await page.locator('[data-grid-body] tr').first().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+if(await page.locator('[data-grid-body] tr').count()!==3)throw Error('SBK local duplication failed');
+let payload;
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{
+ payload=route.request().postDataJSON();
+ await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak KADAR bulanan.']}})});
+});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(payload.rekod.some(row=>'kategori1'in row||'bil_bulan'in row||'preview'in row||'bil_unit'in row))throw Error('SBK fixed/other-definition fields submitted');
+if(payload.rekod[0].kadar!=='9007199254740993'||payload.rekod[0].kategori2!=='Telefon/ Faks')throw Error('SBK save payload lost pasted values');
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/sbk-validation-'+width+'.png',fullPage:true});
+}
+if(await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]').inputValue()!=='9007199254740993')throw Error('SBK validation lost edits');
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();
 
 
