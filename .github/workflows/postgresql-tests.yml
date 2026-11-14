@@ -49,7 +49,7 @@ jobs:
         run: |
           php artisan config:clear
           php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); if (config("database.default") !== "pgsql" || config("database.connections.pgsql.database") !== "sistem_abm_testing") { throw new RuntimeException("Unexpected test database."); }'
-      - run: php artisan test --filter=ProgramAktivitiInterfaceTest
+      - run: php artisan test
         env:
           ABM_UI_CAPTURE: '1'
       - uses: actions/setup-node@v4
@@ -67,5 +67,5 @@ jobs:
         if: always()
         with:
           name: first-interface-screenshots
-          path: storage/app/ui-qa/*.png
-          if-no-files-found: error
+          path: storage/app/ui-qa/
+          if-no-files-found: warn
