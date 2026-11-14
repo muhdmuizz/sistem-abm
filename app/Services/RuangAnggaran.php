@@ -53,6 +53,7 @@ class RuangAnggaran
         'estimate.activated' => 'OS diaktifkan',
         'source.draft_created' => 'Draf Butiran ditambah',
         'source.draft_updated' => 'Draf Butiran dipinda',
+        'source.draft_duplicated' => 'Draf Butiran disalin',
     ];
 
     public const ROLE_LABELS = [
@@ -79,7 +80,7 @@ class RuangAnggaran
                     $sources->where('jenis_entiti', ButiranAnggaran::class)
                         ->whereIn('id_entiti', $sourceIds)
                         ->whereRaw("rekod_audit.selepas @> jsonb_build_object('anggaran_id', CAST(? AS bigint), 'bidaan_id', CAST(? AS bigint))", [$estimate->id, $bid->id])
-                        ->whereIn('tindakan', ['source.draft_created', 'source.draft_updated'])
+                        ->whereIn('tindakan', ['source.draft_created', 'source.draft_updated', 'source.draft_duplicated'])
                         ->whereIn('tempat_bertugas_id', (clone $workplaces)->select('id'))
                         ->whereExists(function ($after) use ($workplaces) {
                             $after->selectRaw('1')->fromSub((clone $workplaces)->select('id'), 'visible_after')

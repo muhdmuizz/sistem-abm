@@ -204,7 +204,7 @@ for (const name of ['estimate-empty','estimate-populated','estimate-workplace','
 }
 
 
-for (const name of ['history-empty','history-populated','history-workplace','history-page','history-readonly','history-validation']) {
+for (const name of ['history-empty','history-populated','history-duplicated','history-workplace','history-page','history-readonly','history-validation']) {
     await page.goto('http://127.0.0.1:4173/' + name + '.html');
     if (await page.locator('body').evaluate(el => el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
     const history = page.locator('#estimate-history');

@@ -697,4 +697,245 @@ SQL);
         $this->assertDatabaseCount('rekod_audit', 2);
     }
 
+    private function draftCopyInput(ButiranAnggaran $source, array $replace = []): array
+    {
+        return array_replace(['semakan_bidaan' => $this->bid->fresh()->semakan,
+            'semakan_anggaran' => $this->estimate->fresh()->semakan,
+            'semakan_butiran' => $source->fresh()->semakan], $replace);
+    }
+
+    private function draftCopy(ButiranAnggaran $source, array $replace = []): ButiranAnggaran
+    {
+        return app(DrafButiranAnggaran::class)->salin($this->estimate->id, $source->id, $this->draftCopyInput($source, $replace));
+    }
+
+    public function test_copy_creates_independent_identity_and_preserves_exact_input_types_and_private_lineage(): void
+    {
+        $payload = (object) ['officer_fixture' => 'Same officer', 'decimal_fixture' => '0.123456789012345678901234567890',
+            'nested_fixture' => (object) ['value' => null, 'flag' => false], 'list_fixture' => [1, 'two', (object) []],
+            'programme_context_fixture' => (object) ['retained_fixture_id' => 77]];
+        $source = $this->draftSave($payload);
+        $beforeTime = $source->updated_at->toISOString();
+        $copy = $this->draftCopy($source);
+        $this->assertNotSame($source->id, $copy->id);
+        $this->assertEquals($source->fresh()->data_sumber, $copy->data_sumber);
+        $this->assertSame('0.123456789012345678901234567890', $copy->data_sumber->decimal_fixture);
+        $this->assertFalse($copy->data_sumber->nested_fixture->flag);
+        $this->assertInstanceOf(stdClass::class, $copy->data_sumber->list_fixture[2]);
+        $this->assertSame($source->anggaran_id, $copy->anggaran_id);
+        $this->assertSame($source->tempat_bertugas_id, $copy->tempat_bertugas_id);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertSame(1, $copy->semakan);
+        $this->assertSame($beforeTime, $source->fresh()->updated_at->toISOString());
+        $this->assertSame(3, $this->bid->fresh()->semakan);
+        $this->assertSame(3, $this->estimate->fresh()->semakan);
+        $audit = RekodAudit::where('tindakan', 'source.draft_duplicated')->sole();
+        $this->assertSame((string) $copy->id, $audit->id_entiti);
+        $this->assertSame($source->id, $audit->selepas['disalin_daripada']);
+        $this->assertSame(1, $audit->selepas['semakan_sumber_asal']);
+        $this->assertSame($this->operator->id, $audit->pelaku_id);
+        $this->assertSame(Peranan::PenyediaAnggaran, $audit->peranan);
+        $this->assertNull($audit->versi_penghantaran);
+        $this->assertSame(StatusBidaan::DalamPenyediaan, $this->bid->fresh()->status);
+        $this->assertDatabaseCount('hasil_pengiraan', 0);
+    }
+
+    public function test_copy_and_original_remain_independently_editable_and_identical_rows_never_merge(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'original']);
+        $copy = $this->draftCopy($source);
+        $second = $this->draftCopy($source);
+        $this->assertCount(3, array_unique([$source->id, $copy->id, $second->id]));
+        $this->draftSave((object) ['fixture' => 'copy changed'], $copy);
+        $this->assertSame('original', $source->fresh()->data_sumber->fixture);
+        $this->assertSame('original', $second->fresh()->data_sumber->fixture);
+        $this->assertSame('copy changed', $copy->fresh()->data_sumber->fixture);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertSame(2, $copy->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 3);
+        $this->assertDatabaseCount('rekod_audit', 4);
+    }
+
+    public function test_copy_checks_all_revisions_and_retries_do_not_create_extra_rows(): void
+    {
+        $source = $this->draftSave();
+        foreach (['semakan_bidaan', 'semakan_anggaran', 'semakan_butiran'] as $key) {
+            $this->draftDenied(fn () => $this->draftCopy($source, [$key => 0]), 409);
+        }
+        $input = $this->draftCopyInput($source);
+        app(DrafButiranAnggaran::class)->salin($this->estimate->id, $source->id, $input);
+        $this->draftDenied(fn () => app(DrafButiranAnggaran::class)->salin($this->estimate->id, $source->id, $input), 409);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 2);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
+    public function test_copy_rejects_missing_revisions_and_forged_source_or_destination_metadata(): void
+    {
+        $source = $this->draftSave();
+        foreach ([
+            ['semakan_bidaan' => null], ['semakan_anggaran' => -1], ['semakan_butiran' => null],
+            ['data_sumber' => (object) ['fixture' => 'forged']], ['tempat_bertugas_id' => $this->workplace->id],
+            ['anggaran_id' => $this->estimate->id], ['ptj_id' => $this->owner->id], ['status' => 'lengkap'],
+        ] as $bad) {
+            $this->draftDenied(fn () => $this->draftCopy($source, $bad), 422);
+        }
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_copy_own_workplace_preparer_cannot_copy_foreign_workplace_source(): void
+    {
+        $own = $this->draftSave((object) ['fixture' => 'own']);
+        $other = TempatBertugas::create(['ptj_id' => $this->owner->id, 'nama' => 'Copy foreign sector', 'jenis' => 'sektor']);
+        $foreign = $this->draftSave((object) ['fixture' => 'foreign'], replace: ['tempat_bertugas_id' => $other->id]);
+        $this->operator->penugasanPeranan()->delete();
+        $this->draftRole($this->workplace->id);
+        $this->draftDenied(fn () => $this->draftCopy($foreign), 403);
+        $copy = $this->draftCopy($own);
+        $this->assertSame($this->workplace->id, $copy->tempat_bertugas_id);
+        $this->assertSame($other->id, $foreign->fresh()->tempat_bertugas_id);
+        $this->assertDatabaseCount('butiran_anggaran', 3);
+        $this->assertDatabaseCount('rekod_audit', 3);
+    }
+
+    public function test_copy_rejects_source_under_another_estimate_and_nonexistent_ids(): void
+    {
+        $otherOs = RujukanOs::create(['kod_objek' => '15000', 'butiran_perbelanjaan' => 'Copy sibling OS']);
+        $otherEstimate = Anggaran::forceCreate(['bidaan_id' => $this->bid->id, 'ptj_id' => $this->owner->id,
+            'rujukan_os_id' => $otherOs->id, 'diaktifkan' => true]);
+        $foreign = ButiranAnggaran::forceCreate(['anggaran_id' => $otherEstimate->id, 'ptj_id' => $this->owner->id,
+            'tempat_bertugas_id' => $this->workplace->id]);
+        $this->draftDenied(fn () => $this->draftCopy($foreign), 404);
+        $this->draftDenied(fn () => app(DrafButiranAnggaran::class)->salin($this->estimate->id, 999999,
+            $this->draftCopyInput($foreign)), 404);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
+    #[DataProvider('draftNonPreparerRoles')]
+    public function test_copy_does_not_grant_preparation_rights_to_other_roles(Peranan $role): void
+    {
+        $source = $this->draftSave();
+        $this->operator->penugasanPeranan()->delete();
+        $scope = ['peranan' => $role];
+        if (in_array($role, [Peranan::KetuaBidaan, Peranan::PenyeliaBidaan, Peranan::PenyediaBidaan], true)) {
+            $scope['aktiviti_kewangan_id'] = $this->activity->id;
+        }
+        if ($role === Peranan::PenyediaBidaan) { $scope['ptj_id'] = $this->owner->id; }
+        $this->operator->penugasanPeranan()->create($scope);
+        $this->draftDenied(fn () => $this->draftCopy($source), 403);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_copy_rechecks_fasa_central_grants_actor_revision_and_idle_session(): void
+    {
+        $source = $this->draftSave();
+        $this->phase->forceFill(['dibuka' => false])->save();
+        $this->draftDenied(fn () => $this->draftCopy($source), 403);
+        $this->phase->forceFill(['dibuka' => true])->save();
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => false]);
+        $this->draftDenied(fn () => $this->draftCopy($source), 403);
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => true]);
+        $this->operator->increment('access_revision');
+        $this->draftDenied(fn () => $this->draftCopy($source), 403);
+        session()->put('abm_access_revision', $this->operator->fresh()->access_revision);
+        session()->put('abm_last_activity', now()->timestamp - 1800);
+        $this->draftDenied(fn () => $this->draftCopy($source), 403);
+        $this->assertSame(2, $this->estimate->fresh()->semakan);
+        $this->assertDatabaseCount('rekod_audit', 1);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+    }
+
+    public function test_copy_preserves_return_status_but_rejects_inactive_submitted_and_finalised_parents(): void
+    {
+        $source = $this->draftSave();
+        $this->bid->forceFill(['diaktifkan' => false])->save();
+        $this->draftDenied(fn () => $this->draftCopy($source), 409);
+        $this->bid->forceFill(['diaktifkan' => true])->save();
+        $this->estimate->forceFill(['diaktifkan' => false])->save();
+        $this->draftDenied(fn () => $this->draftCopy($source), 409);
+        $this->estimate->forceFill(['diaktifkan' => true])->save();
+        foreach ([StatusBidaan::DalamSemakan, StatusBidaan::Muktamad] as $status) {
+            $this->bid->forceFill(['status' => $status])->save();
+            $this->draftDenied(fn () => $this->draftCopy($source), 409);
+        }
+        $this->bid->forceFill(['status' => StatusBidaan::Dikembalikan])->save();
+        $copy = $this->draftCopy($source);
+        $this->assertSame(StatusBidaan::Dikembalikan, $this->bid->fresh()->status);
+        $this->assertSame($source->anggaran_id, $copy->anggaran_id);
+        $this->assertNull(RekodAudit::where('tindakan', 'source.draft_duplicated')->sole()->versi_penghantaran);
+    }
+
+    public function test_copy_calculated_source_is_blocked_without_cloning_or_changing_outputs_even_for_superadmin(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'calculated']);
+        $output = HasilPengiraan::forceCreate(['butiran_anggaran_id' => $source->id,
+            'semakan_sumber' => $source->semakan, 'turutan' => 1, 'amaun' => '123.456789'])->fresh();
+        $this->draftDenied(fn () => $this->draftCopy($source), 409);
+        $this->operator->penugasanPeranan()->delete();
+        $this->operator->penugasanPeranan()->create(['peranan' => Peranan::Superadmin]);
+        $this->draftDenied(fn () => $this->draftCopy($source, ['reason' => 'Pentadbiran.']), 409);
+        $this->assertSame('123.456789', $output->fresh()->amaun);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('hasil_pengiraan', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_copy_actual_audit_insert_failure_rolls_back_new_identity_and_parent_revisions(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'keep']);
+        $this->draftAuditFailure();
+        try {
+            $this->draftCopy($source);
+            $this->fail('Copy audit failure ignored.');
+        } catch (QueryException $exception) {
+            $this->assertSame('P0001', (string) $exception->getCode());
+        }
+        $this->assertSame('keep', $source->fresh()->data_sumber->fixture);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertSame(2, $this->estimate->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_copy_legacy_invalid_source_values_are_not_propagated_or_silently_rewritten(): void
+    {
+        $source = $this->draftSave();
+        foreach (['{"fixture":0.1}', '{"password":"fixture-only"}'] as $invalid) {
+            DB::table('butiran_anggaran')->where('id', $source->id)->update(['data_sumber' => $invalid]);
+            $this->draftDenied(fn () => $this->draftCopy($source), 422);
+            $this->assertEquals(json_decode($invalid), $source->fresh()->data_sumber);
+        }
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+    }
+
+    public function test_copy_superadmin_override_is_reasoned_and_does_not_bypass_state_or_catalogue(): void
+    {
+        $source = $this->draftSave();
+        $this->operator->penugasanPeranan()->delete();
+        $this->operator->penugasanPeranan()->create(['peranan' => Peranan::Superadmin]);
+        $this->phase->forceFill(['dibuka' => false])->save();
+        TetapanAksesPtj::query()->update(['dibenarkan' => false]);
+        $this->draftDenied(fn () => $this->draftCopy($source), 422);
+        $copy = $this->draftCopy($source, ['reason' => 'Salinan pentadbiran yang diluluskan.']);
+        $audit = RekodAudit::where('tindakan', 'source.draft_duplicated')->sole();
+        $this->assertSame(Peranan::Superadmin, $audit->peranan);
+        $this->assertSame($this->operator->id, $audit->pelaku_id);
+        $this->assertTrue($audit->selepas['pintasan']['fasa']);
+        $this->assertTrue($audit->selepas['pintasan']['kebenaran_pusat']);
+        $this->os->forceFill(['dikecualikan' => true])->save();
+        $this->draftDenied(fn () => $this->draftCopy($source, ['reason' => 'Semak katalog.']), 404);
+        $this->assertSame($this->workplace->id, $copy->tempat_bertugas_id);
+        $this->assertDatabaseCount('butiran_anggaran', 2);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
 }

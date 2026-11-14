@@ -764,4 +764,32 @@ SQL);
         $this->workspaceCapture('history-validation', $response);
     }
 
+    public function test_draft_copy_action_is_scoped_and_rendered_without_private_lineage_or_payloads(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $own = $this->workspacePlace('Sektor Salinan');
+        $source = $this->historySave($bid, $estimate, $own, 'COPY_SOURCE_PRIVATE_FIXTURE');
+        $copy = app(\App\Services\DrafButiranAnggaran::class)->salin($estimate->id, $source->id, [
+            'semakan_bidaan' => $bid->fresh()->semakan, 'semakan_anggaran' => $estimate->fresh()->semakan,
+            'semakan_butiran' => $source->fresh()->semakan]);
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $response = $this->get($url)->assertOk()->assertSee('Draf Butiran disalin')
+            ->assertDontSee('disalin_daripada')->assertDontSee('COPY_SOURCE_PRIVATE_FIXTURE');
+        $this->assertSame(['source.draft_duplicated', 'source.draft_created', 'estimate.activated'],
+            $response->viewData('history')->pluck('tindakan')->all());
+        $this->workspaceCapture('history-duplicated', $response);
+        $other = $this->workspacePlace('Foreign original after copy');
+        $this->historySave($bid, $estimate, $other, 'COPY_SOURCE_PRIVATE_FIXTURE', $source);
+        $this->historyOwnRole($own);
+        $scoped = $this->get($url)->assertOk()->assertSee('Draf Butiran disalin')
+            ->assertDontSee('Foreign original after copy')->assertDontSee('disalin_daripada');
+        $this->assertSame(1, $scoped->viewData('sources')->total());
+        $this->assertSame(2, $scoped->viewData('history')->total());
+        $event = $scoped->viewData('history')->first();
+        $this->assertSame((string) $copy->id, $event->id_entiti);
+        $this->assertArrayNotHasKey('selepas', $event->getAttributes());
+        $this->assertDatabaseCount('rekod_audit', 4);
+    }
+
 }

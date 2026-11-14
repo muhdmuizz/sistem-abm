@@ -194,3 +194,7 @@ The user reported **“Clean.”** after the supplied guarded dev pull/database-
 ## User-confirmed local update and inspection — 14 November 2026
 
 The user reported **“It's there. Clean. Proceed.”** after the supplied guarded dev pull/cache-clear commands and the requested active-OS opening/Log Tindakan expansion, activation-entry, actor/time and spacing checks. Record synchronisation through Batch 018 and these bounded UI checks as user-confirmed. This also confirms delivery of Batches 016–017 by the combined pull; it does not establish manual multi-row service execution, all OS navigation, other roles/devices, hidden-row permissions or audit/database inspection. No direct Windows access or new test execution is claimed. Earlier pending local-update statements are superseded only for these checks.
+
+## Batch 019 — audited draft duplication in progress
+
+[Batch 019](batch-019-audited-draft-duplication.md) adds an internal same-Anggaran draft copy with a fresh identity, exact saved-input preservation, live guards, stale-retry protection and atomic lineage audit. Calculated sources remain blocked pending approved recalculation. Implementation prepared; CI/merge/local update pending. No copy button/API, OS policy, migration or seed. The combined update and requested Log Tindakan UI checks through Batch 018 are now user-confirmed; direct draft-service execution remains unverified locally.
