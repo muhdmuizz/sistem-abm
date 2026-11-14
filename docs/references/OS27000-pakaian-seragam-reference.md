@@ -30,3 +30,32 @@ Both `Pembantu Khidmat Am` and `Pembantu Makmal` are present in the 131-row shar
 - All applicable Kadar values are mandatory in accordance with [the universal Kadar rule](shared-mandatory-kadar-rule.md).
 - This covers the **Pakaian Seragam reference only**. Other OS27000 references remain separately documented. No decision to restructure the master OS catalogue is implied.
 - The master OS catalogue, Kod Aktiviti mapping, ADs, Laravel and PostgreSQL remain unchanged.
+
+
+## Owner-approved 30-column Anggaran specification — 14 November 2026
+
+**Scope:** Only **OS27000 Pakaian Seragam**, retaining its separate existing Kod Aktiviti. This subsequent owner approval supersedes earlier reference-only statements that UNIT, quantities and formulas were not approved. It does not change other OS27000 variants or the four original reference-rate combinations.
+
+### Canonical Perbelanjaan applicability
+
+| Status | Canonical 30-column positions | Count |
+| --- | --- | ---: |
+| Active | 01, 02, 03, 12, 14, 17, 19, 21, 23, 27, 28 | 11 |
+| Inactive | 04, 05, 06, 07, 08, 09, 10, 11, 13, 15, 16, 18, 20, 22, 24, 25, 26 | 17 |
+| Deferred | 29, 30 | 2 |
+
+- 01 **OBJEK SEBAGAI** comes from selected Anggaran; 02 **JPNT/ PPD** from authorised Bidaan PTJ; 03 **SEKTOR/ SEKOLAH** from controlled Tempat Bertugas; 28 **KATEGORI SUMBER PERUNTUKAN** from Bidaan Aktiviti Kewangan.
+- 12 **JAWATAN** uses the existing shared personnel reference and remains separate from category levels; 14 **KATEGORI1** is `Pakaian Seragam` or `Kasut`; 15–16 are Inactive. 21 **KADAR** is mandatory, automatically looked up from **KATEGORI1 + JAWATAN** using the four unchanged combinations above.
+- 17 **UNIT** is Active and **fixed to `Pasang` for both Pakaian Seragam and Kasut**.
+- 19 **BIL. UNIT** is Active, displayed in the editor as **BIL. PENGISIAN**, user-entered.
+- 23 **KEKERAPAN** is Active, displayed in the editor as **BIL. PASANG**, user-entered.
+- 27 **ANGGARAN JUMLAH SETAHUN** is calculated. Columns 08–10 are Inactive and exported blank; columns 29–30 remain Deferred.
+- Editor-specific labels do **not** rename the canonical Excel headers or alter the approved 30-column position/order.
+
+### Approved financial calculation
+
+**ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KEKERAPAN × KADAR** — i.e., **BIL. PENGISIAN × BIL. PASANG × KADAR**.
+
+Illustration (not an additional rate policy): 5 pengisian × 2 pasang × RM230 = **RM2,300**. Follow the established AD-008 deterministic decimal arithmetic, independent Butiran identities, reference attribution and immutable submitted snapshots. No unapproved eligibility, rounding, rate revisions or new category choices are inferred.
+
+**Change control:** This is approved specification **only**; no Laravel implementation, database migration, source reference CSV changes or Excel implementation are claimed. AD-008 remains Draft.
