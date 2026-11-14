@@ -1,6 +1,6 @@
 # Batch 015 correction — Fasa dates independent of budget year
 
-Status: application CI passed; PR #34 merge pending. Local migration/acceptance pending.
+Status: application CI passed; PR #34 merged at `53d0e45f6c5c2469033f4e6d8333d8cd6b8af588`. Local migration/acceptance pending.
 
 Authorised by user on 14 November 2026: bidding for Kitaran 2028 starts in 2026. Baseline dev `b1deaf7bd92dd7d2a3c2e921c514a69782e9e524`.
 
