@@ -210,3 +210,63 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 - **Steps 05–07:** Not completed; workbook formula observations are not approved financial calculations.
 
 **Next action when invoking `#P7OS OS14000`: resume at Step 01 and then Step 02, retaining confirmed Step 03 and Step 04 results.**
+
+## Approved 30-column Perbelanjaan revision — 14 November 2026
+
+**Owner-approved canonical export contract.** This section **supersedes the 27-column table above for current column positions**, while preserving that table as a historical baseline. This AD remains **Draft**. All previously approved OS decisions must be interpreted by **field identity**, not obsolete numerical positions.
+
+The three new canonical fields are dedicated to **OS24000 — Sewaan (Mesin Fotostat): Kontrak Keseluruhan**. The original three date fields retain their canonical headers; only in the Mesin Fotostat editor are they presented as **Kontrak Semasa**.
+
+| New no. | Canonical Excel header | Previous no. |
+| ---: | --- | ---: |
+| 01 | OBJEK SEBAGAI | 01 |
+| 02 | JPNT/ PPD | 02 |
+| 03 | SEKTOR/ SEKOLAH | 03 |
+| 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | 04 |
+| 05 | TARIKH MULA | 05 |
+| 06 | TARIKH TAMAT | 06 |
+| 07 | TEMPOH | 07 |
+| **08** | **TARIKH MULA KONTRAK KESELURUHAN** | **NEW** |
+| **09** | **TARIKH TAMAT KONTRAK KESELURUHAN** | **NEW** |
+| **10** | **TEMPOH KONTRAK KESELURUHAN** | **NEW** |
+| 11 | NAMA | 08 |
+| 12 | JAWATAN | 09 |
+| 13 | GRED | 10 |
+| 14 | KATEGORI1 | 11 |
+| 15 | KATEGORI2 | 12 |
+| 16 | KATEGORI3 | 13 |
+| 17 | UNIT | 14 |
+| 18 | GRED PENCERAMAH/ FASILITATOR | 15 |
+| 19 | BIL. UNIT | 16 |
+| 20 | LOKASI URUSAN RASMI | 17 |
+| 21 | KADAR | 18 |
+| 22 | JARAK | 19 |
+| 23 | KEKERAPAN | 20 |
+| 24 | JAM | 21 |
+| 25 | BILANGAN HARI | 22 |
+| 26 | BILANGAN BULAN | 23 |
+| 27 | ANGGARAN JUMLAH SETAHUN | 24 |
+| 28 | KATEGORI SUMBER PERUNTUKAN | 25 |
+| 29 | KATEGORI PROGRAM | 26 |
+| 30 | KATEGORI PESERTA | 27 |
+
+### Universal export and migration compatibility
+
+1. The **Perbelanjaan** worksheet uses one consistent 30-column contract for all applicable OS, with identical order and canonical headers; the **Gaji & Emolumen** worksheet and schema are unchanged.
+2. Columns **08–10** are currently applicable only to OS24000 **Sewaan (Mesin Fotostat)**. Every other OS exports these columns **blank**, not zero, unless a subsequent OS-specific decision authorises their use.
+3. Original 01–07 retain their canonical export headers and meaning. In the Mesin Fotostat editor only, columns 05–07 display **Kontrak Semasa** labels; column 20 displays **LOKASI MESIN FOTOSTAT**. These are not global header renames.
+4. Original columns 08–27 shift forward **+3 positions**. This is a **breaking positional schema change**: update consumers, imports, exports, pivots, formulas, tests and column-index mappings before deployment. Do not assume old 27-column files are automatically interoperable.
+5. Preserve field identity and previously approved applicability, formulas and rate references for **OS14000, OS21000, OS22000, OS23000 and OS24000 Sewaan (Umum)**; do not reinterpret or reopen their category decisions. This applies equally to any other documented OS.
+6. Preserve stable Butiran Anggaran identities, financial snapshots, traceability, reference mapping and organisational permissions; **no data migration or implementation is authorised by this documentation revision**.
+7. For Mesin Fotostat, independent Kontrak Semasa and Kontrak Keseluruhan periods each use calendar **tahun, bulan dan hari** with inclusive end dates. **BILANGAN BULAN remains independent manual input**, and approved ANGGARAN JUMLAH SETAHUN = **BIL. UNIT × KADAR × BILANGAN BULAN**.
+
+### Verification gate before implementation
+
+- Assert the exact 30 headers in the table above, with three new fields inserted immediately after previous column 07.
+- Assert blank 08–10 on every unrelated Perbelanjaan OS.
+- Assert old column 24 ANGGARAN JUMLAH SETAHUN maps to new 27 without calculation changes for other OS.
+- Assert current and overall contract durations calculate independently with inclusive ends, with leap-year and month-end boundary tests.
+- Assert BILANGAN BULAN is never silently computed from either contract duration.
+- Audit all approved OS mappings by canonical field identity and reconcile external pivot/import/export integrations for the new order.
+
+**Change-control:** Owner-approved design specification documented only. AD-008 remains Draft; Laravel, PostgreSQL, reference CSVs and actual Excel exporter are not changed by this commit.
