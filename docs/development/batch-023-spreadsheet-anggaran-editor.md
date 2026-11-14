@@ -1,6 +1,6 @@
 # Batch 023 — Shared Spreadsheet Anggaran Editor
 
-**Status:** Verification passed; merge checkpoint pending. Authorised 15 November 2026 after review of the owner's OS specification improvements.
+**Status:** Merged in PR #54; local functional checks pending. Authorised 15 November 2026 after review of the owner's OS specification improvements.
 **Baseline:** `88e852623a3bfe6bf83a0133c327a3200025a7f7` on dev.
 
 ## Authorised scope and sequence
@@ -36,3 +36,7 @@ In Bida Peruntukan, open an eligible active OS25000 Anggaran, then Buka Jadual B
 ## Next implementation boundary
 
 Continue typed definitions for ready OS and their exact approved references, then separately integrate official calculation/output/completeness and approved programme association/inheritance. Keep OS14000 detailed work paused, and isolate the specific OS15000/general OS21000 unresolved financial rules. No blanket redo of approved OS applicability or formula discussions.
+
+## Merge checkpoint
+
+[PR #54](https://github.com/muhdmuizz/sistem-abm/pull/54) merged into dev at `683629ba734e9104897e8722363bbcaebeb92270`. Evidence-only final commit `6d4bc49c9288d0bce95ce0e0199a93e6599ebe91` changes documentation; the tested application head above is unchanged. Local update has not been executed by the cloud agent or confirmed by the user.
