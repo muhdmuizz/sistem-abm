@@ -499,13 +499,14 @@ if(await first.locator('[data-output=preview]').textContent()!=='4320')throw Err
 await first.locator('[data-field=bil_bulan]').fill('-0.5');
 if(await first.locator('[data-output=preview]').textContent()!=='-180')throw Error('TASKA signed draft factor preview differs from server');
 const pastedName='Bapa <script>window.TASKA_XSS=1</script>';
+await first.locator('[data-field=nama]').focus();
 await first.locator('[data-field=nama]').evaluate((el,name)=>{
  const transfer=new DataTransfer();transfer.setData('text/plain',name+'\t9007199254740993\t12\nIbu Contoh\t3\t10');
  el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
 },pastedName);
 if(await page.evaluate(()=>window.TASKA_XSS!==undefined))throw Error('TASKA name executed HTML');
 if(await page.locator('[data-grid-body] tr').first().locator('[data-field=nama]').inputValue()!==pastedName)throw Error('TASKA paste lost parent name');
-if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='19455550390240544880')throw Error('TASKA exact preview lost digits');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='19455550390240544880')throw Error('TASKA exact preview lost digits: '+await page.locator('[data-grid-body] tr').first().innerText());
 if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').textContent()!=='5400')throw Error('TASKA second row formula');
 await page.locator('[data-grid-body] tr').nth(1).locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==3||await page.locator('[data-grid-body] tr').last().locator('[data-field=nama]').inputValue()!=='Ibu Contoh')throw Error('TASKA duplicate current name/quantities');
