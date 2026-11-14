@@ -28,6 +28,8 @@ Batch 014 adds audited backend Butiran draft creation/editing with stable IDs, o
 
 Batch 015 exposes the authorised Bida Peruntukan workspace: explicit Kitaran/PTJ context, activity cards, eligible OS catalogue and service-backed activation forms. Merged in PR #32 at `96e3507`; 288 tests / 2293 assertions plus build/Chromium checks and desktop/mobile review of populated, empty and validation states passed. Local synchronisation and requested Fasa/activation/persistence/feedback/spacing checks are user-confirmed. The later Fasa date correction in PR #34 at `53d0e45` passed 290 tests / 2311 assertions plus build/browser checks; its normal migration is also user-confirmed. No real financial seed was introduced. OS-specific source entry/calculations and formal submission remain deferred.
 
+Batch 016 adds atomic one-Anggaran multi-row draft create/edit saves through the existing audited service. Merged in [PR #37](https://github.com/muhdmuizz/sistem-abm/pull/37) at `47f2230`; verified application head `781338b` passed [CI 43557005407](https://github.com/muhdmuizz/sistem-abm/actions/runs/43557005407): 302 tests / 2403 assertions, PHP 8.4.27 / PostgreSQL 18.7, build and existing browser regression. Local synchronisation pending; no migration/new UI. OS fields/calculations/source editing and formal submission remain deferred; Step 02 remains in progress.
+
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
