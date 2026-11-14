@@ -183,6 +183,7 @@ for (const name of ['bid-context','bid-list','bid-os','bid-empty','bid-no-result
 for (const name of ['estimate-empty','estimate-populated','estimate-workplace','estimate-readonly','estimate-closed','estimate-validation']) {
     await page.goto('http://127.0.0.1:4173/' + name + '.html');
     if (await page.locator('body').evaluate(el => el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
+    if (!(await page.locator('.sidebar a[aria-label="Bida Peruntukan"][aria-current="page"]').count())) throw Error('Anggaran lost parent navigation context');
     if (!(await page.getByRole('navigation', { name: 'Navigasi OS' }).count())) throw Error('OS navigation missing');
     if (!(await page.locator('#estimate-os').inputValue())) throw Error('Current OS not selected');
     if (await page.locator('textarea[name=data_sumber],input[name=data_sumber]').count()) throw Error('Opaque source editor exposed');
