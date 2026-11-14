@@ -203,3 +203,7 @@ The user reported **“It's there. Clean. Proceed.”** after the supplied guard
 ## User-confirmed local update — 14 November 2026
 
 The user reported **“Clean, next.”** after the supplied guarded dev pull/cache-clear commands and requested Anggaran workspace refresh. Record local synchronisation and that existing-page smoke check as user-confirmed. There is no public copy action; this does not establish manual duplication-service execution, calculated copying, other roles/devices or direct audit/database inspection. Existing CI remains 342 tests / 2722 assertions at ade9a9a; this documentation update adds no application change or test execution.
+
+## Batch 020 — Program/ Aktiviti foundation in progress
+
+[Batch 020](batch-020-program-aktiviti-foundation.md) implements approved AD-007 metadata storage, RPM reference hierarchy, guarded draft saving/scoped queries and four-section validation. Baseline debac9c; user explicitly approved proceeding with this foundation. Application head `99bdfa6` verified by [CI 43579320487](https://github.com/muhdmuizz/sistem-abm/actions/runs/43579320487): 393 tests / 3003 assertions, PHP 8.4.27 / PostgreSQL 18.7 in isolated test database, build/existing Chromium passed. PR #46 merge/local migration/reference import pending. No programme UI, OS editor/financial association or paused OS-policy work. Programme dates remain in the Kitaran year; Fasa may open earlier. Existing verified checkpoint above remains historical until new execution evidence is available.

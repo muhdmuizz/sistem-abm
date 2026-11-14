@@ -1,0 +1,370 @@
+[
+  {
+    "nombor": 1,
+    "tajuk": "Memastikan Sistem Pendidikan Malaysia yang Terangkum, Dinamik dan Relevan",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Meneliti Keberkesanan dan Kecekapan Implementasi Dasar Pendidikan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Pendidikan Sains dan Matematik"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkukuh Pelaksanaan Dasar Memartabatkan Bahasa Melayu dan Memperkukuh Bahasa Inggeris"
+          },
+          {
+            "nombor": 3,
+            "tajuk": "Mengkaji Semula Dasar Pengambilan dan Penempatan Pegawai Perkhidmatan Pendidikan"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Memperkasakan Struktur Persekolahan Kebangsaan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Struktur Persekolahan Kebangsaan"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Menambah Baik Dasar Penawaran Bahasa Tambahan serta Pengoperasian Bahasa Cina dan Bahasa Tamil"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Memperkasakan Pentaksiran dan Peperiksaan Kebangsaan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Sistem Pentaksiran Pendidikan Kebangsaan"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 2,
+    "tajuk": "Mengoptimumkan Potensi Setiap Murid Melalui Pengalaman Pembelajaran yang Bermakna untuk Menjadi Warganegara Global",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Reformasi Kurikulum",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Kurikulum Pendidikan Berorientasikan Kompetensi dan Keperluan Masa Hadapan"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Meningkatkan Kemahiran Murid",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkukuh Literasi dan Numerasi Murid Tahap 1"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkukuh Keterampilan Berbahasa"
+          },
+          {
+            "nombor": 3,
+            "tajuk": "Membudayakan Pembelajaran Sepanjang Hayat untuk Murid"
+          },
+          {
+            "nombor": 4,
+            "tajuk": "Memperkukuh Kemahiran Murid Masa Hadapan"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Membangunkan Bakat",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Membangunkan Bakat Murid secara Holistik dalam Pelbagai Bidang STEM, TVET, Sukan dan Seni"
+          }
+        ]
+      },
+      {
+        "nombor": 4,
+        "tajuk": "Membentuk Karakter",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Kesejahteraan Murid Merangkumi Kesihatan Fizikal, Mental dan Sosial"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkukuh Jati Diri dan Kerohanian Murid"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 3,
+    "tajuk": "Mentransformasikan Pendidik agar Berkeupayaan Tinggi dan Berorientasikan Masa Hadapan",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Meningkatkan Kesejahteraan Pendidik",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Menumpukan Peranan Guru kepada Pengajaran dan Pembelajaran"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkasakan Kesejahteraan Pendidik melalui Keseimbangan Holistik"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Memperkasakan Kompetensi Pendidik melalui Pemberdayaan Pembangunan Profesionalisme Berterusan secara Berstruktur dan Bermutu",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memantapkan Pembangunan Profesionalisme Berterusan secara Berstruktur untuk Memastikan Tahap Kompetensi Pendidik Kekal Relevan"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Mentransformasikan Latihan Keguruan agar Bersifat Adaptif, Dinamik dan Relevan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Latihan Keguruan agar Luwes dan Relevan"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkukuh Mekanisme Jaminan Mutu Latihan Guru dalam Perkhidmatan"
+          }
+        ]
+      },
+      {
+        "nombor": 4,
+        "tajuk": "Membangunkan Pemimpin Transformatif, Berkeupayaan Tinggi dan Berorientasikan Masa Hadapan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Perancangan Pengganti dengan Membentuk Kumpulan Pelapis Pemimpin Pendidikan yang Berteraskan Nilai dan Berwawasan Sistemik"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkukuh Fleksibiliti Penempatan Kepimpinan Sekolah Merentas Sekolah Rendah dan Menengah"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 4,
+    "tajuk": "Memantapkan Prasarana Fizikal dan Digital di Semua Institusi Pendidikan KPM",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Memperkukuh Pembangunan Prasarana yang Terangkum dan Lestari",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkukuh Pembangunan Prasarana Pendidikan yang Strategik dan Responsif"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memantapkan Pengurusan Aset, Penyelenggaraan Proaktif dan Berfasa untuk Kelestarian Prasarana KPM"
+          },
+          {
+            "nombor": 3,
+            "tajuk": "Memperkasakan Prasarana dan Sokongan Pembelajaran Pendidikan Khas"
+          },
+          {
+            "nombor": 4,
+            "tajuk": "Memperkukuh Kemudahan Sedia Ada yang Berfungsi, Terangkum dan Berimpak"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Memperkasakan Prasarana Digital untuk Pendidikan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Mentransformasikan Pengalaman Pembelajaran dengan Inovasi Teknologi"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Menambah Baik Prasarana Digital di Institusi Pendidikan KPM"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Menambah Baik Sistem Pintar dan Tadbir Urus Berpandukan Data",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkukuh Tadbir Urus Pendidikan Melalui Sistem Maklumat dan Data Pintar serta Terhubung"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 5,
+    "tajuk": "Mempergiat Sinergi antara Institusi Pendidikan KPM dengan Pihak Berkepentingan",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Memperkukuh Dasar Kerjasama antara KPM dengan Pihak Berkepentingan",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkasakan Dasar Kerjasama Institusi Pendidikan KPM dengan Pihak Berkepentingan"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Memperkukuh Ekosistem Penyaluran Sumber",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkukuh Ekosistem Penyaluran Sumber"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Meningkatkan Pelibatan Pihak Berkepentingan dengan Institusi Pendidikan KPM",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Mempelbagaikan Mekanisme Pelibatan dan Kerjasama Pihak Berkepentingan"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 6,
+    "tajuk": "Membudayakan Kemampanan dalam Ekosistem Pendidikan",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Memperkasakan Pendidikan untuk Pembangunan Mampan (PPM) dalam Kalangan Murid",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Mengintegrasikan PPM dalam Kurikulum dan Kokurikulum"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Menyediakan Murid dengan Kemahiran Berkaitan Bidang Pekerjaan Lestari"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Mengupayakan Pendidik dan Pemimpin Pendidikan bagi Menerajui PPM",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Membangunkan Kapasiti Pendidik dan Pemimpin Pendidikan sebagai Peneraju PPM"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Meningkatkan Advokasi dan Promosi PPM dalam Ekosistem Pendidikan secara Terangkum",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Mengoptimumkan Jaringan dan Jalinan untuk PPM"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkasakan Murid dan Warga KPM sebagai Agen Perubahan Amalan Kemampanan"
+          }
+        ]
+      },
+      {
+        "nombor": 4,
+        "tajuk": "Memperkukuh Pemantauan dan Penilaian Pelaksanaan PPM di Institusi Pendidikan KPM",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Menilai dan Mengiktiraf Institusi Pendidikan KPM yang Menerapkan Amalan Kemampanan"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "nombor": 7,
+    "tajuk": "Meningkatkan Kecekapan Tadbir Urus dan Sistem Penyampaian",
+    "strategi": [
+      {
+        "nombor": 1,
+        "tajuk": "Mengukuhkan Pelan Komunikasi KPM yang Responsif dan Proaktif",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memantapkan Pelaksanaan Pelan Strategik Komunikasi KPM yang Berstruktur dan Bersasar"
+          }
+        ]
+      },
+      {
+        "nombor": 2,
+        "tajuk": "Memperkukuh Fungsi dan Struktur Organisasi Bahagian, Jabatan Pendidikan Negeri, Pejabat Pendidikan Daerah dan Institusi Pendidikan KPM",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Menyusun Semula Fungsi, Struktur dan Perjawatan Bahagian KPM, JPN, PPD dan Institusi Pendidikan KPM"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Memperkasakan Polisi dan Prosedur Penamatan Pegawai di KPM"
+          }
+        ]
+      },
+      {
+        "nombor": 3,
+        "tajuk": "Meningkatkan Pemberian Autonomi Terpimpin kepada Institusi Pendidikan KPM",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Memperkukuh Pelaksanaan Autonomi Terpimpin di Institusi Pendidikan KPM"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Mengoptimumkan Penggunaan Fasiliti dan Prasarana di Institusi Pendidikan KPM"
+          }
+        ]
+      },
+      {
+        "nombor": 4,
+        "tajuk": "Memperkasakan Pengurusan Perubahan dan Risiko",
+        "prakarsa": [
+          {
+            "nombor": 1,
+            "tajuk": "Membangunkan Pelan Pengurusan Perubahan KPM"
+          },
+          {
+            "nombor": 2,
+            "tajuk": "Membangunkan Pelan Pengurusan Risiko KPM"
+          }
+        ]
+      }
+    ]
+  }
+]

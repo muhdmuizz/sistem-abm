@@ -347,12 +347,20 @@ class CanonicalFinancialStorageTest extends TestCase
     {
         $g = $this->financialGraph();
         $this->financialOutputFixture($this->financialSourceFixture($g), '1');
+        $programmes = require database_path('migrations/2026_11_14_050000_create_program_aktiviti_foundation.php');
+        $workflow = require database_path('migrations/2026_11_14_030000_add_bidaan_workflow_state.php');
         $migration = require database_path('migrations/2026_11_14_020000_create_canonical_financial_storage.php');
+        // Roll dependent modules back before the parent, preserving restrictive FKs.
+        $programmes->down();
+        $workflow->down();
         $migration->down();
         $this->assertDatabaseCount('ptjs', 1);
         $this->assertDatabaseCount('tempat_bertugas', 1);
         $this->assertDatabaseCount('rujukan_os', 1);
         $migration->up();
+        $workflow->up();
+        $programmes->up();
+        $this->assertDatabaseCount('program_aktiviti', 0);
         foreach (['bidaan', 'anggaran', 'butiran_anggaran', 'hasil_pengiraan'] as $table) {
             $this->assertDatabaseCount($table, 0);
         }
