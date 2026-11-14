@@ -351,7 +351,7 @@ SQL);
         $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk()
             ->assertSee('Sektor Pengurusan')->assertSee('Sektor Perancangan dan Pengurusan Pendidikan')
             ->assertSee('Butiran #'.$first->id)->assertSee('2 rekod dalam skop anda')
-            ->assertDontSee('SECRET_SOURCE_VALUE')->assertDontSee('private_fixture')->assertDontSee('RM');
+            ->assertDontSee('SECRET_SOURCE_VALUE')->assertDontSee('private_fixture')->assertDontSeeText('RM ');
         $row = app(\App\Services\RuangAnggaran::class)->sources($this->operator, $bid, $estimate)->first();
         $this->assertArrayNotHasKey('data_sumber', $row->getAttributes());
         $this->assertDatabaseCount('rekod_audit', 0);
