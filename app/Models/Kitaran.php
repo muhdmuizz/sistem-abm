@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['tahun'])]
 class Kitaran extends Model
 {
+    public function bidaan(): HasMany
+    {
+        return $this->hasMany(Bidaan::class);
+    }
+
     public function fasa(): HasMany { return $this->hasMany(Fasa::class); }
 
     /**

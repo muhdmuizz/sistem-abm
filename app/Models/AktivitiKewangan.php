@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['nama', 'singkatan'])]
 class AktivitiKewangan extends Model
 {
+    public function bidaan(): HasMany
+    {
+        return $this->hasMany(Bidaan::class);
+    }
+
     public function kodAktiviti(): HasMany
     {
         return $this->hasMany(KodAktiviti::class);
