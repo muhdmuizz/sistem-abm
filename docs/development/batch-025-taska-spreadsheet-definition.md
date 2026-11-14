@@ -1,6 +1,6 @@
 # Batch 025 — OS42000 TASKA Spreadsheet Definition
 
-**Status:** Verification passed; merge pending. Authorised continuation 15 November 2026.
+**Status:** Merged in PR #58; local update/functional checks pending. Authorised continuation 15 November 2026.
 **Baseline:** `258fe6f14262cea08355c5c2f9c5ae4a2a97adf7` on dev.
 
 ## Scope and authority
@@ -32,3 +32,7 @@ Open an authorised active OS42000 — Subsidi Yuran TASKA under PPN, then Buka J
 ## Remaining work
 
 Official financial output/totals/completeness, programme association/inheritance and remaining OS definitions stay pending. Exact previews are source-draft feedback, not entitlement/eligibility or submission readiness. Keep paused OS14000 detailed work and other unresolved policy gaps isolated.
+
+## Merge checkpoint
+
+[PR #58](https://github.com/muhdmuizz/sistem-abm/pull/58) merged into dev at `0eb73bc132474e1355d22f706104600001c76c06`. Final evidence-only commit `c970d9c2b9b46791938c98335c2b8807ee1f287a` changes documentation; the application code remains the tested head `9c4bce154c684ec232416e9e4d99572ddc64cee2`. Local update has not been executed by the cloud agent or confirmed by the user.

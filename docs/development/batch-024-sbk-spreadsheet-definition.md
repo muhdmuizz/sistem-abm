@@ -21,7 +21,7 @@ Browser SBK checks exercise inline manual rates, fixed Pukal/12, exact decimal a
 
 Artifact `14130395999` contains 129 PNG captures (14 new SBK states). Before the alignment correction, all 14 new states were visually reviewed: empty/populated/Menengah/partial/legacy/read-only and validation, each at 1440/390 widths. Final-head review rechecked populated desktop/mobile, read-only desktop, validation desktop and OS25000 populated desktop to confirm the correction and compatibility. Other final-head captures were generated and browser-checked but not individually re-reviewed after the numeric styling change. Mobile column containment/scrolling passed. No new asynchronous initial load, filtered-results or expanded-panel interface is introduced; no physical-device, full design acceptance or production readiness is claimed.
 
-## Local follow-through — pending
+## Local follow-through — synchronisation confirmed; detailed functional checks unverified
 
 Keep the running server. With a clean working tree, switch to dev, pull --ff-only and run php artisan optimize:clear; Ctrl+F5 refreshes the changed grid script. No migration, seeder, npm build or restart required.
 
