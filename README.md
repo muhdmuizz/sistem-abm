@@ -22,6 +22,8 @@ Batch 011 adds year-only Kitaran and Fasa administration, closed-by-default phas
 
 Batch 012 adds canonical Bidaan/Anggaran/Butiran storage and traceable generated outputs, unique identities, same-PTJ workplace foreign keys and exact numeric storage. Merged in PR #26 at `0ff960d`; 206 tests / 1858 assertions plus build/browser regression passed at `6fd0a01`. Local migration is pending. Step 02 remains in progress: audited financial write services, OS-specific calculations/completeness, programme integration and submission snapshots remain pending. No financial UI or real financial data is introduced.
 
+Batch 013 adds audited backend initial Bidaan/OS activation, distinct preparation-role checks, fresh central/Fasa/session validation, revision conflicts and reasoned Superadmin overrides. Merged in PR #28 at `bf69e80`; 239 tests / 2005 assertions plus build/existing browser regression passed. Local migration remains pending, including Batch 012 if unapplied. Draft-save services, financial UI and the later submission/review/snapshot workflows remain pending; Step 02 is in progress.
+
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
