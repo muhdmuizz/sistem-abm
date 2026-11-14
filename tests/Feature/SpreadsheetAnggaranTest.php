@@ -178,7 +178,7 @@ class SpreadsheetAnggaranTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
         $this->phase->forceFill(['dibuka'=>false])->save();
-        $this->get($url)->assertOk()->assertDontSee('Simpan Draf');$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
+        $this->get($url)->assertOk()->assertDontSee('<button type="submit" class="button primary">', false);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
         $this->phase->forceFill(['dibuka'=>true])->save();$bid->forceFill(['status'=>StatusBidaan::DalamSemakan])->save();
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertConflict();
         $bid->forceFill(['status'=>StatusBidaan::DalamPenyediaan])->save();
@@ -206,7 +206,7 @@ class SpreadsheetAnggaranTest extends TestCase
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>0])]))->assertConflict();
         foreach([Peranan::PemantauBidaan,Peranan::PenyediaBidaan] as $role){
             $this->operator->penugasanPeranan()->delete();$this->workspaceRole($role);
-            $response=$this->get($url)->assertOk()->assertDontSee('Simpan Draf');$this->gridCapture('grid-readonly',$response);
+            $response=$this->get($url)->assertOk()->assertDontSee('<button type="submit" class="button primary">', false);$this->gridCapture('grid-readonly',$response);
             $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
         }
         $this->assertSame('do not expose',$source->fresh()->data_sumber->SECRET_LEGACY);

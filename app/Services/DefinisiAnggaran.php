@@ -95,6 +95,7 @@ class DefinisiAnggaran
     {
         $reference = $this->references()[$source->kategori1 ?? ''] ?? null;
         if (!$reference || ($source->bil_unit ?? null)===null || $source->bil_unit==='') { return null; }
-        return (string)BigDecimal::of($source->bil_unit)->multipliedBy($reference['kadar'])->stripTrailingZeros();
+        $value = (string)BigDecimal::of($source->bil_unit)->multipliedBy($reference['kadar']);
+        return str_contains($value, '.') ? rtrim(rtrim($value, '0'), '.') : $value;
     }
 }
