@@ -180,3 +180,7 @@ The user reported **“Clean.”** after the supplied guarded dev pull/database-
 ## Batch 016 — atomic multi-row drafts merged; local update pending
 
 [Batch 016](batch-016-atomic-multirow-drafts.md) adds one-Anggaran all-or-nothing source draft create/edit batches on the existing audited service. User directed continuation after Batch 015 acceptance. Baseline b376280. Application head `781338b` verified by [CI 43557005407](https://github.com/muhdmuizz/sistem-abm/actions/runs/43557005407): 302 tests / 2403 assertions, PHP 8.4.27 / PostgreSQL 18.7 in isolated test database, build/existing Chromium checks passed. [PR #37](https://github.com/muhdmuizz/sistem-abm/pull/37) merged at `47f223059e020ab6e12abce0b2aee6ff2d45ff87`; local update pending. No route/UI, OS field schema/calculation, migration or seed. Step 02 remains in progress; OS source editor/adapters and calculation integration remain deferred.
+
+## Batch 017 — shared Anggaran read workspace in progress
+
+[Batch 017](batch-017-anggaran-read-workspace.md) adds active-OS opening, saved Butiran metadata and same-Bidaan navigation without exposing an unapproved source editor. Implementation prepared; CI/visual verification/merge/local acceptance pending. Batch 016 local update remains unconfirmed. No migration or new OS policy. Step 02 remains in progress; the read shell is a bounded first part of Step 03, not completion of Senarai Anggaran/editor workflows.
