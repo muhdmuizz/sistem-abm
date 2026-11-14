@@ -1,5 +1,8 @@
 <nav aria-label="Navigasi utama">
     <a aria-label="Utama" href="{{ route('home') }}" @class(['nav-link', 'selected' => request()->routeIs('home')]) @if(request()->routeIs('home')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">U</span><span class="nav-label">Utama</span></a>
+    @if(app(\App\Services\RuangBidaPeruntukan::class)->canUse(auth()->user()))
+    <a aria-label="Bida Peruntukan" href="{{ route('bids.index') }}" @class(['nav-link', 'selected' => request()->routeIs('bids.*')]) @if(request()->routeIs('bids.*')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">BP</span><span class="nav-label">Bida Peruntukan</span></a>
+    @endif
     @if (auth()->user()->penugasanPeranan()->where('peranan', 'superadmin')->exists())
     <p class="nav-group">Pentadbiran</p>
     <a aria-label="Kitaran ABM" href="{{ route('cycles.index') }}" @class(['nav-link', 'selected' => request()->routeIs('cycles.*','phases.*')]) @if(request()->routeIs('cycles.*','phases.*')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">KA</span><span class="nav-label">Kitaran ABM</span></a>
