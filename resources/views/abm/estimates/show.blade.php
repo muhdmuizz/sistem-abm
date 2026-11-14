@@ -24,4 +24,22 @@
 </tbody></table></div>
 @endif
 @if($sources->hasPages())<nav class="pagination" aria-label="Halaman Butiran"><span>Halaman {{ $sources->currentPage() }} daripada {{ $sources->lastPage() }}</span><div>@if($sources->previousPageUrl())<a href="{{ $sources->previousPageUrl() }}">Sebelumnya</a>@endif @if($sources->nextPageUrl())<a href="{{ $sources->nextPageUrl() }}">Seterusnya</a>@endif</div></nav>@endif
+
+<details class="section estimate-history" id="estimate-history" @if(request()->has('audit_page')) open @endif>
+<summary><x-abm-icon name="chevron"/><span>Log Tindakan</span><span class="small">{{ $history->total() }} rekod dalam skop anda</span></summary>
+@if($history->isEmpty())
+<section class="empty-state"><h2>Tiada Log Tindakan dalam skop anda.</h2><p>Tindakan yang direkodkan akan dipaparkan di sini.</p></section>
+@else
+<div class="data-table estimate-audit"><table><caption class="sr-only">Log Tindakan Anggaran OS{{ $os->kod_objek }} dalam skop akses anda</caption><thead><tr><th scope="col">Tarikh & Masa</th><th scope="col">Tindakan</th><th scope="col">Rujukan</th><th scope="col">Pelaku</th></tr></thead><tbody>
+@foreach($history as $event)<tr>
+<td data-label="Tarikh & Masa">{{ $event->berlaku_pada->timezone('Asia/Kuala_Lumpur')->format('d/m/Y H:i') }}</td>
+<td data-label="Tindakan">{{ \App\Services\RuangAnggaran::ACTIONS[$event->tindakan] }}</td>
+<td data-label="Rujukan">{{ $event->jenis_entiti === \App\Models\Anggaran::class ? 'OS'.$os->kod_objek : 'Butiran #'.$event->id_entiti }}</td>
+<td data-label="Pelaku"><div>{{ $event->pelaku->name }}<p class="small">{{ \App\Services\RuangAnggaran::ROLE_LABELS[$event->peranan->value] }}</p></div></td>
+</tr>@endforeach
+</tbody></table></div>
+@endif
+@if($history->hasPages())<nav class="pagination" aria-label="Halaman Log Tindakan"><span>Halaman {{ $history->currentPage() }} daripada {{ $history->lastPage() }}</span><div>@if($history->previousPageUrl())<a href="{{ $history->previousPageUrl() }}#estimate-history">Sebelumnya</a>@endif @if($history->nextPageUrl())<a href="{{ $history->nextPageUrl() }}#estimate-history">Seterusnya</a>@endif</div></nav>@endif
+</details>
+
 @endsection

@@ -46,3 +46,9 @@
 .estimate-navigation form>div{flex:1;min-width:0}.estimate-sequence{display:flex;gap:var(--space-2);flex-wrap:wrap}
 .estimate-sources td{overflow-wrap:anywhere}.estimate-sources th:first-child{width:180px}.estimate-sources th:last-child{width:200px}
 @media(max-width:767px){.estimate-navigation{align-items:stretch}.estimate-navigation form{flex-basis:100%;flex-wrap:wrap}.estimate-navigation form>div{flex-basis:100%}.estimate-sequence{width:100%;justify-content:space-between}.estimate-sources tr{padding:var(--space-3) var(--space-4)}}
+
+/* Scoped OS history reuses shared table, mobile-record and empty-state components. */
+.estimate-history>summary{display:flex;align-items:center;gap:var(--space-3);cursor:pointer;min-height:44px;list-style:none;font-weight:500}
+.estimate-history>summary::-webkit-details-marker{display:none}.estimate-history>summary>.small{margin-left:auto;font-weight:400}
+.estimate-history[open]>summary>.icon{transform:rotate(90deg)}.estimate-audit td{overflow-wrap:anywhere}.estimate-audit .small{margin-top:4px}
+@media(max-width:767px){.estimate-history>summary{flex-wrap:wrap}.estimate-history>summary>.small{flex-basis:100%;margin-left:28px}.estimate-audit tr{padding:var(--space-3) var(--space-4)}}

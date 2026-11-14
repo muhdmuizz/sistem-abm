@@ -203,6 +203,33 @@ for (const name of ['estimate-empty','estimate-populated','estimate-workplace','
     await page.setViewportSize({ width:1440,height:1000 });
 }
 
+
+for (const name of ['history-empty','history-populated','history-workplace','history-page','history-readonly','history-validation']) {
+    await page.goto('http://127.0.0.1:4173/' + name + '.html');
+    if (await page.locator('body').evaluate(el => el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
+    const history = page.locator('#estimate-history');
+    if (await page.content().then(html => html.includes('INTERNAL_REASON_NOT_FOR_DISPLAY') || html.includes('RAW_SNAPSHOT_SECRET'))) throw Error('Raw audit information exposed');
+    for (const width of [1440,390]) {
+        await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
+        if (name === 'history-empty' || name === 'history-populated') {
+            await history.evaluate(el => { el.open = false; });
+            await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-collapsed-' + width + '.png', fullPage:true });
+        }
+        if (!(await history.evaluate(el => el.open))) {
+            await history.locator(':scope > summary').focus();
+            await page.keyboard.press('Enter');
+        }
+        if (!(await history.evaluate(el => el.open))) throw Error('History keyboard expansion failed');
+        if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name + ' overflow at ' + width);
+        for (const empty of await history.locator('.empty-state').all()) {
+            const padding = await empty.evaluate(el => { const s=getComputedStyle(el);return [s.paddingLeft,s.paddingRight,s.paddingTop,s.paddingBottom].map(parseFloat); });
+            if (padding.some(n => n < 16)) throw Error('Audit empty state padding too small');
+        }
+        if (width === 390 && name === 'history-populated' && await history.locator('tbody tr').first().evaluate(el => getComputedStyle(el).display) !== 'block') throw Error('Audit records did not become mobile cards');
+        await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-expanded-' + width + '.png', fullPage:true });
+    }
+}
+
 await browser.close();
 
 

@@ -547,4 +547,221 @@ SQL);
         $this->assertDatabaseCount('anggaran', 1);
     }
 
+    private function historyActivate(Bidaan $bid): Anggaran
+    {
+        return app(\App\Services\PengaktifanKewangan::class)->aktifkanOs($bid->id, $this->os->id,
+            $bid->fresh()->semakan, 'INTERNAL_REASON_NOT_FOR_DISPLAY');
+    }
+
+    private function historySave(Bidaan $bid, Anggaran $estimate, \App\Models\TempatBertugas $place,
+        string $value, ?\App\Models\ButiranAnggaran $source = null): \App\Models\ButiranAnggaran
+    {
+        $input = ['tempat_bertugas_id' => $place->id, 'data_sumber' => (object) ['fixture' => $value],
+            'semakan_bidaan' => $bid->fresh()->semakan, 'semakan_anggaran' => $estimate->fresh()->semakan,
+            'reason' => 'INTERNAL_REASON_NOT_FOR_DISPLAY'];
+        if ($source) { $input['semakan_butiran'] = $source->fresh()->semakan; }
+        return app(\App\Services\DrafButiranAnggaran::class)->simpan($estimate->id, $source?->id, $input);
+    }
+
+    private function historyOwnRole(\App\Models\TempatBertugas $place): void
+    {
+        $this->operator->penugasanPeranan()->delete();
+        $this->operator->forceFill(['tempat_bertugas_id' => $place->id])->save();
+        $this->operator->penugasanPeranan()->create(['peranan' => Peranan::PenyediaAnggaran,
+            'ptj_id' => $this->owner->id, 'aktiviti_kewangan_id' => $this->activity->id, 'tempat_bertugas_id' => $place->id]);
+    }
+
+    public function test_history_shows_real_activation_and_draft_audit_metadata_newest_first_without_payloads(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $place = $this->workspacePlace('Sektor Sejarah');
+        $source = $this->historySave($bid, $estimate, $place, 'RAW_SNAPSHOT_SECRET');
+        $this->historySave($bid, $estimate, $place, 'RAW_SNAPSHOT_SECRET_UPDATED', $source);
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $response = $this->get($url)->assertOk()->assertSee('Log Tindakan')->assertSee('3 rekod dalam skop anda')
+            ->assertSee('OS diaktifkan')->assertSee('Draf Butiran ditambah')->assertSee('Draf Butiran dipinda')
+            ->assertSee('Penyedia Anggaran')->assertSee($this->operator->name)
+            ->assertDontSee('RAW_SNAPSHOT_SECRET')->assertDontSee('INTERNAL_REASON_NOT_FOR_DISPLAY');
+        $history = $response->viewData('history');
+        $this->assertSame(['source.draft_updated', 'source.draft_created', 'estimate.activated'],
+            $history->pluck('tindakan')->all());
+        foreach ($history as $event) {
+            foreach (['sebelum', 'selepas', 'alasan', 'skop_pelaku'] as $field) {
+                $this->assertArrayNotHasKey($field, $event->getAttributes());
+            }
+            $this->assertArrayNotHasKey('email', $event->pelaku->getAttributes());
+        }
+        $audit = RekodAudit::where('tindakan', 'source.draft_updated')->sole();
+        $this->assertStringContainsString('RAW_SNAPSHOT_SECRET_UPDATED', $audit->selepas['data_sumber_json']);
+        $this->assertSame('INTERNAL_REASON_NOT_FOR_DISPLAY', $audit->alasan);
+        $this->get($url)->assertOk();
+        $this->assertDatabaseCount('rekod_audit', 3);
+        $this->workspaceCapture('history-populated', $response);
+    }
+
+    public function test_history_empty_state_does_not_invent_events_for_legacy_fixture_rows(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->workspaceEstimate($bid);
+        $this->workspaceSource($estimate, $this->workspacePlace('Sektor Tanpa Log'));
+        $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk()
+            ->assertSee('Tiada Log Tindakan dalam skop anda.');
+        $this->assertSame(0, $response->viewData('history')->total());
+        $this->assertDatabaseCount('rekod_audit', 0);
+        $this->workspaceCapture('history-empty', $response);
+    }
+
+    public function test_history_own_scope_requires_current_and_both_event_workplaces(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $own = $this->workspacePlace('Sektor Own History');
+        $other = $this->workspacePlace('Foreign History Sector');
+        $stay = $this->historySave($bid, $estimate, $own, 'stay');
+        $this->historySave($bid, $estimate, $own, 'stay updated', $stay);
+        $movedIn = $this->historySave($bid, $estimate, $other, 'foreign');
+        $this->historySave($bid, $estimate, $own, 'moved in', $movedIn);
+        $movedOut = $this->historySave($bid, $estimate, $own, 'was own');
+        $this->historySave($bid, $estimate, $other, 'moved away', $movedOut);
+        $this->historyOwnRole($own);
+        $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk()
+            ->assertDontSee('Foreign History Sector')->assertDontSee('RAW_SNAPSHOT_SECRET');
+        $history = $response->viewData('history');
+        $this->assertSame(3, $history->total());
+        $this->assertSame(['source.draft_updated', 'source.draft_created', 'estimate.activated'],
+            $history->pluck('tindakan')->all());
+        $this->assertSame([(string) $stay->id], $history->where('jenis_entiti', \App\Models\ButiranAnggaran::class)
+            ->pluck('id_entiti')->unique()->values()->all());
+        $this->assertSame(2, $response->viewData('sources')->total());
+        $this->assertDatabaseCount('rekod_audit', 7);
+        $this->workspaceCapture('history-workplace', $response);
+    }
+
+    public function test_history_pagination_is_independent_and_preserves_both_page_choices(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $place = $this->workspacePlace('Sektor Halaman Log');
+        $source = null;
+        for ($i = 0; $i < 26; $i++) {
+            $source = $this->historySave($bid, $estimate, $place, 'version '.$i, $source);
+        }
+        for ($i = 0; $i < 25; $i++) { $this->workspaceSource($estimate, $place); }
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $response = $this->get($url.'?page=2&audit_page=2')->assertOk();
+        $this->assertSame(2, $response->viewData('sources')->currentPage());
+        $this->assertCount(1, $response->viewData('sources')->items());
+        $this->assertSame(27, $response->viewData('history')->total());
+        $this->assertSame(2, $response->viewData('history')->currentPage());
+        $this->assertCount(2, $response->viewData('history')->items());
+        $this->assertStringContainsString('page=2', $response->viewData('history')->previousPageUrl());
+        $this->get($url.'?page=2&audit_page=999')
+            ->assertRedirect(route('estimates.show', [$bid->id, $estimate->id, 'page' => 2, 'audit_page' => 2]));
+        $this->get($url.'?page=999&audit_page=2')
+            ->assertRedirect(route('estimates.show', [$bid->id, $estimate->id, 'page' => 2, 'audit_page' => 2]));
+        $this->assertDatabaseCount('rekod_audit', 27);
+        $this->workspaceCapture('history-page', $response);
+    }
+
+    public function test_history_monitor_keeps_recorded_actor_role_and_has_no_mutation_controls(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::PemantauBidaan);
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $response = $this->get($url)->assertOk()->assertSee('OS diaktifkan')->assertSee('Penyedia Anggaran')
+            ->assertDontSee('Padam Log')->assertDontSee('Pinda Log')->assertDontSee('INTERNAL_REASON_NOT_FOR_DISPLAY');
+        $this->assertSame(Peranan::PenyediaAnggaran, $response->viewData('history')->first()->peranan);
+        $this->assertDatabaseCount('rekod_audit', 1);
+        $this->workspaceCapture('history-readonly', $response);
+    }
+
+    public function test_history_excludes_unrelated_entity_types_cycles_and_unsupported_actions(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $place = $this->workspacePlace('Sektor Event Scope');
+        $source = $this->historySave($bid, $estimate, $place, 'source');
+        $otherCycle = Kitaran::create(['tahun' => 2029]);
+        $payload = ['anggaran_id' => $estimate->id, 'bidaan_id' => $bid->id, 'tempat_bertugas_id' => $place->id];
+        foreach ([
+            ['source.draft_created', User::class, $this->cycle->id],
+            ['source.draft_created', \App\Models\ButiranAnggaran::class, $otherCycle->id],
+            ['unsupported.fixture', \App\Models\ButiranAnggaran::class, $this->cycle->id],
+        ] as [$action, $type, $cycle]) {
+            app(\App\Services\JejakAudit::class)->jalankan(Peranan::PenyediaAnggaran, fn () => new \App\Audit\PeristiwaAudit(
+                $action, $type, (string) $source->id, ['exists' => false], $payload, 'Internal fixture only',
+                ptjId: $bid->ptj_id, aktivitiId: $bid->aktiviti_kewangan_id, tempatBertugasId: $place->id, kitaranId: $cycle));
+        }
+        $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk()
+            ->assertDontSee('unsupported.fixture')->assertDontSee('Internal fixture only');
+        $this->assertSame(2, $response->viewData('history')->total());
+        $this->assertDatabaseCount('rekod_audit', 5);
+    }
+
+    public function test_history_other_os_events_never_mix_with_the_open_estimate(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        TetapanAksesPtj::create(['kategori_ptj' => 'JPNT', 'aktiviti_kewangan_id' => $this->activity->id,
+            'rujukan_os_id' => $this->unconfigured->id, 'dibenarkan' => true]);
+        $otherEstimate = app(\App\Services\PengaktifanKewangan::class)->aktifkanOs($bid->id,
+            $this->unconfigured->id, $bid->fresh()->semakan);
+        $this->historySave($bid, $otherEstimate, $this->workspacePlace('Other OS sector'), 'other OS source');
+        $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk();
+        $this->assertSame(1, $response->viewData('history')->total());
+        $this->assertSame((string) $estimate->id, $response->viewData('history')->first()->id_entiti);
+        $this->assertDatabaseCount('rekod_audit', 3);
+    }
+
+    public function test_history_names_are_escaped_and_superadmin_keeps_actual_recorded_role(): void
+    {
+        $bid = $this->workspaceBid();
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::Superadmin);
+        $this->operator->forceFill(['name' => '<script>alert("audit")</script>'])->save();
+        $this->phase->forceFill(['dibuka' => false])->save();
+        TetapanAksesPtj::query()->update(['dibenarkan' => false]);
+        $estimate = $this->historyActivate($bid);
+        $response = $this->get(route('estimates.show', [$bid->id, $estimate->id]))->assertOk()
+            ->assertSee('<script>alert("audit")</script>')->assertDontSee('<script>alert("audit")</script>', false)
+            ->assertSee('Superadmin')->assertDontSee('INTERNAL_REASON_NOT_FOR_DISPLAY');
+        $event = $response->viewData('history')->first();
+        $this->assertSame($this->operator->id, $event->pelaku_id);
+        $this->assertSame(Peranan::Superadmin, $event->peranan);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_history_access_rechecks_central_role_and_session_and_rejects_bad_page_inputs(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $this->from($url)->get($url.'?audit_page=0')->assertSessionHasErrors('audit_page');
+        $this->from($url)->get($url.'?audit_page=bad')->assertSessionHasErrors('audit_page');
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => false]);
+        $this->get($url)->assertNotFound();
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => true]);
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::PenyeliaBidaan);
+        $this->get($url)->assertForbidden();
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::PemantauBidaan);
+        session()->put('abm_last_activity', now()->timestamp - 1800);
+        $this->get($url)->assertRedirect('/login');
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_history_page_validation_summary_preserves_a_truthful_read_only_view(): void
+    {
+        $bid = $this->workspaceBid();
+        $estimate = $this->historyActivate($bid);
+        $errors = ['default' => ['format' => ':message', 'messages' => ['audit_page' => ['Pilih halaman Log Tindakan yang sah.']]]];
+        $response = $this->withSession(['errors' => $errors])->get(route('estimates.show', [$bid->id, $estimate->id]))
+            ->assertOk()->assertSee('role="alert"', false)->assertSee('Pilih halaman Log Tindakan yang sah.');
+        $this->workspaceCapture('history-validation', $response);
+    }
+
 }
