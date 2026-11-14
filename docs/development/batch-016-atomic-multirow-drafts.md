@@ -1,6 +1,6 @@
 # Batch 016 — Atomic Multi-row Butiran Draft Saves
 
-**Status:** CI verified and merged; local synchronisation pending.
+**Status:** CI verified and merged; local synchronisation user-confirmed; direct service execution remains unverified.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `b3762801ec22e44322b142004b9b35272b0b43dd` on dev.
 **Authorisation:** User directed “Proceed.” after Batch 015 local acceptance. Implement the next bounded shared persistence prerequisite under AD-004 multi-row editing/draft saving and AD-011 transactional bulk edits; no OS-specific policy is inferred.
@@ -24,3 +24,7 @@ Verified application head `781338b3790bbf3b30b412d69fc5bb7a0547035f`: [CI 435570
 The initial run passed 301 cases but failed to create the new audit-failure trigger because its test fixture lost PostgreSQL dollar quoting. Quoting was corrected; the final run executes the actual later-audit-failure rollback case successfully. No application workaround was added.
 
 No UI change; no fresh visual QA claimed. Local update/smoke checks and direct service execution pending. Existing security/device/operational limitations remain tracked.
+
+## User-confirmed local update and inspection — 14 November 2026
+
+The user reported **“It's there. Clean. Proceed.”** after the supplied guarded dev pull/cache-clear commands and the requested active-OS opening/Log Tindakan expansion, activation-entry, actor/time and spacing checks. Record synchronisation through Batch 018 and these bounded UI checks as user-confirmed. This also confirms delivery of Batches 016–017 by the combined pull; it does not establish manual multi-row service execution, all OS navigation, other roles/devices, hidden-row permissions or audit/database inspection. No direct Windows access or new test execution is claimed. Earlier pending local-update statements are superseded only for these checks.
