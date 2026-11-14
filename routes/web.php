@@ -17,6 +17,11 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/bida-peruntukan/{bid}/program', [\App\Http\Controllers\ProgramAktivitiController::class, 'index'])->whereNumber('bid')->name('programs.index');
+    Route::get('/bida-peruntukan/{bid}/program/tambah', [\App\Http\Controllers\ProgramAktivitiController::class, 'form'])->whereNumber('bid')->name('programs.create');
+    Route::post('/bida-peruntukan/{bid}/program', [\App\Http\Controllers\ProgramAktivitiController::class, 'save'])->whereNumber('bid')->middleware('throttle:30,1')->name('programs.store');
+    Route::get('/bida-peruntukan/{bid}/program/{program}', [\App\Http\Controllers\ProgramAktivitiController::class, 'form'])->whereNumber(['bid','program'])->name('programs.edit');
+    Route::put('/bida-peruntukan/{bid}/program/{program}', [\App\Http\Controllers\ProgramAktivitiController::class, 'save'])->whereNumber(['bid','program'])->middleware('throttle:30,1')->name('programs.update');
     Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}', [AnggaranController::class, 'show'])->whereNumber(['bid','estimate'])->name('estimates.show');
     Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');

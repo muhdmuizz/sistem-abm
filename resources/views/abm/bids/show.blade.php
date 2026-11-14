@@ -5,6 +5,7 @@
 <div class="page-heading"><div><p class="eyebrow">Bida Peruntukan</p><h1>{{ $bid->aktivitiKewangan->nama }}</h1></div><a class="button" href="{{ route('bids.index',['kitaran_id'=>$bid->kitaran_id,'ptj_id'=>$bid->ptj_id]) }}">Kembali ke Bidaan</a></div>
 @include('abm.bids.feedback')
 <dl class="bid-context-facts"><div><dt>Kitaran ABM</dt><dd>{{ $bid->kitaran->tahun }}</dd></div><div><dt>PTJ</dt><dd>{{ $bid->ptj->nama }}</dd></div><div><dt>Status Bidaan</dt><dd>{{ \App\Services\RuangBidaPeruntukan::STATUS[$bid->status->value] }}</dd></div><div><dt>Tempoh penyediaan</dt><dd>{{ $open ? 'Fasa dibuka dalam tempoh' : 'Tiada Fasa dibuka dalam tempoh' }}</dd></div></dl>
+<div class="bid-section-heading"><h2>Program/ Aktiviti</h2><a class="button" href="{{ route('programs.index',$bid->id) }}">Buka Program/ Aktiviti</a></div>
 <div class="bid-section-heading"><h2>OS tersedia</h2><p class="small">{{ $cards->count() }} OS</p></div>
 @if(! $bid->diaktifkan)<p class="notice">Bidaan belum diaktifkan. Pengaktifan OS belum tersedia.</p>@endif
 @if($cards->isEmpty())

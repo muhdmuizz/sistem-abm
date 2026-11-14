@@ -230,6 +230,69 @@ for (const name of ['history-empty','history-populated','history-duplicated','hi
     }
 }
 
+// Batch 021: real Blade fixtures; HTTP persistence/authorisation is verified by PHPUnit.
+page.removeAllListeners('dialog');
+page.on('dialog', dialog => dialog.accept());
+for (const name of ['program-empty','program-create','program-list','program-edit','program-validation','program-conflict','program-readonly','program-override']) {
+    for (const width of [1440,390]) {
+        await page.setViewportSize({width,height:1000});
+        await page.goto('http://127.0.0.1:4173/'+name+'.html');
+        if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name+' overflow at '+width);
+        for (const empty of await page.locator('.empty-state').all()) {
+            if (await empty.evaluate(el => ['paddingLeft','paddingRight','paddingTop','paddingBottom'].some(k=>parseFloat(getComputedStyle(el)[k])<16))) throw Error('Programme empty state padding');
+        }
+        if (name==='program-readonly' && await page.getByRole('button',{name:'Simpan Draf'}).count()) throw Error('Read-only programme has save action');
+        if (name==='program-validation' && !(await page.locator('[aria-invalid=true]').count())) throw Error('Programme field error not associated');
+        await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
+    }
+}
+await page.setViewportSize({width:1440,height:1000});
+await page.goto('http://127.0.0.1:4173/program-edit.html');
+const form = page.locator('[data-program-form]');
+const ts=page.locator('#program-teras'), strategy=page.locator('#program-strategy'), initiative=page.locator('#program-initiative');
+const anotherTs=await ts.locator('option').evaluateAll(options=>options.find(o=>o.value&&!o.selected).value);
+await ts.selectOption(anotherTs);
+if (await strategy.inputValue() || await initiative.inputValue()) throw Error('Objectives did not clear');
+if (!(await initiative.isDisabled())) throw Error('Child objective enabled without parent');
+const strategyId=await strategy.locator('option').evaluateAll(options=>options.find(o=>o.value&&!o.disabled).value);
+await strategy.selectOption(strategyId);
+if (await initiative.isDisabled()) throw Error('Prakarsa not enabled');
+const initiativeId=await initiative.locator('option').evaluateAll(options=>options.find(o=>o.value&&!o.disabled).value);
+await initiative.selectOption(initiativeId);
+const mode=page.locator('#program-kaedah');
+await mode.selectOption('Pakej');
+await page.getByLabel('Penginapan',{exact:true}).check();
+if (!(await page.locator('[data-program-package]').isVisible())) throw Error('Package not revealed');
+await mode.selectOption('Bukan Pakej');
+if (await page.getByLabel('Penginapan',{exact:true}).isChecked()) throw Error('Package not explicitly cleared');
+if (await page.locator('[data-program-package]').isVisible()) throw Error('Package not hidden');
+const group=page.locator('[data-person-group="peserta"]');
+const originalCount=await group.locator('[data-person-row]').count();
+await group.locator('[data-add-person]').click();
+let row=group.locator('[data-person-row]').last();
+await row.locator('[data-person-category]').selectOption('Lain-lain');
+if (!(await row.locator('[data-person-class]').isDisabled())) throw Error('Lain-lain classification still submitted');
+await row.locator('[data-person-note]').fill('Wakil komuniti');
+await row.locator('[data-person-count]').fill('9007199254740993');
+if ((await group.locator('[data-person-total]').textContent())!=='9007199254741020') throw Error('Headcount lost integer precision');
+await row.locator('[data-person-category]').selectOption('Murid Rendah');
+if (await row.locator('[data-person-class]').getAttribute('max')!=='6') throw Error('Murid class range incorrect');
+await row.locator('[data-person-class]').fill('2');
+await row.locator('[data-person-count]').fill('3');
+await group.locator('[data-person-row]').first().locator('[data-remove-person]').click();
+const indexes=await group.locator('[data-person-row] [data-person-count]').evaluateAll(inputs=>inputs.map(i=>i.name));
+if (indexes.some((name,i)=>name!==`maklumat[peserta][${i}][bilangan]`)) throw Error('Removed programme rows left sparse indexes');
+if (await group.locator('[data-person-row]').count()!==originalCount) throw Error('Programme row count mismatch');
+const ids=await form.locator('[id]').evaluateAll(nodes=>nodes.map(n=>n.id));
+if (new Set(ids).size!==ids.length) throw Error('Programme form duplicate IDs');
+if (!(await page.locator('[data-program-save-status]').textContent()).includes('belum disimpan')) throw Error('Unsaved programme status absent');
+await page.locator('#program-tarikh_mula').fill('2026-11-14');
+if (await page.locator('#program-tarikh_mula').evaluate(el=>el.checkValidity())) throw Error('Date outside Kitaran accepted in browser');
+await page.locator('#program-tarikh_mula').fill('2028-02-01');
+await page.setViewportSize({width:390,height:844});
+if (await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Dynamic programme form mobile overflow');
+await page.screenshot({path:'storage/app/ui-qa/program-dynamic-390.png',fullPage:true});
+
 await browser.close();
 
 
