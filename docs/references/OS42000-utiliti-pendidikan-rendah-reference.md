@@ -14,3 +14,26 @@
 Read the four Pukal entries from [OS23000 reference CSV](OS23000-perhubungan-utiliti-kategori.csv). Do not create a duplicate item dataset. **Bukan Pukal** does not apply to this OS42000 reference.
 
 The existing Pendidikan Menengah OS42000 mapping is not changed by this decision. No changes are made to application code, database or existing financial formulas.
+
+
+## Owner-approved 30-column applicability and calculation — 15 November 2026
+
+This later approval adopts the already approved **OS23000 Perhubungan dan Utiliti — Pukal** quantity/rate calculation and column applicability for **OS42000 Bayaran Bil Utiliti Sekolah Bantuan Kerajaan (SBK), Pendidikan Rendah**, as a separate OS identity with Kod Aktiviti `030228`. Reuse the existing four Pukal rows from the OS23000 reference CSV; do not duplicate the source dataset or include Bukan Pukal.
+
+| Status | Canonical 30-column numbers | Count |
+| --- | --- | ---: |
+| Active | 01, 02, 03, 14, 15, 21, 26, 27, 28 | 9 |
+| Inactive | 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 16, 17, 18, 19, 20, 22, 23, 24, 25 | 19 |
+| Deferred | 29, 30 | 2 |
+
+**9 + 19 + 2 = 30.** The original canonical headers do not change.
+
+- **14 KATEGORI1**: fixed **Pukal**.
+- **15 KATEGORI2**: one of **Air**, **Elektrik**, **Telefon/ Faks**, **Pembetungan** only, from the existing shared OS23000 Pukal reference.
+- **21 KADAR**: mandatory manual input representing the estimated **monthly** utility expenditure; no prescribed or automatic rate.
+- **26 BILANGAN BULAN**: **fixed at 12**, not user-adjustable.
+- **27 ANGGARAN JUMLAH SETAHUN = KADAR × BILANGAN BULAN = KADAR × 12**, automatically calculated.
+- **01–03 and 28** retain their global organisational/funding reference rules; **29–30** remain Deferred to Program/ Aktiviti.
+- No BIL. UNIT, KEKERAPAN or additional multiplier is used, consistent with OS23000 Pukal.
+
+**Boundaries:** This decision does not combine OS42000 with OS23000, alter the distinct Kod Aktiviti or expand Pukal category coverage. It does not change the existing **Pendidikan Menengah OS42000 mapping**, any reference CSV, the master catalogue, Laravel, PostgreSQL or the Excel exporter. Documentation only; AD-008 remains Draft.
