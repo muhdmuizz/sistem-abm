@@ -227,6 +227,21 @@ class SpreadsheetAnggaranTest extends TestCase
         $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertStatus(503);
         $this->assertDatabaseCount('butiran_anggaran',0);$this->assertSame(1,$bid->fresh()->semakan);$this->assertSame(1,$estimate->fresh()->semakan);
     }
+    public function test_delete_audit_failure_rolls_back_other_row_edits_and_preserves_deleted_source(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place)]))->assertOk();
+        [$first,$second]=$estimate->butiran()->orderBy('id')->get()->all();
+        $bidRevision=$bid->fresh()->semakan;$estimateRevision=$estimate->fresh()->semakan;
+        DB::unprepared("CREATE FUNCTION grid_delete_audit_fail() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.tindakan='source.draft_deleted' THEN RAISE EXCEPTION 'Delete audit unavailable'; END IF; RETURN NEW; END; $$; CREATE TRIGGER grid_delete_audit_fail BEFORE INSERT ON rekod_audit FOR EACH ROW EXECUTE FUNCTION grid_delete_audit_fail();");
+        $this->postJson($url,$this->payload($bid,$estimate,
+            [$this->row($place,['butiran_id'=>$first->id,'semakan_butiran'=>$first->semakan,'bil_unit'=>'9'])],
+            [['butiran_id'=>$second->id,'semakan_butiran'=>$second->semakan]]))->assertStatus(503);
+        $this->assertDatabaseCount('butiran_anggaran',2);$this->assertDatabaseCount('rekod_audit',2);
+        $this->assertSame('2.625',$first->fresh()->data_sumber->bil_unit);
+        $this->assertNotNull($second->fresh());$this->assertSame($bidRevision,$bid->fresh()->semakan);
+        $this->assertSame($estimateRevision,$estimate->fresh()->semakan);
+    }
     public function test_superadmin_override_requires_reason_and_keeps_actual_actor(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
