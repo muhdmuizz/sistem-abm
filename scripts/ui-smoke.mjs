@@ -230,6 +230,7 @@ for (const name of ['history-empty','history-populated','history-duplicated','hi
     }
 }
 
+{
 // Batch 021: real Blade fixtures; HTTP persistence/authorisation is verified by PHPUnit.
 page.removeAllListeners('dialog');
 page.on('dialog', dialog => dialog.accept());
@@ -293,6 +294,7 @@ await page.setViewportSize({width:390,height:844});
 if (await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Dynamic programme form mobile overflow');
 await page.screenshot({path:'storage/app/ui-qa/program-dynamic-390.png',fullPage:true});
 
+}
 await browser.close();
 
 
