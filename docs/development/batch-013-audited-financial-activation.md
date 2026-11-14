@@ -1,6 +1,6 @@
 # Batch 013 — Audited Financial Activation
 
-**Status:** Code verified and merged; local migration pending.
+**Status:** Code verified and merged; local synchronisation/migration user-confirmed; financial operations unverified locally.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `4e42ddaa588cd3a281730fad44440ad54cb5361d` on dev.
 **Authorisation:** User requested the next development batch after canonical storage. Implement the next shared prerequisite: audited initial Bidaan/OS activation services. Apply AD-013 to future UI and retain the deferred broader refinement. Batch 012 local migration is still recorded pending; “Proceed for next” is not treated as proof of local execution.
@@ -28,3 +28,7 @@ Tested application head: `c91a7126bb0d6ef0830d129e75d98b75ff299d9f`.
 Early CI revisions exposed an incorrect Laravel shared-lock method name and JSONB key-order assumptions in assertions; corrected before successful verification. No unsuccessful application revision is merged. Multiple-connection/physical-device/manual acceptance is not claimed. No UI source changed; browser results are existing-screen regression, not certification of a financial interface.
 
 [PR #28](https://github.com/muhdmuizz/sistem-abm/pull/28); merged at `bf69e80a2d21712cefe917db033c900c6d043f09`. Local normal migration remains pending; the handoff will apply Batch 012 too if still unapplied. Step 02 remains in progress: source draft save services and financial screens remain pending. Keep the existing local server running.
+
+## User-confirmed Batches 012–013 local update — 14 November 2026
+
+The user replied **“Clean. Proceed.”** to the last supplied guarded dev pull/database verification/config-clear/normal-migration commands. Record local synchronisation and application of any pending Batch 012/013 migrations as passed by user report. No direct cloud access to Windows, local financial/audit-row inspection or activation service execution is claimed. Those batches delivered backend storage/activation services; manual financial operations and the broader device/security checks remain unverified. Existing CI evidence remains 239 tests / 2005 assertions at `c91a712`; no new test execution is claimed by this acceptance note.
