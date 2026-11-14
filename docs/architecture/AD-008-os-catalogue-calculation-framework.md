@@ -288,3 +288,7 @@ See [OS27000 Pakaian Seragam](../references/OS27000-pakaian-seragam-reference.md
 ## OS27000 Bekalan dan Bahan-bahan Lain (Touch ’n Go) — approved 14 November 2026
 
 See [OS27000 Touch ’n Go](../references/OS27000-bekalan-dan-bahan-lain-touch-n-go-reference.md) for the approved monthly budgeting specification across the existing three Kod Aktiviti: 9 Active, 19 Inactive and 2 Deferred columns; user-entered **TUJUAN**, **BIL. UNIT**, **KADAR BULANAN**, **BILANGAN BULAN**; **KEKERAPAN Inactive**; and **ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KADAR BULANAN × BILANGAN BULAN**. No category or reference-rate lookup is added; other OS27000 variants remain distinct. Documentation only; AD-008 remains **Draft**.
+
+## OS28000 Penyelenggaraan dan Pembaikan Kecil Yang Dibeli — approved 14 November 2026
+
+See [OS28000 Penyelenggaraan reference](../references/OS28000-penyelenggaraan-reference.md#owner-approved-30-column-anggaran-specification--14-november-2026) for the owner-approved **11 Active / 1 Conditional / 16 Inactive / 2 Deferred** column mapping. KATEGORI2 is conditional and blank for Tebang Pokok; KADAR preserves the existing eight manual/two fixed reference combinations; KEKERAPAN means occurrences per month, BILANGAN BULAN means budgeted months; **ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KADAR × KEKERAPAN × BILANGAN BULAN**. Reference data and system implementation unchanged; AD-008 remains **Draft**.
