@@ -11,7 +11,7 @@ No OS selection/association, inheritance/recalculation, financial completeness, 
 
 ## Verification
 
-Verified application/test head `e9da548c44ac0ab77a21d470de0d66b235be0654`: [CI 43583261810](https://github.com/muhdmuizz/sistem-abm/actions/runs/43583261810), **408 tests / 3129 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`. Frontend build and existing/new Chromium checks passed. Fifteen HTTP interface tests added; foundation coverage remains intact. [PR #49](https://github.com/muhdmuizz/sistem-abm/pull/49). Local synchronisation and programme create/edit smoke checks remain pending until the user reports them. Do not equate fixtures with live Google/Windows acceptance.
+Verified application/test head `e9da548c44ac0ab77a21d470de0d66b235be0654`: [CI 43583261810](https://github.com/muhdmuizz/sistem-abm/actions/runs/43583261810), **408 tests / 3129 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`. Frontend build and existing/new Chromium checks passed. Fifteen HTTP interface tests added; foundation coverage remains intact. [PR #49](https://github.com/muhdmuizz/sistem-abm/pull/49). The subsequent user “Clean” report confirms the supplied local synchronisation and requested programme create/edit/objective/headcount/date smoke checks; broader roles/devices/financial operations are not confirmed. Do not equate fixtures with live Google/Windows acceptance.
 
 ## Implementation details
 

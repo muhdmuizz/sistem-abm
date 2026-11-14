@@ -222,3 +222,7 @@ The user reported “Clean, what’s next?” after the guarded dev pull, config
 ## Batch 022 — shared UI refinement in progress
 
 User approved sidebar scrolling, compact login, spacing/alignment, typography, buttons/actions, forms/tables/mobile and interface-state refinement. [Batch 022](batch-022-shared-ui-refinement.md) records the consolidated audit before implementation. Verification/merge/local acceptance pending; no financial policy or workflow changes.
+
+## Batch 022 — verification passed; merge/local acceptance pending
+
+[Batch 022](batch-022-shared-ui-refinement.md): tested head `9422886677ab9b0198d3047ec3d6ddefc902e621`, [CI 43585733643](https://github.com/muhdmuizz/sistem-abm/actions/runs/43585733643), 410 tests / 3141 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated test DB, build/Chromium passed. Login fit, short sidebar/drawer scrolling and shared states verified; representative desktop/mobile visual review completed (104 captures, 25 new). [PR #51](https://github.com/muhdmuizz/sistem-abm/pull/51); merge/local acceptance pending. No migration/seed or business-rule changes.
