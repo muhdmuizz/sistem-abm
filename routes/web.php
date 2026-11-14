@@ -22,6 +22,8 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
     Route::post('/bida-peruntukan/{bid}/program', [\App\Http\Controllers\ProgramAktivitiController::class, 'save'])->whereNumber('bid')->middleware('throttle:30,1')->name('programs.store');
     Route::get('/bida-peruntukan/{bid}/program/{program}', [\App\Http\Controllers\ProgramAktivitiController::class, 'form'])->whereNumber(['bid','program'])->name('programs.edit');
     Route::put('/bida-peruntukan/{bid}/program/{program}', [\App\Http\Controllers\ProgramAktivitiController::class, 'save'])->whereNumber(['bid','program'])->middleware('throttle:30,1')->name('programs.update');
+    Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}/jadual', [\App\Http\Controllers\EditorAnggaranController::class, 'show'])->whereNumber(['bid','estimate'])->name('estimates.editor');
+    Route::post('/bida-peruntukan/{bid}/anggaran/{estimate}/jadual', [\App\Http\Controllers\EditorAnggaranController::class, 'save'])->whereNumber(['bid','estimate'])->middleware('throttle:30,1')->name('estimates.editor-save');
     Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}', [AnggaranController::class, 'show'])->whereNumber(['bid','estimate'])->name('estimates.show');
     Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
