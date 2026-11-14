@@ -433,6 +433,7 @@ for(const name of ['sbk-empty','sbk-populated','sbk-menengah','sbk-partial','sbk
   await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
   if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('SBK mobile table containment failed');
+  if(name==='sbk-readonly'&&!(await page.locator('[data-grid-body] tr').first().locator('td').nth(4).evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
   if(name==='sbk-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('SBK read-only save exposed');
   if(name==='sbk-legacy'&&(await page.content()).includes('SECRET_LEGACY'))throw Error('SBK legacy payload exposed');
   await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
@@ -442,6 +443,7 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
 await page.locator('[data-grid-add-count]').fill('2');await page.locator('[data-grid-add]').click();
 const first=page.locator('[data-grid-body] tr').first();
 if((await first.locator('[data-field=kategori2] option').allTextContents()).length!==5)throw Error('SBK utility choices are not four plus placeholder');
+if(!(await first.locator('[data-field=kadar]').evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Monthly rate input alignment');
 if(await first.locator('[data-field=kadar]').inputValue()!=='')throw Error('SBK manual rate was fabricated');
 await first.locator('[data-field=kategori2]').selectOption('Air');await first.locator('[data-field=kadar]').fill('123.4567');
 if(await first.locator('[data-output=kategori1]').textContent()!=='Pukal')throw Error('SBK fixed Pukal missing');

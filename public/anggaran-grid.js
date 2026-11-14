@@ -35,6 +35,7 @@
    const tr=document.createElement('tr');tr.dataset.key=row.key;
    for(let i=0;i<columns.length+2;i++)tr.append(document.createElement('td'));
    const cells=tr.children;
+   columns.forEach((column,index)=>{if(column.numeric||column.type==='decimal')cells[index+2].classList.add('grid-numeric');});
    if(row.editable&&editable){
     const check=document.createElement('input');check.type='checkbox';check.dataset.rowSelect='';check.checked=!!row.selected;check.setAttribute('aria-label','Pilih '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     check.addEventListener('input',event=>event.stopPropagation());check.addEventListener('change',event=>{row.selected=check.checked;event.stopPropagation();});cells[0].append(check);
