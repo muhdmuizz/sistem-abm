@@ -37,3 +37,22 @@ This later approval adopts the already approved **OS23000 Perhubungan dan Utilit
 - No BIL. UNIT, KEKERAPAN or additional multiplier is used, consistent with OS23000 Pukal.
 
 **Boundaries:** This decision does not combine OS42000 with OS23000, alter the distinct Kod Aktiviti or expand Pukal category coverage. It does not change the existing **Pendidikan Menengah OS42000 mapping**, any reference CSV, the master catalogue, Laravel, PostgreSQL or the Excel exporter. Documentation only; AD-008 remains Draft.
+
+
+## Shared SBK template for Pendidikan Menengah — owner-approved 15 November 2026
+
+The owner additionally approved reuse of this **same SBK Pukal Anggaran template** for **Pendidikan Menengah, Kod Aktiviti `030310`**, while **Pendidikan Rendah remains Kod Aktiviti `030228`**. The two financial catalogue identities and activity mappings remain distinct; no original CSV mapping row is replaced or merged.
+
+Both approved SBK contexts use the **same 9 Active / 19 Inactive / 2 Deferred** canonical 30-column mapping documented above:
+- **01, 02, 03, 14, 15, 21, 26, 27, 28** Active;
+- **04–13, 16–20, 22–25** Inactive;
+- **29–30** Deferred.
+- **KATEGORI1 (14)** is fixed **Pukal**.
+- **KATEGORI2 (15)** comprises exactly the four shared OS23000 Pukal choices **Air**, **Elektrik**, **Telefon/ Faks**, **Pembetungan**.
+- **KADAR (21)** is mandatory manually entered estimated monthly expenditure.
+- **BILANGAN BULAN (26)** is fixed at **12**.
+- **ANGGARAN JUMLAH SETAHUN (27) = KADAR × 12**, automatically calculated. No BIL. UNIT or KEKERAPAN multiplier.
+
+This approval extends the documented template reuse to Pendidikan Menengah; it **supersedes only** the earlier statement that its template reuse had not yet been approved. Preserve the shared reference rows and the original source spelling in historical catalogue records. **Asrama Malaysia (AMal), Kod Aktiviti `030318`, remains Excluded — reference only** and is not an eligible Anggaran in this design.
+
+No Laravel, PostgreSQL, Excel exporter, mapping CSV, reference data or master catalogue changes are authorised by this documentation decision; AD-008 remains Draft.
