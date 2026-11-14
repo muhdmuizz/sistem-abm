@@ -554,4 +554,18 @@ SQL);
         $this->assertDatabaseCount('program_aktiviti',0);
     }
 
+    public function test_programme_metadata_rejects_non_scalar_values_and_boolean_reference_identities(): void
+    {
+        foreach ([
+            ['jenis'=>(object)['fixture'=>'Umum']],
+            ['tarikh_mula'=>['2028-02-01']],
+            ['teras_strategik_id'=>true],
+            ['peserta'=>[['kategori'=>(object)['fixture'=>'Pegawai'],'klasifikasi'=>9,'bilangan'=>1]]],
+            ['peserta'=>[['kategori'=>'Pegawai','klasifikasi'=>(object)[],'bilangan'=>1]]],
+            ['peserta'=>[['kategori'=>'Pegawai','klasifikasi'=>9,'bilangan'=>(object)[]]]],
+        ] as $bad) { $this->programDenied(fn () => $this->programSave($this->programMetadata($bad)),422); }
+        $this->assertDatabaseCount('program_aktiviti',0);
+        $this->assertDatabaseCount('rekod_audit',0);
+    }
+
 }

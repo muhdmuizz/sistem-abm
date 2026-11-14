@@ -92,33 +92,33 @@ class DrafProgramAktiviti
         }
         $rules = [
             'rekod' => 'required|array:tempat_bertugas_id,semakan_bidaan,semakan_program,maklumat,reason',
-            'rekod.tempat_bertugas_id' => 'required|integer|min:1',
-            'rekod.semakan_bidaan' => 'required|integer|min:0',
-            'rekod.semakan_program' => $editing ? 'required|integer|min:0' : 'prohibited',
-            'rekod.reason' => 'nullable|string|max:1000',
+            'rekod.tempat_bertugas_id' => ['bail','required','integer','min:1',$this->integerTypeRule()],
+            'rekod.semakan_bidaan' => ['bail','required','integer','min:0',$this->integerTypeRule()],
+            'rekod.semakan_program' => $editing ? ['bail','required','integer','min:0',$this->integerTypeRule()] : 'prohibited',
+            'rekod.reason' => 'bail|nullable|string|max:1000',
             'rekod.maklumat' => 'required|array:teras_strategik_id,strategi_id,prakarsa_id,nama,jenis,kategori,peringkat,kaedah,tarikh_mula,tarikh_tamat,komponen,jemputan,peserta',
-            'rekod.maklumat.teras_strategik_id' => 'required|integer|min:1|exists:teras_strategik,id',
-            'rekod.maklumat.strategi_id' => 'required|integer|min:1|exists:strategi_rpm,id',
-            'rekod.maklumat.prakarsa_id' => 'required|integer|min:1|exists:prakarsa_rpm,id',
+            'rekod.maklumat.teras_strategik_id' => ['bail','required','integer','min:1',$this->integerTypeRule(),'exists:teras_strategik,id'],
+            'rekod.maklumat.strategi_id' => ['bail','required','integer','min:1',$this->integerTypeRule(),'exists:strategi_rpm,id'],
+            'rekod.maklumat.prakarsa_id' => ['bail','required','integer','min:1',$this->integerTypeRule(),'exists:prakarsa_rpm,id'],
             'rekod.maklumat.nama' => 'nullable|string',
-            'rekod.maklumat.jenis' => ['nullable',Rule::in(self::JENIS)],
-            'rekod.maklumat.kategori' => ['nullable',Rule::in(self::KATEGORI)],
-            'rekod.maklumat.peringkat' => ['nullable',Rule::in(self::PERINGKAT)],
-            'rekod.maklumat.kaedah' => ['nullable',Rule::in(self::KAEDAH)],
-            'rekod.maklumat.tarikh_mula' => 'nullable|date_format:Y-m-d',
-            'rekod.maklumat.tarikh_tamat' => 'nullable|date_format:Y-m-d',
+            'rekod.maklumat.jenis' => ['bail','nullable','string',Rule::in(self::JENIS)],
+            'rekod.maklumat.kategori' => ['bail','nullable','string',Rule::in(self::KATEGORI)],
+            'rekod.maklumat.peringkat' => ['bail','nullable','string',Rule::in(self::PERINGKAT)],
+            'rekod.maklumat.kaedah' => ['bail','nullable','string',Rule::in(self::KAEDAH)],
+            'rekod.maklumat.tarikh_mula' => 'bail|nullable|string|date_format:Y-m-d',
+            'rekod.maklumat.tarikh_tamat' => 'bail|nullable|string|date_format:Y-m-d',
             'rekod.maklumat.komponen' => ['sometimes','array', $this->listRule()],
-            'rekod.maklumat.komponen.*' => ['required','string','distinct',Rule::in(self::KOMPONEN)],
+            'rekod.maklumat.komponen.*' => ['bail','required','string','distinct',Rule::in(self::KOMPONEN)],
         ];
         foreach (['jemputan','peserta'] as $group) {
             $path = 'rekod.maklumat.'.$group;
             $rules[$path] = ['sometimes','array',$this->listRule()];
             $rules[$path.'.*'] = 'required|array:kategori,klasifikasi,catatan,bilangan';
-            $rules[$path.'.*.kategori'] = ['required', Rule::in($group === 'jemputan' ? ['Pegawai','AKP'] :
+            $rules[$path.'.*.kategori'] = ['bail','required','string', Rule::in($group === 'jemputan' ? ['Pegawai','AKP'] :
                 ['Pegawai','Guru','AKP','Murid Rendah','Murid Menengah','Lain-lain'])];
-            $rules[$path.'.*.klasifikasi'] = ['nullable','integer','min:1', $this->integerTypeRule()];
+            $rules[$path.'.*.klasifikasi'] = ['bail','nullable','integer','min:1', $this->integerTypeRule()];
             $rules[$path.'.*.catatan'] = 'nullable|string';
-            $rules[$path.'.*.bilangan'] = ['required','integer','min:1', $this->integerTypeRule()];
+            $rules[$path.'.*.bilangan'] = ['bail','required','integer','min:1', $this->integerTypeRule()];
         }
         $data = Validator::make(['rekod' => $input], $rules)->validate()['rekod'];
         $m = $data['maklumat'];
