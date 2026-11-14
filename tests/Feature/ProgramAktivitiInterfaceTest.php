@@ -273,7 +273,7 @@ SQL);
         TetapanAksesPtj::query()->update(['dibenarkan'=>false]);
         $this->get($this->url('index'))->assertForbidden();
         TetapanAksesPtj::query()->update(['dibenarkan'=>true]);
-        session()->put('abm_last_activity',now()->timestamp-1800);
+        $this->travel(31)->minutes();
         $this->put($this->url('update',$program),$data)->assertRedirect('/login');
         $this->assertDatabaseCount('rekod_audit',1);
     }
