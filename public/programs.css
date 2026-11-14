@@ -3,3 +3,5 @@
 
 .program-section-nav{display:flex;gap:var(--space-4);flex-wrap:wrap;margin-top:var(--space-6)}.program-section-nav a{padding:8px 0}.program-section{scroll-margin-top:var(--space-5)}.program-required{color:#aa453f}.program-choice{display:grid;gap:8px;max-width:720px}.program-person-row .program-remove{min-width:40px;padding:8px}.program-person-row input[type=number]{text-align:right;font-variant-numeric:tabular-nums}.program-people output{font-variant-numeric:tabular-nums}
 .program-section label{display:block}.program-section label>:is(input:not([type=checkbox]),select,textarea){display:block;margin-top:8px}.program-section label>.small[data-class-help]{display:block;margin-top:4px}.program-package label{display:inline-flex}
+
+.program-objective-description{display:none;overflow-wrap:anywhere}@media(max-width:767px){.program-objective-description{display:block;margin-top:8px}}

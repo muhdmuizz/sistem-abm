@@ -234,7 +234,7 @@ for (const name of ['history-empty','history-populated','history-duplicated','hi
 // Batch 021: real Blade fixtures; HTTP persistence/authorisation is verified by PHPUnit.
 page.removeAllListeners('dialog');
 page.on('dialog', dialog => dialog.accept());
-for (const name of ['program-empty','program-create','program-list','program-edit','program-validation','program-conflict','program-readonly','program-override']) {
+for (const name of ['program-package','program-empty','program-create','program-list','program-edit','program-validation','program-conflict','program-readonly','program-override']) {
     for (const width of [1440,390]) {
         await page.setViewportSize({width,height:1000});
         await page.goto('http://127.0.0.1:4173/'+name+'.html');

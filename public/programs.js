@@ -22,6 +22,14 @@
     teras.addEventListener('change', () => { filter(strategy, teras, true); filter(initiative, strategy, true); });
     strategy.addEventListener('change', () => filter(initiative, strategy, true));
     filter(strategy, teras); filter(initiative, strategy);
+    const showObjectiveDescriptions = () => {
+        form.querySelectorAll('[data-objective-description]').forEach(description => {
+            const select = document.getElementById(description.dataset.objectiveDescription);
+            description.textContent = select.value ? select.selectedOptions[0].textContent : '';
+        });
+    };
+    form.addEventListener('change', showObjectiveDescriptions);
+    showObjectiveDescriptions();
     const mode = form.querySelector('#program-kaedah');
     const packageFields = form.querySelector('[data-program-package]');
     let previousMode = mode.value;

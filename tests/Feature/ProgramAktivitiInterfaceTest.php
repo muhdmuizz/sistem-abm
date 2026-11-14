@@ -220,6 +220,7 @@ SQL);
     public function test_removed_child_lists_are_full_replacements_and_same_names_stay_independent(): void
     {
         $program=$this->programSave($this->programMetadata(['kaedah'=>'Pakej','komponen'=>['Penginapan']]));
+        $this->capture('program-package',$this->get($this->url('edit',$program))->assertOk()->assertSee('Sewaan Peralatan'));
         $data=$this->programInput($this->programMetadata(),$program);
         unset($data['maklumat']['jemputan'],$data['maklumat']['peserta'],$data['maklumat']['komponen']);
         $this->put($this->url('update',$program),$data)->assertRedirect();
