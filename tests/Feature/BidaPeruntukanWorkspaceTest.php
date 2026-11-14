@@ -228,6 +228,12 @@ class BidaPeruntukanWorkspaceTest extends TestCase
             ['semakan' => 0, 'activation_context' => 'bid/'.$this->cycle->id.'/'.$this->owner->id.'/'.$this->activity->id])
             ->assertSessionHasErrors('reason');
         $invalid = $this->get($this->workspaceActivateUrl())->assertOk();
+        preg_match('/<textarea.*?<\/textarea>/s', $invalid->getContent(), $reasonField);
+        fwrite(STDERR, 'WORKSPACE_VALIDATION '.json_encode([
+            'errors' => session('errors')?->getBag('default')->messages(),
+            'field' => $reasonField[0] ?? 'NO_REASON_FIELD',
+            'has_error_summary' => str_contains($invalid->getContent(), 'role="alert"'),
+        ]).PHP_EOL);
         $this->assertStringContainsString('aria-invalid="true"', $invalid->getContent(),
             json_encode(session('errors')?->getBag('default')->messages())."\n".$invalid->getContent());
         $this->post($this->workspaceActivateUrl(), ['semakan' => 0, 'reason' => 'Pembukaan pentadbiran yang dibenarkan.'])->assertRedirect();
