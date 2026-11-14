@@ -1,6 +1,6 @@
 # Batch 017 — Shared Anggaran Read Workspace
 
-**Status:** Code/visual verification passed; merge/local acceptance pending.
+**Status:** Code/visual verification passed and merged; local acceptance pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `0670cc7c87a0659f5cebc730571152d8cc374843` on dev.
 **Authorisation:** User directed “Proceed.” after Batch 016 implementation. Batch 016 local update remains unconfirmed; do not infer execution from continuation.
@@ -19,7 +19,7 @@ This is the shared read shell, not a completed spreadsheet editor or cross-Bidaa
 
 ## Verification and local handoff
 
-Verified application head `7e5273077b4647df4e45774416be2bd9051e9b50`: [CI 43559544013](https://github.com/muhdmuizz/sistem-abm/actions/runs/43559544013), **315 tests / 2505 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; frontend build and all Chromium assertions passed. Thirteen HTTP cases added. [PR #39](https://github.com/muhdmuizz/sistem-abm/pull/39), merge pending. Subsequent evidence edits are Markdown only.
+Verified application head `7e5273077b4647df4e45774416be2bd9051e9b50`: [CI 43559544013](https://github.com/muhdmuizz/sistem-abm/actions/runs/43559544013), **315 tests / 2505 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; frontend build and all Chromium assertions passed. Thirteen HTTP cases added. [PR #39](https://github.com/muhdmuizz/sistem-abm/pull/39), merged at `fab380ccf69e5c8501bcd520a95a3e9d2f522e81`. Subsequent evidence edits are Markdown only.
 
 Twelve final screenshots (six states at desktop/mobile) reviewed for context, wrapping, insets and pagination; no layout defect identified in this bounded workspace. [Screenshot artifact 14099916643](https://github.com/muhdmuizz/sistem-abm/actions/runs/43559544013/artifacts/14099916643). Browser checks also assert active sidebar, selected OS, no opaque source editor and responsive overflow/empty-state padding. HTTP tests cover live route requests separately; static fixtures do not certify real Google/browser navigation.
 
