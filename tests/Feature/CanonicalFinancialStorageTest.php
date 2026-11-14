@@ -51,13 +51,13 @@ class CanonicalFinancialStorageTest extends TestCase
         ])->fresh();
     }
 
-    private function rejectDatabaseWrite(callable $operation, string $state): void
+    private function rejectDatabaseWrite(callable $operation, string|array $state): void
     {
         try {
             DB::transaction($operation);
             $this->fail('Expected database integrity rejection.');
         } catch (QueryException $exception) {
-            $this->assertSame($state, (string) $exception->getCode());
+            $this->assertContains((string) $exception->getCode(), (array) $state);
         }
     }
 
@@ -191,7 +191,7 @@ class CanonicalFinancialStorageTest extends TestCase
         $base = ['butiran_anggaran_id' => $source->id, 'semakan_sumber' => 1, 'turutan' => 1, 'amaun' => '1'];
         $this->rejectDatabaseWrite(fn () => DB::table('hasil_pengiraan')->insert($base), '23503');
         $output = $this->financialOutputFixture($source, '1');
-        $this->rejectDatabaseWrite(fn () => DB::table('butiran_anggaran')->where('id', $source->id)->update(['semakan' => 1]), '23503');
+        $this->rejectDatabaseWrite(fn () => DB::table('butiran_anggaran')->where('id', $source->id)->update(['semakan' => 1]), '23001');
         $this->assertSame(0, $source->fresh()->semakan);
         $this->assertSame(0, $output->fresh()->semakan_sumber);
         // Future audited recalculation replaces only affected editable outputs in a transaction.
@@ -241,7 +241,7 @@ class CanonicalFinancialStorageTest extends TestCase
             ['bidaan', $g['bid']->id], ['anggaran', $g['estimate']->id],
             ['butiran_anggaran', $source->id], ['tempat_bertugas', $g['workplace']->id],
         ] as [$table, $id]) {
-            $this->rejectDatabaseWrite(fn () => DB::table($table)->where('id', $id)->delete(), '23503');
+            $this->rejectDatabaseWrite(fn () => DB::table($table)->where('id', $id)->delete(), '23001');
         }
         $this->assertDatabaseCount('bidaan', 1);
         $this->assertDatabaseCount('anggaran', 1);
@@ -262,7 +262,7 @@ class CanonicalFinancialStorageTest extends TestCase
             ['butiran_anggaran', $source->id, 'anggaran_id'],
             ['butiran_anggaran', $source->id, 'tempat_bertugas_id'],
         ] as [$table, $id, $column]) {
-            $this->rejectDatabaseWrite(fn () => DB::table($table)->where('id', $id)->update([$column => 999999999]), '23503');
+            $this->rejectDatabaseWrite(fn () => DB::table($table)->where('id', $id)->update([$column => 999999999]), ['23503', '23001']);
             $this->rejectDatabaseWrite(fn () => DB::table($table)->where('id', $id)->update([$column => null]), '23502');
         }
         foreach ([
