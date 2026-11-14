@@ -1,0 +1,67 @@
+# OS21000 — Perjalanan Sara Hidup: 27-column direct-entry applicability checkpoint
+
+**Recorded:** 14 November 2026. **Status:** Approved shared column-applicability decisions, not finished financial calculation specifications or implementation.
+
+## Scope and preserved references
+
+This checkpoint applies to three **separate Anggaran (OS)**, each with Kod Objek 21000:
+
+- **Perjalanan Sara Hidup (Umum)** — Kod Aktiviti `010801`.
+- **Perjalanan Sara Hidup (Sukan)** — Kod Aktiviti `010803`.
+- **Perjalanan Sara Hidup (Kokurikulum)** — Kod Aktiviti `010803`.
+
+These are Anggaran labels, **not** KATEGORI1 values. All three use the approved shared six-category, 83-row rate source in [OS21000-perjalanan-sara-hidup-variants-and-kategori.md](OS21000-perjalanan-sara-hidup-variants-and-kategori.md) and [OS21000-perjalanan-sara-hidup-revised-kadar.csv](OS21000-perjalanan-sara-hidup-revised-kadar.csv). Preserve original rates and blank cells, including special grade C; do not invent rates, zero defaults, or mappings. General column behaviours remain as recorded in the [OS15000 column-behaviour checkpoint](OS15000-faedah-faedah-kewangan-yang-lain-27-column-applicability.md). This exercise configures direct OS entry only; Program/ Aktiviti remains a future alternative doorway.
+
+## Approved common applicability (all three Anggaran)
+
+| No. | Canonical column | Status | Input behaviour or contextual rule |
+| ---: | --- | --- | --- |
+| 01 | OBJEK SEBAGAI | Active | Auto from selected Anggaran (OS) |
+| 02 | JPNT/ PPD | Active | Auto from authorised Bidaan PTJ |
+| 03 | SEKTOR/ SEKOLAH | Active | Manual controlled Tempat Bertugas selection restricted to user's PTJ |
+| 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Active | OS-specific direct-entry value; meaning not further defined |
+| 05 | TARIKH MULA | Active | OS-specific start date |
+| 06 | TARIKH TAMAT | Active | OS-specific end date |
+| 07 | TEMPOH | Active | Calculated where date inputs apply; exact counting convention not yet decided |
+| 08 | NAMA | Active | Manual |
+| 09 | JAWATAN | Active | Existing shared reference drop-down |
+| 10 | GRED | Active | Existing full SSPA Gred reference drop-down |
+| 11 | KATEGORI1 | Active | Existing six Kategori Tuntutan choices |
+| 12 | KATEGORI2 | Reference unresolved | No subordinate values approved; do not invent or mark approved inactive |
+| 13 | KATEGORI3 | Reference unresolved | No subordinate values approved; do not invent or mark approved inactive |
+| 14 | UNIT | Inactive | — |
+| 15 | GRED PENCERAMAH/ FASILITATOR | Inactive | — |
+| 16 | BIL. UNIT | Inactive | — |
+| 17 | LOKASI URUSAN RASMI | Active | Existing approved shared reference; location-dependent rate data retained |
+| 18 | KADAR | Active | OS-specific rate source / unresolved blank-rate behaviour |
+| 19 | JARAK | Conditional | Manual distance, **only for Elaun Perjalanan Kenderaan** within KATEGORI1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**; not for the Bas/Teksi component; do not create a new KATEGORI1 |
+| 20 | KEKERAPAN | Active | OS-specific; precise financial use not yet verified |
+| 21 | JAM | Inactive | — |
+| 22 | BILANGAN HARI | Active | OS-specific; precise financial use not yet verified |
+| 23 | BILANGAN BULAN | Active | OS-specific; precise financial use not yet verified |
+| 24 | ANGGARAN JUMLAH SETAHUN | Active | Calculated, exact formula not yet approved |
+| 25 | KATEGORI SUMBER PERUNTUKAN | Active | Auto from Bidaan Aktiviti Kewangan, approved mapping |
+| 26 | KATEGORI PROGRAM | Deferred | Program/ Aktiviti alternative entry |
+| 27 | KATEGORI PESERTA | Deferred | Program/ Aktiviti alternative entry |
+
+**Counts:** 18 active, 1 conditional, 4 inactive, 2 reference unresolved, 2 deferred = 27. No other statuses may be silently inferred from absent subordinate references.
+
+## Approved KATEGORI1 labels (unchanged)
+
+1. Makanan dan Minuman
+2. Penginapan
+3. Bayaran Tambang Kereta Api
+4. Elaun Perjalanan, Bayaran Tambang Bas dan Teksi
+5. Bayaran Tambang Kapal/ Bot
+6. Bayaran Kapal Terbang
+
+**Clarification explicitly approved:** `JARAK` applies only to **Elaun Perjalanan Kenderaan**, a component falling under existing KATEGORI1 `Elaun Perjalanan, Bayaran Tambang Bas dan Teksi`. This does **not** rename or split that category.
+
+## Deliberately outstanding
+
+- Reconciliation of KATEGORI2/3 applicability or any conditional subcomponent representation; no new reference values authorized.
+- Handling of missing/blank Kadar reference rows.
+- Exact formulas, units, multipliers, duration calculation, decimal rounding, and eligibility.
+- Direct-entry vs Program/ Aktiviti inheritance mapping, implementation, DB and tests.
+
+**Archival documentation only.** Do not claim full production readiness.
