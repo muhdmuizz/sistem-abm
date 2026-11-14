@@ -133,7 +133,8 @@ SQL);
         $this->assertSame($this->cycle->id, $audit->kitaran_id);
         $this->assertSame('bid.activated', $audit->tindakan);
         $this->assertSame(['exists' => false], $audit->sebelum);
-        $this->assertSame(['kebenaran_pusat' => false, 'fasa' => false], $audit->selepas['pintasan']);
+        $this->assertSame(false, $audit->selepas['pintasan']['kebenaran_pusat']);
+        $this->assertSame(false, $audit->selepas['pintasan']['fasa']);
         $this->assertDatabaseCount('anggaran', 0);
     }
 
@@ -302,7 +303,8 @@ SQL);
         foreach (RekodAudit::all() as $audit) {
             $this->assertSame($this->operator->id, $audit->pelaku_id);
             $this->assertSame(Peranan::Superadmin, $audit->peranan);
-            $this->assertSame(['kebenaran_pusat' => true, 'fasa' => true], $audit->selepas['pintasan']);
+            $this->assertSame(true, $audit->selepas['pintasan']['kebenaran_pusat']);
+            $this->assertSame(true, $audit->selepas['pintasan']['fasa']);
             $this->assertNotEmpty($audit->alasan);
         }
         $this->assertTrue($os->diaktifkan);
@@ -386,6 +388,40 @@ SQL);
         $this->assertFalse($os->fresh()->diaktifkan);
         $this->assertTrue($source->fresh()->anggaran->is($os));
         $this->assertSame(1, $bid->fresh()->semakan);
+        $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
+    public function test_superadmin_must_obey_protected_state_and_stale_revision_even_with_an_override_reason(): void
+    {
+        $this->operator->penugasanPeranan()->delete();
+        $this->activationAssign(Peranan::Superadmin);
+        $bid = $this->activationBidFixture(true, StatusBidaan::Muktamad);
+        $this->activationDenied(fn () => $this->activateFixtureBid(1, 'Pentadbiran.'), 409);
+        $this->activationDenied(fn () => app(PengaktifanKewangan::class)->aktifkanOs($bid->id, $this->os->id, 1, 'Pentadbiran.'), 409);
+        $bid->forceFill(['status' => StatusBidaan::DalamPenyediaan])->save();
+        $this->activationDenied(fn () => app(PengaktifanKewangan::class)->aktifkanOs($bid->id, $this->os->id, 0, 'Pentadbiran.'), 409);
+        $this->assertDatabaseCount('anggaran', 0);
+        $this->assertDatabaseCount('rekod_audit', 0);
+    }
+
+    public function test_closed_phase_is_rechecked_before_os_creation_after_bid_activation(): void
+    {
+        $this->activationAssign(Peranan::PenyediaAnggaran);
+        $bid = $this->activateFixtureBid();
+        $this->phase->forceFill(['dibuka' => false])->save();
+        $this->activationDenied(fn () => app(PengaktifanKewangan::class)->aktifkanOs($bid->id, $this->os->id, 1), 403);
+        $this->assertSame(1, $bid->fresh()->semakan);
+        $this->assertDatabaseCount('anggaran', 0);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_inactive_bid_with_existing_os_is_not_silently_repaired_by_activation(): void
+    {
+        $bid = $this->activationBidFixture(false);
+        Anggaran::forceCreate(['bidaan_id' => $bid->id, 'ptj_id' => $this->owner->id, 'rujukan_os_id' => $this->os->id]);
+        $this->activationDenied(fn () => $this->activateFixtureBid(), 409);
+        $this->assertFalse($bid->fresh()->diaktifkan);
+        $this->assertDatabaseCount('anggaran', 1);
         $this->assertDatabaseCount('rekod_audit', 0);
     }
 
