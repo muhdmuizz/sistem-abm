@@ -22,7 +22,7 @@ class DefinisiAnggaran
     public function columns(): array
     {
         return [
-            ['key'=>'tempat_bertugas_id','label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
+            ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>200],
             ['key'=>'bil_unit','label'=>'Bil. Unit','type'=>'decimal','width'=>120],
             ['key'=>'unit','label'=>'UNIT','type'=>'output','reference'=>'unit','width'=>130],
@@ -35,7 +35,7 @@ class DefinisiAnggaran
     public function project(stdClass $source): array
     {
         $result=[];
-        foreach($this->columns() as $column) { if($column['type']!=='output')$result[$column['key']]=$source->{$column['key']} ?? null; }
+        foreach($this->columns() as $column) { if($column['type']!=='output' && !($column['context'] ?? false))$result[$column['key']]=$source->{$column['key']} ?? null; }
         return $result;
     }
 

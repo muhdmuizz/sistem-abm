@@ -141,7 +141,7 @@ class SpreadsheetAnggaranTest extends TestCase
         $sources=$estimate->butiran()->orderBy('id')->get();$this->assertCount(2,$sources);$first=$sources->first();
         $this->assertSame('2.625',$first->data_sumber->bil_unit);$this->assertSame('39.375',app(\App\Services\DefinisiAnggaran::class)->preview($first->data_sumber));
         $this->assertDatabaseCount('rekod_audit',2);$this->assertDatabaseCount('hasil_pengiraan',0);
-        $response=$this->get($url)->assertOk();$this->gridCapture('grid-populated',$response);
+        $response=$this->get($url)->assertOk();$this->assertSame($place->id,$response->viewData('records')->first()['tempat_bertugas_id']);$this->gridCapture('grid-populated',$response);
         $row=$this->row($place,['butiran_id'=>$first->id,'semakan_butiran'=>$first->semakan,'bil_unit'=>'3']);
         $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();
         $this->assertSame('3',$first->fresh()->data_sumber->bil_unit);$this->assertSame($first->id,$first->fresh()->id);
