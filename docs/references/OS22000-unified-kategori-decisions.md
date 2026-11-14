@@ -8,7 +8,7 @@
 
 | KATEGORI1 | Confirmed configuration |
 | --- | --- |
-| **Pertukaran/ Penempatan** | Use the owner's verified 126-row OS22000 Pertukaran rate reference, currently stored under its historical filename [OS22000-pengangkutan-barang-kadar.csv](OS22000-pengangkutan-barang-kadar.csv). Its `Lokasi Pertukaran`, `Bujang/ Keluarga`, and `Kategori Tuntutan` fields are the subsequent three category levels. `Gred` is an independent personnel/rate-lookup attribute, **not** a Kategori. |
+| **Pertukaran/ Penempatan** | Use the owner's verified 126-row OS22000 Pertukaran rate reference, currently stored under its historical filename [OS22000-pengangkutan-barang-kadar.csv](OS22000-pengangkutan-barang-kadar.csv). **Lokasi Pertukaran uses canonical Excel column 17 (LOKASI URUSAN RASMI), displayed as LOKASI PERTUKARAN for this OS22000 path; it is not a Kategori level.** `Bujang/ Keluarga` and `Kategori Tuntutan` are the subsequent category levels. `Gred` remains an independent personnel/rate-lookup attribute. |
 | **Pengangkutan Barang** | No KATEGORI2 or subsequent categories. **Program/ Aktiviti/ Tujuan** and **KADAR** are both mandatory user-entered fields; no grade-based rate lookup. Do not populate this path with additional choices from the old 126-row table. |
 
 For **Pertukaran/ Penempatan**, the verified hierarchy is:
@@ -16,10 +16,11 @@ For **Pertukaran/ Penempatan**, the verified hierarchy is:
 | System field | Approved source / values |
 | --- | --- |
 | KATEGORI1 | Pertukaran/ Penempatan |
-| KATEGORI2 | Lokasi Pertukaran: Semenanjung; Sabah/ Sarawak/ WP Labuan |
-| KATEGORI3 | Bujang/ Keluarga: Bujang; Keluarga |
-| KATEGORI4 | Kategori Tuntutan: Tambang Pengangkutan Barang; Pemberian Pindahan; Elaun Berpindah; Belanja Pelbagai |
+| KATEGORI2 | Bujang/ Keluarga: Bujang; Keluarga |
+| KATEGORI3 | Kategori Tuntutan: Tambang Pengangkutan Barang; Pemberian Pindahan; Elaun Berpindah; Belanja Pelbagai |
 | GRED (separate field) | Source Gred from verified rate rows, including special C; do not invent mappings or missing grade values |
+
+**Approved OS-specific column 17 mapping (14 November 2026):** The canonical 27-column Excel field **17 — LOKASI URUSAN RASMI** is **Active** for `KATEGORI1 = Pertukaran/ Penempatan` and captures source **Lokasi Pertukaran**, with choices `Semenanjung` and `Sabah/ Sarawak/ WP Labuan`. In this path's spreadsheet-like editor, **rename the displayed field label to `LOKASI PERTUKARAN`**. Keep the official Excel column header `LOKASI URUSAN RASMI` unchanged so the 27-column export contract is preserved. This is an OS-specific display label, not a global rename, and does not add another category.
 
 **Rate behaviour in the existing reference:** For Pemberian Pindahan and Elaun Berpindah, use the grade/location/status-matched supplied Kadar. For Tambang Pengangkutan Barang and Belanja Pelbagai, Kadar is mandatory user input where the supplied reference is blank. Preserve all source figures and blank values. The exact formulas, 27-column export mapping and other input applicability are not approved by this correction.
 
