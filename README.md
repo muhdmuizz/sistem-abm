@@ -36,6 +36,8 @@ Batch 018 adds scoped read-only Log Tindakan in the Anggaran workspace for actua
 
 Batch 019 adds audited internal draft duplication with independent identities, exact saved-input/workplace preservation, stale-retry guards and private lineage. Calculated sources remain gated until approved recalculation. Merged in [PR #43](https://github.com/muhdmuizz/sistem-abm/pull/43) at `c2ab85c`; [CI 43562510603](https://github.com/muhdmuizz/sistem-abm/actions/runs/43562510603), 342 tests / 2722 assertions at `ade9a9a`, build/Chromium and new event screenshots passed. Local synchronisation/existing-page smoke check user-confirmed; direct copying-service execution remains unverified. No migration/public copy UI or OS financial policy.
 
+Batch 020 adds the approved Program/ Aktiviti backend foundation: exact 7/25/44 RPM references, stable scoped programme IDs, audited draft metadata and four-section/date/headcount validation. Merged in [PR #46](https://github.com/muhdmuizz/sistem-abm/pull/46) at `97733ab`; [CI 43579320487](https://github.com/muhdmuizz/sistem-abm/actions/runs/43579320487), 393 tests / 3003 assertions at `99bdfa6`, build/existing Chromium passed. Local migration and explicit RpmReferenceSeeder pending. No programme UI, OS entry, financial association/recalculation or paused OS-policy work is enabled.
+
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
