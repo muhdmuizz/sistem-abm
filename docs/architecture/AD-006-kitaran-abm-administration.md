@@ -4,7 +4,7 @@
 **Date:** 10 November 2026  
 **Related:** AD-001, AD-002, AD-003, AD-005; detailed review and comparison UI deferred to AD-009 and AD-010.
 
-**User-authorised correction:** 14 November 2026 — Kitaran identifies the budget year, not the calendar-year boundary for Fasa dates. This supersedes the previous same-year date restriction; it does not change Program/ Aktiviti implementation dates.
+**User-authorised correction:** 14 November 2026 — Kitaran identifies the budget year, not the calendar-year boundary for Fasa dates. This supersedes the previous same-year date restriction; Bidaan and Anggaran dates must remain within the Kitaran year. Only the Fasa dates controlling when users may enter bidding are independent of that year; Program/ Aktiviti implementation-date rules are unchanged.
 
 ## Core definitions
 

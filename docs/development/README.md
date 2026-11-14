@@ -170,4 +170,4 @@ User approved the [Bida Peruntukan workspace and activation UI](batch-015-bida-p
 
 ## Batch 015 — user-authorised Fasa date correction
 
-[Correction record](batch-015-fasa-budget-year-correction.md): Kitaran is the budget year; Fasa dates may start earlier or span years (2028 bidding starts in 2026). Implementation/forward migration prepared on a dedicated branch; CI, merge and local migration/acceptance pending. Previous test totals above describe the prior merged checkpoint.
+[Correction record](batch-015-fasa-budget-year-correction.md): Kitaran is the budget year; Fasa dates may start earlier or span years (2028 bidding starts in 2026). [PR #34](https://github.com/muhdmuizz/sistem-abm/pull/34): application head `a0985fc9fb9a18688a123052d6998f5e12db7b51` verified by [CI 43553865130](https://github.com/muhdmuizz/sistem-abm/actions/runs/43553865130): 290 tests / 2311 assertions, PHP 8.4.27 / PostgreSQL 18.7, isolated test database, build/Chromium passed. Merge and local migration/acceptance pending. Bidaan/Anggaran dates remain restricted to the Kitaran year. Previous test totals above describe the prior merged checkpoint.
