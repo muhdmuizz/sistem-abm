@@ -1,6 +1,6 @@
 # Batch 014 — Audited Butiran Anggaran Draft Saves
 
-**Status:** Code verified; merge and local synchronisation pending.
+**Status:** Code verified and merged; local synchronisation pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `afc4d8577f003eca3080015b35c99235fdc6050a` on dev.
 **Authorisation:** User approved audited source draft creation/editing, stable Butiran IDs, workplace/role/central/Fasa/workflow boundaries, stale-edit protection and atomic audit. Batches 012–013 local update/migrations are now user-confirmed.
@@ -29,4 +29,4 @@ Tested application head: `3abec8519519bbf8b20db393f64003cb5347c856`.
 
 No UI source changed; browser results are existing-screen regression. OS validation/calculation, browser autosave, simultaneous physical-device/database connections and complete financial workflow acceptance are not certified by these tests. JSON keys/values and financial outputs used in tests are synthetic fixtures, not approved OS specifications or real seeds.
 
-[PR #30](https://github.com/muhdmuizz/sistem-abm/pull/30); actual merge checkpoint pending. Local Batch 014 synchronisation remains pending. No new migration is included. Keep the existing local server running.
+[PR #30](https://github.com/muhdmuizz/sistem-abm/pull/30); merged at `12fc1459a95775674c3c9ac8a092996e14d4c929`. Local Batch 014 synchronisation remains pending. No new migration is included. Keep the existing local server running.
