@@ -103,6 +103,62 @@ class DrafButiranAnggaran
         });
     }
 
+
+    /**
+     * One editor save, one Anggaran, all rows or none. Each entry contains the full
+     * replacement source object. Omit butiran_id for a new independent source.
+     * No public endpoint: approved OS adapters must validate their field schema first.
+     *
+     * @return array<int, ButiranAnggaran> Persisted sources in the supplied row order.
+     */
+    public function simpanBanyak(int $estimateId, array $input): array
+    {
+        return DB::transaction(function () use ($estimateId, $input) {
+            $this->guard->actor();
+            $data = Validator::make(['kelompok' => $input], [
+                'kelompok' => 'required|array:semakan_bidaan,semakan_anggaran,reason,rekod',
+                'kelompok.semakan_bidaan' => 'required|integer|min:0',
+                'kelompok.semakan_anggaran' => 'required|integer|min:0',
+                'kelompok.reason' => 'nullable|string|max:1000',
+                'kelompok.rekod' => ['required', 'array', 'min:1', function ($attribute, $value, $fail) {
+                    if (! is_array($value) || ! array_is_list($value)) {
+                        $fail('Rekod mesti senarai baris yang tersusun.');
+                    }
+                }],
+                'kelompok.rekod.*' => 'required|array:butiran_id,tempat_bertugas_id,data_sumber,semakan_butiran',
+                'kelompok.rekod.*.butiran_id' => 'sometimes|required|integer|min:1|distinct',
+            ])->validate()['kelompok'];
+
+            $bidRevision = (int) $data['semakan_bidaan'];
+            $estimateRevision = (int) $data['semakan_anggaran'];
+            $saved = [];
+            foreach ($data['rekod'] as $index => $row) {
+                $sourceId = isset($row['butiran_id']) ? (int) $row['butiran_id'] : null;
+                unset($row['butiran_id']);
+                try {
+                    $source = $this->simpan($estimateId, $sourceId, $row + [
+                        'semakan_bidaan' => $bidRevision, 'semakan_anggaran' => $estimateRevision,
+                        'reason' => $data['reason'] ?? null,
+                    ]);
+                } catch (ValidationException $exception) {
+                    $errors = [];
+                    foreach ($exception->errors() as $key => $messages) {
+                        $field = str_starts_with($key, 'rekod.') ? substr($key, 6) : $key;
+                        $errors['kelompok.rekod.'.$index.'.'.$field] = $messages;
+                    }
+                    throw ValidationException::withMessages($errors);
+                }
+                $saved[] = $source;
+                // Parent locks acquired by the first save remain held until this
+                // outer transaction commits. No-op rows do not advance revisions.
+                $estimate = Anggaran::whereKey($estimateId)->firstOrFail();
+                $estimateRevision = $estimate->semakan;
+                $bidRevision = Bidaan::whereKey($estimate->bidaan_id)->firstOrFail()->semakan;
+            }
+            return $saved;
+        });
+    }
+
     private function snapshot(ButiranAnggaran $source, Bidaan $bid, Anggaran $estimate): array
     {
         return ['butiran_id' => $source->id, 'anggaran_id' => $estimate->id, 'bidaan_id' => $bid->id,

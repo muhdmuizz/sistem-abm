@@ -175,3 +175,7 @@ User approved the [Bida Peruntukan workspace and activation UI](batch-015-bida-p
 ## User-confirmed local acceptance — 14 November 2026
 
 The user reported **“Clean.”** after the supplied guarded dev pull/database-check/normal-migration/cache-clear commands and the requested local checks: create/save/open a Fasa for Kitaran 2028 starting in 2026; choose Kitaran/PTJ in Bida Peruntukan; activate one Bidaan and one OS; refresh to verify persistence; inspect feedback/spacing and the active-OS preparation-not-yet-open message. Record those bounded checks as user-confirmed. No direct cloud inspection of Windows, audit rows, all roles, stale editors, physical devices or OS calculations is claimed. Earlier security/manual limitations remain tracked. No new application changes or test execution accompany this documentation update.
+
+## Batch 016 — atomic multi-row drafts in progress
+
+[Batch 016](batch-016-atomic-multirow-drafts.md) adds one-Anggaran all-or-nothing source draft create/edit batches on the existing audited service. User directed continuation after Batch 015 acceptance. Baseline b376280. Implementation prepared; CI/merge/local update pending. No route/UI, OS field schema/calculation, migration or seed. Latest verified merged checkpoint above remains unchanged until execution evidence is available.

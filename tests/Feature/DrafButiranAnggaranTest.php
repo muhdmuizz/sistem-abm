@@ -456,4 +456,245 @@ SQL);
         $this->assertDatabaseCount('butiran_anggaran', 0);
         $this->assertDatabaseCount('rekod_audit', 0);
     }
+    private function draftBatchInput(array $rows, array $replace = []): array
+    {
+        return array_replace(['semakan_bidaan' => $this->bid->fresh()->semakan,
+            'semakan_anggaran' => $this->estimate->fresh()->semakan, 'rekod' => $rows], $replace);
+    }
+
+    private function draftBatchRow(string $value, ?ButiranAnggaran $source = null, array $replace = []): array
+    {
+        $row = ['tempat_bertugas_id' => $this->workplace->id, 'data_sumber' => (object) ['fixture' => $value]];
+        if ($source) {
+            $row += ['butiran_id' => $source->id, 'semakan_butiran' => $source->fresh()->semakan];
+        }
+        return array_replace($row, $replace);
+    }
+
+    private function draftBatchSave(array $rows, array $replace = []): array
+    {
+        return app(DrafButiranAnggaran::class)->simpanBanyak($this->estimate->id, $this->draftBatchInput($rows, $replace));
+    }
+
+    public function test_batch_mixed_create_edit_and_noop_retains_independent_ids_order_and_exact_values(): void
+    {
+        $existing = $this->draftSave((object) ['fixture' => 'before']);
+        $noop = $this->draftSave((object) ['fixture' => 'same']);
+        $rows = $this->draftBatchSave([
+            $this->draftBatchRow('0.12345678901234567890'),
+            $this->draftBatchRow('after', $existing),
+            $this->draftBatchRow('same', $noop),
+            $this->draftBatchRow('0.12345678901234567890'),
+        ]);
+        $this->assertSame($existing->id, $rows[1]->id);
+        $this->assertSame($noop->id, $rows[2]->id);
+        $this->assertNotSame($rows[0]->id, $rows[3]->id);
+        $this->assertSame('0.12345678901234567890', $rows[0]->fresh()->data_sumber->fixture);
+        $this->assertSame('after', $existing->fresh()->data_sumber->fixture);
+        $this->assertSame(1, $noop->fresh()->semakan);
+        $this->assertSame(6, $this->bid->fresh()->semakan);
+        $this->assertSame(6, $this->estimate->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 4);
+        $this->assertDatabaseCount('rekod_audit', 5);
+        $this->assertDatabaseCount('hasil_pengiraan', 0);
+        $this->assertSame(StatusBidaan::DalamPenyediaan, $this->bid->fresh()->status);
+    }
+
+    public function test_batch_stale_later_source_rolls_back_earlier_create_edit_and_audits(): void
+    {
+        $first = $this->draftSave((object) ['fixture' => 'keep first']);
+        $last = $this->draftSave((object) ['fixture' => 'keep last']);
+        $this->draftDenied(fn () => $this->draftBatchSave([
+            $this->draftBatchRow('new'),
+            $this->draftBatchRow('changed', $first),
+            $this->draftBatchRow('stale', $last, ['semakan_butiran' => 0]),
+        ]), 409);
+        $this->assertSame('keep first', $first->fresh()->data_sumber->fixture);
+        $this->assertSame('keep last', $last->fresh()->data_sumber->fixture);
+        $this->assertSame(1, $first->fresh()->semakan);
+        $this->assertSame(3, $this->bid->fresh()->semakan);
+        $this->assertSame(3, $this->estimate->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 2);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
+    public function test_batch_original_create_retry_and_both_stale_parent_revisions_conflict(): void
+    {
+        $input = $this->draftBatchInput([$this->draftBatchRow('one'), $this->draftBatchRow('two')]);
+        app(DrafButiranAnggaran::class)->simpanBanyak($this->estimate->id, $input);
+        $this->draftDenied(fn () => app(DrafButiranAnggaran::class)->simpanBanyak($this->estimate->id, $input), 409);
+        foreach (['semakan_bidaan', 'semakan_anggaran'] as $key) {
+            $this->draftDenied(fn () => $this->draftBatchSave([$this->draftBatchRow('three')], [$key => 1]), 409);
+        }
+        $this->assertDatabaseCount('butiran_anggaran', 2);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
+    public function test_batch_validation_identifies_later_row_and_rolls_back_earlier_changes(): void
+    {
+        try {
+            $this->draftBatchSave([$this->draftBatchRow('first'),
+                $this->draftBatchRow('bad', replace: ['data_sumber' => (object) ['fixture' => 0.1]])]);
+            $this->fail('Invalid source accepted.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('kelompok.rekod.1.data_sumber', $exception->errors());
+        }
+        $this->assertDatabaseCount('butiran_anggaran', 0);
+        $this->assertDatabaseCount('rekod_audit', 0);
+        $this->assertSame(1, $this->bid->fresh()->semakan);
+        $this->assertSame(1, $this->estimate->fresh()->semakan);
+    }
+
+    public function test_batch_rejects_ambiguous_duplicate_ids_unknown_metadata_and_non_list_rows(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'keep']);
+        $row = $this->draftBatchRow('change', $source);
+        foreach ([
+            ['rekod' => [$row, array_replace($row, ['butiran_id' => (string) $source->id])]],
+            ['rekod' => ['named' => $row]],
+            ['rekod' => []],
+            ['rekod' => [$row + ['ptj_id' => $this->owner->id]]],
+            ['rekod' => [$row + ['reason' => 'Row override']]],
+            ['rekod' => [$row + ['semakan_bidaan' => 999]]],
+            ['ptj_id' => $this->owner->id],
+        ] as $bad) {
+            $this->draftDenied(fn () => $this->draftBatchSave([$row], $bad), 422);
+        }
+        $this->assertSame('keep', $source->fresh()->data_sumber->fixture);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_batch_own_workplace_scope_cannot_take_a_later_foreign_source_or_move_own_source(): void
+    {
+        $other = TempatBertugas::create(['ptj_id' => $this->owner->id, 'nama' => 'Other batch sector', 'jenis' => 'sektor']);
+        $foreign = $this->draftSave((object) ['fixture' => 'foreign'], replace: ['tempat_bertugas_id' => $other->id]);
+        $own = $this->draftSave((object) ['fixture' => 'own']);
+        $this->operator->penugasanPeranan()->delete();
+        $this->draftRole($this->workplace->id);
+        foreach ([
+            $this->draftBatchRow('take', $foreign),
+            $this->draftBatchRow('move', $own, ['tempat_bertugas_id' => $other->id]),
+        ] as $denied) {
+            $this->draftDenied(fn () => $this->draftBatchSave([$this->draftBatchRow('new'), $denied]), 403);
+        }
+        $this->assertSame($other->id, $foreign->fresh()->tempat_bertugas_id);
+        $this->assertSame($this->workplace->id, $own->fresh()->tempat_bertugas_id);
+        $this->assertSame(3, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 2);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
+    public function test_batch_wrong_parent_later_source_rolls_back_first_row(): void
+    {
+        $otherOs = RujukanOs::create(['kod_objek' => '15000', 'butiran_perbelanjaan' => 'Batch sibling']);
+        $otherEstimate = Anggaran::forceCreate(['bidaan_id' => $this->bid->id, 'ptj_id' => $this->owner->id,
+            'rujukan_os_id' => $otherOs->id, 'diaktifkan' => true]);
+        $foreign = ButiranAnggaran::forceCreate(['anggaran_id' => $otherEstimate->id, 'ptj_id' => $this->owner->id,
+            'tempat_bertugas_id' => $this->workplace->id]);
+        $this->draftDenied(fn () => $this->draftBatchSave([$this->draftBatchRow('new'),
+            $this->draftBatchRow('foreign', $foreign)]), 404);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 0);
+        $this->assertSame(1, $this->bid->fresh()->semakan);
+    }
+
+    public function test_batch_generated_output_guard_retains_every_original_row_and_exact_output(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'calculated']);
+        $output = HasilPengiraan::forceCreate(['butiran_anggaran_id' => $source->id,
+            'semakan_sumber' => $source->semakan, 'turutan' => 1, 'amaun' => '123.456789'])->fresh();
+        $this->draftDenied(fn () => $this->draftBatchSave([$this->draftBatchRow('new'),
+            $this->draftBatchRow('changed', $source)]), 409);
+        $this->assertSame('123.456789', $output->fresh()->amaun);
+        $this->assertSame('calculated', $source->fresh()->data_sumber->fixture);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+        $this->assertSame(2, $this->estimate->fresh()->semakan);
+    }
+
+    public function test_batch_later_audit_insert_failure_restores_existing_source_and_all_parent_revisions(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'keep']);
+        DB::unprepared(<<<'SQL'
+CREATE FUNCTION batch_test_audit_failure() RETURNS trigger LANGUAGE plpgsql AS $
+BEGIN
+    IF NEW.tindakan = 'source.draft_updated' THEN RAISE EXCEPTION 'Later batch audit unavailable'; END IF;
+    RETURN NEW;
+END;
+$;
+CREATE TRIGGER batch_test_audit_failure BEFORE INSERT ON rekod_audit
+FOR EACH ROW EXECUTE FUNCTION batch_test_audit_failure();
+SQL);
+        try {
+            $this->draftBatchSave([$this->draftBatchRow('new'), $this->draftBatchRow('change', $source)]);
+            $this->fail('Later audit failure ignored.');
+        } catch (QueryException $exception) {
+            $this->assertSame('P0001', (string) $exception->getCode());
+        }
+        $this->assertSame('keep', $source->fresh()->data_sumber->fixture);
+        $this->assertSame(1, $source->fresh()->semakan);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertSame(2, $this->estimate->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_batch_supports_more_than_fifty_distinct_rows_without_merging_identical_values(): void
+    {
+        $rows = array_fill(0, 51, $this->draftBatchRow('same fixture'));
+        $sources = $this->draftBatchSave($rows);
+        $this->assertCount(51, array_unique(array_map(fn ($source) => $source->id, $sources)));
+        $this->assertSame(52, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('butiran_anggaran', 51);
+        $this->assertDatabaseCount('rekod_audit', 51);
+        $this->assertDatabaseCount('hasil_pengiraan', 0);
+    }
+
+    public function test_batch_rechecks_phase_central_role_session_and_workflow_before_even_noop_rows(): void
+    {
+        $source = $this->draftSave((object) ['fixture' => 'same']);
+        $rows = [$this->draftBatchRow('same', $source)];
+        $this->phase->forceFill(['dibuka' => false])->save();
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 403);
+        $this->phase->forceFill(['dibuka' => true])->save();
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => false]);
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 403);
+        TetapanAksesPtj::where('rujukan_os_id', $this->os->id)->update(['dibenarkan' => true]);
+        $this->bid->forceFill(['status' => StatusBidaan::Muktamad])->save();
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 409);
+        $this->bid->forceFill(['status' => StatusBidaan::DalamPenyediaan])->save();
+        $this->estimate->forceFill(['diaktifkan' => false])->save();
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 409);
+        $this->estimate->forceFill(['diaktifkan' => true])->save();
+        $this->operator->penugasanPeranan()->delete();
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 403);
+        $this->draftRole();
+        session()->put('abm_last_activity', now()->timestamp - 1800);
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 403);
+        $this->assertSame(2, $this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('rekod_audit', 1);
+    }
+
+    public function test_batch_reasoned_superadmin_override_keeps_actor_and_per_row_audit_attribution(): void
+    {
+        $this->operator->penugasanPeranan()->delete();
+        $this->operator->penugasanPeranan()->create(['peranan' => Peranan::Superadmin]);
+        $this->phase->forceFill(['dibuka' => false])->save();
+        TetapanAksesPtj::query()->update(['dibenarkan' => false]);
+        $rows = [$this->draftBatchRow('one'), $this->draftBatchRow('two')];
+        $this->draftDenied(fn () => $this->draftBatchSave($rows), 422);
+        $sources = $this->draftBatchSave($rows, ['reason' => 'Pembetulan pentadbiran berkelompok.']);
+        foreach (RekodAudit::all() as $audit) {
+            $this->assertSame($this->operator->id, $audit->pelaku_id);
+            $this->assertSame(Peranan::Superadmin, $audit->peranan);
+            $this->assertSame($this->workplace->id, $audit->tempat_bertugas_id);
+            $this->assertSame('Pembetulan pentadbiran berkelompok.', $audit->alasan);
+            $this->assertTrue($audit->selepas['pintasan']['fasa']);
+            $this->assertNull($audit->versi_penghantaran);
+        }
+        $this->assertCount(2, $sources);
+        $this->assertDatabaseCount('rekod_audit', 2);
+    }
+
 }
