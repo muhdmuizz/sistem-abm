@@ -9,7 +9,7 @@
  const dirty=()=>{if(status)status.textContent='Perubahan belum disimpan.';form.dispatchEvent(new Event('input',{bubbles:true}));};
  const plain=value=>value===null||value===undefined?'':String(value);
  function decimalMultiply(a,b){
-  if(!/^-?\d+(\.\d+)?$/.test(a)||!/^\d+(\.\d+)?$/.test(b))return '—';
+  if(!/^-?\d+(\.\d+)?$/.test(a)||!/^-?\d+(\.\d+)?$/.test(b))return '—';
   const scale=(a.split('.')[1]?.length||0)+(b.split('.')[1]?.length||0);
   let raw=(BigInt(a.replace('.',''))*BigInt(b.replace('.',''))).toString(),negative=raw.startsWith('-');
   if(negative)raw=raw.slice(1);
@@ -20,7 +20,8 @@
  function output(row,tr){
   const ref=references[row[selector]],values={...row};
   for(const column of columns.filter(c=>c.type==='output')){
-   let value=column.value??ref?.[column.reference];
+   const columnReference=column.referenceKey ? references[column.referenceKey] : ref;
+   let value=column.value??columnReference?.[column.reference];
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
@@ -52,7 +53,10 @@
     if(!editable||!row.editable){cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:plain(row[name]);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
-    if(column.type==='decimal'){input.type='text';input.inputMode='decimal';input.maxLength=128;input.value=plain(row[name]);}
+    if(column.type==='decimal'||column.type==='text'){
+     input.type='text';if(column.type==='decimal')input.inputMode='decimal';
+     input.maxLength=column.maxLength??128;input.value=plain(row[name]);
+    }
     else{
      option(input,'','Pilih '+column.label);
      if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));

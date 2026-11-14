@@ -1,6 +1,6 @@
 # Batch 024 — OS42000 SBK Spreadsheet Definition
 
-**Status:** Merged in PR #56; local update/functional checks pending — owner authorised continuation 15 November 2026.
+**Status:** Merged in PR #56; local synchronisation user-confirmed; detailed functional checks unverified — owner authorised continuation 15 November 2026.
 **Baseline:** `250d57f95706e3caf1eb30b9a8a815d7644700e6` on dev.
 
 ## Scope and authority
@@ -34,3 +34,7 @@ Official calculation/output/completeness and programme association/inheritance r
 ## Merge checkpoint
 
 [PR #56](https://github.com/muhdmuizz/sistem-abm/pull/56) merged into dev at `68a8f46fb839675f2d83ad7914e9b4cb2f163a19`. Final evidence-only commit `5925c375f85ff878726492ea5da0c71ab3e13a88` changes documentation; application code remains the exact tested head `5ebdce2244d8f80aa021df961b1af4efd1c4eb9f`. Local update has not been executed by the cloud agent or confirmed by the user.
+
+## Local update — 15 November 2026
+
+“Clean, continue.” confirms the supplied guarded pull/cache-clear commands. Detailed SBK functional, role/device and audit checks remain unverified locally; no direct Windows access is claimed.

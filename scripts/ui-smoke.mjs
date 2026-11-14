@@ -474,6 +474,57 @@ if(await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
+
+{
+for(const name of ['taska-empty','taska-populated','taska-partial','taska-legacy','taska-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
+  if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('TASKA mobile grid containment');
+  if(name==='taska-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('TASKA read-only save exposed');
+  if(name==='taska-legacy'&&(await page.content()).includes('SECRET_LEGACY'))throw Error('TASKA opaque source exposed');
+  await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/taska-empty.html');
+await page.locator('[data-grid-add-count]').fill('2');await page.locator('[data-grid-add]').click();
+const first=page.locator('[data-grid-body] tr').first();
+if(await first.locator('[data-field=nama]').getAttribute('type')!=='text')throw Error('TASKA name is not a text input');
+if(await first.locator('[data-field=bil_unit]').inputValue()!==''||await first.locator('[data-field=bil_bulan]').inputValue()!=='')throw Error('TASKA quantities fabricated');
+if(await first.locator('[data-output=unit]').textContent()!=='Anak'||await first.locator('[data-output=kadar]').textContent()!=='180.00')throw Error('TASKA fixed reference/unit changed');
+await first.locator('[data-field=nama]').fill('Ibu Contoh');await page.keyboard.press('Tab');
+if(!(await first.locator('[data-field=bil_unit]').evaluate(el=>document.activeElement===el)))throw Error('TASKA Tab text to quantity');
+await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=bil_bulan]').fill('12');
+if(await first.locator('[data-output=preview]').textContent()!=='4320')throw Error('TASKA multi-child formula');
+await first.locator('[data-field=bil_bulan]').fill('-0.5');
+if(await first.locator('[data-output=preview]').textContent()!=='-180')throw Error('TASKA signed draft factor preview differs from server');
+const pastedName='Bapa <script>window.TASKA_XSS=1</script>';
+await first.locator('[data-field=nama]').focus();
+await first.locator('[data-field=nama]').evaluate((el,name)=>{
+ const transfer=new DataTransfer();transfer.setData('text/plain',name+'\t9007199254740993\t12\nIbu Contoh\t3\t10');
+ el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
+},pastedName);
+if(await page.evaluate(()=>window.TASKA_XSS!==undefined))throw Error('TASKA name executed HTML');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-field=nama]').inputValue()!==pastedName)throw Error('TASKA paste lost parent name');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='19455550390240544880')throw Error('TASKA exact preview lost digits: '+await page.locator('[data-grid-body] tr').first().innerText());
+if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').textContent()!=='5400')throw Error('TASKA second row formula');
+await page.locator('[data-grid-body] tr').nth(1).locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+if(await page.locator('[data-grid-body] tr').count()!==3||await page.locator('[data-grid-body] tr').last().locator('[data-field=nama]').inputValue()!=='Ibu Contoh')throw Error('TASKA duplicate current name/quantities');
+let payload;
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{
+ payload=route.request().postDataJSON();
+ await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.nama':['Semak Nama Ibu/ Bapa.']}})});
+});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(payload.rekod.some(row=>'kadar'in row||'unit'in row||'preview'in row||'kategori1'in row||'kategori2'in row))throw Error('TASKA derived/other-definition fields submitted');
+if(payload.rekod[0].nama!==pastedName||payload.rekod[0].bil_unit!=='9007199254740993'||payload.rekod[0].bil_bulan!=='12')throw Error('TASKA save payload lost source values');
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/taska-validation-'+width+'.png',fullPage:true});
+}
+if(await page.locator('[data-grid-body] tr').first().locator('[data-field=nama]').inputValue()!==pastedName)throw Error('TASKA validation lost name');
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();
 
 
