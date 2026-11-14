@@ -353,6 +353,7 @@ for (const name of ['cycles-empty','users-empty']) {
 await page.goto('http://127.0.0.1:4173/program-readonly.html');
 if (!(await page.locator('.sidebar a[aria-label="Bida Peruntukan"][aria-current="page"]').count())) throw Error('Programme active parent missing');
 if (await page.locator('[data-remove-person]:visible').count()) throw Error('Read-only programme displays row removal controls');
+if (await page.locator('[data-person-count]').first().evaluate(el=>getComputedStyle(el).backgroundColor)!=='rgb(243, 245, 247)') throw Error('Read-only numerical input styling inconsistent');
 await page.goto('http://127.0.0.1:4173/program-edit.html');
 if (await page.locator('.program-form').evaluate(el=>getComputedStyle(el).maxWidth)!=='1120px') throw Error('Programme form width constraint invalid');
 }
