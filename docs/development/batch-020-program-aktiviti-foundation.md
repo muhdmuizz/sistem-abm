@@ -1,6 +1,6 @@
 # Batch 020 — Program/ Aktiviti Foundation
 
-**Status:** Code verification passed and merged; local migration/reference import pending.
+**Status:** Code verification passed and merged; local migration/reference import user-confirmed.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `debac9ce7cf0be0bba80dbf3207ece84ed8e1b29` on dev.
 **Authorisation:** User accepted the proposed Program/ Aktiviti foundation and explicitly directed “Okay, let's proceed as planned.” AD-007 is finalised; AD-008 detailed OS design remains paused.
@@ -39,4 +39,8 @@ Verified application head `99bdfa69d03e31a7f0b0994dcc0203dfda337b84`: [CI 435793
 
 The first run passed all initial new cases but exposed an old storage rollback test that attempted to drop Bidaan while the new restrictive programme FK still existed. The test now reverses dependent programme/workflow migrations first and restores them in forward order; no FK was removed or weakened. Non-scalar/boolean input validation was also hardened and tested before final verification. Added cases cover source-text-exact/idempotent RPM import, repeated local numbering, four-section metadata/derived headcounts, strict objectives/progressive drafts, parent mismatch, identity/no-op/stale retries, budget-year dates versus early Fasa, category/classification/positive quantity rules, exact large totals, package labels without OS mutation, mass assignment, scoped reads/writes, old/new workplace, roles/session/central/Fasa, protected workflows, actual Superadmin, actual PostgreSQL audit failure rollback, direct database corruption rejection and migration down/up in isolation.
 
-No UI source changes; browser results will be existing-screen regression, not a new UI acceptance claim. Local migration/reference import/service operation checks pending; real programme entry remains unavailable until its interface is implemented.
+No UI source changes; browser results will be existing-screen regression, not a new UI acceptance claim. Local migration/reference import and existing-page smoke check user-confirmed; direct service operations remain unverified; real programme entry remains unavailable until its interface is implemented.
+
+## Batch 020 local acceptance — 14 November 2026
+
+The user reported “Clean, what’s next?” after the guarded dev pull, config clear, normal migration, explicit `RpmReferenceSeeder` import, cache clear and requested existing Anggaran workspace refresh. These local setup and smoke checks are user-confirmed. The cloud agent did not access Windows or independently query reference counts. Direct programme service execution, programme create/edit UI and financial operations are not confirmed by this report. This acceptance update changes documentation only; the recorded application CI evidence remains unchanged.
