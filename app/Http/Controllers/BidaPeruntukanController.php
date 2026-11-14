@@ -64,7 +64,7 @@ class BidaPeruntukanController extends Controller
         $activation = $workspace->activation($request->user(), $cycle, $ptj, $activity, $bid);
         abort_unless($activation['allowed'], 403);
         return view('abm.bids.activate', ['cycle' => $record, 'ptj' => $owner, 'activity' => $financialActivity,
-            'bid' => $bid, 'os' => null, 'activation' => $activation, 'activationErrors' => $this->formErrors($request),
+            'bid' => $bid, 'os' => null, 'activation' => $activation,
             'context' => 'bid/'.$cycle.'/'.$ptj.'/'.$activity,
             'postUrl' => route('bids.activate', [$cycle, $ptj, $activity]),
             'backUrl' => route('bids.index', ['kitaran_id' => $cycle, 'ptj_id' => $ptj])]);
