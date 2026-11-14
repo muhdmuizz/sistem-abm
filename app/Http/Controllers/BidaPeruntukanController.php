@@ -14,6 +14,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BidaPeruntukanController extends Controller
 {
+    private function formErrors(Request $request): \Illuminate\Support\ViewErrorBag
+    {
+        $shared = app('view')->getShared();
+        return $request->session()->get('errors') ?? ($shared['errors'] ?? new \Illuminate\Support\ViewErrorBag);
+    }
+
     public function index(Request $request, RuangBidaPeruntukan $workspace)
     {
         abort_unless($workspace->canUse($request->user()), 403);
@@ -32,7 +38,8 @@ class BidaPeruntukanController extends Controller
             $cards = $activities->map(fn ($activity) => ['activity' => $activity, 'bid' => $bids->get($activity->id),
                 'activation' => $workspace->activation($request->user(), $cycle->id, $ptj->id, $activity->id, $bids->get($activity->id))]);
         }
-        return view('abm.bids.index', compact('cycles', 'ptjs', 'cycle', 'ptj', 'cards'));
+        return view('abm.bids.index', compact('cycles', 'ptjs', 'cycle', 'ptj', 'cards'))
+            ->with('activationErrors', $this->formErrors($request));
     }
 
     private function bidContext(Request $request, int $bid, RuangBidaPeruntukan $workspace): Bidaan
@@ -51,7 +58,7 @@ class BidaPeruntukanController extends Controller
             'activation' => $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
                 $record->aktiviti_kewangan_id, $record, $os, $estimates->get($os->id))]);
         $open = $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id);
-        return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open]);
+        return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open, 'activationErrors' => $this->formErrors($request)]);
     }
 
     public function bidForm(Request $request, int $cycle, int $ptj, int $activity, RuangBidaPeruntukan $workspace)
@@ -64,7 +71,7 @@ class BidaPeruntukanController extends Controller
         $activation = $workspace->activation($request->user(), $cycle, $ptj, $activity, $bid);
         abort_unless($activation['allowed'], 403);
         return view('abm.bids.activate', ['cycle' => $record, 'ptj' => $owner, 'activity' => $financialActivity,
-            'bid' => $bid, 'os' => null, 'activation' => $activation,
+            'bid' => $bid, 'os' => null, 'activation' => $activation, 'activationErrors' => $this->formErrors($request),
             'context' => 'bid/'.$cycle.'/'.$ptj.'/'.$activity,
             'postUrl' => route('bids.activate', [$cycle, $ptj, $activity]),
             'backUrl' => route('bids.index', ['kitaran_id' => $cycle, 'ptj_id' => $ptj])]);
@@ -81,7 +88,7 @@ class BidaPeruntukanController extends Controller
         abort_unless($activation['allowed'], 403);
         return view('abm.bids.activate', ['cycle' => $record->kitaran, 'ptj' => $record->ptj,
             'activity' => $record->aktivitiKewangan, 'bid' => $record, 'os' => $reference,
-            'activation' => $activation, 'context' => 'os/'.$bid.'/'.$os,
+            'activation' => $activation, 'activationErrors' => $this->formErrors($request), 'context' => 'os/'.$bid.'/'.$os,
             'postUrl' => route('bids.os-activate', [$bid, $os]), 'backUrl' => route('bids.show', $bid)]);
     }
 

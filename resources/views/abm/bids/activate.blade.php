@@ -12,8 +12,8 @@
 <form method="post" action="{{ $postUrl }}" data-track-unsaved>@csrf
 <input type="hidden" name="activation_context" value="{{ $context }}"><input type="hidden" name="semakan" value="{{ $bid?->semakan ?? 0 }}">
 @if($activation['needs_reason'])
-<div class="action-field"><label for="activation-reason">Alasan pintasan <span class="required">*</span></label><textarea id="activation-reason" name="reason" rows="3" maxlength="1000" required @if($errors->has('reason')) aria-invalid="true" aria-describedby="activation-reason-error" @endif>{{ old('activation_context') === $context && is_scalar(old('reason')) ? old('reason') : '' }}</textarea>
-@error('reason')<p id="activation-reason-error" class="field-error">{{ $message }}</p>@enderror</div>
+<div class="action-field"><label for="activation-reason">Alasan pintasan <span class="required">*</span></label><textarea id="activation-reason" name="reason" rows="3" maxlength="1000" required @if($activationErrors->has('reason')) aria-invalid="true" aria-describedby="activation-reason-error" @endif>{{ old('activation_context') === $context && is_scalar(old('reason')) ? old('reason') : '' }}</textarea>
+@if($activationErrors->has('reason'))<p id="activation-reason-error" class="field-error">{{ $activationErrors->first('reason') }}</p>@endif</div>
 @endif
 <div class="form-actions"><button class="button primary" type="submit"><x-abm-icon name="plus"/>{{ $os ? 'Aktifkan OS' : 'Aktifkan Bidaan' }}</button><a class="button" href="{{ $backUrl }}">Batal</a></div>
 </form>
