@@ -244,3 +244,7 @@ The user reported “Clean, proceed.” after the guarded dev pull and optimize:
 ## Batch 024 — SBK spreadsheet definition in progress
 
 Authorised continuation of the shared spreadsheet editor. Baseline `250d57f95706e3caf1eb30b9a8a815d7644700e6`. [Batch 024](batch-024-sbk-spreadsheet-definition.md) enables the approved OS42000 SBK source template for Pendidikan Rendah (030228) and Pendidikan Menengah (030310), using the existing four shared Pukal options, manual monthly KADAR and fixed 12-month exact preview. Keep catalogue identities/mappings unchanged, AMal excluded and OS25000 behaviour intact. No migration/seed or official totals/completeness integration planned.
+
+## Batch 024 — verification passed; merge pending
+
+Typed OS42000 SBK definition enabled for the two approved education contexts, with context-aware definition resolution, fixed columns and manual KADAR. Application head `5ebdce2244d8f80aa021df961b1af4efd1c4eb9f`, [CI 43635684953](https://github.com/muhdmuizz/sistem-abm/actions/runs/43635684953): 431 tests / 3354 assertions on PHP 8.4.27 / PostgreSQL 18.7 isolated test DB; build/Chromium passed. Fourteen SBK states reviewed before numeric alignment correction; final representative correction/OS25000 review completed. Actual HTTP persistence is separate from static browser response interception. No migration/seed or official output/completeness. Local update/functional checks pending; see [Batch 024](batch-024-sbk-spreadsheet-definition.md).
