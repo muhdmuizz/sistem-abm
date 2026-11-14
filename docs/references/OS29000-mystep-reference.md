@@ -55,3 +55,35 @@ The existing legacy catalogue labels and mappings are left intact for now; this 
 - Applicable Kadar is mandatory per [shared rule](shared-mandatory-kadar-rule.md).
 - No basis (monthly/hourly/session), duration/quantity formula, Excel destination field for Taraf Akademik, applicable year, or eligibility condition has been established by these source tables.
 - No changes to the master OS catalogue, Kod Aktiviti mapping, other ADs, Laravel, PostgreSQL or existing 27-column Excel contract are authorised by this commit.
+
+
+## Owner-approved 30-column MySTEP Anggaran specification — 15 November 2026
+
+The following later owner decisions **supersede earlier reference-only exclusions** for TARAF AKADEMIK and the earlier absence of an approved monthly KADAR/formula. Keep the original CSV reference records and all existing labels unchanged. The three catalogue identities **MySTEP**, **MySTEP - Guru Ganti**, and **MySTEP - Pembantu Pengurusan Murid (PPM) Ganti** use **one shared Anggaran template** and reference set, with relevant Aktiviti Kewangan context distinguishing their applicability; do not invent additional mappings.
+
+### Canonical 30-column Perbelanjaan applicability
+
+| Status | Canonical positions | Count |
+| --- | --- | ---: |
+| Active | 01, 02, 03, 04, 05, 06, 07, 14, 15, 17, 19, 21, 26, 27, 28 | 15 |
+| Inactive | 08, 09, 10, 11, 12, 13, 16, 18, 20, 22, 23, 24, 25 | 13 |
+| Deferred | 29, 30 | 2 |
+
+**15 + 13 + 2 = 30.** Column 04 **NAMA PROGRAM/ AKTIVITI/ TUJUAN** carries **TUJUAN LANTIKAN**, selected from the existing six-item source; 05 TARIKH MULA, 06 TARIKH TAMAT and 07 calculated TEMPOH follow their established canonical meaning. 11 **NAMA**, 12 **JAWATAN** and 13 **GRED** are Inactive: budgeting uses numbers of personnel and does not require identified individual names or SSPA personnel-reference grades. Columns 08–10 are Inactive, as are 16 KATEGORI3 and 18 GRED PENCERAMAH/ FASILITATOR.
+
+- 14 **KATEGORI1**: existing **Guru Ganti**, **Pembantu Pengurusan Murid**, **Pengurusan** options.
+- 15 **KATEGORI2**: **TARAF AKADEMIK**, selected from the four existing academic qualifications. **This is an express owner-approved revision to the prior exclusion of TARAF AKADEMIK from KATEGORI2**. It preserves the source qualification values and makes them explicitly visible in canonical Excel output. KATEGORI3 remains Inactive.
+- 17 **UNIT**: **Orang**.
+- 19 **BIL. UNIT**: number of MySTEP personnel in the line.
+- 21 **KADAR**: automatically retrieved as the existing **JUMLAH** value for the chosen TARAF AKADEMIK, interpreted as **RM per person per month**. The exact four existing totals are RM2,638.35 / RM2,408.85 / RM2,179.35 / RM1,949.85. Do not recompute JUMLAH from Upah Tetap, KWSP, or PERKESO or display these source parts as independently entered KADAR.
+- 26 **BILANGAN BULAN**: budgeted months.
+- 27 **ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KADAR × BILANGAN BULAN**. The calculation uses the approved monthly rate basis.
+- Columns 01–03 and 28 use the existing organisational/funding references; 29–30 remain Deferred to Program/ Aktiviti.
+
+### TUJUAN LANTIKAN availability and source fidelity
+
+All **six existing TUJUAN LANTIKAN** options are available with **each of the three KATEGORI1 options**, without filtering or inferring eligibility from the coincidental source-row ordering. The two original 11-row KATEGORI1 and Tujuan reference files remain intact and auditable. This is the approved application selection design, not a new claim about statutory eligibility.
+
+### Change-control boundaries
+
+Keep the 30 canonical Excel headers and existing shared AD-004 Butiran Anggaran model; no new TARAF AKADEMIK export column. The source KATEGORI1/TUJUAN/TARAF AKADEMIK CSVs, all listed JUMLAH amounts, master catalogue, Kod Aktiviti mappings, Laravel application, actual exporter and PostgreSQL are **unchanged**. This is a documentation-only approval within **Draft AD-008**.
