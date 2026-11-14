@@ -151,6 +151,34 @@ await page.setViewportSize({ width: 390, height: 844 });
 await page.evaluate(() => scrollTo(0, 0));
 if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile phase form overflow');
 await page.screenshot({ path: 'storage/app/ui-qa/phase-form-mobile.png', fullPage: true });
+
+await page.setViewportSize({ width: 1440, height: 1000 });
+for (const name of ['bid-context','bid-list','bid-os','bid-empty','bid-no-results','bid-os-empty','bid-activation','bid-validation']) {
+    await page.goto('http://127.0.0.1:4173/' + name + '.html');
+    if (await page.locator('body').evaluate(el => el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name + ' desktop overflow');
+    await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-desktop.png', fullPage: true });
+    if (name === 'bid-context') {
+        await page.locator('[data-search-select="bid-ptj"]').fill('JPNT');
+        if (!(await page.locator('#bid-ptj option').evaluateAll(nodes => nodes.some(n => n.textContent === 'JPNT' && !n.hidden)))) throw Error('Scoped PTJ search failed');
+    }
+    if (name === 'bid-activation') {
+        const reason = page.locator('#activation-reason');
+        if (!(await reason.getAttribute('required') !== null)) throw Error('Override reason is not required');
+        await reason.fill('Pintasan pentadbiran yang diluluskan.');
+        if (!(await reason.inputValue()).includes('Pintasan')) throw Error('Reason entry failed');
+    }
+    if (name === 'bid-validation' && !(await page.locator('#activation-reason[aria-invalid="true"]').count())) throw Error('Reason validation not exposed');
+    for (const empty of await page.locator('.empty-state').all()) {
+        const insets = await empty.evaluate(el => { const s = getComputedStyle(el); return [s.paddingLeft,s.paddingRight,s.paddingTop,s.paddingBottom].map(parseFloat); });
+        if (insets.some(n => n < 16)) throw Error(name + ' empty-state padding too small');
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name + ' mobile overflow');
+    await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-mobile.png', fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+}
+
 await browser.close();
 
 

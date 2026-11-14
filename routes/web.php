@@ -5,6 +5,7 @@ use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\AksesPeruntukanController;
 use App\Http\Controllers\KitaranController;
+use App\Http\Controllers\BidaPeruntukanController;
 use App\Http\Middleware\EnsureAbmSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,12 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
+    Route::get('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'bidForm'])->whereNumber(['cycle','ptj','activity'])->name('bids.activate-form');
+    Route::post('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'activateBid'])->whereNumber(['cycle','ptj','activity'])->middleware('throttle:30,1')->name('bids.activate');
+    Route::get('/bida-peruntukan/{bid}', [BidaPeruntukanController::class, 'show'])->whereNumber('bid')->name('bids.show');
+    Route::get('/bida-peruntukan/{bid}/os/{os}/aktifkan', [BidaPeruntukanController::class, 'osForm'])->whereNumber(['bid','os'])->name('bids.os-form');
+    Route::post('/bida-peruntukan/{bid}/os/{os}/aktifkan', [BidaPeruntukanController::class, 'activateOs'])->whereNumber(['bid','os'])->middleware('throttle:30,1')->name('bids.os-activate');
     Route::get('/pentadbiran/kitaran', [KitaranController::class, 'index'])->name('cycles.index');
     Route::get('/pentadbiran/kitaran/tambah', [KitaranController::class, 'create'])->name('cycles.create');
     Route::post('/pentadbiran/kitaran', [KitaranController::class, 'store'])->middleware('throttle:30,1')->name('cycles.store');
