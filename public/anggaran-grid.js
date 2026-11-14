@@ -20,7 +20,7 @@
  function output(row,tr){
   const ref=references[row[selector]],values={...row};
   for(const column of columns.filter(c=>c.type==='output')){
-   let value=ref?.[column.reference];
+   let value=column.value??ref?.[column.reference];
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
@@ -47,7 +47,7 @@
    }
    inputColumns.forEach((column,index)=>{
     const name=column.key;
-    const cell=cells[index+2];
+    const cell=cells[columns.indexOf(column)+2];
     if(!editable||!row.editable){cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:plain(row[name]);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));

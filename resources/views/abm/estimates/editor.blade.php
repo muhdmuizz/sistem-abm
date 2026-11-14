@@ -16,7 +16,7 @@
 <div class="notice error" role="alert" tabindex="-1" data-grid-error hidden></div>
 @if($editable)
 <div class="grid-toolbar"><label>Tambah baris<input type="number" min="1" step="1" value="5" data-grid-add-count></label><button type="button" class="button" data-grid-add><x-abm-icon name="plus"/>Tambah Baris</button><button type="button" class="button" data-grid-copy>Salin Baris Dipilih</button><button type="button" class="button danger" data-grid-remove>Padam Baris Dipilih</button><button type="button" class="button" data-grid-undo hidden>Batal Padam</button></div>
-<p class="small grid-help">Tab/ Shift+Tab untuk bergerak antara sel. Tampal lajur input mengikut turutan: {{ implode(', ',$inputLabels) }}. UNIT dan KADAR diisi daripada rujukan.</p>
+<p class="small grid-help">Tab/ Shift+Tab untuk bergerak antara sel. Tampal lajur input mengikut turutan: {{ implode(', ',$inputLabels) }}. {{ $inputHelp }}</p>
 @endif
 <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual Butiran Anggaran boleh ditatal mendatar">
 <table class="anggaran-grid" style="min-width:{{ 160+array_sum(array_column($columns,'width')) }}px"><caption class="sr-only">Butiran Anggaran dengan identiti baris tersimpan</caption><colgroup><col style="width:60px"><col style="width:100px">@foreach($columns as $column)<col style="width:{{ $column['width'] }}px">@endforeach</colgroup><thead><tr><th>Pilih</th><th>Rujukan</th>@foreach($columns as $column)<th>{{ $column['label'] }}</th>@endforeach</tr></thead><tbody data-grid-body></tbody></table>
