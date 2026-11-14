@@ -229,7 +229,7 @@ The previously discussed alternative presentation patterns remain **options for 
 - **Structured Form — possible later alternative:** for an OS found better suited to a compact form after review.
 - **Component-based Editor — possible later alternative:** for an OS found better suited to distinct component entry after review.
 
-Keep **one canonical shared OS wizard** and its stable Butiran Anggaran identities, save states, completeness, permissions and navigation. OS-specific fields, validation and approved AD-008 calculations are independent of presentation. The change concerns the **entry interface only**, not the canonical financial model or data migration. Do not create a new end-user layout selector or administration module merely to support future presentation assignments. This decision does **not** require showing all 27 Excel output columns at once; display applicable OS input fields while preserving the approved Excel output contract.
+Keep **one canonical shared OS wizard** and its stable Butiran Anggaran identities, save states, completeness, permissions and navigation. OS-specific fields, validation and approved AD-008 calculations are independent of presentation. The change concerns the **entry interface only**, not the canonical financial model or data migration. Do not create a new end-user layout selector or administration module merely to support future presentation assignments. This decision does **not** require showing all 30 current Excel output columns at once; display applicable OS input fields while preserving the approved Excel output contract.
 
 ### 09.4 Butiran Anggaran (Approved; presentation default revised 13 November 2026)
 
@@ -306,7 +306,7 @@ Use a compact, **single-page** official Excel extraction interface, **separate f
 - **Keseluruhan Data** requires no manual selection. **Bidaan Lengkap** permits selection of **one or more Bidaan**; **OS Terpilih** permits **one or more OS**.
 - Use a **searchable multi-select dropdown with checkboxes** for Bidaan and OS selections, showing the **number selected**. Populate from actual authorised records/catalogue, not illustrative placeholder values.
 - Provide a clear **Ekstrak Excel** action with generation/loading feedback, duplicate-submit protection, retained selections and actionable errors on failure. Enforce authorisation and financial versioning server-side.
-- The complete workbook uses the two approved worksheets: **Gaji & Emolumen** (OS11000–OS13000, official column template still pending) and **Perbelanjaan** (OS14000–OS29000/OS42000, official 27-column granular structure). Selected OS exports contain only selected OS in applicable worksheet format.
+- The complete workbook uses the two approved worksheets: **Gaji & Emolumen** (OS11000–OS13000, official column template still pending) and **Perbelanjaan** (OS14000–OS29000/OS42000, current approved 30-column granular structure under AD-008's later revision). Selected OS exports contain only selected OS in applicable worksheet format.
 - Do not invent additional export filters, worksheet-presence rules, filenames, calculation rules or Program/ Aktiviti export selections. This is a **UI presentation decision**, not an amendment to AD-010.
 
 ### 11.3 Pentadbiran — Approved

@@ -54,6 +54,7 @@ class RuangAnggaran
         'source.draft_created' => 'Draf Butiran ditambah',
         'source.draft_updated' => 'Draf Butiran dipinda',
         'source.draft_duplicated' => 'Draf Butiran disalin',
+        'source.draft_deleted' => 'Draf Butiran dipadam',
     ];
 
     public const ROLE_LABELS = [
@@ -92,6 +93,17 @@ class RuangAnggaran
                                     $previous->selectRaw('1')->fromSub((clone $workplaces)->select('id'), 'visible_before')
                                         ->whereRaw("rekod_audit.sebelum @> jsonb_build_object('tempat_bertugas_id', visible_before.id)");
                                 });
+                        });
+                })->orWhere(function ($deleted) use ($bid,$estimate,$workplaces) {
+                    $deleted->where('jenis_entiti',ButiranAnggaran::class)->where('tindakan','source.draft_deleted')
+                        ->whereRaw("rekod_audit.selepas @> jsonb_build_object('exists', false, 'anggaran_id', CAST(? AS bigint), 'bidaan_id', CAST(? AS bigint))",[$estimate->id,$bid->id])
+                        ->whereIn('tempat_bertugas_id',(clone $workplaces)->select('id'))
+                        ->whereExists(function($old) use($workplaces) {
+                            $old->selectRaw('1')->fromSub((clone $workplaces)->select('id'),'deleted_before')
+                                ->whereRaw("rekod_audit.sebelum @> jsonb_build_object('tempat_bertugas_id', deleted_before.id)");
+                        })->whereExists(function($after) use($workplaces) {
+                            $after->selectRaw('1')->fromSub((clone $workplaces)->select('id'),'deleted_after')
+                                ->whereRaw("rekod_audit.selepas @> jsonb_build_object('tempat_bertugas_id', deleted_after.id)");
                         });
                 });
             })

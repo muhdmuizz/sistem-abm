@@ -198,6 +198,34 @@ class DrafButiranAnggaran
         });
     }
 
+
+    /** Authorised removal of a source-only draft. Calculated records require the later deletion/recalculation workflow. */
+    public function padam(int $estimateId, int $sourceId, array $input): void
+    {
+        DB::transaction(function () use ($estimateId,$sourceId,$input) {
+            [$actor,$bid,$estimate,$source]=$this->lockedContext($estimateId,$sourceId);
+            $data=Validator::make(['rekod'=>$input],[
+                'rekod'=>'required|array:semakan_bidaan,semakan_anggaran,semakan_butiran,reason',
+                'rekod.semakan_bidaan'=>'required|integer|min:0','rekod.semakan_anggaran'=>'required|integer|min:0',
+                'rekod.semakan_butiran'=>'required|integer|min:0','rekod.reason'=>'nullable|string|max:1000',
+            ])->validate()['rekod'];
+            $authority=$this->guard->authorise($actor,Peranan::PenyediaAnggaran,$bid->kitaran_id,$bid->ptj_id,
+                $bid->aktiviti_kewangan_id,$estimate->rujukan_os_id,$data['reason'] ?? null,$source->tempat_bertugas_id);
+            $this->currentSource($bid,$estimate,$source,$data);
+            abort_if($source->hasilPengiraan()->exists(),409,'Butiran berpengiraan tidak boleh dipadam melalui draf ini.');
+            $before=$this->snapshot($source,$bid,$estimate);
+            $this->audit->jalankan(Peranan::PenyediaAnggaran,function() use($source,$bid,$estimate,$before,$authority) {
+                $source->delete(); $bid->semakan++; $bid->save(); $estimate->semakan++; $estimate->save();
+                return new PeristiwaAudit('source.draft_deleted',ButiranAnggaran::class,(string)$source->id,$before,
+                    ['exists'=>false,'bidaan_id'=>$bid->id,'anggaran_id'=>$estimate->id,
+                        'tempat_bertugas_id'=>$source->tempat_bertugas_id,'semakan_bidaan'=>$bid->semakan,
+                        'semakan_anggaran'=>$estimate->semakan,'pintasan'=>$authority['override']],
+                    $authority['reason'] ?: 'Padam draf Butiran Anggaran.',ptjId:$bid->ptj_id,
+                    aktivitiId:$bid->aktiviti_kewangan_id,tempatBertugasId:$source->tempat_bertugas_id,kitaranId:$bid->kitaran_id);
+            });
+        });
+    }
+
     /** Caller owns the outer transaction; preserve the existing financial lock order. */
     private function lockedContext(int $estimateId, ?int $sourceId): array
     {

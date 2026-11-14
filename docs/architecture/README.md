@@ -61,7 +61,7 @@ Foundation Batches 001–007 are implemented, merged and locally user-confirmed.
 
 **AD-012:** Finalised technical deployment, backup/recovery, release verification and operational safeguards; no claim of application deployment or production readiness.
 
-**AD-008:** Shared OS catalogue/calculation contract drafted; individual OS rates, formulas, mappings and official templates remain unverified and are not approved.
+**AD-008:** Draft umbrella containing multiple owner-approved OS mappings/formulas and the current 30-column Perbelanjaan contract. Its current readiness summary identifies remaining per-OS gaps. Preserve approved decisions; Draft does not mean all OS policies are unapproved. Implementation and verification remain outstanding.
 
 **AD-013:** Finalised UI/UX specification; all 12 sections approved, including accessibility, responsiveness and QA acceptance standards. This is design approval, not implementation or test certification.
 

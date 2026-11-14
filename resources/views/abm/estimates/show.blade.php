@@ -12,7 +12,7 @@
 <form method="get" action="{{ route('estimates.navigate',$bid->id) }}"><div><label for="estimate-os">Anggaran (OS)</label><select id="estimate-os" name="os_id" required>@foreach($navigation as $item)<option value="{{ $item['os']->id }}" @selected($item['os']->id===$os->id)>OS{{ $item['os']->kod_objek }} — {{ $item['os']->butiran_perbelanjaan }}{{ $item['active'] ? '' : ' (Belum Aktif)' }}</option>@endforeach</select></div><button class="button" type="submit">Buka OS</button></form>
 <div class="estimate-sequence">@if($previous)<a class="button" href="{{ $previous['url'] }}" rel="prev">Sebelumnya<span class="sr-only"> OS{{ $previous['os']->kod_objek }} {{ $previous['os']->butiran_perbelanjaan }}</span></a>@endif @if($next)<a class="button" href="{{ $next['url'] }}" rel="next">Seterusnya<span class="sr-only"> OS{{ $next['os']->kod_objek }} {{ $next['os']->butiran_perbelanjaan }}</span></a>@endif</div>
 </nav>
-<p class="notice">Penyediaan butiran OS ini belum dibuka.</p>
+@if($editorAvailable)<p class="notice">Sediakan Butiran Anggaran melalui jadual draf.</p><a class="button primary" href="{{ route('estimates.editor',[$bid->id,$estimate->id]) }}">Buka Jadual Butiran</a>@else<p class="notice">Penyediaan butiran OS ini belum dibuka.</p>@endif
 @if(! $open)<p class="small">Tiada Fasa dibuka dalam tempoh. Rekod tersimpan boleh dilihat mengikut skop akses anda.</p>@endif
 @if(! $bid->diaktifkan)<p class="small">Bidaan belum aktif.</p>@endif
 <div class="bid-section-heading"><h2>Senarai Butiran Anggaran</h2><p class="small">{{ $sources->total() }} rekod dalam skop anda</p></div>

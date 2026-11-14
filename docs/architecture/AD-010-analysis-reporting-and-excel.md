@@ -43,7 +43,7 @@ Preserve the previously agreed export scopes:
 
 The **complete dataset** is one Excel workbook with two worksheets:
 1. **Gaji & Emolumen** — OS11000, OS12000 and OS13000, with its own official dataset structure (exact columns await the official template).
-2. **Perbelanjaan** — applicable OS14000 through OS29000, and OS42000, using the official **27-column granular** dataset in its exact official column order.
+2. **Perbelanjaan** — applicable OS14000 through OS29000, and OS42000, using the owner-approved **30-column granular** dataset in its current canonical column order ([AD-008 revision](AD-008-os-catalogue-calculation-framework.md#approved-30-column-perbelanjaan-revision--14-november-2026)). This later revision supersedes the former 27-column positional contract; preserve field identities and the approved two-sheet/export-scope behavior.
 
 When users select particular OS, **export only the selected OS**, in the applicable worksheet format. Do not impose new empty-sheet, conditional-sheet, naming, or filter rules beyond the agreed export behaviour. The two-sheet explanation describes the **default complete set**, not a new architectural decision. Exports remain permission-scoped and version-aware.
 

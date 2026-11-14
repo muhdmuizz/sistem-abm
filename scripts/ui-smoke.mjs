@@ -364,6 +364,67 @@ for (const width of [1366,390]) {
 }
 }
 
+{
+// Shared spreadsheet source editor. Real saves/permissions are exercised through HTTP in PostgreSQL tests.
+page.removeAllListeners('dialog');page.on('dialog',dialog=>dialog.accept());
+for(const name of ['grid-empty','grid-populated','grid-legacy','grid-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
+  if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('Mobile spreadsheet lost tabular horizontal scrolling');
+  if(name==='grid-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Read-only grid exposes save');
+  if(name==='grid-legacy'&&await page.content().then(s=>s.includes('SECRET_LEGACY')))throw Error('Opaque source exposed');
+  await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/grid-empty.html');
+const grid=page.locator('[data-anggaran-grid]');
+await page.locator('[data-grid-add-count]').fill('5');await page.locator('[data-grid-add]').click();
+if(await page.locator('[data-grid-body] tr').count()!==5)throw Error('Bulk rows not added');
+const first=page.locator('[data-grid-body] tr').first();
+await first.locator('[data-field=kategori1]').selectOption('Gula-gula');await first.locator('[data-field=bil_unit]').fill('2.625');
+if(await first.locator('[data-output=unit]').textContent()!=='Balang/ Paket')throw Error('Reference compound unit split');
+if(await first.locator('[data-output=preview]').textContent()!=='39.375')throw Error('Preview was rounded or lost precision');
+await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+if(await page.locator('[data-grid-body] tr').count()!==6)throw Error('Local row duplication failed');
+if(await page.locator('[data-grid-body] tr').last().locator('[data-field=bil_unit]').inputValue()!=='2.625')throw Error('Copy dropped current inputs');
+const place=await grid.evaluate(el=>JSON.parse(el.dataset.places)[0].nama);
+await first.locator('[data-field=tempat_bertugas_id]').evaluate((el,text)=>{
+ const transfer=new DataTransfer();transfer.setData('text/plain',text);el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
+},place+'\tAir Minuman\t9007199254740993\n'+place+'\tBiskut\t3');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='135107988821114895')throw Error('Clipboard quantity precision lost');
+const second=page.locator('[data-grid-body] tr').nth(1);await second.locator('[data-field=kategori1]').focus();await page.keyboard.press('Tab');
+if(!(await second.locator('[data-field=bil_unit]').evaluate(el=>document.activeElement===el)))throw Error('Tab between inline inputs failed');
+let lastPayload;
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{lastPayload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak Bil. Unit.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(lastPayload.rekod.some(r=>'kadar'in r||'unit'in r||'data_sumber'in r))throw Error('Client submits derived/opaque fields');
+if(lastPayload.rekod[0].bil_unit!=='9007199254740993')throw Error('Save payload decimal coerced');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-field=bil_unit]').inputValue()!=='9007199254740993')throw Error('Validation lost user inputs');
+await page.screenshot({path:'storage/app/ui-qa/grid-validation-1440.png',fullPage:true});
+await page.setViewportSize({width:390,height:844});await page.screenshot({path:'storage/app/ui-qa/grid-validation-390.png',fullPage:true});
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+await page.screenshot({path:'storage/app/ui-qa/grid-conflict-390.png',fullPage:true});
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.abort());
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Sambungan gagal'));
+if(await page.getByRole('button',{name:'Simpan Draf',exact:true}).isDisabled())throw Error('Failed save cannot retry');
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.goto('http://127.0.0.1:4173/grid-populated.html');
+const persisted=page.locator('[data-grid-body] tr').first();await persisted.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+if(!(await page.locator('[data-grid-undo]').isVisible()))throw Error('Persisted delete cannot be undone');
+await page.locator('[data-grid-undo]').click();
+if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Undo deletion lost rows');
+const ids=await page.locator('[data-grid-body] [id]').evaluateAll(nodes=>nodes.map(n=>n.id));if(new Set(ids).size!==ids.length)throw Error('Grid control ID collision');
+await page.locator('[data-grid-body] tr').first().locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{lastPayload=route.request().postDataJSON();await route.fulfill({status:409,contentType:'application/json',body:'{}'});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+if(lastPayload.padam.length!==1||!lastPayload.padam[0].butiran_id)throw Error('Deletion lacks stable identity/revision');
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();
 
 
