@@ -227,7 +227,9 @@ class BidaPeruntukanWorkspaceTest extends TestCase
         $this->from($this->workspaceActivateUrl())->post($this->workspaceActivateUrl(),
             ['semakan' => 0, 'activation_context' => 'bid/'.$this->cycle->id.'/'.$this->owner->id.'/'.$this->activity->id])
             ->assertSessionHasErrors('reason');
-        $invalid = $this->get($this->workspaceActivateUrl())->assertOk()->assertSee('aria-invalid="true"', false);
+        $invalid = $this->get($this->workspaceActivateUrl())->assertOk();
+        $this->assertStringContainsString('aria-invalid="true"', $invalid->getContent(),
+            json_encode(session('errors')?->getBag('default')->messages())."\n".$invalid->getContent());
         $this->post($this->workspaceActivateUrl(), ['semakan' => 0, 'reason' => 'Pembukaan pentadbiran yang dibenarkan.'])->assertRedirect();
         $bid = Bidaan::sole();
         $this->assertSame(Peranan::Superadmin, RekodAudit::sole()->peranan);
