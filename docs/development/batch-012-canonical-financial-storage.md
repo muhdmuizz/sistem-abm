@@ -1,6 +1,6 @@
 # Batch 012 — Canonical Financial Storage
 
-**Status:** Code verified and merged; local migration pending.
+**Status:** Code verified and merged; local synchronisation/migration user-confirmed; financial operations unverified locally.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `435a360f8a026c03b8bb7c93645d88e2f5e19415` on dev.
 **Authorisation:** User approved Batch 012: canonical Bidaan → Anggaran (OS) → Butiran Anggaran storage, relationships, integrity safeguards and focused tests. Apply existing UI guidance to new interface work; defer the broad visual refinement.
@@ -29,6 +29,10 @@ Tested application head: `6fd0a018fc816fa4a4b831d68c98f0b5b35a2f61`.
 
 Frontend build and all existing Chromium regression checks passed. No UI source changed; no new visual completion or financial workflow certification is claimed. Earlier CI attempts caught a PHPUnit helper-name collision and incorrect test expectations for PostgreSQL's RESTRICT SQLSTATE; these were corrected without weakening database constraints. No unsuccessful revision is merged.
 
-[PR #26](https://github.com/muhdmuizz/sistem-abm/pull/26); merged at `0ff960d0744f06256d4025c482047ba6684d36be`. Local normal migration remains pending. Step 02 remains in progress: audited transactional financial write services and application workflows are not delivered by these storage models. Use guarded normal migration on local `sistem_abm`; keep the existing server running.
+[PR #26](https://github.com/muhdmuizz/sistem-abm/pull/26); merged at `0ff960d0744f06256d4025c482047ba6684d36be`. Local synchronisation/normal migration is user-confirmed (see acceptance below). Step 02 remains in progress: audited transactional financial write services and application workflows are not delivered by these storage models. Use guarded normal migration on local `sistem_abm`; keep the existing server running.
 
 The output/source revision FK prevents advancing a source revision while older editable outputs still reference it. Future audited recalculation must replace affected obsolete outputs and advance the source revision atomically; prior submitted snapshots require their separately immutable storage. The schema does not independently authorise a write or enforce automatic revision increments.
+
+## User-confirmed Batches 012–013 local update — 14 November 2026
+
+The user replied **“Clean. Proceed.”** to the last supplied guarded dev pull/database verification/config-clear/normal-migration commands. Record local synchronisation and application of any pending Batch 012/013 migrations as passed by user report. No direct cloud access to Windows, local financial/audit-row inspection or activation service execution is claimed. Those batches delivered backend storage/activation services; manual financial operations and the broader device/security checks remain unverified. Existing CI evidence remains 239 tests / 2005 assertions at `c91a712`; no new test execution is claimed by this acceptance note.
