@@ -1,6 +1,6 @@
 # Batch 019 — Audited Draft Butiran Duplication
 
-**Status:** Implementation prepared; CI/merge/local synchronisation pending.
+**Status:** Code verification passed; merge/local synchronisation pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `9294293029924583bf6086fb40fb77095137ee1f` on dev.
 **Authorisation:** User confirmed the combined local update/Log Tindakan inspection and directed continuation. Implement the next shared draft prerequisite under AD-004 stable-ID Salin Baris, AD-005/006 role/Fasa scope and AD-011 audit/concurrency safeguards.
@@ -23,6 +23,6 @@ Backend draft prerequisite only. No OS source fields/rates/calculations, calcula
 
 ## Verification and local handoff
 
-CI/database/build/Chromium verification pending. Added cases cover independent identities and edits, exact nested/decimal data, private lineage/actual actor, stale original/parent revisions and retries, unknown/missing metadata, workplace/parent/other-role/session/central/Fasa denial, active/workflow/catalogue guards, calculated-output preservation, actual PostgreSQL audit failure rollback, legacy-invalid JSON and reasoned Superadmin. A route-level case verifies scoped duplicate-event rendering and preserves raw lineage privacy after the original moves workplace.
+Verified application head `ade9a9a61750b5ecb4a8a52d53fa4cd929826b59`: [CI 43562510603](https://github.com/muhdmuizz/sistem-abm/actions/runs/43562510603), **342 tests / 2722 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`; frontend build and Chromium passed on the first run. Seventeen added cases including parameterised role denials and the scoped HTTP integration case. [PR #43](https://github.com/muhdmuizz/sistem-abm/pull/43), merge pending. Subsequent evidence edits are Markdown only. Added cases cover independent identities and edits, exact nested/decimal data, private lineage/actual actor, stale original/parent revisions and retries, unknown/missing metadata, workplace/parent/other-role/session/central/Fasa denial, active/workflow/catalogue guards, calculated-output preservation, actual PostgreSQL audit failure rollback, legacy-invalid JSON and reasoned Superadmin. A route-level case verifies scoped duplicate-event rendering and preserves raw lineage privacy after the original moves workplace.
 
-No structural UI change. A duplicate-event desktop/mobile fixture is added to existing browser/screenshot regression; review pending. Local synchronisation pending; direct duplication service execution has no public UI and remains unverified locally. Prior device/security/operational limitations persist.
+No structural UI change. The duplicate-event desktop/mobile fixture passed browser regression and both screenshots were reviewed: label, stable reference, wrapping and existing spacing passed. [Artifact 14101107873](https://github.com/muhdmuizz/sistem-abm/actions/runs/43562510603/artifacts/14101107873). This is static fixture QA, not direct local copy execution; the internal copy and scope behavior are separately tested against PostgreSQL. Local synchronisation pending; direct duplication service execution has no public UI and remains unverified locally. Prior device/security/operational limitations persist.
