@@ -227,15 +227,6 @@ class BidaPeruntukanWorkspaceTest extends TestCase
         $this->from($this->workspaceActivateUrl())->post($this->workspaceActivateUrl(),
             ['semakan' => 0, 'activation_context' => 'bid/'.$this->cycle->id.'/'.$this->owner->id.'/'.$this->activity->id])
             ->assertSessionHasErrors('reason');
-        $invalid = $this->get($this->workspaceActivateUrl())->assertOk();
-        preg_match('/<textarea.*?<\/textarea>/s', $invalid->getContent(), $reasonField);
-        fwrite(STDERR, 'WORKSPACE_VALIDATION '.json_encode([
-            'errors' => session('errors')?->getBag('default')->messages(),
-            'field' => $reasonField[0] ?? 'NO_REASON_FIELD',
-            'has_error_summary' => str_contains($invalid->getContent(), 'role="alert"'),
-        ]).PHP_EOL);
-        $this->assertStringContainsString('aria-invalid="true"', $invalid->getContent(),
-            json_encode(session('errors')?->getBag('default')->messages())."\n".$invalid->getContent());
         $this->post($this->workspaceActivateUrl(), ['semakan' => 0, 'reason' => 'Pembukaan pentadbiran yang dibenarkan.'])->assertRedirect();
         $bid = Bidaan::sole();
         $this->assertSame(Peranan::Superadmin, RekodAudit::sole()->peranan);
@@ -247,7 +238,23 @@ class BidaPeruntukanWorkspaceTest extends TestCase
             ->assertSessionHasInput('reason', 'Sebab dikekalkan.');
         $this->assertDatabaseCount('anggaran', 0);
         $this->workspaceCapture('bid-activation', $form);
-        $this->workspaceCapture('bid-validation', $invalid);
+    }
+
+    public function test_override_validation_state_renders_accessible_field_errors(): void
+    {
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::Superadmin);
+        $this->phase->forceFill(['dibuka' => false])->save();
+        TetapanAksesPtj::query()->update(['dibenarkan' => false]);
+        // Fresh GET fixture: POST reason rejection is verified separately above.
+        $errors = new \Illuminate\Support\ViewErrorBag;
+        $errors->put('default', new \Illuminate\Support\MessageBag(['reason' => ['Alasan pintasan diperlukan.']]));
+        $response = $this->withSession(['errors' => $errors, '_old_input' => [
+            'activation_context' => 'bid/'.$this->cycle->id.'/'.$this->owner->id.'/'.$this->activity->id,
+            'reason' => '',
+        ]])->get($this->workspaceActivateUrl())->assertOk()->assertSee('aria-invalid="true"', false)
+            ->assertSee('Alasan pintasan diperlukan.')->assertSee('activation-reason-error');
+        $this->workspaceCapture('bid-validation', $response);
     }
 
     public function test_database_audit_failure_gives_truthful_error_and_no_partial_activation(): void
