@@ -1,6 +1,6 @@
 # Batch 016 — Atomic Multi-row Butiran Draft Saves
 
-**Status:** Implementation prepared; CI/merge/local synchronisation pending.
+**Status:** CI verified; merge/local synchronisation pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `b3762801ec22e44322b142004b9b35272b0b43dd` on dev.
 **Authorisation:** User directed “Proceed.” after Batch 015 local acceptance. Implement the next bounded shared persistence prerequisite under AD-004 multi-row editing/draft saving and AD-011 transactional bulk edits; no OS-specific policy is inferred.
@@ -19,6 +19,8 @@ Backend only: no new route, public JSON editor, UI, browser autosave, OS field a
 
 ## Verification
 
-Pending CI against isolated sistem_abm_testing, build and existing Chromium regression. Added cases exercise mixed create/edit/no-op identities, >50 distinct rows, initial/later stale conflicts, indexed validation, strict envelope/duplicate IDs, later old/new workplace denial, source-parent isolation, generated output preservation, later real audit-insert failure, fresh guards and reasoned actual-actor overrides. Test payloads are synthetic, not OS financial specifications.
+Verified application head `781338b3790bbf3b30b412d69fc5bb7a0547035f`: [CI 43557005407](https://github.com/muhdmuizz/sistem-abm/actions/runs/43557005407), **302 tests / 2403 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; build and existing Chromium regression passed. Twelve new database cases added; these totals describe the whole suite. [PR #37](https://github.com/muhdmuizz/sistem-abm/pull/37), merge pending. Subsequent evidence edits are Markdown only. Added cases exercise mixed create/edit/no-op identities, >50 distinct rows, initial/later stale conflicts, indexed validation, strict envelope/duplicate IDs, later old/new workplace denial, source-parent isolation, generated output preservation, later real audit-insert failure, fresh guards and reasoned actual-actor overrides. Test payloads are synthetic, not OS financial specifications.
+
+The initial run passed 301 cases but failed to create the new audit-failure trigger because its test fixture lost PostgreSQL dollar quoting. Quoting was corrected; the final run executes the actual later-audit-failure rollback case successfully. No application workaround was added.
 
 No UI change; no fresh visual QA claimed. Local update/smoke checks and direct service execution pending. Existing security/device/operational limitations remain tracked.
