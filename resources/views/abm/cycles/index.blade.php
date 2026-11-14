@@ -14,7 +14,7 @@
 <div class="phase-facts"><div><span class="small">Tarikh Mula</span><p>{{ $phase->tarikh_mula->format('d/m/Y') }}</p></div><div><span class="small">Tarikh Tamat</span><p>{{ $phase->tarikh_tamat->format('d/m/Y') }}</p></div><div><span class="small">Skop Pembukaan</span>@include('abm.cycles.scope-summary')</div></div>
 @if($phase->dibuka && ! $phase->dalamTempoh())<p class="small phase-window-note">Di luar tempoh pembukaan. Akses penyedia masih tertakluk pada tarikh Fasa.</p>@endif
 <div class="phase-actions"><a class="button icon-button" href="{{ route('phases.edit', [$cycle->id, $phase->id]) }}" aria-label="Pinda {{ $phase->label() }} Kitaran {{ $cycle->tahun }}" title="Pinda Fasa"><x-abm-icon name="pencil"/></a>
-@if($phase->tarikh_tamat->toDateString() < sprintf('%04d-12-31', $cycle->tahun))<a class="button" href="{{ route('phases.action', [$cycle->id, $phase->id, 'lanjutkan']) }}"><x-abm-icon name="calendar"/>Lanjutkan</a>@endif
+<a class="button" href="{{ route('phases.action', [$cycle->id, $phase->id, 'lanjutkan']) }}"><x-abm-icon name="calendar"/>Lanjutkan</a>
 @php($openingAction = $phase->dibuka ? 'tutup' : ($phase->pernah_dibuka ? 'buka-semula' : 'buka'))
 <a class="button {{ $phase->dibuka ? 'caution' : 'positive-action' }}" href="{{ route('phases.action', [$cycle->id, $phase->id, $openingAction]) }}"><x-abm-icon :name="$phase->dibuka ? 'lock' : 'unlock'"/>{{ $phase->dibuka ? 'Tutup' : ($phase->pernah_dibuka ? 'Buka Semula' : 'Buka') }}</a></div>
 </article>

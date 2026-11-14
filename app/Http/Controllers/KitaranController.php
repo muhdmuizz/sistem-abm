@@ -79,7 +79,7 @@ class KitaranController extends Controller
             'buka' => ! $fasa->dibuka && ! $fasa->pernah_dibuka,
             'buka-semula' => ! $fasa->dibuka && $fasa->pernah_dibuka,
             'tutup' => $fasa->dibuka,
-            'lanjutkan' => $fasa->tarikh_tamat->toDateString() < sprintf('%04d-12-31', $record->tahun),
+            'lanjutkan' => true,
         };
         abort_unless($valid, 409, 'Tindakan tidak lagi sesuai. Muat semula senarai Fasa.');
         return view('abm.cycles.action', ['cycle' => $record, 'phase' => $fasa, 'action' => $action]);

@@ -61,11 +61,6 @@ class PengurusanKitaran
             'semakan' => [$phase ? 'required' : 'nullable', 'integer', 'min:0'],
             'reason' => [$phase ? 'required' : 'nullable', 'string', 'max:1000'],
         ])->validate();
-        foreach (['tarikh_mula', 'tarikh_tamat'] as $key) {
-            if ((int) substr($data[$key], 0, 4) !== $cycle->tahun) {
-                throw ValidationException::withMessages([$key => 'Tarikh mesti dalam tahun Kitaran '.$cycle->tahun.'.']);
-            }
-        }
         $p = array_map('intval', $data['ptj_ids'] ?? []);
         $a = array_map('intval', $data['aktiviti_ids'] ?? []);
         $pairs = array_map(fn ($row) => ['ptj_id' => (int) $row['ptj_id'], 'aktiviti_kewangan_id' => (int) $row['aktiviti_kewangan_id']], $data['pasangan'] ?? []);
@@ -168,9 +163,8 @@ class PengurusanKitaran
                 'lanjutkan' => true,
             };
             abort_unless($valid, 409, 'Tindakan tidak lagi sesuai untuk status Fasa semasa.');
-            if ($action === 'lanjutkan' && ($data['tarikh_tamat'] <= $phase->tarikh_tamat->toDateString() ||
-                (int) substr($data['tarikh_tamat'], 0, 4) !== $cycle->tahun)) {
-                throw ValidationException::withMessages(['tarikh_tamat' => 'Tarikh baharu mesti selepas tarikh tamat semasa dan dalam tahun Kitaran.']);
+            if ($action === 'lanjutkan' && $data['tarikh_tamat'] <= $phase->tarikh_tamat->toDateString()) {
+                throw ValidationException::withMessages(['tarikh_tamat' => 'Tarikh baharu mesti selepas tarikh tamat semasa.']);
             }
             $before = $this->snapshot($phase);
             $this->audit->jalankan(Peranan::Superadmin, function () use ($cycle, $phase, $action, $data, $reason, $before) {

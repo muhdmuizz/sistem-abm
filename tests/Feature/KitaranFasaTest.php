@@ -114,7 +114,7 @@ class KitaranFasaTest extends TestCase
     public function test_invalid_dates_or_scope_shapes_are_rejected_without_partial_phase_or_audit(): void
     {
         $variants=[
-            ['tarikh_mula'=>'2027-12-31'], ['tarikh_tamat'=>'2029-01-01'], ['tarikh_tamat'=>'2028-04-30'],
+            ['tarikh_tamat'=>'2028-04-30'],
             ['tarikh_mula'=>'2028-02-30'], ['jenis_skop'=>'ptj'], ['jenis_skop'=>'aktiviti'],
             ['jenis_skop'=>'gabungan'], ['jenis_skop'=>'global','ptj_ids'=>[$this->ptjA->id]],
             ['jenis_skop'=>'ptj','ptj_ids'=>[999999]],
@@ -191,19 +191,19 @@ class KitaranFasaTest extends TestCase
         $this->assertSame(['phase.created','phase.buka','phase.tutup','phase.buka-semula'],RekodAudit::orderBy('id')->pluck('tindakan')->all());
     }
 
-    public function test_extension_preserves_closed_state_identity_and_scope_and_stays_inside_year(): void
+    public function test_extension_preserves_closed_state_identity_and_scope_across_years(): void
     {
         $phase=$this->makePhase(['jenis'=>'pindaan','jenis_skop'=>'ptj','ptj_ids'=>[$this->ptjA->id]]);
         $scopeId=$phase->skop()->sole()->id;
         $path=$this->phasePath($phase,'/tindakan/lanjutkan');
-        foreach (['2028-05-31','2028-05-01','2029-01-01'] as $end) {
+        foreach (['2028-05-31','2028-05-01','2029-02-30'] as $end) {
             $this->post($path,['semakan'=>0,'reason'=>'Extend','tarikh_tamat'=>$end])->assertSessionHasErrors('tarikh_tamat');
         }
-        $this->post($path,['semakan'=>0,'reason'=>'Lanjutkan tempoh.','tarikh_tamat'=>'2028-06-30'])->assertRedirect();
+        $this->post($path,['semakan'=>0,'reason'=>'Lanjutkan tempoh.','tarikh_tamat'=>'2029-01-01'])->assertRedirect();
         $this->assertFalse($phase->fresh()->dibuka);
         $this->assertSame(1,$phase->fresh()->nombor_pindaan);
         $this->assertSame($scopeId,$phase->skop()->sole()->id);
-        $this->assertSame('2028-06-30',$phase->fresh()->tarikh_tamat->toDateString());
+        $this->assertSame('2029-01-01',$phase->fresh()->tarikh_tamat->toDateString());
     }
 
     public function test_edit_preserves_phase_identity_and_open_state_and_changes_scope_atomically(): void
@@ -295,11 +295,43 @@ class KitaranFasaTest extends TestCase
         $this->assertDatabaseCount('rekod_audit',2);
     }
 
-    public function test_database_rejects_cross_year_dates_even_outside_service(): void
+    public function test_budget_2028_phase_can_start_in_2026_and_span_calendar_years(): void
+    {
+        $path='/pentadbiran/kitaran/'.$this->cycle->id.'/fasa';
+        $this->post($path,$this->phaseInput(['tarikh_mula'=>'2026-11-14','tarikh_tamat'=>'2027-01-31']))->assertRedirect();
+        $phase=Fasa::sole();
+        $this->assertSame(2028,$phase->tahun_kitaran);
+        $this->assertFalse($phase->dibuka);
+        $phase=$this->actionPhase($phase,'buka');
+        $resolver=app(PembukaanFasa::class);
+        foreach (['2026-11-13'=>false,'2026-11-14'=>true,'2027-01-31'=>true,'2027-02-01'=>false] as $date=>$allowed) {
+            $this->assertSame($allowed,$resolver->dibenarkan($this->cycle->id,$this->ptjA->id,$this->activityA->id,
+                CarbonImmutable::parse($date,'Asia/Kuala_Lumpur')));
+        }
+        $this->put($this->phasePath($phase),$this->phaseInput(['tarikh_mula'=>'2026-10-01','tarikh_tamat'=>'2029-01-01',
+            'semakan'=>$phase->semakan,'reason'=>'Betulkan tempoh pembidaan.']))->assertRedirect();
+        $this->assertSame('2026-10-01',$phase->fresh()->tarikh_mula->toDateString());
+        $this->assertTrue($phase->fresh()->dibuka);
+        $this->assertDatabaseHas('rekod_audit',['tindakan'=>'phase.updated','kitaran_id'=>$this->cycle->id]);
+        $this->get($path.'/tambah')->assertOk()->assertDontSee('min="2028-01-01"',false)->assertDontSee('max="2028-12-31"',false);
+        $this->get($this->phasePath($phase,'/tindakan/lanjutkan'))->assertOk()->assertDontSee('max="2028-12-31"',false);
+        $this->get('/pentadbiran/kitaran?tahun=2028')->assertOk()->assertSee('Lanjutkan</a>',false);
+    }
+
+    public function test_database_accepts_dates_outside_budget_year_and_keeps_parent_year_integrity(): void
+    {
+        $phase=$this->makePhase();
+        DB::table('fasa')->where('id',$phase->id)->update(['tarikh_mula'=>'2026-11-14','tarikh_tamat'=>'2029-01-01']);
+        $this->assertSame('2026-11-14',$phase->fresh()->tarikh_mula->toDateString());
+        $this->expectException(QueryException::class);
+        DB::table('fasa')->where('id',$phase->id)->update(['tahun_kitaran'=>2026]);
+    }
+
+    public function test_database_rejects_reversed_dates_even_outside_service(): void
     {
         $phase=$this->makePhase();
         $this->expectException(QueryException::class);
-        DB::table('fasa')->where('id',$phase->id)->update(['tarikh_tamat'=>'2029-01-01']);
+        DB::table('fasa')->where('id',$phase->id)->update(['tarikh_tamat'=>'2028-04-30']);
     }
 
     public function test_database_rejects_scope_shape_and_phase_kind_mismatch(): void

@@ -4,10 +4,12 @@
 **Date:** 10 November 2026  
 **Related:** AD-001, AD-002, AD-003, AD-005; detailed review and comparison UI deferred to AD-009 and AD-010.
 
+**User-authorised correction:** 14 November 2026 — Kitaran identifies the budget year, not the calendar-year boundary for Fasa dates. This supersedes the previous same-year date restriction; it does not change Program/ Aktiviti implementation dates.
+
 ## Core definitions
 
 - **Kitaran = Tahun**: one ABM planning year, identified by its unique year (e.g. 2028).
-- **Fasa = a bounded opening/closing period within that year** for **Bidaan Awal** or **Pindaan**. A Kitaran may have multiple Pindaan phases, numbered sequentially, without a predetermined limit.
+- **Fasa = a bounded opening/closing period for that budget year** for **Bidaan Awal** or **Pindaan**. A Kitaran may have multiple Pindaan phases, numbered sequentially, without a predetermined limit.
 - **One complete Bidaan per PTJ + Aktiviti Kewangan + Kitaran**. A Pindaan edits/corrects the existing Bidaan; it never creates a second Bidaan or a separate financial hierarchy.
 - Fasa is an access/time control, **not** a separate approval workflow or an owner of submissions. Do not introduce exclusive-active-Fasa constraints or arbitrary overlap restrictions.
 
@@ -15,7 +17,7 @@
 
 **Kitaran:** required unique Tahun Kitaran. No duplicate year or redundant mandatory name.
 
-**Fasa:** required Jenis Fasa (Bidaan Awal/Pindaan), Tarikh Mula, Tarikh Tamat, and Skop Pembukaan (global or selected PTJ/Aktiviti Kewangan). Dates must be valid and within the Kitaran year. Pindaan numbering is automatic. New Fasa starts **Ditutup** until Superadmin explicitly opens it; reaching the start date does not automatically activate it.
+**Fasa:** required Jenis Fasa (Bidaan Awal/Pindaan), Tarikh Mula, Tarikh Tamat, and Skop Pembukaan (global or selected PTJ/Aktiviti Kewangan). Dates must be valid, with Tarikh Tamat on or after Tarikh Mula; they are independent of the Kitaran budget year and may begin earlier or span calendar years. For example, bidding for Kitaran 2028 may start in 2026. Extensions must end after the current end date without a Kitaran-year limit. Pindaan numbering is automatic. New Fasa starts **Ditutup** until Superadmin explicitly opens it; reaching the start date does not automatically activate it.
 
 Superadmin may open, close, extend and reopen Fasa, including selectively for PTJ, Aktiviti Kewangan, or a specific PTJ + Aktiviti Kewangan combination. All changes are audited.
 
