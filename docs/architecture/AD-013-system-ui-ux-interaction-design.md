@@ -135,6 +135,17 @@ These standards do not introduce new functions, change role permissions or overr
 
 These are shared interaction standards, not changes to AD-004 wizard persistence, AD-007 Program/ Aktiviti or financial calculation rules.
 
+### 05.1 Monetary display contract — owner clarification, 15 November 2026
+
+The owner reaffirmed tabular numbers and made the expected monetary presentation explicit: **`4,320.00`, not `4320`**.
+
+- Use the existing Inter font with **tabular numerals** (`font-variant-numeric: tabular-nums`) and right alignment for numeric cells; align monetary column headers with their values. Do not substitute a monospace font for normal financial figures.
+- Monetary amounts use **comma thousands grouping and a decimal point with two displayed decimal places**: `0.00`, `180.00`, `4,320.00`, `1,234,567.80`. Apply this consistently to monetary input presentation, reference KADAR, row previews, read-only values, totals and financial summaries as those interfaces are implemented.
+- Keep quantities/counts, months, frequencies, identifiers and dates semantically distinct. They remain appropriately aligned/tabular numeric values; they are not automatically currency or forced to two monetary decimals.
+- Display formatting is separate from source values and financial arithmetic. Preserve exact decimal source/reference values and calculations; do not coerce large decimals through binary floating point, truncate input precision, persist formatting commas as numeric data or make displayed two-decimal text the basis of subsequent calculations.
+- Editing/focus/blur, paste, save/reopen, duplication and validation failures must round-trip the original exact values. Accept formatted monetary paste such as `4,320.00` through an explicit, tested normalisation boundary. Where a higher-precision rate/source/preview needs inspection, retain access to its exact value rather than silently replacing it with the display representation. This clarification does not approve a new financial rounding, entitlement or eligibility rule.
+- Use one shared formatter/input presentation path across OS definitions. The next OS28000 implementation must also apply this contract to the existing OS25000, SBK and TASKA monetary cells; a correctly formatted new OS alone does not fulfil this shared commitment.
+
 ## Section 06 — Tables & Data Presentation (Approved; complete)
 
 1. **Table structure:** Compact rows, distinguished headers and subtle horizontal dividers; avoid unnecessary gridlines and zebra striping.
@@ -364,7 +375,7 @@ Section 12 is a **system-wide design and acceptance standard**, not a new workfl
 
 1. **Visual consistency:** approved Inter typography, spacing, restrained colours, Lucide icon conventions, button hierarchy and reusable components.
 2. **Functional integrity:** UI follows AD-001–AD-012 authority, status transitions, roles, PTJ/Aktiviti Kewangan/OS scope and approved submission/review flows.
-3. **Financial accuracy:** correct amounts, decimal precision, totals, immutable snapshots, historical comparison and official export semantics.
+3. **Financial accuracy:** correct amounts, decimal precision, totals, immutable snapshots, historical comparison and official export semantics. Verify Section 05.1 monetary presentation (including `4,320.00`), tabular alignment, grouped-paste/edit round-trips and preservation of exact source/calculation values.
 4. **Responsive behaviour:** desktop/tablet/mobile navigation, controls, filters, forms and data presentation retain meaning and operability.
 5. **Accessibility:** keyboard, focus, assistive-technology semantics, contrast, touch interaction and reduced-motion behaviour.
 6. **Performance and regression:** stable loading, no unnecessary skeleton/arrow flashes, duplicate actions, lost edits, broken navigation or stale/false save confirmations.

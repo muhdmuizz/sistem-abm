@@ -1,6 +1,6 @@
 # Batch 025 — OS42000 TASKA Spreadsheet Definition
 
-**Status:** Merged in PR #58; local update/functional checks pending. Authorised continuation 15 November 2026.
+**Status:** Merged in PR #58; local synchronisation user-confirmed; detailed functional checks unverified. Authorised continuation 15 November 2026.
 **Baseline:** `258fe6f14262cea08355c5c2f9c5ae4a2a97adf7` on dev.
 
 ## Scope and authority
@@ -36,3 +36,7 @@ Official financial output/totals/completeness, programme association/inheritance
 ## Merge checkpoint
 
 [PR #58](https://github.com/muhdmuizz/sistem-abm/pull/58) merged into dev at `0eb73bc132474e1355d22f706104600001c76c06`. Final evidence-only commit `c970d9c2b9b46791938c98335c2b8807ee1f287a` changes documentation; the application code remains the tested head `9c4bce154c684ec232416e9e4d99572ddc64cee2`. Local update has not been executed by the cloud agent or confirmed by the user.
+
+## Local confirmation and display refinement — 15 November 2026
+
+The user reported “The previous is clean.” after the supplied update commands. Local synchronisation/cache clear are user-confirmed; detailed TASKA functional/role/device/audit checks remain unverified locally. The user also requires tabular monetary presentation such as `4,320.00`; raw previews in the verified Batch 025 UI do not yet fulfil that explicit display contract. The next shared-grid task must implement AD-013 Section 05.1 while retaining exact source/calculation values. No application change or new test execution is claimed here.

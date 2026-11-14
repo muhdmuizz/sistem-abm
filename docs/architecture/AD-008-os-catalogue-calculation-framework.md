@@ -73,6 +73,7 @@ Items 2–8 must be filled from verified OS-specific requirements before an indi
 - Treat user-entered source inputs and computed financial outputs as distinct data. Users do not arbitrarily edit derived amounts.
 - Calculate deterministically from validated inputs, inherited context, verified rates and the applicable OS definition/version.
 - Store financial amounts as exact decimals; do not use binary floating-point arithmetic for monetary totals. No universal rate, multiplier, rounding rule or negative/zero rule is assumed in this draft.
+- Monetary UI presentation follows [AD-013 Section 05.1](AD-013-system-ui-ux-interaction-design.md#051-monetary-display-contract--owner-clarification-15-november-2026): tabular/right-aligned values with thousands grouping and two displayed decimals (`4,320.00`). Display formatting must preserve exact source/reference/calculation values and cannot establish a financial rounding policy or alter export numeric semantics.
 - A single source input may generate multiple stable, attributable granular Butiran output rows where the verified OS specification requires it.
 - Each eligible valid Butiran contributes to its Anggaran total; active Anggaran totals contribute to the Bidaan total. Incomplete/blank rows do not inflate totals.
 - Record calculation inputs and applicable rule/reference version in submitted immutable snapshots so historical figures remain reproducible even after rates/reference data change.
