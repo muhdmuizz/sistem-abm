@@ -1,6 +1,6 @@
 # Batch 021 — Program/ Aktiviti Interface
 
-**Status:** Verification passed in PR #49; merge and local acceptance pending. User approved the bounded interface scope on 14 November 2026.
+**Status:** Verified and merged in PR #49 at `981b766d4435724abf6dc7b463bbce6c2a109fa1`; local acceptance pending. User approved the bounded interface scope on 14 November 2026.
 **Baseline:** `e2197b6012d77f8f15ba7a95773e1eb1a6826618` on dev.
 
 ## Scope and authority
