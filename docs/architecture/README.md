@@ -73,7 +73,7 @@ This records the **existing six-step development plan** without introducing anot
 | --- | --- | --- |
 | 01 | Canonical Model & Compatibility | Design completed; not evidence of implemented code |
 | 02 | Anggaran Persistence | In progress — storage, audited activation and backend source draft saves implemented through Batch 014; Batch 023 adds an OS25000 typed source adapter and shared editor; other definitions/official calculation integration remain pending; Batch 015 exposes context/catalogue/activation UI; Batches 016/019 add atomic multi-row draft saves and independent draft duplication |
-| 03 | Senarai Anggaran & Editor UI | In progress — Batch 017 read shell/navigation, Batch 018 Log Tindakan and Batch 023 shared spreadsheet source editing for OS25000 implemented; full hub, remaining OS definitions and financial integration pending |
+| 03 | Senarai Anggaran & Editor UI | In progress — Batch 017 read shell/navigation, Batch 018 Log Tindakan and Batches 023–024 shared spreadsheet source editing for OS25000 and approved OS42000 SBK contexts implemented; full hub, remaining OS definitions and financial integration pending |
 | 04 | Activity-Level Submission | Not started |
 | 05 | **OS End-to-End Validation — All Applicable OS** | Not started |
 | 06 | Regression, Cleanup & Readiness | Not started |
@@ -93,3 +93,7 @@ Batch 022 refines shared UI spacing, typography/controls and empty/read-only/pro
 ## Latest bounded source editor checkpoint — Batch 023
 
 [PR #54](https://github.com/muhdmuizz/sistem-abm/pull/54) merged at `683629ba734e9104897e8722363bbcaebeb92270`: shared spreadsheet-like source editing with OS25000 typed inputs/references, draft save/reopen, duplication and audited removal. [CI 43632464587](https://github.com/muhdmuizz/sistem-abm/actions/runs/43632464587) passed 423 tests / 3245 assertions, build/Chromium and 11 new reviewed grid captures at tested head `11255c04c0c7c0d117c66d58aa475896b7f654e3`. Local acceptance pending; no migration/seed. Exact row previews do not certify official totals/completeness. Other OS definitions, programme inheritance and financial workflows remain pending. No AD approval or financial rule was changed by this implementation.
+
+## Latest typed OS checkpoint — Batch 024
+
+[PR #56](https://github.com/muhdmuizz/sistem-abm/pull/56) merged at `68a8f46fb839675f2d83ad7914e9b4cb2f163a19`: OS42000 SBK source entry for Pendidikan Rendah 030228 and Pendidikan Menengah 030310 using the common spreadsheet, four shared Pukal options, manual monthly KADAR and fixed 12-month exact previews. Tested `5ebdce2244d8f80aa021df961b1af4efd1c4eb9f`, [CI 43635684953](https://github.com/muhdmuizz/sistem-abm/actions/runs/43635684953), 431 tests / 3354 assertions on PHP 8.4.27 / PostgreSQL 18.7, build/Chromium and visual correction review passed. No migration/seed or approved financial-rule change. Batch 023 local synchronisation/cache clear user-confirmed; its detailed functional checks unverified. Batch 024 local acceptance pending; official calculation/output/completeness and programme inheritance remain pending.

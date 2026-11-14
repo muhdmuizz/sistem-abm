@@ -27,7 +27,7 @@ No migration or seed; no official financial output, totals/completeness, submiss
 
 User reported Batch 022 UI clean, while noting overall visual design still needs future refinement. Record supplied update/requested layout checks as user-confirmed, not independent Windows/device inspection or complete design acceptance.
 
-## Windows follow-through (not yet executed)
+## Windows follow-through — synchronisation confirmed; detailed functional checks unverified
 
 Keep the existing development server running. With a clean working tree, switch to dev, pull with --ff-only and run php artisan optimize:clear. This batch has no migration, seeder or local asset build.
 

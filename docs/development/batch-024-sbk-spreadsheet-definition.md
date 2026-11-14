@@ -1,6 +1,6 @@
 # Batch 024 — OS42000 SBK Spreadsheet Definition
 
-**Status:** Verification passed; merge pending — owner authorised continuation 15 November 2026.
+**Status:** Merged in PR #56; local update/functional checks pending — owner authorised continuation 15 November 2026.
 **Baseline:** `250d57f95706e3caf1eb30b9a8a815d7644700e6` on dev.
 
 ## Scope and authority
@@ -30,3 +30,7 @@ Open an authorised active OS42000 — Bayaran Bil Utiliti Sekolah Bantuan Keraja
 ## Remaining work
 
 Official calculation/output/completeness and programme association/inheritance remain unimplemented. Other ready OS need typed definitions. Preserve all approved OS decisions and keep unresolved rules isolated; OS14000 detailed work stays paused.
+
+## Merge checkpoint
+
+[PR #56](https://github.com/muhdmuizz/sistem-abm/pull/56) merged into dev at `68a8f46fb839675f2d83ad7914e9b4cb2f163a19`. Final evidence-only commit `5925c375f85ff878726492ea5da0c71ab3e13a88` changes documentation; application code remains the exact tested head `5ebdce2244d8f80aa021df961b1af4efd1c4eb9f`. Local update has not been executed by the cloud agent or confirmed by the user.

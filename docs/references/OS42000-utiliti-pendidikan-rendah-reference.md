@@ -56,3 +56,7 @@ Both approved SBK contexts use the **same 9 Active / 19 Inactive / 2 Deferred** 
 This approval extends the documented template reuse to Pendidikan Menengah; it **supersedes only** the earlier statement that its template reuse had not yet been approved. Preserve the shared reference rows and the original source spelling in historical catalogue records. **Asrama Malaysia (AMal), Kod Aktiviti `030318`, remains Excluded — reference only** and is not an eligible Anggaran in this design.
 
 No Laravel, PostgreSQL, Excel exporter, mapping CSV, reference data or master catalogue changes are authorised by this documentation decision; AD-008 remains Draft.
+
+## Implementation status — Batch 024, 15 November 2026
+
+The earlier no-application-change statements describe the documentation approvals above. The owner's subsequent instruction to continue development authorised the source-draft implementation in [Batch 024](../development/batch-024-sbk-spreadsheet-definition.md). [PR #56](https://github.com/muhdmuizz/sistem-abm/pull/56), merged `68a8f46fb839675f2d83ad7914e9b4cb2f163a19`, enables the shared SBK template for the two existing approved activity/code mappings. It reads the original shared CSV; no reference/catalogue/mapping or permission data is changed. Fixed Pukal/12 and manual monthly rate produce exact row previews; official output/totals/completeness remain pending. CI 43635684953 passed 431 tests / 3354 assertions plus build/Chromium. Local acceptance pending. This status update changes no approved applicability or financial rule.
