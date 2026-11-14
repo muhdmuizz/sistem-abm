@@ -8,72 +8,16 @@ use App\Enums\StatusBidaan;
 use App\Models\AktivitiKewangan;
 use App\Models\Anggaran;
 use App\Models\Bidaan;
-use App\Models\Kitaran;
 use App\Models\Ptj;
-use App\Models\RujukanOs;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 /** Initial preparation only. No source writes, completeness, calculations or submission transitions. */
 class PengaktifanKewangan
 {
     public function __construct(
         private JejakAudit $audit,
-        private SkopPeranan $roles,
-        private AksesPeruntukan $permissions,
-        private PembukaanFasa $phases,
+        private KawalanPenyediaanKewangan $guard,
     ) {}
-
-    private function actor(): User
-    {
-        $actor = User::with('ptj')->whereKey(Auth::id())->lockForUpdate()->first();
-        $authenticated = session('abm_authenticated_at');
-        $active = session('abm_last_activity');
-        $now = now()->timestamp;
-        abort_unless($actor && $actor->is_active && $actor->ptj !== null &&
-            trim($actor->google_subject ?? '') !== '' &&
-            session('abm_access_revision') === $actor->access_revision &&
-            is_int($authenticated) && is_int($active) &&
-            $authenticated <= $active && $active <= $now &&
-            $now - $authenticated < 28800 && $now - $active < 1800, 403);
-        $actor->setRelation('penugasanPeranan', $actor->penugasanPeranan()->lockForUpdate()->get());
-        return $actor;
-    }
-
-    private function prepareLocks(int $cycleId): Kitaran
-    {
-        // Same key as central-permission administration: do not authorise against an interleaved edit.
-        DB::select('select pg_advisory_xact_lock(41620101, 8010)');
-        // Phase administration locks this parent too; creation is serialised without a per-phase identity.
-        return Kitaran::whereKey($cycleId)->lockForUpdate()->firstOrFail();
-    }
-
-    private function authorise(User $actor, Peranan $role, int $cycle, int $ptj, int $activity, ?int $os, ?string $reason): array
-    {
-        $admin = $actor->penugasanPeranan->contains('peranan', Peranan::Superadmin);
-        abort_unless($this->roles->meliputi($actor->id, $role, $ptj, $activity, $actor->tempat_bertugas_id), 403);
-        $central = $os === null
-            ? $this->permissions->bolehAksesAktiviti($ptj, $activity)
-            : $this->permissions->bolehAksesOs($ptj, $activity, $os);
-        $open = $this->phases->dibenarkan($cycle, $ptj, $activity);
-        abort_unless($admin || ($central && $open), 403);
-        $reason = trim($reason ?? '');
-        $override = ['kebenaran_pusat' => ! $central, 'fasa' => ! $open];
-        if (strlen($reason) > 4000 || mb_strlen($reason) > 1000 || ($admin && (! $central || ! $open) && $reason === '')) {
-            throw ValidationException::withMessages(['reason' => 'Alasan sah diperlukan bagi pintasan Superadmin (maksimum 1000 aksara).']);
-        }
-        return ['override' => $override, 'reason' => $reason];
-    }
-
-    private function current(Bidaan $bid, int $revision): void
-    {
-        abort_unless($revision >= 0, 422);
-        abort_unless($bid->semakan === $revision, 409, 'Bidaan telah berubah. Muat semula sebelum meneruskan.');
-        abort_unless($bid->status === StatusBidaan::DalamPenyediaan, 409,
-            'Pengaktifan awal hanya tersedia untuk Bidaan Dalam Penyediaan.');
-    }
 
     private function state(Bidaan $bid, ?Anggaran $estimate = null): array
     {
@@ -90,15 +34,15 @@ class PengaktifanKewangan
     public function aktifkanBidaan(int $cycleId, int $ptjId, int $activityId, int $expectedRevision, ?string $reason = null): Bidaan
     {
         return DB::transaction(function () use ($cycleId, $ptjId, $activityId, $expectedRevision, $reason) {
-            $actor = $this->actor();
-            $this->prepareLocks($cycleId);
+            $actor = $this->guard->actor();
+            $this->guard->prepareLocks($cycleId);
             Ptj::findOrFail($ptjId);
             AktivitiKewangan::findOrFail($activityId);
-            $authority = $this->authorise($actor, Peranan::PenyediaBidaan, $cycleId, $ptjId, $activityId, null, $reason);
+            $authority = $this->guard->authorise($actor, Peranan::PenyediaBidaan, $cycleId, $ptjId, $activityId, null, $reason);
             $bid = Bidaan::where('kitaran_id', $cycleId)->where('ptj_id', $ptjId)
                 ->where('aktiviti_kewangan_id', $activityId)->lockForUpdate()->first();
             if ($bid) {
-                $this->current($bid, $expectedRevision);
+                $this->guard->current($bid, $expectedRevision);
                 if ($bid->diaktifkan) {
                     return $bid;
                 }
@@ -127,18 +71,16 @@ class PengaktifanKewangan
     public function aktifkanOs(int $bidId, int $osId, int $expectedBidRevision, ?string $reason = null): Anggaran
     {
         return DB::transaction(function () use ($bidId, $osId, $expectedBidRevision, $reason) {
-            $actor = $this->actor();
+            $actor = $this->guard->actor();
             $cycleId = Bidaan::whereKey($bidId)->value('kitaran_id');
             abort_if($cycleId === null, 404);
-            $this->prepareLocks($cycleId);
+            $this->guard->prepareLocks($cycleId);
             $bid = Bidaan::whereKey($bidId)->where('kitaran_id', $cycleId)->lockForUpdate()->firstOrFail();
-            $authority = $this->authorise($actor, Peranan::PenyediaAnggaran, $cycleId, $bid->ptj_id, $bid->aktiviti_kewangan_id, $osId, $reason);
-            $this->current($bid, $expectedBidRevision);
+            $authority = $this->guard->authorise($actor, Peranan::PenyediaAnggaran, $cycleId, $bid->ptj_id, $bid->aktiviti_kewangan_id, $osId, $reason);
+            $this->guard->current($bid, $expectedBidRevision);
             abort_unless($bid->diaktifkan, 409, 'Aktifkan Bidaan terlebih dahulu.');
             // Superadmin overrides permission/time scope, never catalogue exclusion or activity parentage.
-            RujukanOs::untukPelaksanaan()->whereKey($osId)
-                ->whereHas('pemetaan', fn ($q) => $q->where('aktiviti_kewangan_id', $bid->aktiviti_kewangan_id))
-                ->sharedLock()->firstOrFail();
+            $this->guard->catalogue($bid, $osId);
             $estimate = $bid->anggaran()->where('rujukan_os_id', $osId)->lockForUpdate()->first();
             if ($estimate?->diaktifkan) {
                 return $estimate;
