@@ -1,6 +1,6 @@
 # Batch 020 — Program/ Aktiviti Foundation
 
-**Status:** Code verification passed; merge/local migration/reference import pending.
+**Status:** Code verification passed and merged; local migration/reference import pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `debac9ce7cf0be0bba80dbf3207ece84ed8e1b29` on dev.
 **Authorisation:** User accepted the proposed Program/ Aktiviti foundation and explicitly directed “Okay, let's proceed as planned.” AD-007 is finalised; AD-008 detailed OS design remains paused.
@@ -35,7 +35,7 @@ One forward migration and the explicit reference seeder are required locally. No
 
 ## Verification and handoff
 
-Verified application head `99bdfa69d03e31a7f0b0994dcc0203dfda337b84`: [CI 43579320487](https://github.com/muhdmuizz/sistem-abm/actions/runs/43579320487), **393 tests / 3003 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; frontend build and all existing Chromium checks passed. Fifty-one programme-foundation cases added; one existing storage rollback regression updated for dependent migration order. [PR #46](https://github.com/muhdmuizz/sistem-abm/pull/46), merge pending. Subsequent evidence edits are Markdown only.
+Verified application head `99bdfa69d03e31a7f0b0994dcc0203dfda337b84`: [CI 43579320487](https://github.com/muhdmuizz/sistem-abm/actions/runs/43579320487), **393 tests / 3003 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; frontend build and all existing Chromium checks passed. Fifty-one programme-foundation cases added; one existing storage rollback regression updated for dependent migration order. [PR #46](https://github.com/muhdmuizz/sistem-abm/pull/46), merged at `97733ab16742d0b2e4a57645a78dd82f9d86c670`. Subsequent evidence edits are Markdown only.
 
 The first run passed all initial new cases but exposed an old storage rollback test that attempted to drop Bidaan while the new restrictive programme FK still existed. The test now reverses dependent programme/workflow migrations first and restores them in forward order; no FK was removed or weakened. Non-scalar/boolean input validation was also hardened and tested before final verification. Added cases cover source-text-exact/idempotent RPM import, repeated local numbering, four-section metadata/derived headcounts, strict objectives/progressive drafts, parent mismatch, identity/no-op/stale retries, budget-year dates versus early Fasa, category/classification/positive quantity rules, exact large totals, package labels without OS mutation, mass assignment, scoped reads/writes, old/new workplace, roles/session/central/Fasa, protected workflows, actual Superadmin, actual PostgreSQL audit failure rollback, direct database corruption rejection and migration down/up in isolation.
 

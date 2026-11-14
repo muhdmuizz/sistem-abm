@@ -134,3 +134,6 @@ TERAS STRATEGIK 7: Meningkatkan Kecekapan Tadbir Urus dan Sistem Penyampaian
   * Prakarsa 1: Membangunkan Pelan Pengurusan Perubahan KPM
   * Prakarsa 2: Membangunkan Pelan Pengurusan Risiko KPM
 ```
+## Implementation checkpoint — 14 November 2026
+
+Batch 020 adds database-backed reference import, exact parent-FK programme selections and internal draft validation using these confirmed defaults. The approved wording/numbering and optionality policy above are unchanged. The initial implementation requires all three objective selections; progressive draft incompleteness applies to other programme metadata. Superadmin optionality controls are not yet implemented or enabled. [rpm-objectives.json](rpm-objectives.json) is the exact machine-readable source transcription; RpmReferenceSeeder imports it without users or programme/financial rows. Verified by [CI 43579320487](https://github.com/muhdmuizz/sistem-abm/actions/runs/43579320487), 393 tests / 3003 assertions at 99bdfa6; [PR #46](https://github.com/muhdmuizz/sistem-abm/pull/46) merged at 97733ab16742d0b2e4a57645a78dd82f9d86c670. Local migration/import and programme interface remain pending.
