@@ -1,6 +1,6 @@
 # Batch 018 — Scoped Anggaran Log Tindakan
 
-**Status:** Implementation prepared; CI/visual verification/merge/local acceptance pending.
+**Status:** Code/visual verification passed; merge/local acceptance pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `410698a993d6bc2de7a06ba3c4391c69f4bd5b35` on dev.
 **Authorisation:** User directed continuation after Batch 017. Implement AD-004 shared Log Tindakan under AD-005/011 viewing/audit controls and AD-013 spacing/state review. Batches 016–017 local checks remain unconfirmed.
@@ -19,6 +19,8 @@ This is not a global audit/security viewer, financial diff or Semakan/review his
 
 ## Verification and handoff
 
-CI/database/build/Chromium and screenshot review pending. Cases cover real audited activation/saves, payload omission without rewriting history, recorded actor/role, escaping, old/new/current workplace moves, entity/OS/context isolation, independent pagination and invalid pages, fresh permissions/role/session denial, read-only monitor and reasoned Superadmin. Synthetic events test exclusions only; they are not financial policy.
+Verified application head `48b245af39e20b2afb0e3c11e6eef5cb05f94bb9`: [CI 43561176414](https://github.com/muhdmuizz/sistem-abm/actions/runs/43561176414), **325 tests / 2596 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`; frontend build and Chromium passed on the first run. Ten HTTP/database cases added; counts describe the complete suite. [PR #41](https://github.com/muhdmuizz/sistem-abm/pull/41), merge pending. Subsequent evidence edits are Markdown only.
+
+Six expanded states at desktop/mobile plus empty/populated collapsed states (16 screenshots) reviewed for wrapping, context, record cards, insets and independent pagination. No defect identified in this bounded view. [Artifact 14100476192](https://github.com/muhdmuizz/sistem-abm/actions/runs/43561176414/artifacts/14100476192). Static fixtures verify rendered states/keyboard expansion; live local Google/browser flows remain unverified. Source/audit querying and denial paths are covered separately by HTTP/database tests. Cases cover real audited activation/saves, payload omission without rewriting history, recorded actor/role, escaping, old/new/current workplace moves, entity/OS/context isolation, independent pagination and invalid pages, fresh permissions/role/session denial, read-only monitor and reasoned Superadmin. Synthetic events test exclusions only; they are not financial policy.
 
 Visual states: empty/populated/scoped/paginated/read-only/validation, collapsed and expanded where applicable, on desktop/mobile. No asynchronous loading path added. Local update and UI inspection pending; keep running server and refresh after pull/cache clear.
