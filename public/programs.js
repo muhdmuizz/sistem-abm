@@ -40,6 +40,16 @@
         previousMode = mode.value; packageState();
     });
     packageState();
+    form.querySelectorAll('[data-program-search]').forEach(input => {
+        input.addEventListener('input', event => {
+            event.stopPropagation();
+            const select = document.getElementById(input.dataset.programSearch);
+            const query = input.value.toLocaleLowerCase();
+            for (const option of select.options) {
+                option.hidden = !!option.value && !option.selected && !option.text.toLocaleLowerCase().includes(query);
+            }
+        });
+    });
     let nextRow = 1000000;
     function classify(row) {
         const category = row.querySelector('[data-person-category]').value;
@@ -100,6 +110,7 @@
     form.addEventListener('submit', () => { if(status) status.textContent = 'Menyimpan draf…'; });
     const errors = document.querySelector('[data-program-errors]');
     if (errors) {
+        if (status) dirty();
         const messages = JSON.parse(errors.dataset.messages || '{}');
         let number = 0;
         for (let [key, values] of Object.entries(messages)) {

@@ -64,6 +64,7 @@ jobs:
           python3 -m http.server 4173 --directory storage/app/ui-qa > /tmp/abm-ui-server.log 2>&1 &
           node scripts/ui-smoke.mjs
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: first-interface-screenshots
           path: storage/app/ui-qa/*.png
