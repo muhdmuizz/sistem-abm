@@ -1,14 +1,39 @@
 # AD-008 — OS Catalogue & Calculation Framework
 
-**Status:** Draft — shared technical framework documented; OS-specific financial policy and mappings pending verification  
+**Status:** Draft umbrella — multiple owner-approved OS specifications recorded; remaining per-OS gaps and implementation verification tracked below  
 **Date:** 11 November 2026  
 **Related:** AD-002, AD-003, AD-004, AD-007, AD-009, AD-010, AD-011, AD-012
 
 ## Scope and evidence boundary
 
-Define the common OS catalogue, financial calculation, inheritance, validation and output contracts used by the single AD-004 Anggaran wizard. **This draft does not approve individual OS rates, eligibility policies, formulas, object-code mappings, or the official payroll Excel column schema.** Those require authoritative reference templates and/or verified source data.
+Define the common OS catalogue, financial calculation, inheritance, validation and output contracts used by the single AD-004 Anggaran wizard. **The umbrella Draft status does not invalidate the later owner-approved OS decisions linked below.** Implement only their explicit approved scope; unresolved eligibility, rounding, mappings and the payroll schema remain separate gaps. Historical unverified statements below describe their original checkpoint and must not override later approvals.
 
 At the time of drafting, GitHub `main` contains architecture documentation only; the Laravel source and official OS spreadsheets were not available in that branch. Do not infer current implementation from these architecture notes.
+
+
+## Current contract and readiness reconciliation — 15 November 2026
+
+**Current Perbelanjaan output is 30 columns**, as defined in the owner-approved revision below. The earlier 27-column matrices remain valid historical decisions: retain old 01–07; map old 08–27 forward by three; insert new 08–10 as Inactive/blank unless explicitly approved for that OS. Read mappings by canonical field identity, not stale position. Do not repeat the original applicability decisions or rename the two approved worksheets. The export contract does not require displaying 30 editable columns in the shared spreadsheet editor.
+
+| OS scope | Approved work to preserve | Remaining implementation boundary |
+| --- | --- | --- |
+| OS14000 | [Consolidated references and Kadar formula](../references/OS14000-reference-consolidated.md); historical 19/8 applicability | Detailed work remains paused; overall amount, output expansion and precision/rounding are not finalised |
+| OS15000 Faedah | [All 13 Kemudahan applicability and Kadar modes](../references/OS15000-faedah-faedah-kewangan-yang-lain-27-column-applicability.md) | Overall financial formulas and applicable BIPs percentage/rounding; programme inheritance |
+| OS15000 Perubatan | [Column applicability and nine manual-rate categories](../references/OS15000-bayaran-perubatan-27-column-applicability.md) | Financial multiplier meanings/formula and conditional contract duration convention |
+| OS21000 travel variants | [Direct-entry applicability and shared reference](../references/OS21000-perjalanan-sara-hidup-27-column-applicability.md) | Explicit unresolved subcategory applicability, blank-rate handling and calculations |
+| OS21000 Pertukaran | [Final hierarchy, eight combinations, reference matching and formulas](../references/OS21000-tuntutan-perbelanjaan-pertukaran-category-combinations.md) | Implement and verify the exact approved component/rate selection; preserve separation from OS22000 |
+| OS22000 | [One Anggaran/two paths, corrected source ownership and KADAR × 1](../references/OS22000-unified-kategori-decisions.md) | Reconcile legacy duplicate identities; unresolved special grade C must not be guessed |
+| OS23000 | [Both paths/seven combinations and monthly KADAR × 12](../references/OS23000-perhubungan-utiliti-reference.md) | Reconcile legacy identities/source associations; no new formula discussion |
+| OS24000 | [Umum](../references/OS24000-sewaan-umum-reference.md) and [Mesin Fotostat](../references/OS24000-sewaan-mesin-fotostat-reference.md) approved mappings/formulas | Preserve distinct contexts; verify inclusive calendar duration boundaries |
+| OS25000 | [Four categories, exact reference UNIT/KADAR, quantity formula](../references/OS25000-bahan-makanan-minuman-reference.md) | Implement shared editor adapter and calculation/output tests |
+| OS26000 | [Both paths, UNIT mapping, 2028 planning rates and proposal governance](../references/OS26000-bahan-mentah-reference.md) | Implement references, approval/publication and draft/submission safeguards |
+| OS27000 | [Office supplies](../references/OS27000-bekalan-alat-pejabat-reference.md), [uniform](../references/OS27000-pakaian-seragam-reference.md), [Touch n Go](../references/OS27000-bekalan-dan-bahan-lain-touch-n-go-reference.md) approved variants | Implement their distinct rules; office-supply proposal governance is required |
+| OS28000 | [Conditional categories, mixed Kadar and formula](../references/OS28000-penyelenggaraan-reference.md) | Implement and verify |
+| OS29000 | [Umum](../references/OS29000-umum-reference.md), [meter](../references/OS29000-bacaan-meter-mesin-fotostat-reference.md), [Pakej](../references/OS29000-pakej-reference.md), [MySTEP](../references/OS29000-mystep-reference.md) approved mappings/formulas | Implement distinct contexts, rate classification and calendar/chargeable-duration safeguards |
+| OS42000 | [TASKA](../references/OS42000-subsidi-yuran-taska-reference.md) and [shared SBK template](../references/OS42000-utiliti-pendidikan-rendah-reference.md) approved rules | Preserve distinct activities, fixed SBK months and AMal exclusion |
+| Gaji & Emolumen | Separate existing worksheet boundary | Official payroll schema still pending |
+
+Approval of a mapping/formula is not proof of complete precision, eligibility, implementation or production readiness. Retain explicitly recorded gaps; do not invent missing policies. Common spreadsheet and draft persistence work can proceed without reopening approved decisions or silently enabling unresolved calculations.
 
 ## 01 — Canonical entity and catalogue
 
@@ -93,7 +118,7 @@ Each saved **Butiran Anggaran row** has a unique stable Butiran ID **even if mul
 ## 07 — Export compatibility
 
 - Preserve AD-010 official scopes: **Keseluruhan Data**, **Bidaan Lengkap**, **OS Terpilih**.
-- The complete workbook has **Gaji & Emolumen** (OS11000–OS13000, official schema pending) and **Perbelanjaan** (OS14000–OS29000 and OS42000, official 27-column granular structure).
+- The complete workbook has **Gaji & Emolumen** (OS11000–OS13000, official schema pending) and **Perbelanjaan** (OS14000–OS29000 and OS42000, current approved 30-column granular structure).
 - Selected OS are exported only in their applicable worksheet format. Do not introduce extra export filters, empty-sheet rules or new worksheet conventions.
 - Analisis has no Excel export and retains its approved filters and historical PTJ-level comparison.
 
@@ -102,14 +127,14 @@ Each saved **Butiran Anggaran row** has a unique stable Butiran ID **even if mul
 1. Locate the official OS catalogue/templates and verify each applicable OS and variant.
 2. Verify the authorised rate and eligibility references, effective dates and source ownership.
 3. Specify OS-specific source inputs, inherited dependencies, formulas, precision/rounding and row expansion.
-4. Verify all 27 Perbelanjaan column mappings and obtain the separate official Gaji & Emolumen template without inventing columns.
+4. Verify all 30 current Perbelanjaan column mappings by field identity and obtain the separate official Gaji & Emolumen template without inventing columns.
 5. Produce representative normal, boundary, invalid and recalculation examples for each applicable OS.
 6. Confirm financial totals reconcile with canonical Butiran and immutable submitted snapshots.
 7. Review the resulting complete OS-specific specifications before changing this AD from **Draft** to **Finalised**.
 
 ## Status and next action
 
-The shared technical framework is documented; the **OS-specific catalogue and calculation policies remain unverified**. Do not describe AD-008 as approved/finalised or the application as implemented. Next action is to obtain and reconcile authoritative OS templates and rate/reference sources, then complete the individual OS mappings inside this same AD rather than creating extra architectural branches.
+The shared framework and multiple approved OS-specific decisions are documented. Use the current readiness summary below and each authoritative reference, preserving approved mappings/formulas. AD-008 as a whole remains Draft; documentation approval is not application implementation or production verification. Resolve only actual per-OS gaps; do not restart completed column or formula discussions.
 
 ## Confirmed workbook column classification and OS14000 applicability — 11 November 2026
 
@@ -184,11 +209,11 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 | Step | Stage | Output |
 | --- | --- | --- |
 | **01** | **Understand the OS** | OS Functional Profile — purpose, expenditure scope, relevant users, and whether entries originate from Program/ Aktiviti, direct entry, or both. |
-| **02** | **Decide the Input Design** | Approved OS Interaction Design — select and refine form, spreadsheet-style, hybrid, or specialised interaction *within* the existing shared AD-004 Anggaran wizard; clarify multiple entries, Program/ Aktiviti inheritance, and Senarai Butiran. |
-| **03** | **Confirm Active Columns** | OS × 27-Column Applicability Matrix — classify each column Active, Inactive, or Conditional and determine OS-contextual meaning. |
+| **02** | **Decide the Input Design** | Approved OS Interaction Design — spreadsheet-like inline editing is the initial default under the later AD-013 decision; refine its OS-specific controls *within* the shared AD-004 wizard. Any alternative requires later individual approval; clarify multiple entries, Program/ Aktiviti inheritance, and Senarai Butiran. |
+| **03** | **Confirm Active Columns** | OS × current canonical-column Applicability Matrix — classify each column Active, Inactive, or Conditional and determine OS-contextual meaning. |
 | **04** | **Define Fields and References** | OS Field & Reference Specification — input types, requiredness, conditional fields, inherited values, shared/OS-specific reference sources, dropdown and lookup dependencies. |
 | **05** | **Define Financial Calculations** | OS Calculation Specification — source inputs, verified rates and eligibility, exact formulas, effective dates, rounding/precision and representative test cases. Workbook behaviour alone does not approve policy. |
-| **06** | **Define Granular Financial Outputs** | OS Output Mapping — map each saved Butiran Anggaran to its attributable generated 27-column Perbelanjaan output rows, preserving stable originating Butiran ID and reconcilable totals. |
+| **06** | **Define Granular Financial Outputs** | OS Output Mapping — map each saved Butiran Anggaran to its attributable generated current 30-column Perbelanjaan output rows (historically 27 before the approved revision), preserving stable originating Butiran ID and reconcilable totals. |
 | **07** | **Review and Finalise the OS Specification** | Owner-confirmed complete OS specification within Draft AD-008, recording verified evidence and unresolved issues. Confirmation of one OS does **not** finalise AD-008. |
 
 ### #P7OS operating rules
@@ -204,12 +229,12 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 ### Current OS14000 #P7OS position
 
 - **Step 01:** Operational profile partially discussed; not yet completed.
-- **Step 02:** Form-based, spreadsheet-style, and hybrid approaches discussed; **no input design selected or approved**.
+- **Step 02:** AD-013 §09.3–09.4 subsequently establishes spreadsheet-like inline editing as the initial default for every OS. OS14000's remaining detailed design stays paused; the common presentation decision is already approved.
 - **Step 03:** **Confirmed** — 19 Active and 8 Inactive columns in the 27-column structure (see the earlier confirmed matrix).
 - **Step 04:** Partially analysed. Owner **confirmed** `JAWATAN → GRED` as dependent selection: select JAWATAN first and display only applicable GRED options. Rate reference and remaining field rules require verification.
-- **Steps 05–07:** Not completed; workbook formula observations are not approved financial calculations.
+- **Steps 05–07:** Overall OS14000 calculation/output specification is incomplete. The later [consolidated reference](../references/OS14000-reference-consolidated.md) confirms KADAR = Gaji Median × 12 / 2504; preserve it. Precision/rounding and overall amount/expansion mapping remain unresolved.
 
-**Next action when invoking `#P7OS OS14000`: resume at Step 01 and then Step 02, retaining confirmed Step 03 and Step 04 results.**
+**OS14000 detailed #P7OS work remains paused under its consolidated reference. Resume only when separately instructed, preserving approved decisions and the universal spreadsheet-like presentation.**
 
 ## Approved 30-column Perbelanjaan revision — 14 November 2026
 
