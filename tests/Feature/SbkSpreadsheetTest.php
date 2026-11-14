@@ -226,7 +226,7 @@ class SbkSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
         $source=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$estimate->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,
-            'data_sumber'=>(object)['definition'=>'os25000.v1','kategori1'=>'Air Minuman','bil_unit'=>'2','SECRET_LEGACY'=>'private']]);
+            'semakan'=>0,'data_sumber'=>(object)['definition'=>'os25000.v1','kategori1'=>'Air Minuman','bil_unit'=>'2','SECRET_LEGACY'=>'private']]);
         $response=$this->get($url)->assertOk()->assertDontSee('SECRET_LEGACY')->assertDontSee('Air Minuman');$this->assertFalse($response->viewData('records')->first()['compatible']);
         $this->gridCapture('sbk-legacy',$response);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan])]))->assertConflict();
