@@ -259,3 +259,7 @@ The user reported “Clean, continue.” after the supplied guarded dev pull/cac
 ## Batch 025 — TASKA spreadsheet definition in progress
 
 Authorised continuation from `258fe6f14262cea08355c5c2f9c5ae4a2a97adf7`. [Batch 025](batch-025-taska-spreadsheet-definition.md) implements the owner-approved TASKA source fields and exact row preview under PPN / 010102, preserving SBK/OS25000 and the existing reference/canonical identities. No migration/seed or official outputs/completeness.
+
+## Batch 025 — verification passed; merge pending
+
+TASKA typed source definition under PPN/010102 adds parent text, multi-child quantity, budgeted months and exact reference-rate previews while preserving SBK/OS25000. Tested `9c4bce154c684ec232416e9e4d99572ddc64cee2`, [CI 43653498708](https://github.com/muhdmuizz/sistem-abm/actions/runs/43653498708): 438 tests / 3449 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated test DB; build/Chromium passed. Twelve new TASKA states reviewed in the early pass; final representative populated/validation desktop/mobile review completed after preview/test-focus correction. Static browser response interception is separate from actual HTTP persistence. No migration/seed or official totals/completeness; local update/checks pending. See [Batch 025](batch-025-taska-spreadsheet-definition.md).
