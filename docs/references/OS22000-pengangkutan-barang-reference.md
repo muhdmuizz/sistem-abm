@@ -19,13 +19,14 @@ For OS22000's `KATEGORI1 = Pertukaran/ Penempatan`, the approved current categor
 | Category | Value / source |
 | --- | --- |
 | KATEGORI1 | Pertukaran/ Penempatan |
-| KATEGORI2 | Lokasi Pertukaran |
-| KATEGORI3 | Bujang/ Keluarga |
-| KATEGORI4 | Kategori Tuntutan |
+| KATEGORI2 | Bujang/ Keluarga |
+| KATEGORI3 | Kategori Tuntutan |
+
+**Approved OS22000 column mapping (14 November 2026):** `Lokasi Pertukaran` is **not a category**. It is mapped to canonical Excel **column 17 — LOKASI URUSAN RASMI**, with the **OS-specific displayed label `LOKASI PERTUKARAN`** for the Pertukaran/ Penempatan path. Its two source choices remain `Semenanjung` and `Sabah/ Sarawak/ WP Labuan`. Canonical export column header is unchanged. Column 17 is active for this path; no column-17 decision is made for the separate `Pengangkutan Barang` path. `GRED` remains a separate reference attribute.
 
 ## Reference Kadar modes
 
-| KATEGORI4 / Kategori Tuntutan | Treatment |
+| KATEGORI3 / Kategori Tuntutan | Treatment |
 | --- | --- |
 | Tambang Pengangkutan Barang | Mandatory manually entered Kadar (blank in supplied rate table) |
 | Pemberian Pindahan | Automatic lookup from source by location, Bujang/ Keluarga and applicable Gred |
