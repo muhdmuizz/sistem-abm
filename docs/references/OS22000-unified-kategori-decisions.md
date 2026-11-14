@@ -43,3 +43,55 @@ The 126-row source file name `OS22000-pengangkutan-barang-kadar.csv` is **histor
 ## Implementation boundary
 
 This correction updates OS22000 documentation only. The historical source CSV, existing amount values, catalogue, application code, DB and Excel export are not modified; implementation and testing remain outstanding. **For all future OS22000 work, read this document first.**
+
+## Approved 27-column applicability and calculation — 14 November 2026
+
+The following decisions apply to the **same OS22000 Anggaran**, conditional upon the selected KATEGORI1. The 27 canonical Excel headers remain unchanged. Global column rules are retained; the two branches must not be treated as separate OS identities.
+
+| No. | Canonical column | Pertukaran/ Penempatan | Pengangkutan Barang | Behaviour |
+| ---: | --- | --- | --- | --- |
+| 01 | OBJEK SEBAGAI | Active | Active | Auto from selected Anggaran |
+| 02 | JPNT/ PPD | Active | Active | Auto from authorised Bidaan PTJ |
+| 03 | SEKTOR/ SEKOLAH | Active | Active | Controlled Tempat Bertugas choice under authorised PTJ |
+| 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Inactive | Active | For Pengangkutan Barang: mandatory manual TUJUAN; not the path selector |
+| 05 | TARIKH MULA | Inactive | Inactive | — |
+| 06 | TARIKH TAMAT | Inactive | Inactive | — |
+| 07 | TEMPOH | Inactive | Inactive | — |
+| 08 | NAMA | Active | Inactive | Manual where active |
+| 09 | JAWATAN | Active | Inactive | Existing shared Jawatan reference |
+| 10 | GRED | Active | Inactive | Existing SSPA grade reference; source's special C must not be guessed |
+| 11 | KATEGORI1 | Active | Active | Path: Pertukaran/ Penempatan or Pengangkutan Barang |
+| 12 | KATEGORI2 | Active | Inactive | Pertukaran/ Penempatan only: Bujang / Keluarga |
+| 13 | KATEGORI3 | Active | Inactive | Pertukaran/ Penempatan only: Tambang Pengangkutan Barang; Pemberian Pindahan; Elaun Berpindah; Belanja Pelbagai |
+| 14 | UNIT | Inactive | Inactive | — |
+| 15 | GRED PENCERAMAH/ FASILITATOR | Inactive | Inactive | — |
+| 16 | BIL. UNIT | Inactive | Inactive | — |
+| 17 | LOKASI URUSAN RASMI | Active | Inactive | For Pertukaran/ Penempatan, editor label **LOKASI PERTUKARAN** with Semenanjung; Sabah/ Sarawak/ WP Labuan; canonical Excel header unchanged |
+| 18 | KADAR | Active | Active | Pertukaran/ Penempatan: reference lookup or manual by KATEGORI3; Pengangkutan Barang: mandatory manual |
+| 19 | JARAK | Inactive | Inactive | — |
+| 20 | KEKERAPAN | Inactive | Inactive | — |
+| 21 | JAM | Inactive | Inactive | — |
+| 22 | BILANGAN HARI | Inactive | Inactive | — |
+| 23 | BILANGAN BULAN | Inactive | Inactive | — |
+| 24 | ANGGARAN JUMLAH SETAHUN | Active | Active | **KADAR × 1**, both branches |
+| 25 | KATEGORI SUMBER PERUNTUKAN | Active | Active | Auto from Bidaan Aktiviti Kewangan |
+| 26 | KATEGORI PROGRAM | Deferred | Deferred | Program/ Aktiviti pathway |
+| 27 | KATEGORI PESERTA | Deferred | Deferred | Program/ Aktiviti pathway |
+
+**Applicability reconciliation:**
+- Pertukaran/ Penempatan: **13 Active + 12 Inactive + 2 Deferred = 27**.
+- Pengangkutan Barang: **8 Active + 17 Inactive + 2 Deferred = 27**.
+
+### Approved Kadar modes and exact calculation
+
+| KATEGORI1 | KATEGORI3, where applicable | KADAR mode | ANGGARAN JUMLAH SETAHUN |
+| --- | --- | --- | --- |
+| Pertukaran/ Penempatan | Tambang Pengangkutan Barang | Mandatory user-entered KADAR (blank reference) | KADAR × 1 |
+| Pertukaran/ Penempatan | Pemberian Pindahan | Prescribed lookup by Lokasi Pertukaran, Bujang/ Keluarga and applicable Gred | KADAR × 1 |
+| Pertukaran/ Penempatan | Elaun Berpindah | Prescribed lookup by Lokasi Pertukaran, Bujang/ Keluarga and applicable Gred | KADAR × 1 |
+| Pertukaran/ Penempatan | Belanja Pelbagai | Mandatory user-entered KADAR (blank reference) | KADAR × 1 |
+| Pengangkutan Barang | Not applicable | Mandatory user-entered KADAR; no grade-based lookup | KADAR × 1 |
+
+All applicable KADAR values are mandatory. Blank source entries must not be treated as zero or arbitrary defaults. No additional quantities, frequencies, durations or JARAK multipliers are authorised. Do not alter source rate values or introduce eligibility/rounding rules.
+
+**Status:** Owner-approved design specification committed to GitHub. This does not claim implementation, migrations, UI updates or end-to-end tests.
