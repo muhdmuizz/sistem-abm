@@ -6,6 +6,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\AksesPeruntukanController;
 use App\Http\Controllers\KitaranController;
 use App\Http\Controllers\BidaPeruntukanController;
+use App\Http\Controllers\AnggaranController;
 use App\Http\Middleware\EnsureAbmSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,8 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}', [AnggaranController::class, 'show'])->whereNumber(['bid','estimate'])->name('estimates.show');
+    Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
     Route::get('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'bidForm'])->whereNumber(['cycle','ptj','activity'])->name('bids.activate-form');
     Route::post('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'activateBid'])->whereNumber(['cycle','ptj','activity'])->middleware('throttle:30,1')->name('bids.activate');

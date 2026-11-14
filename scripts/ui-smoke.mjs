@@ -179,6 +179,30 @@ for (const name of ['bid-context','bid-list','bid-os','bid-empty','bid-no-result
     await page.setViewportSize({ width: 1440, height: 1000 });
 }
 
+
+for (const name of ['estimate-empty','estimate-populated','estimate-workplace','estimate-readonly','estimate-closed','estimate-validation']) {
+    await page.goto('http://127.0.0.1:4173/' + name + '.html');
+    if (await page.locator('body').evaluate(el => el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
+    if (!(await page.locator('.sidebar a[aria-label="Bida Peruntukan"][aria-current="page"]').count())) throw Error('Anggaran lost parent navigation context');
+    if (!(await page.getByRole('navigation', { name: 'Navigasi OS' }).count())) throw Error('OS navigation missing');
+    if (!(await page.locator('#estimate-os').inputValue())) throw Error('Current OS not selected');
+    if (await page.locator('textarea[name=data_sumber],input[name=data_sumber]').count()) throw Error('Opaque source editor exposed');
+    if (name === 'estimate-validation' && !(await page.getByRole('alert').count())) throw Error('OS validation summary missing');
+    for (const width of [1440,390]) {
+        await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
+        if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name + ' overflow at ' + width);
+        for (const empty of await page.locator('.empty-state').all()) {
+            const insets = await empty.evaluate(el => { const s = getComputedStyle(el); return [s.paddingLeft,s.paddingRight,s.paddingTop,s.paddingBottom].map(parseFloat); });
+            if (insets.some(n => n < 16)) throw Error(name + ' empty-state padding too small');
+        }
+        if (width === 390 && name === 'estimate-populated') {
+            if (await page.locator('.estimate-sources tr').first().evaluate(el => getComputedStyle(el).display) !== 'block') throw Error('Butiran records not adapted to mobile');
+        }
+        await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-' + (width === 1440 ? 'desktop' : 'mobile') + '.png', fullPage: true });
+    }
+    await page.setViewportSize({ width:1440,height:1000 });
+}
+
 await browser.close();
 
 
