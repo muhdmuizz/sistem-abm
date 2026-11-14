@@ -1,6 +1,6 @@
 # Batch 015 — Bida Peruntukan Workspace & Activation UI
 
-**Status:** Code/visual verification passed; merge and local acceptance pending.
+**Status:** Code/visual verification passed and merged; local acceptance pending.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `238971301798dd475b87b731fce525744cde1f73` on dev.
 **Authorisation:** User approved authorised Bidaan context by Kitaran/PTJ/Aktiviti, UI-backed initial Bidaan/OS activation, clear states and feedback, and AD-013 spacing/anti-slop. Batch 014 local synchronisation/existing-page checks are user-confirmed.
@@ -29,6 +29,6 @@ Desktop/mobile review passed for eight states (16 screenshots): initial context,
 
 Early CI exposed incorrect validation-error fixtures for Laravel 13's JSON session serialization. The final fixture uses the framework's serialized error-bag shape; POST reason validation and error rendering are checked separately. Temporary diagnostics/workarounds were removed; production session serialization/authentication are unchanged. Static fixture deadlines use the browser's real clock rather than the financial test's future year. Browser checks exercise rendered fixtures, not live Google authentication or browser-to-app POSTs; server POST integration is covered separately. Local activation/manual device/security acceptance remains unverified.
 
-[PR #32](https://github.com/muhdmuizz/sistem-abm/pull/32); actual merge checkpoint pending. No new migration. Local synchronisation/inspection pending. Step 02 remains in progress: OS field adapters, calculation integration and source editing UI remain deferred. Keep the running local server; pull/cache clear in another terminal and refresh.
+[PR #32](https://github.com/muhdmuizz/sistem-abm/pull/32); merged at `96e3507150dfa595ec241fe81517a48ba6777887`. No new migration. Local synchronisation/inspection pending. Step 02 remains in progress: OS field adapters, calculation integration and source editing UI remain deferred. Keep the running local server; pull/cache clear in another terminal and refresh.
 
 Read presentation memoisation is transient within a service instance; mutation services independently recheck the database under their existing locks. It is not a cached authorisation grant or cross-request permission cache.
