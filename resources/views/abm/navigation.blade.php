@@ -1,7 +1,7 @@
-<nav aria-label="Navigasi utama">
+<nav aria-label="Navigasi utama" tabindex="0">
     <a aria-label="Utama" href="{{ route('home') }}" @class(['nav-link', 'selected' => request()->routeIs('home')]) @if(request()->routeIs('home')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">U</span><span class="nav-label">Utama</span></a>
     @if(app(\App\Services\RuangBidaPeruntukan::class)->canUse(auth()->user()))
-    <a aria-label="Bida Peruntukan" href="{{ route('bids.index') }}" @class(['nav-link', 'selected' => request()->routeIs('bids.*','estimates.*')]) @if(request()->routeIs('bids.*','estimates.*')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">BP</span><span class="nav-label">Bida Peruntukan</span></a>
+    <a aria-label="Bida Peruntukan" href="{{ route('bids.index') }}" @class(['nav-link', 'selected' => request()->routeIs('bids.*','estimates.*','programs.*')]) @if(request()->routeIs('bids.*','estimates.*','programs.*')) aria-current="page" @endif><span class="nav-short" aria-hidden="true">BP</span><span class="nav-label">Bida Peruntukan</span></a>
     @endif
     @if (auth()->user()->penugasanPeranan()->where('peranan', 'superadmin')->exists())
     <p class="nav-group">Pentadbiran</p>

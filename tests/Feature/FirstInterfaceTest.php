@@ -224,6 +224,33 @@ class FirstInterfaceTest extends TestCase
         $this->assertNull(session('abm_authenticated_at'));
     }
 
+    public function test_login_feedback_remains_escaped_and_configured_link_uses_existing_google_route(): void
+    {
+        $this->google();
+        $ready = $this->get('/login')->assertOk()->assertSee('href="'.route('google.redirect').'"', false);
+        $errors = ['default' => ['format' => ':message', 'messages' => ['login' => ['Akses akaun tidak dibenarkan. <script>private</script>']]]];
+        $failed = $this->withSession(['errors' => $errors])->get('/login')->assertOk()
+            ->assertSee('Akses akaun tidak dibenarkan.')->assertDontSee('<script>private</script>', false);
+        $status = $this->withSession(['errors' => [], 'status' => 'Sesi telah tamat. Sila log masuk semula.'])->get('/login')->assertOk()
+            ->assertSee('Sesi telah tamat.');
+        if (getenv('ABM_UI_CAPTURE') === '1') {
+            foreach (['login-ready'=>$ready,'login-error'=>$failed,'login-status'=>$status] as $name=>$response) {
+                $this->capture($name, $response->getContent());
+            }
+        }
+    }
+
+    public function test_empty_admin_views_keep_existing_scopes_and_recovery_controls(): void
+    {
+        $this->signedIn($this->registered());
+        $cycle = $this->get('/pentadbiran/kitaran')->assertOk()->assertSee('Tiada Kitaran ditemui.');
+        $filtered = $this->get('/pentadbiran/pengguna?q=NO_MATCH_022')->assertOk()->assertSee('Tiada pengguna ditemui.')->assertSee('Set Semula');
+        if (getenv('ABM_UI_CAPTURE') === '1') {
+            $this->capture('cycles-empty',$cycle->getContent());
+            $this->capture('users-empty',$filtered->getContent());
+        }
+    }
+
     private function capture(string $name, string $html): void
     {
         $directory = storage_path('app/ui-qa');

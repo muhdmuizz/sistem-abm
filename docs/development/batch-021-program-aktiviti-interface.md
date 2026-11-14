@@ -1,6 +1,6 @@
 # Batch 021 — Program/ Aktiviti Interface
 
-**Status:** Verified and merged in PR #49 at `981b766d4435724abf6dc7b463bbce6c2a109fa1`; local acceptance pending. User approved the bounded interface scope on 14 November 2026.
+**Status:** Verified and merged in PR #49 at `981b766d4435724abf6dc7b463bbce6c2a109fa1`; requested local acceptance user-confirmed. User approved the bounded interface scope on 14 November 2026.
 **Baseline:** `e2197b6012d77f8f15ba7a95773e1eb1a6826618` on dev.
 
 ## Scope and authority
@@ -11,7 +11,7 @@ No OS selection/association, inheritance/recalculation, financial completeness, 
 
 ## Verification
 
-Verified application/test head `e9da548c44ac0ab77a21d470de0d66b235be0654`: [CI 43583261810](https://github.com/muhdmuizz/sistem-abm/actions/runs/43583261810), **408 tests / 3129 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`. Frontend build and existing/new Chromium checks passed. Fifteen HTTP interface tests added; foundation coverage remains intact. [PR #49](https://github.com/muhdmuizz/sistem-abm/pull/49). Local synchronisation and programme create/edit smoke checks remain pending until the user reports them. Do not equate fixtures with live Google/Windows acceptance.
+Verified application/test head `e9da548c44ac0ab77a21d470de0d66b235be0654`: [CI 43583261810](https://github.com/muhdmuizz/sistem-abm/actions/runs/43583261810), **408 tests / 3129 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`. Frontend build and existing/new Chromium checks passed. Fifteen HTTP interface tests added; foundation coverage remains intact. [PR #49](https://github.com/muhdmuizz/sistem-abm/pull/49). The subsequent user “Clean” report confirms the supplied local synchronisation and requested programme create/edit/objective/headcount/date smoke checks; broader roles/devices/financial operations are not confirmed. Do not equate fixtures with live Google/Windows acceptance.
 
 ## Implementation details
 
@@ -31,7 +31,7 @@ OS checklist/locking, programme-to-Butiran links, inherited OS data, financial r
 
 ## Local acceptance
 
-Pending after merge: guarded dev pull, cache clear, browser refresh, programme create/save/reopen/edit and dependent objective/headcount/date smoke checks. Cloud fixtures and automated PostgreSQL results do not certify the user's Windows installation, real-device/assistive-technology acceptance or a complete financial workflow.
+User-confirmed by the subsequent “Clean” report after: guarded dev pull, cache clear, browser refresh, programme create/save/reopen/edit and dependent objective/headcount/date smoke checks. Cloud fixtures and automated PostgreSQL results do not certify the user's Windows installation, real-device/assistive-technology acceptance or a complete financial workflow.
 
 ## Browser and visual review
 
@@ -40,3 +40,5 @@ CI generated nineteen programme screenshots: empty list, populated list, create,
 Chromium verifies dependent resets/disabled children, package reveal and acknowledged clearing, dynamic classified rows, exact totals above JavaScript's safe integer limit, contiguous submitted row indexes, unique IDs, unsaved status, budget-year native validation and mobile overflow. PHPUnit exercises actual HTTP persistence, draft validation/retained inputs, audit atomic rollback, revisions/no-op, scoping and read-only roles, workflow/phase/session/central permissions and Superadmin reasons. Fixtures are not an end-to-end signed-in Google session.
 
 No asynchronous data retrieval was added; filtered programme-table/loading skeleton states are not applicable to this server-rendered manual-save slice. Actual-device, assistive-technology/contrast certification, concurrent browser sessions and local Windows acceptance remain unverified. No complete AD-007/financial UI or production readiness is claimed. Later evidence edits are documentation only; no additional application behavior is introduced by them.
+
+The reported sidebar scrolling defect is separately tracked in Batch 022. Local confirmation is limited to the supplied commands/requested smoke checks, not independent Windows or database inspection.
