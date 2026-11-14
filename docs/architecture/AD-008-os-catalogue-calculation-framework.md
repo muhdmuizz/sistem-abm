@@ -215,7 +215,7 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 
 **Owner-approved canonical export contract.** This section **supersedes the 27-column table above for current column positions**, while preserving that table as a historical baseline. This AD remains **Draft**. All previously approved OS decisions must be interpreted by **field identity**, not obsolete numerical positions.
 
-The three new canonical fields are dedicated to **OS24000 — Sewaan (Mesin Fotostat): Kontrak Keseluruhan**. The original three date fields retain their canonical headers; only in the Mesin Fotostat editor are they presented as **Kontrak Semasa**.
+The three new canonical fields were initially introduced for **OS24000 — Sewaan (Mesin Fotostat): Kontrak Keseluruhan**; the later owner-approved **OS29000 — Bacaan Meter Mesin Fotostat** specification also activates columns 08–10 for its own Kontrak Keseluruhan. These are the only two approved uses documented here. The original three date fields retain their canonical headers; only in the Mesin Fotostat editor are they presented as **Kontrak Semasa**.
 
 | New no. | Canonical Excel header | Previous no. |
 | ---: | --- | ---: |
@@ -253,7 +253,7 @@ The three new canonical fields are dedicated to **OS24000 — Sewaan (Mesin Foto
 ### Universal export and migration compatibility
 
 1. The **Perbelanjaan** worksheet uses one consistent 30-column contract for all applicable OS, with identical order and canonical headers; the **Gaji & Emolumen** worksheet and schema are unchanged.
-2. Columns **08–10** are currently applicable only to OS24000 **Sewaan (Mesin Fotostat)**. Every other OS exports these columns **blank**, not zero, unless a subsequent OS-specific decision authorises their use.
+2. Columns **08–10** apply to both **OS24000 Sewaan (Mesin Fotostat)** and **OS29000 Bacaan Meter Mesin Fotostat**, under their separately approved contract-period specifications. All other Perbelanjaan OS export these columns **blank**, not zero, unless a later OS-specific approval authorises their use.
 3. Original 01–07 retain their canonical export headers and meaning. In the Mesin Fotostat editor only, columns 05–07 display **Kontrak Semasa** labels; column 20 displays **LOKASI MESIN FOTOSTAT**. These are not global header renames.
 4. Original columns 08–27 shift forward **+3 positions**. This is a **breaking positional schema change**: update consumers, imports, exports, pivots, formulas, tests and column-index mappings before deployment. Do not assume old 27-column files are automatically interoperable.
 5. Preserve field identity and previously approved applicability, formulas and rate references for **OS14000, OS21000, OS22000, OS23000 and OS24000 Sewaan (Umum)**; do not reinterpret or reopen their category decisions. This applies equally to any other documented OS.
@@ -263,7 +263,7 @@ The three new canonical fields are dedicated to **OS24000 — Sewaan (Mesin Foto
 ### Verification gate before implementation
 
 - Assert the exact 30 headers in the table above, with three new fields inserted immediately after previous column 07.
-- Assert blank 08–10 on every unrelated Perbelanjaan OS.
+- Assert approved independent current/overall contract periods in OS24000 Sewaan Mesin Fotostat and OS29000 Bacaan Meter Mesin Fotostat; assert blank 08–10 for all other Perbelanjaan OS.
 - Assert old column 24 ANGGARAN JUMLAH SETAHUN maps to new 27 without calculation changes for other OS.
 - Assert current and overall contract durations calculate independently with inclusive ends, with leap-year and month-end boundary tests.
 - Assert BILANGAN BULAN is never silently computed from either contract duration.
