@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\StatusBidaan;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +17,7 @@ class Bidaan extends Model
 
     protected function casts(): array
     {
-        return ['diaktifkan' => 'boolean', 'semakan' => 'integer'];
+        return ['diaktifkan' => 'boolean', 'semakan' => 'integer', 'status' => StatusBidaan::class];
     }
 
     public function ptj(): BelongsTo
