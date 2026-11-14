@@ -39,6 +39,7 @@ class AnggaranController extends Controller
     public function show(Request $request, int $bid, int $estimate, RuangBidaPeruntukan $workspace, RuangAnggaran $rows)
     {
         $record = $this->context($request, $bid, $workspace);
+        $request->validate(['page' => 'nullable|integer|min:1', 'audit_page' => 'nullable|integer|min:1']);
         $estimateRecord = $record->anggaran()->whereKey($estimate)->firstOrFail();
         $navigation = $this->navigation($request, $record, $workspace);
         $index = $navigation->search(fn ($item) => $item['os']->id === $estimateRecord->rujukan_os_id);
@@ -47,10 +48,18 @@ class AnggaranController extends Controller
         $sources = $rows->sources($request->user(), $record, $estimateRecord)
             ->orderByDesc('updated_at')->orderByDesc('id')->paginate(25)->withQueryString();
         if ($sources->isEmpty() && $sources->total() > 0) {
-            return redirect()->route('estimates.show', [$record->id, $estimateRecord->id, 'page' => $sources->lastPage()]);
+            $parameters = [$record->id, $estimateRecord->id, 'page' => $sources->lastPage()];
+            if ($request->filled('audit_page')) { $parameters['audit_page'] = $request->integer('audit_page'); }
+            return redirect()->route('estimates.show', $parameters);
+        }
+        $history = $rows->history($request->user(), $record, $estimateRecord)
+            ->orderByDesc('berlaku_pada')->orderByDesc('id')->paginate(25, ['*'], 'audit_page')->withQueryString();
+        if ($history->isEmpty() && $history->total() > 0) {
+            return redirect()->route('estimates.show', [$record->id, $estimateRecord->id,
+                'page' => $sources->currentPage(), 'audit_page' => $history->lastPage()]);
         }
         return view('abm.estimates.show', ['bid' => $record, 'estimate' => $estimateRecord,
-            'os' => $navigation[$index]['os'], 'navigation' => $navigation, 'sources' => $sources,
+            'os' => $navigation[$index]['os'], 'navigation' => $navigation, 'sources' => $sources, 'history' => $history,
             'previous' => $index > 0 ? $navigation[$index - 1] : null,
             'next' => $navigation->get($index + 1),
             'open' => $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id)]);
