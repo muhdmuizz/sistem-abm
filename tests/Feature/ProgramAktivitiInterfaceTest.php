@@ -196,7 +196,9 @@ SQL);
     {
         $data=$this->programInput($this->programMetadata(['tarikh_mula'=>'2026-11-14','nama'=>'Nama Belum Disimpan']));
         $this->from($this->url('create'))->post($this->url('store'),$data)->assertSessionHasErrors('rekod.maklumat.tarikh_mula')->assertSessionHasInput('maklumat.nama','Nama Belum Disimpan');
+        dump(['before_program_get'=>session('errors'),'before_old'=>session()->getOldInput()]);
         $response=$this->get($this->url('create'))->assertOk();
+        dump(['after_program_get'=>session('errors'),'view_program_errors'=>$response->viewData('errors')]);
         $this->capture('program-validation',$response);
         $response->assertSee('Draf belum disimpan')->assertSee('Nama Belum Disimpan');
         $this->assertDatabaseCount('program_aktiviti',0);
