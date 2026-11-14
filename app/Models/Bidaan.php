@@ -35,6 +35,11 @@ class Bidaan extends Model
         return $this->belongsTo(Kitaran::class);
     }
 
+    public function programAktiviti(): HasMany
+    {
+        return $this->hasMany(ProgramAktiviti::class);
+    }
+
     public function anggaran(): HasMany
     {
         return $this->hasMany(Anggaran::class);
