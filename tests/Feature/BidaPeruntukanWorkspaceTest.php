@@ -247,8 +247,8 @@ class BidaPeruntukanWorkspaceTest extends TestCase
         $this->phase->forceFill(['dibuka' => false])->save();
         TetapanAksesPtj::query()->update(['dibenarkan' => false]);
         // Fresh GET fixture: POST reason rejection is verified separately above.
-        $errors = new \Illuminate\Support\ViewErrorBag;
-        $errors->put('default', new \Illuminate\Support\MessageBag(['reason' => ['Alasan pintasan diperlukan.']]));
+        // Laravel 13 JSON sessions marshal this serialized structure on request start.
+        $errors = ['default' => ['format' => ':message', 'messages' => ['reason' => ['Alasan pintasan diperlukan.']]]];
         $response = $this->withSession(['errors' => $errors, '_old_input' => [
             'activation_context' => 'bid/'.$this->cycle->id.'/'.$this->owner->id.'/'.$this->activity->id,
             'reason' => '',
