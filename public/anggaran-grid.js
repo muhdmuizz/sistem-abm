@@ -4,7 +4,8 @@
  const references=JSON.parse(form.dataset.references),places=JSON.parse(form.dataset.places),editable=form.dataset.editable==='yes';
  const rows=JSON.parse(form.dataset.records); let next=0,submitting=false;
  rows.forEach(r=>r.key=++next);
- const fieldNames=['tempat_bertugas_id','kategori1','bil_unit'];
+ const columns=JSON.parse(form.dataset.columns),inputColumns=columns.filter(c=>c.type!=='output'),fieldNames=inputColumns.map(c=>c.key);
+ const selector=form.dataset.referenceSelector;
  const dirty=()=>{if(status)status.textContent='Perubahan belum disimpan.';form.dispatchEvent(new Event('input',{bubbles:true}));};
  const plain=value=>value===null||value===undefined?'':String(value);
  function decimalMultiply(a,b){
@@ -17,16 +18,22 @@
  }
  function option(select,value,label){const o=document.createElement('option');o.value=plain(value);o.textContent=label;select.append(o);}
  function output(row,tr){
-  const ref=references[row.kategori1];
-  tr.querySelector('[data-output=unit]').textContent=ref?.unit||'—';
-  tr.querySelector('[data-output=kadar]').textContent=ref?.kadar||'—';
-  tr.querySelector('[data-output=preview]').textContent=ref&&plain(row.bil_unit)!==''?decimalMultiply(plain(row.bil_unit),ref.kadar):'—';
+  const ref=references[row[selector]],values={...row};
+  for(const column of columns.filter(c=>c.type==='output')){
+   let value=ref?.[column.reference];
+   if(column.formula?.operation==='multiply'){
+    const inputs=column.formula.inputs.map(key=>plain(values[key]));
+    value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
+   }
+   values[column.key]=value??'';
+   tr.querySelector('[data-output="'+column.key+'"]').textContent=value??'—';
+  }
  }
  function render(){
   body.replaceChildren();const fragment=document.createDocumentFragment();
   for(const row of rows.filter(r=>!r.deleted)){
    const tr=document.createElement('tr');tr.dataset.key=row.key;
-   for(let i=0;i<8;i++)tr.append(document.createElement('td'));
+   for(let i=0;i<columns.length+2;i++)tr.append(document.createElement('td'));
    const cells=tr.children;
    if(row.editable&&editable){
     const check=document.createElement('input');check.type='checkbox';check.dataset.rowSelect='';check.checked=!!row.selected;check.setAttribute('aria-label','Pilih '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
@@ -35,18 +42,19 @@
    cells[1].textContent=row.butiran_id?'#'+row.butiran_id:'Baharu';
    if(!row.compatible&&row.butiran_id){
     tr.className='grid-quarantine';cells[2].textContent=row.tempat_bertugas;
-    cells[3].colSpan=5;cells[3].textContent='Rekod asal dikekalkan. Penyesuaian diperlukan sebelum dipinda.';
-    for(let i=7;i>=4;i--)cells[i].remove();fragment.append(tr);continue;
+    cells[3].colSpan=columns.length-1;cells[3].textContent='Rekod asal dikekalkan. Penyesuaian diperlukan sebelum dipinda.';
+    for(let i=columns.length+1;i>=4;i--)cells[i].remove();fragment.append(tr);continue;
    }
-   fieldNames.forEach((name,index)=>{
+   inputColumns.forEach((column,index)=>{
+    const name=column.key;
     const cell=cells[index+2];
     if(!editable||!row.editable){cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:plain(row[name]);return;}
-    const input=document.createElement(name==='bil_unit'?'input':'select');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
-    input.setAttribute('aria-label',['Tempat Bertugas','Kategori1 — Jenis Bekalan','Bil. Unit'][index]+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
-    if(name==='bil_unit'){input.type='text';input.inputMode='decimal';input.maxLength=128;input.value=plain(row[name]);}
+    const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
+    input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
+    if(column.type==='decimal'){input.type='text';input.inputMode='decimal';input.maxLength=128;input.value=plain(row[name]);}
     else{
-     option(input,'','Pilih '+(name==='kategori1'?'Jenis Bekalan':'Tempat Bertugas'));
-     if(name==='kategori1')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
+     option(input,'','Pilih '+column.label);
+     if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
      input.value=plain(row[name]);
     }
@@ -54,13 +62,13 @@
     input.addEventListener('change',()=>{row[name]=input.value;output(row,tr);});
     cell.append(input);
    });
-   ['unit','kadar','preview'].forEach((name,index)=>{const el=document.createElement('output');el.dataset.output=name;cells[index+5].append(el);});
+   columns.forEach((column,index)=>{if(column.type!=='output')return;const el=document.createElement('output');el.dataset.output=column.key;cells[index+2].append(el);});
    output(row,tr);fragment.append(tr);
   }
   body.append(fragment);form.querySelector('[data-grid-empty]').hidden=rows.some(r=>!r.deleted);
   const removed=rows.filter(r=>r.deleted).length,undo=form.querySelector('[data-grid-undo]');if(undo){undo.hidden=!removed;undo.textContent='Batal Padam ('+removed+')';}
  }
- function add(){const r={key:++next,tempat_bertugas_id:places.length===1?places[0].id:'',kategori1:null,bil_unit:null,compatible:true,editable:true};rows.push(r);return r;}
+ function add(){const r={key:++next,compatible:true,editable:true};fieldNames.forEach(key=>r[key]=key==='tempat_bertugas_id'&&places.length===1?places[0].id:null);rows.push(r);return r;}
  form.querySelector('[data-grid-add]')?.addEventListener('click',async()=>{
   const count=Number(form.querySelector('[data-grid-add-count]').value);
   if(!Number.isSafeInteger(count)||count<1){error.hidden=false;error.textContent='Masukkan bilangan baris bulat positif.';return;}
@@ -84,7 +92,7 @@
   const input=event.target.closest('[data-field]'),text=event.clipboardData?.getData('text/plain');
   if(!input||!text||!/[\t\n]/.test(text)||!editable)return;
   const data=tsv(text),start=fieldNames.indexOf(input.dataset.field),visible=rows.filter(r=>!r.deleted),first=visible.findIndex(r=>r.key===Number(input.closest('tr').dataset.key));
-  if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya tiga lajur input: Tempat Bertugas, Kategori1 dan Bil. Unit.';event.preventDefault();return;}
+  if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya lajur input: '+inputColumns.map(c=>c.label).join(', ')+'.';event.preventDefault();return;}
   event.preventDefault();
   data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=value;});});
   render();dirty();
@@ -92,9 +100,9 @@
  function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});}
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(submitting)return;clearErrors();
-  const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||plain(r.kategori1)!==''||plain(r.bil_unit)!==''));
+  const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
   const deleted=rows.filter(r=>r.deleted),payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
-   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},tempat_bertugas_id:r.tempat_bertugas_id,kategori1:r.kategori1||null,bil_unit:plain(r.bil_unit)===''?null:String(r.bil_unit)})),
+   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,plain(r[key])===''?null:String(r[key])]))})),
    padam:deleted.map(r=>({butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}))};
   const buttons=form.querySelectorAll('button[type=submit]');
   function restore(){delete form.dataset.submitting;buttons.forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});submitting=false;}

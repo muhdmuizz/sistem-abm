@@ -19,6 +19,26 @@ class DefinisiAnggaran
         return $os->kod_objek === '25000' && $os->butiran_perbelanjaan === 'Bahan-bahan Makanan dan Minuman' && ! $os->dikecualikan;
     }
 
+    public function columns(): array
+    {
+        return [
+            ['key'=>'tempat_bertugas_id','label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
+            ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>200],
+            ['key'=>'bil_unit','label'=>'Bil. Unit','type'=>'decimal','width'=>120],
+            ['key'=>'unit','label'=>'UNIT','type'=>'output','reference'=>'unit','width'=>130],
+            ['key'=>'kadar','label'=>'KADAR (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'width'=>110],
+            ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
+                'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar']],'width'=>160],
+        ];
+    }
+    public function selector(): string { return 'kategori1'; }
+    public function project(stdClass $source): array
+    {
+        $result=[];
+        foreach($this->columns() as $column) { if($column['type']!=='output')$result[$column['key']]=$source->{$column['key']} ?? null; }
+        return $result;
+    }
+
     public function references(): array
     {
         $handle = fopen(base_path('docs/references/OS25000-bahan-makanan-minuman-kategori.csv'), 'rb');

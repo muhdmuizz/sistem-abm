@@ -36,14 +36,13 @@ class EditorAnggaranController extends Controller
             $valid=$definition->readable($source->data_sumber);
             return ['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan,
                 'tempat_bertugas_id'=>$source->tempat_bertugas_id,'tempat_bertugas'=>$source->tempatBertugas->nama,
-                'kategori1'=>$valid ? $source->data_sumber->kategori1 : null,
-                'bil_unit'=>$valid ? $source->data_sumber->bil_unit : null,
+                ...($valid ? $definition->project($source->data_sumber) : []),
                 'preview'=>$valid ? $definition->preview($source->data_sumber) : null,
                 'editable'=>$valid && $access['editable'] && $access['places']->contains('id',$source->tempat_bertugas_id),
                 'compatible'=>$valid];
         })->values();
         return view('abm.estimates.editor',['bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'records'=>$visible,'references'=>$definition->references()] + $access);
+            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)
