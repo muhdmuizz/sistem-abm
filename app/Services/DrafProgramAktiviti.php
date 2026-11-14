@@ -120,7 +120,32 @@ class DrafProgramAktiviti
             $rules[$path.'.*.catatan'] = 'nullable|string';
             $rules[$path.'.*.bilangan'] = ['bail','required','integer','min:1', $this->integerTypeRule()];
         }
-        $data = Validator::make(['rekod' => $input], $rules)->validate()['rekod'];
+        $attributes = ['rekod' => 'Rekod Program/ Aktiviti', 'rekod.maklumat' => 'Maklumat Program/ Aktiviti',
+            'rekod.tempat_bertugas_id' => 'Tempat Bertugas', 'rekod.semakan_bidaan' => 'Semakan Bidaan',
+            'rekod.semakan_program' => 'Semakan Program/ Aktiviti', 'rekod.reason' => 'Alasan pintasan'];
+        foreach (['teras_strategik_id' => 'Teras Strategik', 'strategi_id' => 'Strategi', 'prakarsa_id' => 'Prakarsa',
+            'nama' => 'Nama Program/ Aktiviti', 'jenis' => 'Jenis Program/ Aktiviti', 'kategori' => 'Kategori Program/ Aktiviti',
+            'peringkat' => 'Peringkat', 'kaedah' => 'Kaedah Pelaksanaan', 'tarikh_mula' => 'Tarikh Mula',
+            'tarikh_tamat' => 'Tarikh Tamat', 'komponen' => 'Komponen Pakej'] as $field => $label) {
+            $attributes['rekod.maklumat.'.$field] = $label;
+            $attributes['rekod.maklumat.'.$field.'.*'] = $label;
+        }
+        foreach (['jemputan' => 'Jemputan/ Urus Setia', 'peserta' => 'Peserta'] as $group => $label) {
+            $attributes['rekod.maklumat.'.$group] = $label;
+            $attributes['rekod.maklumat.'.$group.'.*'] = 'Baris '.$label;
+            foreach (['kategori'=>'Kategori','klasifikasi'=>'Gred/ Tahun/ Tingkatan','catatan'=>'Catatan','bilangan'=>'Bilangan'] as $field=>$name) {
+                $attributes['rekod.maklumat.'.$group.'.*.'.$field] = $name.' '.$label.' (baris :position)';
+            }
+        }
+        $data = Validator::make(['rekod' => $input], $rules, [
+            'required' => ':attribute diperlukan.', 'integer' => ':attribute mesti nombor bulat.',
+            'min.numeric' => ':attribute mesti sekurang-kurangnya :min.',
+            'max.string' => ':attribute tidak boleh melebihi :max aksara.',
+            'exists' => 'Pilih :attribute yang sah.', 'in' => 'Pilih :attribute yang sah.',
+            'string' => ':attribute mesti berbentuk teks.', 'array' => 'Struktur :attribute tidak sah.',
+            'distinct' => ':attribute tidak boleh berulang.', 'prohibited' => ':attribute tidak dibenarkan.',
+            'date_format' => ':attribute mesti tarikh yang sah.',
+        ], $attributes)->validate()['rekod'];
         $m = $data['maklumat'];
         $error = fn ($field, $message) => throw ValidationException::withMessages(['rekod.maklumat.'.$field => $message]);
         TerasStrategik::whereKey($m['teras_strategik_id'])->sharedLock()->firstOrFail();

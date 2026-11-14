@@ -213,3 +213,7 @@ The user reported **“Clean, next.”** after the supplied guarded dev pull/cac
 ## Batch 020 local acceptance — 14 November 2026
 
 The user reported “Clean, what’s next?” after the guarded dev pull, config clear, normal migration, explicit `RpmReferenceSeeder` import, cache clear and requested existing Anggaran workspace refresh. These local setup and smoke checks are user-confirmed. The cloud agent did not access Windows or independently query reference counts. Direct programme service execution, programme create/edit UI and financial operations are not confirmed by this report. This acceptance update changes documentation only; the recorded application CI evidence remains unchanged.
+
+## Batch 021 — verified; merge/local acceptance pending
+
+[Batch 021](batch-021-program-aktiviti-interface.md) adds the scoped programme list and four-section draft interface using Batch 020's audited service. Tested application head `e9da548c44ac0ab77a21d470de0d66b235be0654`; [CI 43583261810](https://github.com/muhdmuizz/sistem-abm/actions/runs/43583261810): 408 tests / 3129 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated test DB, build/Chromium passed; desktop/mobile state review completed and mobile objective clipping corrected. [PR #49](https://github.com/muhdmuizz/sistem-abm/pull/49); merge/local acceptance pending. No migration/seed, OS entry/association or financial completeness.
