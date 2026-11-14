@@ -617,12 +617,12 @@ SQL);
     {
         $source = $this->draftSave((object) ['fixture' => 'keep']);
         DB::unprepared(<<<'SQL'
-CREATE FUNCTION batch_test_audit_failure() RETURNS trigger LANGUAGE plpgsql AS $
+CREATE FUNCTION batch_test_audit_failure() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
     IF NEW.tindakan = 'source.draft_updated' THEN RAISE EXCEPTION 'Later batch audit unavailable'; END IF;
     RETURN NEW;
 END;
-$;
+$$;
 CREATE TRIGGER batch_test_audit_failure BEFORE INSERT ON rekod_audit
 FOR EACH ROW EXECUTE FUNCTION batch_test_audit_failure();
 SQL);
