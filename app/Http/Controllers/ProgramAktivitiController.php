@@ -14,6 +14,7 @@ use App\Services\SkopPeranan;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProgramAktivitiController extends Controller
@@ -83,6 +84,8 @@ class ProgramAktivitiController extends Controller
         }
         try {
             $saved = $service->simpan($bid, $program, $input);
+        } catch (ValidationException $exception) {
+            return back()->withInput()->withErrors($exception->errors());
         } catch (QueryException $exception) {
             Log::notice('abm.program.save_failed', ['exception_type' => get_class($exception)]);
             return back()->withInput()->withErrors(['save' => 'Draf tidak disimpan. Cuba lagi atau muat semula halaman.']);

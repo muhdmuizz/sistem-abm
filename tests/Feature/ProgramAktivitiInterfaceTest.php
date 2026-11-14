@@ -196,7 +196,9 @@ SQL);
     {
         $data=$this->programInput($this->programMetadata(['tarikh_mula'=>'2026-11-14','nama'=>'Nama Belum Disimpan']));
         $this->from($this->url('create'))->post($this->url('store'),$data)->assertSessionHasErrors('rekod.maklumat.tarikh_mula')->assertSessionHasInput('maklumat.nama','Nama Belum Disimpan');
-        $this->capture('program-validation',$this->get($this->url('create'))->assertOk()->assertSee('Draf belum disimpan')->assertSee('Nama Belum Disimpan'));
+        $response=$this->get($this->url('create'))->assertOk();
+        $this->capture('program-validation',$response);
+        $response->assertSee('Draf belum disimpan')->assertSee('Nama Belum Disimpan');
         $this->assertDatabaseCount('program_aktiviti',0);
         $this->assertDatabaseCount('rekod_audit',0);
     }
@@ -207,7 +209,7 @@ SQL);
         $data=$this->programInput($this->programMetadata(['nama'=>'Stale unpublished']),$program);
         $this->programSave($this->programMetadata(['nama'=>'Current saved']),$program);
         $this->from($this->url('edit',$program))->put($this->url('update',$program),$data)->assertSessionHasErrors('save');
-        $response=$this->get($this->url('edit',$program))->assertOk()->assertSee('Stale unpublished')->assertSee('value="1"',false);
+        $response=$this->get($this->url('edit',$program))->assertOk()->assertSee('Stale unpublished')->assertSee('name="semakan_program" value="1"',false);
         $this->capture('program-conflict',$response);
         $this->assertSame('Current saved',$program->fresh()->nama);
         $this->assertDatabaseCount('rekod_audit',2);
@@ -245,7 +247,7 @@ SQL);
         $program=$this->programSave();
         foreach ([Peranan::PemantauBidaan,Peranan::PenyediaBidaan] as $role) {
             $this->actor->penugasanPeranan()->delete();
-            $this->actor->penugasanPeranan()->create(['peranan'=>$role,'ptj_id'=>$this->ptj->id,'aktiviti_kewangan_id'=>$this->activity->id]);
+            $this->actor->penugasanPeranan()->create(['peranan'=>$role,'ptj_id'=>$role===Peranan::PemantauBidaan ? null : $this->ptj->id,'aktiviti_kewangan_id'=>$role===Peranan::PemantauBidaan ? null : $this->activity->id]);
             $this->get($this->url('index'))->assertOk()->assertDontSee('Tambah Program/ Aktiviti');
             $response=$this->get($this->url('edit',$program))->assertOk()->assertSee('Paparan sahaja')->assertDontSee('Simpan Draf');
             $this->capture('program-readonly',$response);
@@ -304,4 +306,44 @@ SQL);
         $this->get($this->url('index').'?page=0')->assertSessionHasErrors('page');
         $this->assertDatabaseCount('rekod_audit',1);
     }
+    public function test_http_audit_failure_rolls_back_metadata_children_and_revisions(): void
+    {
+        $program=$this->programSave();
+        $revision=$this->bid->fresh()->semakan;
+        $this->programAuditFailure();
+        $data=$this->programInput($this->programMetadata(['nama'=>'Must roll back','peserta'=>[]]),$program);
+        $this->from($this->url('edit',$program))->put($this->url('update',$program),$data)->assertSessionHasErrors('save');
+        $this->assertSame('Mesyuarat Perancangan',$program->fresh()->nama);
+        $this->assertSame('27',$program->jumlah('peserta'));
+        $this->assertSame($revision,$this->bid->fresh()->semakan);
+        $this->assertDatabaseCount('rekod_audit',1);
+    }
+
+    public function test_returned_bid_is_editable_but_inactive_bid_is_not(): void
+    {
+        $this->bid->forceFill(['status'=>StatusBidaan::Dikembalikan])->save();
+        $this->get($this->url('create'))->assertOk();
+        $this->post($this->url('store'),$this->programInput($this->programMetadata()))->assertRedirect();
+        $program=ProgramAktiviti::sole();
+        $this->bid->forceFill(['diaktifkan'=>false])->save();
+        $this->get($this->url('edit',$program))->assertOk()->assertDontSee('Simpan Draf');
+        $this->put($this->url('update',$program),$this->programInput($this->programMetadata(['nama'=>'Blocked']),$program))->assertSessionHasErrors('save');
+        $this->assertDatabaseCount('rekod_audit',1);
+    }
+
+    public function test_programme_list_paginates_and_reviewer_only_access_is_denied(): void
+    {
+        $program=$this->programSave();
+        for($i=0;$i<20;$i++) { $copy=$program->replicate(); $copy->save(); }
+        $first=$this->get($this->url('index'))->assertOk()->assertSee('Seterusnya');
+        $this->assertSame(21,$first->viewData('programs')->total());
+        $this->assertCount(20,$first->viewData('programs'));
+        $this->assertCount(1,$this->get($this->url('index').'?page=2')->assertOk()->viewData('programs'));
+        $this->actor->penugasanPeranan()->delete();
+        $this->actor->penugasanPeranan()->create(['peranan'=>Peranan::PenyeliaBidaan,'aktiviti_kewangan_id'=>$this->activity->id]);
+        $this->get($this->url('index'))->assertForbidden();
+        $this->get($this->url('edit',$program))->assertForbidden();
+        $this->assertDatabaseCount('rekod_audit',1);
+    }
+
 }
