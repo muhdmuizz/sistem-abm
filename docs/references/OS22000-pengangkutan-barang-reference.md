@@ -14,19 +14,20 @@ Source fields: **LOKASI PERTUKARAN**, **BUJANG/ KELUARGA**, **GRED**, **KATEGORI
 - **Gred:** Separate lookup attribute, **not a category**. Preserve original grades including `C`; do not invent Gred 11 or interpolate absent rows.
 - **Kadar:** Preserve prescribed source values and intentional blanks. The CSV contains 126 source rows.
 
-For OS22000's `KATEGORI1 = Pertukaran/ Penempatan`, the approved current category fields are:
+For OS22000's `TUJUAN = Pertukaran/ Penempatan`, the approved current field mapping is:
 
 | Category | Value / source |
 | --- | --- |
-| KATEGORI1 | Pertukaran/ Penempatan |
-| KATEGORI2 | Bujang/ Keluarga |
-| KATEGORI3 | Kategori Tuntutan |
+| TUJUAN (canonical column 04) | Pertukaran/ Penempatan |
+| KATEGORI1 (canonical column 11) | Bujang/ Keluarga |
+| KATEGORI2 (canonical column 12) | Kategori Tuntutan |
+| KATEGORI3 (canonical column 13) | No approved values for this path |
 
 **Approved OS22000 column mapping (14 November 2026):** `Lokasi Pertukaran` is **not a category**. It is mapped to canonical Excel **column 17 — LOKASI URUSAN RASMI**, with the **OS-specific displayed label `LOKASI PERTUKARAN`** for the Pertukaran/ Penempatan path. Its two source choices remain `Semenanjung` and `Sabah/ Sarawak/ WP Labuan`. Canonical export column header is unchanged. Column 17 is active for this path; no column-17 decision is made for the separate `Pengangkutan Barang` path. `GRED` remains a separate reference attribute.
 
 ## Reference Kadar modes
 
-| KATEGORI3 / Kategori Tuntutan | Treatment |
+| KATEGORI2 / Kategori Tuntutan | Treatment |
 | --- | --- |
 | Tambang Pengangkutan Barang | Mandatory manually entered Kadar (blank in supplied rate table) |
 | Pemberian Pindahan | Automatic lookup from source by location, Bujang/ Keluarga and applicable Gred |
@@ -35,6 +36,6 @@ For OS22000's `KATEGORI1 = Pertukaran/ Penempatan`, the approved current categor
 
 The earlier four-row [OS22000-pengangkutan-barang-kadar-modes.csv](OS22000-pengangkutan-barang-kadar-modes.csv) is **historical rate-mode reference for these source claim types**; its old header/Butiran identification must not be used to redefine the new simple Pengangkutan Barang branch.
 
-For `KATEGORI1 = Pengangkutan Barang` (the *other* branch of the single OS22000 Anggaran), **no KATEGORI2 or later levels exist**; the user manually enters both `Program/ Aktiviti/ Tujuan` and `Kadar`. **Do not apply the grade-based rate table to that branch.**
+For `TUJUAN = Pengangkutan Barang` (the *other* path of the single OS22000 Anggaran), **no category levels exist** and `KADAR` is manually entered. An earlier decision also required a user-entered descriptive `Program/ Aktiviti/ Tujuan`; its placement needs reconciliation because canonical column 04 is now the TUJUAN path selector. Do not silently discard the requirement or invent another export column. **Do not apply the grade-based rate table to this path.**
 
-No additional calculation formulas, 27-column mapping, eligibility or application implementation are approved by this source correction.
+**14 November 2026 update:** TUJUAN (column 04) is the approved path selector, with values `Pertukaran/ Penempatan` and `Pengangkutan Barang`. KATEGORI1 and KATEGORI2 shift to the two remaining source classifications for Pertukaran/ Penempatan; column 17 remains LOKASI PERTUKARAN in the editor. No additional calculation formulas, other column applicability, eligibility or application implementation are approved.
