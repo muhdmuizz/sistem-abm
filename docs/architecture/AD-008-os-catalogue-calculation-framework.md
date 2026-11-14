@@ -270,3 +270,9 @@ The three new canonical fields are dedicated to **OS24000 — Sewaan (Mesin Foto
 - Audit all approved OS mappings by canonical field identity and reconcile external pivot/import/export integrations for the new order.
 
 **Change-control:** Owner-approved design specification documented only. AD-008 remains Draft; Laravel, PostgreSQL, reference CSVs and actual Excel exporter are not changed by this commit.
+
+## OS26000 approved mapping and reference governance — 14 November 2026
+
+The owner-approved OS26000 **Pukal/Bukan Pukal** 30-column applicability, per-path calculation, all 42 baseline UNIT assignments, 2028 planning fuel KADAR, and Superadmin-controlled global publication of approved **Bukan Pukal Cadangan Item Baharu** are specified in [OS26000 — Bekalan Bahan Mentah](../references/OS26000-bahan-mentah-reference.md#owner-approved-os26000-anggaran-specification--14-november-2026).
+
+This OS-specific reference specification governs the two existing distinct Kod Aktiviti identities without changing the shared AD-004 wizard or AD-008's canonical 30-column contract. Draft-only pending proposals cannot proceed to submission; approved items publish to the common reference catalogue for authorised users and require revalidation of affected drafts. The entire AD-008 remains **Draft**; these are documentation decisions, **not implementation**.
