@@ -1,6 +1,6 @@
 # Batch 017 — Shared Anggaran Read Workspace
 
-**Status:** Code/visual verification passed and merged; local acceptance pending.
+**Status:** Code/visual verification passed and merged; requested local acceptance user-confirmed.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `0670cc7c87a0659f5cebc730571152d8cc374843` on dev.
 **Authorisation:** User directed “Proceed.” after Batch 016 implementation. Batch 016 local update remains unconfirmed; do not infer execution from continuation.
@@ -26,3 +26,7 @@ Twelve final screenshots (six states at desktop/mobile) reviewed for context, wr
 Early checks caught out-of-range pagination and missing parent sidebar selection during review; fixed before final verification. One final-suite attempt falsely matched random CSRF-token letters in an overly broad no-currency assertion. It now checks visible currency text; application source was unchanged by that test correction. Added HTTP cases cover scoped metadata and counts, pagination, own-workplace empty state, tuple/registered-workplace denial, read-only roles and protected states, nested IDs, inactive/excluded catalogue, fresh revocation/session, context-preserving navigation and GET-without-mutations. Fixtures are synthetic metadata, never approved OS fields/rates.
 
 Applicable visual states: populated, scoped paginated, empty, read-only, closed-phase and validation summary. No asynchronous loading path/financial editor exists here; no such state QA claimed. Local synchronisation/actual-browser inspection remains pending, alongside prior security/device limitations.
+
+## User-confirmed local update and inspection — 14 November 2026
+
+The user reported **“It's there. Clean. Proceed.”** after the supplied guarded dev pull/cache-clear commands and the requested active-OS opening/Log Tindakan expansion, activation-entry, actor/time and spacing checks. Record synchronisation through Batch 018 and these bounded UI checks as user-confirmed. This also confirms delivery of Batches 016–017 by the combined pull; it does not establish manual multi-row service execution, all OS navigation, other roles/devices, hidden-row permissions or audit/database inspection. No direct Windows access or new test execution is claimed. Earlier pending local-update statements are superseded only for these checks.

@@ -1,6 +1,6 @@
 # Batch 018 — Scoped Anggaran Log Tindakan
 
-**Status:** Code/visual verification passed and merged; local acceptance pending.
+**Status:** Code/visual verification passed and merged; requested local acceptance user-confirmed.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `410698a993d6bc2de7a06ba3c4391c69f4bd5b35` on dev.
 **Authorisation:** User directed continuation after Batch 017. Implement AD-004 shared Log Tindakan under AD-005/011 viewing/audit controls and AD-013 spacing/state review. Batches 016–017 local checks remain unconfirmed.
@@ -24,3 +24,7 @@ Verified application head `48b245af39e20b2afb0e3c11e6eef5cb05f94bb9`: [CI 435611
 Six expanded states at desktop/mobile plus empty/populated collapsed states (16 screenshots) reviewed for wrapping, context, record cards, insets and independent pagination. No defect identified in this bounded view. [Artifact 14100476192](https://github.com/muhdmuizz/sistem-abm/actions/runs/43561176414/artifacts/14100476192). Static fixtures verify rendered states/keyboard expansion; live local Google/browser flows remain unverified. Source/audit querying and denial paths are covered separately by HTTP/database tests. Cases cover real audited activation/saves, payload omission without rewriting history, recorded actor/role, escaping, old/new/current workplace moves, entity/OS/context isolation, independent pagination and invalid pages, fresh permissions/role/session denial, read-only monitor and reasoned Superadmin. Synthetic events test exclusions only; they are not financial policy.
 
 Visual states: empty/populated/scoped/paginated/read-only/validation, collapsed and expanded where applicable, on desktop/mobile. No asynchronous loading path added. Local update and UI inspection pending; keep running server and refresh after pull/cache clear.
+
+## User-confirmed local update and inspection — 14 November 2026
+
+The user reported **“It's there. Clean. Proceed.”** after the supplied guarded dev pull/cache-clear commands and the requested active-OS opening/Log Tindakan expansion, activation-entry, actor/time and spacing checks. Record synchronisation through Batch 018 and these bounded UI checks as user-confirmed. This also confirms delivery of Batches 016–017 by the combined pull; it does not establish manual multi-row service execution, all OS navigation, other roles/devices, hidden-row permissions or audit/database inspection. No direct Windows access or new test execution is claimed. Earlier pending local-update statements are superseded only for these checks.
