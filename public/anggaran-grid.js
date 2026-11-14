@@ -9,7 +9,7 @@
  const dirty=()=>{if(status)status.textContent='Perubahan belum disimpan.';form.dispatchEvent(new Event('input',{bubbles:true}));};
  const plain=value=>value===null||value===undefined?'':String(value);
  function decimalMultiply(a,b){
-  if(!/^-?\d+(\.\d+)?$/.test(a)||!/^\d+(\.\d+)?$/.test(b))return '—';
+  if(!/^-?\d+(\.\d+)?$/.test(a)||!/^-?\d+(\.\d+)?$/.test(b))return '—';
   const scale=(a.split('.')[1]?.length||0)+(b.split('.')[1]?.length||0);
   let raw=(BigInt(a.replace('.',''))*BigInt(b.replace('.',''))).toString(),negative=raw.startsWith('-');
   if(negative)raw=raw.slice(1);

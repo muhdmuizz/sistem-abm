@@ -496,6 +496,8 @@ await first.locator('[data-field=nama]').fill('Ibu Contoh');await page.keyboard.
 if(!(await first.locator('[data-field=bil_unit]').evaluate(el=>document.activeElement===el)))throw Error('TASKA Tab text to quantity');
 await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=bil_bulan]').fill('12');
 if(await first.locator('[data-output=preview]').textContent()!=='4320')throw Error('TASKA multi-child formula');
+await first.locator('[data-field=bil_bulan]').fill('-0.5');
+if(await first.locator('[data-output=preview]').textContent()!=='-180')throw Error('TASKA signed draft factor preview differs from server');
 const pastedName='Bapa <script>window.TASKA_XSS=1</script>';
 await first.locator('[data-field=nama]').evaluate((el,name)=>{
  const transfer=new DataTransfer();transfer.setData('text/plain',name+'\t9007199254740993\t12\nIbu Contoh\t3\t10');
