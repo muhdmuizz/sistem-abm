@@ -34,7 +34,7 @@ class CanonicalFinancialStorageTest extends TestCase
         return compact('ptj', 'activity', 'cycle', 'workplace', 'os', 'bid', 'estimate');
     }
 
-    private function source(array $g, array $data = []): ButiranAnggaran
+    private function financialSourceFixture(array $g, array $data = []): ButiranAnggaran
     {
         return ButiranAnggaran::forceCreate([
             'anggaran_id' => $g['estimate']->id, 'ptj_id' => $g['ptj']->id,
@@ -42,7 +42,7 @@ class CanonicalFinancialStorageTest extends TestCase
         ])->fresh();
     }
 
-    private function output(ButiranAnggaran $source, string $amount, int $order = 1): HasilPengiraan
+    private function financialOutputFixture(ButiranAnggaran $source, string $amount, int $order = 1): HasilPengiraan
     {
         // Synthetic exact-number fixtures, not approved rates or OS calculations.
         return HasilPengiraan::forceCreate([
@@ -64,8 +64,8 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_financial_graph_keeps_real_parentage_and_defaults_inactive_without_creating_phases(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g);
-        $output = $this->output($source, '0');
+        $source = $this->financialSourceFixture($g);
+        $output = $this->financialOutputFixture($source, '0');
 
         $this->assertFalse($g['bid']->diaktifkan);
         $this->assertFalse($g['estimate']->diaktifkan);
@@ -128,8 +128,8 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_sources_with_identical_values_keep_separate_ids_and_independent_edits(): void
     {
         $g = $this->financialGraph();
-        $first = $this->source($g, ['fixture_text' => 'same']);
-        $second = $this->source($g, ['fixture_text' => 'same']);
+        $first = $this->financialSourceFixture($g, ['fixture_text' => 'same']);
+        $second = $this->financialSourceFixture($g, ['fixture_text' => 'same']);
         $id = $first->id;
         $first->forceFill(['data_sumber' => (object) ['fixture_text' => 'edited'], 'semakan' => 1])->save();
 
@@ -167,11 +167,11 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_source_can_have_many_exactly_attributable_outputs_with_independent_ids(): void
     {
         $g = $this->financialGraph();
-        $a = $this->source($g);
-        $b = $this->source($g);
-        $one = $this->output($a, '1.01');
-        $two = $this->output($a, '2.02', 2);
-        $other = $this->output($b, '3.03');
+        $a = $this->financialSourceFixture($g);
+        $b = $this->financialSourceFixture($g);
+        $one = $this->financialOutputFixture($a, '1.01');
+        $two = $this->financialOutputFixture($a, '2.02', 2);
+        $other = $this->financialOutputFixture($b, '3.03');
         $two->forceFill(['amaun' => '2.020001', 'data_output' => (object) ['fixture' => 'revised']])->save();
 
         $this->assertCount(2, $a->hasilPengiraan);
@@ -180,17 +180,17 @@ class CanonicalFinancialStorageTest extends TestCase
         $this->assertSame('3.03', $other->fresh()->amaun);
         $this->assertSame('2.020001', $two->fresh()->amaun);
         $this->assertSame($a->id, $two->fresh()->butiran_anggaran_id);
-        $this->rejectDatabaseWrite(fn () => $this->output($a, '4', 1), '23505');
-        $this->rejectDatabaseWrite(fn () => $this->output($a, '4', 0), '23514');
+        $this->rejectDatabaseWrite(fn () => $this->financialOutputFixture($a, '4', 1), '23505');
+        $this->rejectDatabaseWrite(fn () => $this->financialOutputFixture($a, '4', 0), '23514');
     }
 
     public function test_generated_outputs_cannot_reference_a_missing_or_different_source_revision(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g);
+        $source = $this->financialSourceFixture($g);
         $base = ['butiran_anggaran_id' => $source->id, 'semakan_sumber' => 1, 'turutan' => 1, 'amaun' => '1'];
         $this->rejectDatabaseWrite(fn () => DB::table('hasil_pengiraan')->insert($base), '23503');
-        $output = $this->output($source, '1');
+        $output = $this->financialOutputFixture($source, '1');
         $this->rejectDatabaseWrite(fn () => DB::table('butiran_anggaran')->where('id', $source->id)->update(['semakan' => 1]), '23503');
         $this->assertSame(0, $source->fresh()->semakan);
         $this->assertSame(0, $output->fresh()->semakan_sumber);
@@ -198,7 +198,7 @@ class CanonicalFinancialStorageTest extends TestCase
         DB::transaction(function () use ($source, $output): void {
             $output->delete();
             $source->forceFill(['semakan' => 1])->save();
-            $this->output($source, '1.25');
+            $this->financialOutputFixture($source, '1.25');
         });
         $this->assertSame(1, $source->fresh()->hasilPengiraan->sole()->semakan_sumber);
     }
@@ -206,12 +206,12 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_money_round_trips_exactly_without_float_scale_caps_or_positive_only_policy(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g);
+        $source = $this->financialSourceFixture($g);
         foreach ([
             '0', '-0.000001', '0.123456789012345678901234567890',
             '999999999999999999999999999999999999999999.123456789',
         ] as $i => $amount) {
-            $this->assertSame($amount, $this->output($source, $amount, $i + 1)->amaun);
+            $this->assertSame($amount, $this->financialOutputFixture($source, $amount, $i + 1)->amaun);
         }
         $sum = DB::table('hasil_pengiraan')->where('butiran_anggaran_id', $source->id)->selectRaw('sum(amaun)::text as total')->first()->total;
         $this->assertSame('999999999999999999999999999999999999999999.246912578012345678901234567890', $sum);
@@ -220,8 +220,8 @@ class CanonicalFinancialStorageTest extends TestCase
     #[DataProvider('nonFiniteAmounts')]
     public function test_database_rejects_non_finite_financial_amounts(string $amount): void
     {
-        $source = $this->source($this->financialGraph());
-        $this->rejectDatabaseWrite(fn () => $this->output($source, $amount), '23514');
+        $source = $this->financialSourceFixture($this->financialGraph());
+        $this->rejectDatabaseWrite(fn () => $this->financialOutputFixture($source, $amount), '23514');
         $this->assertDatabaseCount('hasil_pengiraan', 0);
     }
 
@@ -233,8 +233,8 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_financial_parents_and_workplace_attribution_cannot_be_destructively_cascaded(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g);
-        $this->output($source, '1');
+        $source = $this->financialSourceFixture($g);
+        $this->financialOutputFixture($source, '1');
         foreach ([
             ['ptjs', $g['ptj']->id], ['aktiviti_kewangans', $g['activity']->id],
             ['kitarans', $g['cycle']->id], ['rujukan_os', $g['os']->id],
@@ -252,7 +252,7 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_missing_parents_nulls_and_negative_technical_revisions_are_rejected(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g);
+        $source = $this->financialSourceFixture($g);
         foreach ([
             ['bidaan', $g['bid']->id, 'ptj_id'],
             ['bidaan', $g['bid']->id, 'aktiviti_kewangan_id'],
@@ -278,8 +278,8 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_draft_envelopes_accept_partial_objects_but_reject_arrays_scalars_and_nulls(): void
     {
         $g = $this->financialGraph();
-        $source = $this->source($g, ['fixture_optional' => null, 'fixture_decimal_text' => '0.000000001']);
-        $output = $this->output($source, '0');
+        $source = $this->financialSourceFixture($g, ['fixture_optional' => null, 'fixture_decimal_text' => '0.000000001']);
+        $output = $this->financialOutputFixture($source, '0');
         $this->assertNull($source->data_sumber->fixture_optional);
         $this->assertSame('0.000000001', $source->data_sumber->fixture_decimal_text);
         foreach ([
@@ -297,10 +297,10 @@ class CanonicalFinancialStorageTest extends TestCase
     {
         $g = $this->financialGraph();
         $this->rejectDatabaseWrite(function () use ($g): void {
-            $first = $this->source($g, ['fixture_text' => 'first']);
-            $this->output($first, '1');
-            $second = $this->source($g, ['fixture_text' => 'second']);
-            $this->output($second, 'NaN');
+            $first = $this->financialSourceFixture($g, ['fixture_text' => 'first']);
+            $this->financialOutputFixture($first, '1');
+            $second = $this->financialSourceFixture($g, ['fixture_text' => 'second']);
+            $this->financialOutputFixture($second, 'NaN');
         }, '23514');
         $this->assertDatabaseCount('butiran_anggaran', 0);
         $this->assertDatabaseCount('hasil_pengiraan', 0);
@@ -346,7 +346,7 @@ class CanonicalFinancialStorageTest extends TestCase
     public function test_storage_migration_is_reversible_and_preserves_organisational_references(): void
     {
         $g = $this->financialGraph();
-        $this->output($this->source($g), '1');
+        $this->financialOutputFixture($this->financialSourceFixture($g), '1');
         $migration = require database_path('migrations/2026_11_14_020000_create_canonical_financial_storage.php');
         $migration->down();
         $this->assertDatabaseCount('ptjs', 1);
