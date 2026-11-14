@@ -28,8 +28,17 @@ The system owner explicitly confirms that this Anggaran has **four Kategori leve
 - **KATEGORI3:** Bujang / Keluarga
 - **KATEGORI4:** Jenis Tuntutan, dependent on the preceding choices: Elaun Perjalanan Kenderaan/ Tambang Pengangkutan Awam when Tidak Berpindah Rumah, or Elaun Makan, Bayaran Sewa Hotel/ Elaun Lojing, Tambang Perjalanan when Berpindah Rumah.
 
-**KATEGORI4 is real and approved**, not an invented fourth category. The canonical 27-column Perbelanjaan Excel layout currently exposes columns named KATEGORI1–3; how the fourth level is represented during Excel export remains a separate unresolved **output mapping** question. Do not remove, merge or rename KATEGORI4 to make it fit the export schema.
+**KATEGORI4 is real and approved**, not an invented fourth category. The owner has also approved the following OS21000 Pertukaran-specific export mapping into the existing 27-column Perbelanjaan Excel structure:
+
+| Canonical Excel column | System category | Source values |
+| --- | --- | --- |
+| 04 — NAMA PROGRAM/ AKTIVITI/ TUJUAN | KATEGORI1 | Bertukar Ke Luar Kawasan Pejabat |
+| 11 — KATEGORI1 | KATEGORI2 | Tidak Berpindah Rumah / Berpindah Rumah |
+| 12 — KATEGORI2 | KATEGORI3 | Bujang / Keluarga |
+| 13 — KATEGORI3 | KATEGORI4 | Dependent Jenis Tuntutan values from the eight approved combinations |
+
+**Applicability confirmed:** columns **04, 11, 12 and 13 are Active** for this Anggaran. The internal KATEGORI1–4 hierarchy remains intact. Do not change canonical Excel header names, introduce a 28th column, or extend this mapping to other OSs.
 
 Do not invent rate reference mappings, financial formulas, extra category choices, eligibility rules or a relationship to OS22000 from these rows.
 
-**Status:** Four-category hierarchy and eight combinations explicitly approved and documented. Export representation for KATEGORI4, remaining applicability and calculation rules still pending. Documentation-only checkpoint; no Laravel/database edits.
+**Status:** Four-category hierarchy and eight combinations explicitly approved and documented. Export representation for KATEGORI4 approved; other column applicability and calculation rules still pending. Documentation-only checkpoint; no Laravel/database edits.
