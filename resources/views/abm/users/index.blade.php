@@ -17,7 +17,7 @@
 @empty<li>Tiada penugasan. Akses dilindungi tidak dibenarkan.</li>@endforelse
 </ul></details></td>
 <td data-label="Tindakan"><a class="button icon-button" href="{{ route('users.edit', $account) }}" aria-label="Pinda {{ $account->name }}" title="Pinda pengguna"><x-abm-icon name="pencil"/></a></td></tr>
-@empty<tr><td colspan="5">Tiada pengguna ditemui.</td></tr>@endforelse
+@empty<tr><td class="table-empty" colspan="5">Tiada pengguna ditemui.</td></tr>@endforelse
 </tbody></table></div>
 <div class="pagination"><span>Halaman {{ $users->currentPage() }} daripada {{ $users->lastPage() }}</span><div>@if($users->previousPageUrl())<a href="{{ $users->previousPageUrl() }}">Sebelumnya</a>@endif @if($users->nextPageUrl())<a href="{{ $users->nextPageUrl() }}">Seterusnya</a>@endif</div></div>
 @endsection

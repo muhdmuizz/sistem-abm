@@ -20,7 +20,7 @@
 </article>
 @empty<p class="notice">Belum ada Fasa bagi Kitaran ini.</p>@endforelse
 </div><a class="button primary" href="{{ route('phases.create', $cycle->id) }}"><x-abm-icon name="plus"/>Tambah Fasa</a></div></details></td></tr>
-@empty<tr><td colspan="2">Tiada Kitaran ditemui.</td></tr>@endforelse
+@empty<tr><td colspan="2" class="table-empty">Tiada Kitaran ditemui.</td></tr>@endforelse
 </tbody></table></div>
 <div class="pagination"><span>Halaman {{ $cycles->currentPage() }} daripada {{ $cycles->lastPage() }}</span><div>@if($cycles->previousPageUrl())<a href="{{ $cycles->previousPageUrl() }}">Sebelumnya</a>@endif @if($cycles->nextPageUrl())<a href="{{ $cycles->nextPageUrl() }}">Seterusnya</a>@endif</div></div>
 @endsection

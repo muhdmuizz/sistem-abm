@@ -295,6 +295,68 @@ if (await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) th
 await page.screenshot({path:'storage/app/ui-qa/program-dynamic-390.png',fullPage:true});
 
 }
+
+{
+// Batch 022: shared layouts, compact sign-in and independently scrolling navigation.
+page.removeAllListeners('dialog');
+page.on('dialog', dialog => dialog.accept());
+for (const name of ['login-ready','login','login-error','login-status']) {
+    for (const [width,height] of [[1366,768],[1280,720],[390,844],[320,568]]) {
+        await page.setViewportSize({width,height});
+        await page.goto('http://127.0.0.1:4173/'+name+'.html');
+        if (await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error(name+' login horizontal overflow');
+        if (width>=1280 && await page.evaluate(()=>document.documentElement.scrollHeight>innerHeight)) throw Error(name+' login does not fit a standard laptop display');
+        const panel=page.locator('.login-panel');
+        if (await panel.evaluate(el=>parseFloat(getComputedStyle(el).paddingLeft))<24) throw Error('Login insets crowded');
+        await page.screenshot({path:'storage/app/ui-qa/refined-'+name+'-'+width+'.png',fullPage:true});
+    }
+}
+await page.setViewportSize({width:1366,height:480});
+await page.goto('http://127.0.0.1:4173/ptj.html');
+if (await page.locator('body').evaluate(el=>el.classList.contains('sidebar-collapsed'))) await page.locator('#sidebar-toggle').click();
+const nav=page.locator('.sidebar>nav');
+for(const collapsed of [false,true]) {
+    if ((await page.locator('body').evaluate(el=>el.classList.contains('sidebar-collapsed')))!==collapsed) await page.locator('#sidebar-toggle').click();
+    await nav.evaluate(el=>el.scrollTop=0);
+    if (!(await nav.evaluate(el=>el.scrollHeight>el.clientHeight))) throw Error('Short sidebar test has no overflow');
+    await nav.hover(); await page.mouse.wheel(0,600);
+    await page.waitForFunction(()=>document.querySelector('.sidebar>nav').scrollTop>0);
+    await nav.evaluate(el=>el.scrollTop=0); await nav.focus(); await page.keyboard.press('End');
+    await page.waitForFunction(()=>document.querySelector('.sidebar>nav').scrollTop>0);
+    const toggle=await page.locator('#sidebar-toggle').boundingBox();
+    if (!toggle || toggle.y+toggle.height>480) throw Error('Sidebar toggle clipped');
+    await page.screenshot({path:'storage/app/ui-qa/sidebar-short-'+(collapsed?'collapsed':'expanded')+'.png',fullPage:true});
+}
+await page.reload();
+if (!(await page.locator('body').evaluate(el=>el.classList.contains('sidebar-collapsed')))) throw Error('Refinement lost collapse preference');
+await page.setViewportSize({width:390,height:420});
+await page.locator('#mobile-open').click();
+const drawer=page.locator('#mobile-navigation');
+const mobileNav=drawer.locator('nav');
+if (await drawer.evaluate(el=>el.getBoundingClientRect().height)>420) throw Error('Drawer exceeds short viewport');
+await mobileNav.focus(); await page.keyboard.press('End');
+await page.waitForFunction(()=>document.querySelector('#mobile-navigation>nav').scrollTop>0);
+await page.screenshot({path:'storage/app/ui-qa/sidebar-mobile-short.png',fullPage:true});
+await page.keyboard.press('Escape');
+if (await drawer.evaluate(el=>el.open)) throw Error('Mobile drawer did not close');
+for (const name of ['cycles-empty','users-empty']) {
+    for (const width of [1366,390]) {
+        await page.setViewportSize({width,height:768});
+        await page.goto('http://127.0.0.1:4173/'+name+'.html');
+        const cell=page.locator('td.table-empty');
+        if (!(await cell.count())) throw Error(name+' empty cell missing');
+        if (await cell.evaluate(el=>['paddingLeft','paddingRight','paddingTop','paddingBottom'].some(k=>parseFloat(getComputedStyle(el)[k])<16))) throw Error(name+' empty-state padding regressed');
+        if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error(name+' overflow');
+        await page.screenshot({path:'storage/app/ui-qa/refined-'+name+'-'+width+'.png',fullPage:true});
+    }
+}
+await page.goto('http://127.0.0.1:4173/program-readonly.html');
+if (!(await page.locator('.sidebar a[aria-label="Bida Peruntukan"][aria-current="page"]').count())) throw Error('Programme active parent missing');
+if (await page.locator('[data-remove-person]:visible').count()) throw Error('Read-only programme displays row removal controls');
+await page.goto('http://127.0.0.1:4173/program-edit.html');
+if (await page.locator('.program-form').evaluate(el=>getComputedStyle(el).maxWidth)!=='1120px') throw Error('Programme form width constraint invalid');
+}
+
 await browser.close();
 
 
