@@ -1,6 +1,6 @@
 # Batch 022 — Shared UI Refinement
 
-**Status:** Verification passed in PR #51; merge/local acceptance pending. User approved all seven refinement areas on 14 November 2026.
+**Status:** Verified and merged in PR #51 at `f8d0cbf9d5875815b354b0de7cba545ba8dfb0a9`; local acceptance pending. User approved all seven refinement areas on 14 November 2026.
 **Baseline:** `0e4914c7d62221a460c296039d3318f949bb02bc` on dev. AD-013 is authoritative; existing workflows/roles/financial rules remain unchanged. No migration/seed or resumed AD-008 work.
 
 ## Consolidated audit before changes
@@ -19,7 +19,7 @@ Reviewed current source and the Batch 021 CI screenshots for login, references, 
 
 ## Verification and acceptance
 
-Verified application/test head `9422886677ab9b0198d3047ec3d6ddefc902e621`: [CI 43585733643](https://github.com/muhdmuizz/sistem-abm/actions/runs/43585733643), **410 tests / 3141 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; frontend build and all existing/new Chromium checks passed. Two HTTP rendering/feedback cases added. [PR #51](https://github.com/muhdmuizz/sistem-abm/pull/51). Test login configured, unconfigured, error and status at standard laptop/desktop and mobile sizes; short/zoom-equivalent navigation and expanded/collapsed sidebar/drawer. Existing synchronous pages do not gain synthetic asynchronous loading screens. Real-device and assistive-technology certification remain unverified.
+Verified application/test head `9422886677ab9b0198d3047ec3d6ddefc902e621`: [CI 43585733643](https://github.com/muhdmuizz/sistem-abm/actions/runs/43585733643), **410 tests / 3141 assertions**, PHP 8.4.27 / PostgreSQL 18.7 against isolated `sistem_abm_testing`; frontend build and all existing/new Chromium checks passed. Two HTTP rendering/feedback cases added. [PR #51](https://github.com/muhdmuizz/sistem-abm/pull/51). Coverage includes login configured, unconfigured, error and status at standard laptop/desktop and mobile sizes; short/zoom-equivalent navigation and expanded/collapsed sidebar/drawer. Existing synchronous pages do not gain synthetic asynchronous loading screens. Real-device and assistive-technology certification remain unverified.
 
 ## Prior local acceptance — Batch 021
 
