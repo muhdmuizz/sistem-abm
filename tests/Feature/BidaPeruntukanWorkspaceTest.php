@@ -377,6 +377,8 @@ SQL);
         $second = $this->get($url.'?page=2')->assertOk()->assertSee('Halaman 2 daripada 2')
             ->assertDontSee('SECTOR_NOT_AUTHORISED');
         $this->assertCount(1, $second->viewData('sources')->items());
+        $this->get($url.'?page=999')->assertRedirect(route('estimates.show', [$bid->id, $estimate->id, 'page' => 2]));
+        $this->get($url.'?tempat_bertugas_id='.$other->id)->assertOk()->assertSee('26 rekod dalam skop anda')->assertDontSee('SECTOR_NOT_AUTHORISED');
         $this->workspaceCapture('estimate-workplace', $response);
     }
 
@@ -529,6 +531,20 @@ SQL);
         $response = $this->withSession(['errors' => $errors])->get(route('estimates.show', [$bid->id, $estimate->id]))
             ->assertOk()->assertSee('role="alert"', false)->assertSee('Pilih OS yang sah.');
         $this->workspaceCapture('estimate-validation', $response);
+    }
+
+    public function test_cross_ptj_estimate_is_denied_and_superadmin_reads_real_context_without_mutation(): void
+    {
+        $bid = Bidaan::forceCreate(['kitaran_id' => $this->cycle->id, 'ptj_id' => $this->other->id,
+            'aktiviti_kewangan_id' => $this->activity->id, 'diaktifkan' => true])->fresh();
+        $estimate = $this->workspaceEstimate($bid);
+        $url = route('estimates.show', [$bid->id, $estimate->id]);
+        $this->get($url)->assertForbidden();
+        $this->operator->penugasanPeranan()->delete();
+        $this->workspaceRole(Peranan::Superadmin);
+        $this->get($url)->assertOk()->assertSee('PPD Kuala Nerus')->assertSee('Pengurusan Pentadbiran Negeri');
+        $this->assertDatabaseCount('rekod_audit', 0);
+        $this->assertDatabaseCount('anggaran', 1);
     }
 
 }

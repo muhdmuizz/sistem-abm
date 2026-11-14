@@ -46,6 +46,9 @@ class AnggaranController extends Controller
         abort_unless($estimateRecord->diaktifkan, 409, 'OS belum aktif. Kembali ke senarai OS untuk menyemak pengaktifan.');
         $sources = $rows->sources($request->user(), $record, $estimateRecord)
             ->orderByDesc('updated_at')->orderByDesc('id')->paginate(25)->withQueryString();
+        if ($sources->isEmpty() && $sources->total() > 0) {
+            return redirect()->route('estimates.show', [$record->id, $estimateRecord->id, 'page' => $sources->lastPage()]);
+        }
         return view('abm.estimates.show', ['bid' => $record, 'estimate' => $estimateRecord,
             'os' => $navigation[$index]['os'], 'navigation' => $navigation, 'sources' => $sources,
             'previous' => $index > 0 ? $navigation[$index - 1] : null,
