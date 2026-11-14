@@ -1,6 +1,6 @@
 # OS23000 — Perhubungan dan Utiliti: category and rate reference
 
-**Owner-confirmed:** 12 November 2026. **Scope:** Reference classification and Kadar mode only; no application or database implementation.
+**Owner-confirmed categories:** 12 November 2026. **Owner-approved column applicability and calculation:** 14 November 2026. **Scope:** Reference and Anggaran specification only; no application or database implementation.
 
 ## Category hierarchy
 
@@ -31,5 +31,53 @@ The OS catalogue and legacy mapping CSVs are deliberately left unchanged pending
 ## Boundaries
 
 - Jawatan and Gred are shared personnel attributes where relevant, **not categories**. They are not required for the OS23000 rate lookup specified here.
-- No new quantity, free-text description, date, calculation, authorisation or rounding rule is approved by this reference.
+- The approved BILANGAN BULAN = 12 and ANGGARAN JUMLAH SETAHUN = KADAR × 12 rule is recorded below. No further quantity, date, eligibility, authorisation or rounding rule is approved.
 - This commit does **not** change ADs, Laravel, PostgreSQL, or the existing master source data.
+
+## Approved 27-column applicability and calculation — 14 November 2026
+
+The following single set of applicability decisions applies to **all seven approved KATEGORI1/KATEGORI2 combinations** under the same OS23000 Anggaran. Preserve the canonical 27-column Excel headers and existing global rules.
+
+| No. | Canonical column | Status | Approved behaviour |
+| ---: | --- | --- | --- |
+| 01 | OBJEK SEBAGAI | Active | Automatically from selected Anggaran (OS) |
+| 02 | JPNT/ PPD | Active | Automatically from authorised Bidaan PTJ |
+| 03 | SEKTOR/ SEKOLAH | Active | Controlled Tempat Bertugas selection under authorised PTJ |
+| 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Inactive | — |
+| 05 | TARIKH MULA | Inactive | — |
+| 06 | TARIKH TAMAT | Inactive | — |
+| 07 | TEMPOH | Inactive | — |
+| 08 | NAMA | Inactive | — |
+| 09 | JAWATAN | Inactive | — |
+| 10 | GRED | Inactive | — |
+| 11 | KATEGORI1 | Active | Pukal / Bukan Pukal |
+| 12 | KATEGORI2 | Active | Exactly the seven dependent category values in the existing source CSV |
+| 13 | KATEGORI3 | Inactive | — |
+| 14 | UNIT | Inactive | — |
+| 15 | GRED PENCERAMAH/ FASILITATOR | Inactive | — |
+| 16 | BIL. UNIT | Inactive | — |
+| 17 | LOKASI URUSAN RASMI | Inactive | — |
+| 18 | KADAR | Active | Mandatory user-entered value; no lookup or fabricated default |
+| 19 | JARAK | Inactive | — |
+| 20 | KEKERAPAN | Inactive | — |
+| 21 | JAM | Inactive | — |
+| 22 | BILANGAN HARI | Inactive | — |
+| 23 | BILANGAN BULAN | Active | **Fixed at 12**; not a frequency or adjustable quantity |
+| 24 | ANGGARAN JUMLAH SETAHUN | Active | **KADAR × 12**, calculated automatically |
+| 25 | KATEGORI SUMBER PERUNTUKAN | Active | Automatically from Bidaan Aktiviti Kewangan |
+| 26 | KATEGORI PROGRAM | Deferred | Program/ Aktiviti pathway |
+| 27 | KATEGORI PESERTA | Deferred | Program/ Aktiviti pathway |
+
+**Reconciliation:** 9 Active + 16 Inactive + 2 Deferred = 27.
+
+### Calculation contract
+
+For every permitted **Pukal** and **Bukan Pukal** combination:
+
+- **KADAR** (column 18): mandatory user entry.
+- **BILANGAN BULAN** (column 23): fixed value **12**.
+- **ANGGARAN JUMLAH SETAHUN** (column 24): automatically **KADAR × BILANGAN BULAN = KADAR × 12**.
+- Do not infer additional quantities, frequency multipliers, rounding conventions, grade-based rates, or eligibility rules.
+- Existing category reference CSV, catalogue and global rules are unchanged.
+
+**Status:** Specification committed; Laravel application, PostgreSQL, master data, and Excel implementation are not changed by this documentation update.
