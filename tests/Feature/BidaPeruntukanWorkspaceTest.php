@@ -97,8 +97,10 @@ class BidaPeruntukanWorkspaceTest extends TestCase
         if (getenv('ABM_UI_CAPTURE') !== '1') { return; }
         $directory = storage_path('app/ui-qa');
         if (! is_dir($directory)) { mkdir($directory, 0775, true); }
+        // Static browser fixtures run on the real clock, not this test's future Kitaran clock.
+        $html = preg_replace('/data-deadline="\d+"/', 'data-deadline="'.(time() + 3600).'"', $response->getContent());
         file_put_contents($directory.'/'.$name.'.html',
-            str_replace('http://localhost', 'http://127.0.0.1:4173', $response->getContent()));
+            str_replace('http://localhost', 'http://127.0.0.1:4173', $html));
         foreach (['abm.css', 'abm.js'] as $asset) { copy(public_path($asset), $directory.'/'.$asset); }
     }
 
