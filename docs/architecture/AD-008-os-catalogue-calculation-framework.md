@@ -284,3 +284,7 @@ See [OS27000 Bekalan Alat Pejabat](../references/OS27000-bekalan-alat-pejabat-re
 ## OS27000 Pakaian Seragam approved specification — 14 November 2026
 
 See [OS27000 Pakaian Seragam](../references/OS27000-pakaian-seragam-reference.md#owner-approved-30-column-anggaran-specification--14-november-2026): 11 Active, 17 Inactive and 2 Deferred columns in the canonical 30-column order; JAWATAN is a separate shared personnel reference; UNIT is fixed to **Pasang**; BIL. UNIT displays **BIL. PENGISIAN**; KEKERAPAN displays **BIL. PASANG**; and **ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KEKERAPAN × KADAR**, with KADAR automatically selected from the existing four KATEGORI1 + JAWATAN combinations. Separate Kod Aktiviti and other OS27000 variants are unaffected. Documentation only; AD-008 remains **Draft**.
+
+## OS27000 Bekalan dan Bahan-bahan Lain (Touch ’n Go) — approved 14 November 2026
+
+See [OS27000 Touch ’n Go](../references/OS27000-bekalan-dan-bahan-lain-touch-n-go-reference.md) for the approved monthly budgeting specification across the existing three Kod Aktiviti: 9 Active, 19 Inactive and 2 Deferred columns; user-entered **TUJUAN**, **BIL. UNIT**, **KADAR BULANAN**, **BILANGAN BULAN**; **KEKERAPAN Inactive**; and **ANGGARAN JUMLAH SETAHUN = BIL. UNIT × KADAR BULANAN × BILANGAN BULAN**. No category or reference-rate lookup is added; other OS27000 variants remain distinct. Documentation only; AD-008 remains **Draft**.
