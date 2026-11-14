@@ -1,6 +1,6 @@
 # Batch 015 — Bida Peruntukan Workspace & Activation UI
 
-**Status:** Code/visual verification passed and merged; local acceptance pending.
+**Status:** Code/visual verification passed and merged; requested local acceptance user-confirmed.
 **Date:** 14 November 2026 (Asia/Kuala_Lumpur).
 **Baseline:** `238971301798dd475b87b731fce525744cde1f73` on dev.
 **Authorisation:** User approved authorised Bidaan context by Kitaran/PTJ/Aktiviti, UI-backed initial Bidaan/OS activation, clear states and feedback, and AD-013 spacing/anti-slop. Batch 014 local synchronisation/existing-page checks are user-confirmed.
@@ -27,8 +27,12 @@ Tested application head: `daf17e186514e4df0d50f52cac5b591e6e73aeee`.
 
 Desktop/mobile review passed for eight states (16 screenshots): initial context, available activity cards, OS catalogue, no cycle, no permitted activities, no permitted OS, override confirmation and validation. Browser assertions cover responsive overflow, searchable PTJ, required reason, accessible validation markers and at least 16 px empty-state insets. [Screenshot artifact](https://github.com/muhdmuizz/sistem-abm/actions/runs/43552003016/artifacts/14096961494). Screens are isolated Blade fixtures, not the user's Windows browser or real financial seeds.
 
-Early CI exposed incorrect validation-error fixtures for Laravel 13's JSON session serialization. The final fixture uses the framework's serialized error-bag shape; POST reason validation and error rendering are checked separately. Temporary diagnostics/workarounds were removed; production session serialization/authentication are unchanged. Static fixture deadlines use the browser's real clock rather than the financial test's future year. Browser checks exercise rendered fixtures, not live Google authentication or browser-to-app POSTs; server POST integration is covered separately. Local activation/manual device/security acceptance remains unverified.
+Early CI exposed incorrect validation-error fixtures for Laravel 13's JSON session serialization. The final fixture uses the framework's serialized error-bag shape; POST reason validation and error rendering are checked separately. Temporary diagnostics/workarounds were removed; production session serialization/authentication are unchanged. Static fixture deadlines use the browser's real clock rather than the financial test's future year. Browser checks exercise rendered fixtures, not live Google authentication or browser-to-app POSTs; server POST integration is covered separately. Local activation/persistence and requested feedback/spacing checks are user-confirmed; broader device/security acceptance remains unverified.
 
-[PR #32](https://github.com/muhdmuizz/sistem-abm/pull/32); merged at `96e3507150dfa595ec241fe81517a48ba6777887`. No new migration. Local synchronisation/inspection pending. Step 02 remains in progress: OS field adapters, calculation integration and source editing UI remain deferred. Keep the running local server; pull/cache clear in another terminal and refresh.
+[PR #32](https://github.com/muhdmuizz/sistem-abm/pull/32); merged at `96e3507150dfa595ec241fe81517a48ba6777887`. No new migration. Local synchronisation/inspection user-confirmed; subsequent Fasa correction migration also user-confirmed. Step 02 remains in progress: OS field adapters, calculation integration and source editing UI remain deferred. Keep the running local server; pull/cache clear in another terminal and refresh.
 
 Read presentation memoisation is transient within a service instance; mutation services independently recheck the database under their existing locks. It is not a cached authorisation grant or cross-request permission cache.
+
+## User-confirmed local acceptance — 14 November 2026
+
+The user reported **“Clean.”** after the supplied guarded dev pull/database-check/normal-migration/cache-clear commands and the requested local checks: create/save/open a Fasa for Kitaran 2028 starting in 2026; choose Kitaran/PTJ in Bida Peruntukan; activate one Bidaan and one OS; refresh to verify persistence; inspect feedback/spacing and the active-OS preparation-not-yet-open message. Record those bounded checks as user-confirmed. No direct cloud inspection of Windows, audit rows, all roles, stale editors, physical devices or OS calculations is claimed. Earlier security/manual limitations remain tracked. No new application changes or test execution accompany this documentation update.
