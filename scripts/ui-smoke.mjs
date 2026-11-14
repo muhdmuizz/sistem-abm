@@ -356,6 +356,12 @@ if (await page.locator('[data-remove-person]:visible').count()) throw Error('Rea
 if (await page.locator('[data-person-count]').first().evaluate(el=>getComputedStyle(el).backgroundColor)!=='rgb(243, 245, 247)') throw Error('Read-only numerical input styling inconsistent');
 await page.goto('http://127.0.0.1:4173/program-edit.html');
 if (await page.locator('.program-form').evaluate(el=>getComputedStyle(el).maxWidth)!=='1120px') throw Error('Programme form width constraint invalid');
+await page.locator('[data-program-form]').evaluate(el=>el.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
+if (!(await page.locator('button[aria-busy=true]:disabled').count())) throw Error('Saving state not disabled/announced');
+for (const width of [1366,390]) {
+    await page.setViewportSize({width,height:768});
+    await page.screenshot({path:'storage/app/ui-qa/refined-saving-'+width+'.png',fullPage:true});
+}
 }
 
 await browser.close();

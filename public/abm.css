@@ -73,3 +73,5 @@ input[type=number],output{font-variant-numeric:tabular-nums}
 @media(max-width:767px){:root{--control-height:44px;--panel-inset:16px}.page-heading>.button{margin-top:0}.form-actions .button{min-width:0}.data-table td.table-empty{display:block}.data-table td.table-empty:before{display:none}.cycle-table td.table-empty{padding:var(--space-5) var(--space-4)}}
 
 .login-form>.notice{margin:16px 0}.login-form .full{min-height:44px}.table-empty{overflow-wrap:anywhere}
+
+:is(.sidebar,#mobile-navigation) .nav-link:focus-visible{outline-offset:-3px}.button[aria-busy=true]::after{content:'…'}
