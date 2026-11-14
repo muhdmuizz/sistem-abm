@@ -103,6 +103,8 @@ class PengaktifanKewanganTest extends TestCase
             $this->fail('Expected activation to be denied.');
         } catch (HttpException $exception) {
             $this->assertSame($status, $exception->getStatusCode());
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
+            $this->assertSame(404, $status);
         }
     }
 

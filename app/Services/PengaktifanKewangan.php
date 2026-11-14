@@ -138,7 +138,7 @@ class PengaktifanKewangan
             // Superadmin overrides permission/time scope, never catalogue exclusion or activity parentage.
             RujukanOs::untukPelaksanaan()->whereKey($osId)
                 ->whereHas('pemetaan', fn ($q) => $q->where('aktiviti_kewangan_id', $bid->aktiviti_kewangan_id))
-                ->lockForShare()->firstOrFail();
+                ->sharedLock()->firstOrFail();
             $estimate = $bid->anggaran()->where('rujukan_os_id', $osId)->lockForUpdate()->first();
             if ($estimate?->diaktifkan) {
                 return $estimate;
