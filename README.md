@@ -32,6 +32,8 @@ Batch 016 adds atomic one-Anggaran multi-row draft create/edit saves through the
 
 Batch 017 adds the shared active-OS read workspace: scoped saved Butiran references/workplaces/save times, counts/pagination and same-Bidaan OS selector/previous/next navigation. Merged in [PR #39](https://github.com/muhdmuizz/sistem-abm/pull/39) at `fab380c`; [CI 43559544013](https://github.com/muhdmuizz/sistem-abm/actions/runs/43559544013), 315 tests / 2505 assertions at `7e52730`, build/Chromium and twelve reviewed desktop/mobile screenshots passed. Local synchronisation/inspection pending; Batch 016 local update also remains unconfirmed. No migration/new field schema or financial calculations. The read shell begins a bounded part of Step 03; the cross-Bidaan hub and spreadsheet editor remain pending.
 
+Batch 018 adds scoped read-only Log Tindakan in the Anggaran workspace for actual OS activation and source draft changes, with recorded actor/role and independent pagination. Raw audit payloads/reasons remain private. Merged in [PR #41](https://github.com/muhdmuizz/sistem-abm/pull/41) at `30713fd`; [CI 43561176414](https://github.com/muhdmuizz/sistem-abm/actions/runs/43561176414), 325 tests / 2596 assertions at `48b245a`, build/Chromium and sixteen reviewed screenshots passed. Local synchronisation/inspection pending; no migration. The global audit/security viewer, OS editor and financial workflows remain pending.
+
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
