@@ -20,6 +20,8 @@ Batch 010 adds audited Pengurusan Aktiviti Kewangan editors for category default
 
 Batch 011 adds year-only Kitaran and Fasa administration, closed-by-default phases, per-cycle Pindaan numbering, valid dates and configured opening scopes, plus explicit audited open/close/extend/reopen actions. Merged in PR #23 at `6c6e777`; 187 tests / 1730 assertions plus build/browser checks and desktop/mobile visual review passed. Local synchronisation/migration and requested list/year-only form inspection are user-confirmed; actual phase mutations remain unverified. The reported empty-state padding defect remains open, with system-wide spacing requirements clarified in AD-013. Financial integration and archive/delete controls remain outside this slice.
 
+Batch 012 adds canonical Bidaan/Anggaran/Butiran storage and traceable generated outputs, unique identities, same-PTJ workplace foreign keys and exact numeric storage. Merged in PR #26 at `0ff960d`; 206 tests / 1858 assertions plus build/browser regression passed at `6fd0a01`. Local migration is pending. Step 02 remains in progress: audited financial write services, OS-specific calculations/completeness, programme integration and submission snapshots remain pending. No financial UI or real financial data is introduced.
+
 The canonical financial hierarchy remains **PTJ → Aktiviti Kewangan → Bidaan → Anggaran (OS) → Butiran Anggaran**. Reference and permission tables do not introduce extra financial layers.
 
 ## Development safety
