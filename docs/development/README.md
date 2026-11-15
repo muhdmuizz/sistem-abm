@@ -422,3 +422,7 @@ Owner requested preserving the future Program/ Aktiviti entry point for OS29000 
 ## Batch 034 — OS29000 Umum started
 
 User authorised the proposed Umum implementation. [Batch 034](batch-034-umum-spreadsheet.md) records the five existing mappings, 22 rates, conditional shared personnel fields/derived classification and exact previews. Baseline `e7fb9632b15798e8137cbd8f338b51f947158154`. No migration/seed, reference/rate/policy or Pakej entry-route changes. Prior local acceptance remains unconfirmed.
+
+## Batch 034 — pre-merge verification passed
+
+Tested `44a27bfda1c2046d322df43f12ff39f5e4111096`; [CI 43697537069](https://github.com/muhdmuizz/sistem-abm/actions/runs/43697537069): **491 tests / 4570 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Twelve representative final-head captures reviewed from 19 Umum captures (322 total). [Batch 034](batch-034-umum-spreadsheet.md) records coverage and limits. Merge/local update pending; no migration/seed or Pakej entry-route change. Official financial integration remains pending.

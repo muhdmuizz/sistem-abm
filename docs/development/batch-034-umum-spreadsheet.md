@@ -1,6 +1,6 @@
 # Batch 034 — OS29000 Umum source spreadsheet
 
-**Status:** In progress; user authorised “Proceed” on 15 November 2026.
+**Status:** Verified; PR #79 merge/local update pending. User authorised “Proceed” on 15 November 2026.
 **Baseline:** `e7fb9632b15798e8137cbd8f338b51f947158154` on dev. Batch 033 remains merged/verified; local sync and detailed acceptance remain unconfirmed.
 
 ## Approved scope
@@ -13,4 +13,16 @@ No migration/seed, CSV/catalogue/mapping/permission changes, new rates/eligibili
 
 ## Verification
 
-Pending isolated PostgreSQL, exact reference/classification/guard regressions, build/formatter/Chromium and desktop/mobile state review. Record actual tested head/evidence before merge; local sync remains pending.
+Tested application head `44a27bfda1c2046d322df43f12ff39f5e4111096`; [CI 43697537069](https://github.com/muhdmuizz/sistem-abm/actions/runs/43697537069), job 132761286994: **491 tests / 4570 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated `sistem_abm_testing`; production build, monetary formatter and full Chromium regression passed. Artifact **14155505983** contains 322 PNGs including 19 Umum captures.
+
+Six new HTTP tests cover 18 automatic/four manual reference rows, all 131 Jawatan/Gred pairs and 82 grade codes, classification boundaries including VU7, all 14 selectable service choices, exact manual-rate source storage and previews, stable IDs/reopening/no-op audit behaviour, inactive-field/derived injection rejection, invalid pair/rate/date rejection with atomic rollback, partial drafts, live Fasa/role/revision guards, audited deletion and all five exact activity mappings. No generated official financial rows are produced.
+
+Chromium exercises dependent service and Jawatan/Gred choices, grade reset on job change, derived classification/rates, automatic rate locking, contextual quantities, inactive-personnel clearing, manual precision, calendar duration, row copying, source-only payloads and retained validation feedback. Save requests are intercepted for client checks; real persistence/authorisation is covered by PostgreSQL HTTP tests. Existing OS/Pakej browser regression remains in the same suite. Local Node syntax checks passed. No local PHP, Windows/Google session, physical-device or screen-reader execution is claimed.
+
+The first full application head passed CI 43696906575 (491 tests / 4569 assertions plus build/formatter/Chromium). Final review aligned the server's null/empty personnel checks with the browser and added one regression assertion; final-head evidence below supersedes that earlier count. No business-name eligibility rule was introduced.
+
+### Visual review and limits
+
+Twelve final-head captures inspected: empty 1440/390 left; populated 1440 left/right and 390 right; partial 1440/390 right; read-only partial 1440/390 right; validation 1440/390 right; exact-value expanded desktop. Checked title-case headers, right-aligned tabular/grouped/two-decimal money, shared-job/grade controls and dedicated classification, contextual rate/quantity hints, inactive-field presentation, incomplete previews, retained validation inputs, comfortable empty-state padding and contained mobile scroll. Leading cells are partly outside the viewport at the right edge and remain available by scrolling left; populated captures expose the current internal vertical viewport, not all 14 services simultaneously. No new blocking defect found in reviewed content. Other 310 PNGs were generated/automated but not individually visually inspected. New Umum saving/network/loading/filter states were not visually reviewed; no new filter/async retrieval UI was introduced. This is bounded source-editor verification, not full accessibility, financial or production-readiness certification.
+
+**Merge/local:** PR #79 merge pending. Local Batch 034 synchronisation/financial acceptance pending; previous local statuses remain unchanged. No migration/seed or server restart. Programme inheritance/official calculations and submission remain pending; the recorded Pakej programme-only proposal remains unchanged.
