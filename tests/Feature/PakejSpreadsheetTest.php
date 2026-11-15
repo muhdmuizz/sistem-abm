@@ -125,7 +125,7 @@ class PakejSpreadsheetTest extends TestCase
         $this->workspaceCapture($name,$response);
         if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js','pakej-grid.css','pakej-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
     }
-    private function component(string $name='Penginapan',string $quantity='10',?string $rate='180',?string $duration='2'): array
+    private function pakejComponent(string $name='Penginapan',string $quantity='10',?string $rate='180',?string $duration='2'): array
     {
         return ['id'=>(string)\Illuminate\Support\Str::uuid(),'kategori1'=>$name,'bil_unit'=>$quantity,'kadar'=>$rate,'bil_hari'=>$duration];
     }
@@ -136,7 +136,7 @@ class PakejSpreadsheetTest extends TestCase
     public function test_grouped_activity_saves_shared_fields_once_and_components_atomically_with_exact_subtotal(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
-        $row=$this->groupRow($place,[$this->component(),$this->component('Makan Minum','20','35','3'),$this->component('Sewaan Dewan','1','500','3')]);
+        $row=$this->groupRow($place,[$this->pakejComponent(),$this->pakejComponent('Makan Minum','20','35','3'),$this->pakejComponent('Sewaan Dewan','1','500','3')]);
         $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$definition=new \App\Services\DefinisiPakejBerkumpulan(2028);
         $this->assertSame('os29000.pakej.v2',$source->data_sumber->definition);$this->assertCount(3,$source->data_sumber->komponen);$this->assertSame('7200',$definition->preview($source->data_sumber));$this->assertTrue($definition->readable($source->data_sumber));
         foreach($source->data_sumber->komponen as $component){$this->assertObjectNotHasProperty('tujuan',$component);$this->assertObjectNotHasProperty('tarikh_mula',$component);}
@@ -148,9 +148,9 @@ class PakejSpreadsheetTest extends TestCase
     }
     public function test_nested_component_errors_and_injected_shared_or_derived_fields_roll_back_whole_save(): void
     {
-        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$good=$this->groupRow($place,[$this->component()]);
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$good=$this->groupRow($place,[$this->pakejComponent()]);
         foreach([['kadar'=>'1,23'],['unit'=>'Bilik'],['tujuan'=>'different'],['id'=>'bad'],['bil_hari'=>'1,000'],['kategori1'=>'Other']] as $change){
-            $bad=$this->groupRow($place,[$this->component(),array_replace($this->component(),$change)]);
+            $bad=$this->groupRow($place,[$this->pakejComponent(),array_replace($this->pakejComponent(),$change)]);
             $this->postJson($url,$this->payload($bid,$estimate,[$good,$bad]))->assertUnprocessable();$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         }
         $bad=$good;$bad['komponen'][]=$bad['komponen'][0];$this->postJson($url,$this->payload($bid,$estimate,[$bad]))->assertUnprocessable();
@@ -164,7 +164,7 @@ class PakejSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$definition=new \App\Services\DefinisiPakejBerkumpulan(2028);
         $this->gridCapture('pakej-grouped-empty',$this->get($url)->assertOk());
         $blank=$this->groupRow($place,[],['tujuan'=>null,'tarikh_mula'=>null,'tarikh_tamat'=>null]);$this->postJson($url,$this->payload($bid,$estimate,[$blank]))->assertOk();$this->assertDatabaseCount('butiran_anggaran',0);
-        $row=$this->groupRow($place,[$this->component(),$this->component('Makan Minum','20',null,null)]);$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$this->assertNull($definition->preview($source->data_sumber));
+        $row=$this->groupRow($place,[$this->pakejComponent(),$this->pakejComponent('Makan Minum','20',null,null)]);$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$this->assertNull($definition->preview($source->data_sumber));
         $this->gridCapture('pakej-grouped-partial',$this->get($url)->assertOk());
         $row['komponen']=[];$row+=['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertCount(0,$source->fresh()->data_sumber->komponen);$this->assertNull($definition->preview($source->fresh()->data_sumber));
     }
@@ -172,7 +172,7 @@ class PakejSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place)]))->assertOk();
         $response=$this->get($url)->assertOk();$records=$response->viewData('records');$this->assertCount(2,$records);foreach($records as $record)$this->assertCount(1,$record['komponen']);
-        $source=$estimate->butiran()->orderBy('id')->first();$record=$records[0];$row=$this->groupRow($place,$record['komponen'],['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);$row['komponen'][]=$this->component('Makan Minum','20','35','3');
+        $source=$estimate->butiran()->orderBy('id')->first();$record=$records[0];$row=$this->groupRow($place,$record['komponen'],['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);$row['komponen'][]=$this->pakejComponent('Makan Minum','20','35','3');
         $data=$this->payload($bid,$estimate,[$row]);$this->postJson($url,$data)->assertOk();$this->assertSame($source->id,$source->fresh()->id);$this->assertSame('source.draft_updated',RekodAudit::orderByDesc('id')->first()->tindakan);$this->postJson($url,$data)->assertConflict();
         $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertForbidden();$this->phase->forceFill(['dibuka'=>true])->save();
         $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);$this->gridCapture('pakej-grouped-readonly',$this->get($url)->assertOk());$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertForbidden();
@@ -181,11 +181,11 @@ class PakejSpreadsheetTest extends TestCase
     public function test_pagination_never_splits_a_multi_component_activity_and_scope_stays_at_parent(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$rows=[];
-        for($i=0;$i<26;$i++)$rows[]=$this->groupRow($place,[$this->component(),$this->component('Makan Minum','20','35','3')],['tujuan'=>'Aktiviti '.($i+1)]);
+        for($i=0;$i<26;$i++)$rows[]=$this->groupRow($place,[$this->pakejComponent(),$this->pakejComponent('Makan Minum','20','35','3')],['tujuan'=>'Aktiviti '.($i+1)]);
         $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$response=$this->get($url)->assertOk();$this->assertCount(25,$response->viewData('records'));foreach($response->viewData('records') as $record)$this->assertCount(2,$record['komponen']);
         $response=$this->get($url.'?page=2')->assertOk();$this->assertCount(1,$response->viewData('records'));$this->assertCount(2,$response->viewData('records')[0]['komponen']);
         $otherPlace=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'PPD Kuala Nerus','jenis'=>'ppd']);
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->groupRow($otherPlace,[$this->component()])]))->assertNotFound();$this->assertDatabaseCount('butiran_anggaran',26);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->groupRow($otherPlace,[$this->pakejComponent()])]))->assertNotFound();$this->assertDatabaseCount('butiran_anggaran',26);
     }
     public function test_four_components_have_manual_rates_and_contextual_units_and_charge_labels(): void
     {
