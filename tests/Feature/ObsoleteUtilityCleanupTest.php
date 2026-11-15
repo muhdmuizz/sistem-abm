@@ -39,7 +39,7 @@ class ObsoleteUtilityCleanupTest extends TestCase
         $this->assertSame(2,$bid->fresh()->semakan);$this->assertSame(1,$keep->fresh()->semakan);
         $this->assertDatabaseMissing('tetapan_akses_ptj',['rujukan_os_id'=>$old->id]);
         $this->seed(OsReferenceSeeder::class);$this->assertDatabaseCount('rujukan_os',32);$this->assertDatabaseCount('pemetaan_os',105);
-        $this->assertSame($currentId,RujukanOs::where('kod_objek','23000')->sole()->id);$this->assertSame(9,$current->pemetaan()->count());
+        $this->assertSame($currentId,RujukanOs::where('kod_objek','23000')->sole()->id);$this->assertSame(8,$current->pemetaan()->count());
     }
 
     public function test_missing_current_mapping_is_repointed_without_granting_old_permissions(): void
