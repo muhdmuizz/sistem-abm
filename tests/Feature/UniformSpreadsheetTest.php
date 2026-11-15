@@ -119,7 +119,7 @@ class UniformSpreadsheetTest extends TestCase
     {
         return ['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,'rekod'=>$rows,'padam'=>$deleted];
     }
-    private function row($place,array $extra=[]): array {return array_replace(['tempat_bertugas_id'=>$place->id,'kategori1'=>'Pakaian Seragam','jawatan'=>'PEMBANTU KHIDMAT AM','bil_unit'=>'5','kekerapan'=>'2'],$extra);}
+    private function row($place,array $extra=[]): array {return array_replace(['tempat_bertugas_id'=>$place->id,'kategori1'=>'Pakaian Seragam','jawatan'=>'PEMBANTU KHIDMAT AM','bil_unit'=>'5'],$extra);}
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
@@ -133,7 +133,7 @@ class UniformSpreadsheetTest extends TestCase
         $names=app(\App\Services\RujukanJawatan::class)->names();$this->assertSame($names,$columns['jawatan']['values']);
         $this->assertContains('PEMBANTU KHIDMAT AM',$names);$this->assertContains('PEMBANTU MAKMAL',$names);$this->assertGreaterThan(2,count($names));
         $this->assertFalse($columns->has('kategori2'));$this->assertFalse($columns->has('gred'));
-        $this->assertSame('Pasang',$columns['unit']['value']);$this->assertSame('Bil. Pengisian',$columns['bil_unit']['label']);$this->assertSame('Bil. Pasang',$columns['kekerapan']['label']);
+        $this->assertSame('Pasang',$columns['unit']['value']);$this->assertSame('Bil. Pengisian',$columns['bil_unit']['label']);$this->assertSame('Bil. Pasang',$columns['kekerapan']['label']);$this->assertSame('output',$columns['kekerapan']['type']);$this->assertSame('2',$columns['kekerapan']['value']);
         $this->gridCapture('uniform-empty',$response);$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         $this->get(route('estimates.show',[$bid->id,$estimate->id]))->assertOk()->assertSee('Buka Jadual Butiran');
     }
@@ -164,7 +164,7 @@ class UniformSpreadsheetTest extends TestCase
     public function test_fixed_unit_rate_grade_and_category_injection_are_rejected_atomically(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
-        foreach([['unit'=>'Pasang'],['kadar'=>'230.00'],['gred'=>'H1'],['kategori2'=>'PEMBANTU KHIDMAT AM'],['jawatan'=>'Unknown job'],['kategori1'=>'Other'],['bil_unit'=>'1,000'],['kekerapan'=>'1e3']] as $change){
+        foreach([['unit'=>'Pasang'],['kadar'=>'230.00'],['gred'=>'H1'],['kategori2'=>'PEMBANTU KHIDMAT AM'],['jawatan'=>'Unknown job'],['kategori1'=>'Other'],['bil_unit'=>'1,000'],['kekerapan'=>'2']] as $change){
             $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,$change)]))->assertUnprocessable();
             $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         }
@@ -182,10 +182,10 @@ class UniformSpreadsheetTest extends TestCase
     public function test_partial_and_blank_uniform_drafts_do_not_invent_defaults(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
-        $blank=$this->row($place,array_fill_keys(['kategori1','jawatan','bil_unit','kekerapan'],null));
+        $blank=$this->row($place,array_fill_keys(['kategori1','jawatan','bil_unit'],null));
         $this->postJson($url,$this->payload($bid,$estimate,[$blank]))->assertOk();$this->assertDatabaseCount('butiran_anggaran',0);
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['jawatan'=>null,'kekerapan'=>null])]))->assertOk();
-        $source=$estimate->butiran()->sole();$this->assertNull($source->data_sumber->jawatan);$this->assertNull($source->data_sumber->kekerapan);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['jawatan'=>null])]))->assertOk();
+        $source=$estimate->butiran()->sole();$this->assertNull($source->data_sumber->jawatan);$this->assertSame('2',$source->data_sumber->kekerapan);
         $this->assertNull(app(\App\Services\DefinisiPakaianSeragam::class)->preview($source->data_sumber));$this->gridCapture('uniform-partial',$this->get($url)->assertOk());
     }
 
@@ -202,4 +202,17 @@ class UniformSpreadsheetTest extends TestCase
         $legacy=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$estimate->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,'semakan'=>0,'data_sumber'=>(object)['definition'=>'os25000.v1','SECRET_LEGACY'=>'private']]);
         $this->get($url)->assertOk()->assertDontSee('SECRET_LEGACY');$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$legacy->id,'semakan_butiran'=>0])]))->assertConflict();
     }
+    public function test_legacy_pairs_are_preserved_until_explicit_audited_save_and_corrected_to_two(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$definition=app(\App\Services\DefinisiPakaianSeragam::class);
+        $legacy=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$estimate->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,'semakan'=>0,
+            'data_sumber'=>(object)['definition'=>'os27000.pakaian-seragam.v1','kategori1'=>'Pakaian Seragam','jawatan'=>'PEMBANTU KHIDMAT AM','bil_unit'=>'5','kekerapan'=>'7']]);
+        $this->get($this->gridUrl($bid,$estimate))->assertOk();$this->assertSame('7',$legacy->fresh()->data_sumber->kekerapan);
+        $this->assertTrue($definition->readable($legacy->data_sumber));$this->assertSame('2300',$definition->preview($legacy->data_sumber));
+        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$legacy->id,'semakan_butiran'=>0])]))->assertOk();
+        $this->assertSame('2',$legacy->fresh()->data_sumber->kekerapan);$this->assertSame($definition::VERSION,$legacy->fresh()->data_sumber->definition);
+        $this->assertDatabaseCount('rekod_audit',1);
+        foreach(['1','3',null] as $value){$this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place,['kekerapan'=>$value])]))->assertUnprocessable();}
+    }
+
 }

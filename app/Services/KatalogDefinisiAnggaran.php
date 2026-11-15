@@ -25,6 +25,17 @@ class KatalogDefinisiAnggaran
             return $mapped?$uniform:null;
         }
 
+        $touch=app(DefinisiTouchNgo::class);
+        if($touch->supports($os)) {
+            $code=match($bid->aktivitiKewangan->nama){
+                'Pengurusan Pentadbiran Negeri'=>'010809','Pendidikan Menengah'=>'030304','Pengurusan Asrama'=>'030316',default=>null,
+            };
+            if($code===null)return null;
+            $mapped=PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($query)=>$query->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists();
+            return $mapped?$touch:null;
+        }
+
         $taska = app(DefinisiTaska::class);
         if ($taska->supports($os)) {
             if ($bid->aktivitiKewangan->nama !== 'Pengurusan Pentadbiran Negeri') { return null; }
