@@ -1,6 +1,6 @@
 # Batch 030 — Searchable PTJ and One OS23000 Card
 
-**Status:** In progress; owner authorised the searchable-selector refinement and reported duplicate OS23000 cards on 15 November 2026, then reaffirmed that Batch 029 already covers both Pukal/Bukan Pukal.
+**Status:** Merged; local acceptance pending. Owner authorised the searchable-selector refinement and reported duplicate OS23000 cards on 15 November 2026, then reaffirmed that Batch 029 already covers both Pukal/Bukan Pukal.
 **Baseline:** `5c6ce7d30ee38cde15d6e5856506d0b954859c45` on dev.
 
 ## Scope
@@ -30,3 +30,7 @@ No application edits after tested head. No migration/seed, data/permission merge
 
 Keep the server running; clean dev pull --ff-only, php artisan optimize:clear and Ctrl+F5. No migration/seed/build/restart. Confirm PTJ has one searchable selector: type Nerus, select PPD Kuala Nerus (or use arrows/Enter), then Papar Bidaan. Check no-result wording, explicit selection and Set Semula. Within a Bidaan confirm one **OS23000 Perhubungan dan Utiliti** card whose existing editor covers Pukal/Bukan Pukal. If old Utiliti Pukal records exist, expand **Rekod sedia ada**; active ones retain scoped read access and inactive ones display preserved-record wording. Other OS27000 cards remain separate. No financial data migration is performed.
 
+
+## Merge checkpoint
+
+PR #70 merged at `4458d0ec490de4492e9b6f008dd11615d8322257`. Evidence-only head `4c0a66a16f45d7d189b72ffad9720be180d2027f` preserves the tested application code. This close-out changes Markdown only; no new test run or local confirmation.
