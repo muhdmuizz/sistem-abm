@@ -15,4 +15,18 @@ No new quantity/date/eligibility/month/rounding policy. No migration/seed, catal
 
 ## Verification
 
-Pending isolated PostgreSQL/full regression, production build, formatter/Chromium and representative desktop/mobile inspection. Record tested head/evidence before merge. Batch 028 local sync/checks remain unconfirmed; Batch 029 local acceptance pending.
+
+## Verification — passed before merge
+
+Tested application head `f7cdd2553615c4620804fa21359348338c7b1887`; [CI 43670963928](https://github.com/muhdmuizz/sistem-abm/actions/runs/43670963928), job 132680674403: **464 tests / 3802 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Production build, money formatter/browser checks and full Chromium regression passed. Six new OS23000 HTTP tests cover seven paths, exact grouped-rate normalisation/save/reopen/edit/no-op, all five existing mappings, legacy-alias exclusion, dependent-choice and fixed-field injection/atomic rollback, partial drafts, stale/Fasa/read-only guards and audited removal. Uniform tests now require exactly two permitted choices, reject other shared jobs atomically, preserve old stored jobs on read and replace through audited v3 saves.
+
+Browser checks assert exact allowed Jawatan options on new and older affected rows, reject unsupported paste, retain independent category selection/fixed two pairs, and clear the reselection notice after valid repair. Utility checks cover Pukal/Bukan Pukal dependent reset, fixed 12, exact/format/paste/copy, validation retention and inactive-field payload exclusion; existing grid regression remains intact.
+
+Artifact **14144262800** contains 235 PNGs (20 new: 18 utility states and two uniform repaired states; old unpriced fixtures now represent repairable legacy rows). Representative final-head review covered 14 captures: uniform legacy/repaired desktop/mobile shell, and utility empty/populated/partial/read-only/validation desktop/mobile. Desktop legacy notice was inspected; narrow left-edge captures do not expose its middle Jawatan cell. Not every artifact, expanded/loading state or physical device was visually reviewed. Horizontal grid scrolling is intentional; outer overflow checks pass. Actual persistence is tested by HTTP; browser error responses use static-fixture interception, not a claimed live browser save.
+
+No application changes after tested head. No migration/seed or official financial output/completeness. Batches 028/029 local acceptance remains unconfirmed.
+
+## Local follow-through — pending
+
+Keep existing server running. Clean dev pull --ff-only, php artisan optimize:clear, Ctrl+F5; no migration/seed/build/restart. Pakaian Seragam Jawatan should offer only Pembantu Khidmat Am/Pembantu Makmal, with fixed Bil. Pasang 2. For older unrelated-job drafts choose a replacement and save/reopen; original stored job is retained until explicit save. Open active OS23000 Perhubungan dan Utiliti, select either category path and enter monthly RM360: fixed 12 months gives **4,320.00**. Check save/reopen/edit/copy/removal and internal scrolling. Older Utiliti Pukal identity is not enabled or merged; reconciliation remains pending. Official financial integration remains pending.
+

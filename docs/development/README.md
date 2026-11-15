@@ -329,3 +329,7 @@ Tested application head `c780d2dbb6cb5dcb40d10e6e7e7b78fcb7033a28`; [CI 43669111
 ## Batch 029 — applicable uniform Jawatan and OS23000 source grid in progress
 
 Owner authorised correction and next OS on 15 November 2026. Baseline `dffc449c439e9cc5c4181bb1177bffa2a6f8011d`. [Batch 029](batch-029-uniform-jobs-utilities.md): restrict Pakaian Seragam Jawatan to the two existing approved-rate jobs, retaining shared Reference 07 and fixed two pairs; preserve/flag old unrelated-job drafts for replacement. Add seven-path Perhubungan dan Utiliti source grid under current canonical identity/existing mappings; legacy Utiliti Pukal association reconciliation remains deferred. Batch 028 remains merged/CI verified with local sync/checks unconfirmed; the new user request is not a “Clean” report. No migration/seed, role/mapping/CSV changes or official financial integration.
+
+## Batch 029 — pre-merge verification passed
+
+Tested `f7cdd2553615c4620804fa21359348338c7b1887`; [CI 43670963928](https://github.com/muhdmuizz/sistem-abm/actions/runs/43670963928): 464 tests / 3802 assertions on PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium passed. Representative final-head desktop/mobile review completed; [Batch 029](batch-029-uniform-jobs-utilities.md) records coverage/limits. Merge and local acceptance pending; no migration/seed or official financial integration. Batch 028 local confirmation remains unreceived.
