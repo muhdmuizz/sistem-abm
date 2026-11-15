@@ -643,7 +643,8 @@ await first.locator('[data-field=jawatan]').selectOption('PEMBANTU KHIDMAT AM');
 await first.locator('[data-field=kategori1]').selectOption('Pakaian Seragam');
 if(await first.locator('[data-field=jawatan]').inputValue()!=='PEMBANTU KHIDMAT AM')throw Error('Category reset independent Jawatan');
 if(await first.locator('[data-output=kadar]').textContent()!=='230.00'||await first.locator('[data-output=unit]').textContent()!=='Pasang')throw Error('Uniform prescribed rate/unit');
-await first.locator('[data-field=bil_unit]').fill('5');await first.locator('[data-field=kekerapan]').fill('2');
+await first.locator('[data-field=bil_unit]').fill('5');
+if(await first.locator('[data-field=kekerapan]').count()||await first.locator('[data-output=kekerapan]').textContent()!=='2')throw Error('Bil. Pasang must be fixed at two');
 if(await first.locator('[data-output=preview]').textContent()!=='2,300.00')throw Error('Uniform formula/accounting display');
 await first.locator('[data-field=kategori1]').selectOption('Kasut');
 if(await first.locator('[data-field=jawatan]').inputValue()!=='PEMBANTU KHIDMAT AM'||await first.locator('[data-output=kadar]').textContent()!=='150.00')throw Error('Shoe Khidmat Am lookup');
@@ -656,7 +657,7 @@ await first.locator('[data-field=jawatan]').selectOption('PEMBANTU MAKMAL');
 await page.keyboard.press('Tab');if(!(await first.locator('[data-field=bil_unit]').evaluate(el=>el===document.activeElement)))throw Error('Uniform Jawatan keyboard flow');
 await first.locator('[data-field=kategori1]').focus();
 await first.locator('[data-field=kategori1]').evaluate(el=>{
- const transfer=new DataTransfer();transfer.setData('text/plain','Pakaian Seragam\tPEMBANTU KHIDMAT AM\t5\t2');
+ const transfer=new DataTransfer();transfer.setData('text/plain','Pakaian Seragam\tPEMBANTU KHIDMAT AM\t5');
  el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
 });
 if(await first.locator('[data-output=preview]').textContent()!=='2,300.00')throw Error('Uniform paste formula');
@@ -665,13 +666,46 @@ if(await page.locator('[data-grid-body] tr').count()!==2||await page.locator('[d
 let uniformPayload;
 await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{uniformPayload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak Bil. Pengisian.']}})});});
 await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
-if(uniformPayload.rekod.some(row=>'kadar'in row||'unit'in row||'gred'in row||'kategori2'in row))throw Error('Uniform submits derived/unapproved fields');
+if(uniformPayload.rekod.some(row=>'kadar'in row||'unit'in row||'gred'in row||'kategori2'in row||'kekerapan'in row))throw Error('Uniform submits derived/unapproved fields');
 if(uniformPayload.rekod[0].jawatan!=='PEMBANTU KHIDMAT AM'||uniformPayload.rekod[0].bil_unit!=='5')throw Error('Uniform save payload source lost');
 for(const width of [1440,390]){
  await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));
  await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);
  await page.screenshot({path:'storage/app/ui-qa/uniform-validation-'+width+'.png',fullPage:true});
 }
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
+// Monthly Touch ’n Go source adapter and locked uniform multiplier.
+for(const fixture of ['touchngo-empty','touchngo-populated','touchngo-partial','touchngo-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Touch n Go outer overflow');
+  if(await page.locator('[data-field=kekerapan],[data-field=kategori1],[data-output=unit]').count())throw Error('Touch n Go inactive field exposed');
+  if(fixture==='touchngo-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Touch n Go readonly save');
+  await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-left.png',fullPage:true});
+  await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);
+  await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-right.png',fullPage:true});
+ }
+}
+{
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/touchngo-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
+const first=page.locator('[data-grid-body] tr').first();
+await first.locator('[data-field=tujuan]').fill('Van JPNT');await first.locator('[data-field=bil_unit]').fill('3');
+await first.locator('[data-field=kadar]').fill('2,000.125');await first.locator('[data-field=bil_bulan]').fill('12');
+if(await first.locator('[data-output=preview]').textContent()!=='72,004.50')throw Error('Touch n Go exact monthly preview');
+await first.locator('[data-field=kadar]').focus();if(await first.locator('[data-field=kadar]').inputValue()!=='2000.125')throw Error('Touch n Go exact edit');
+await first.locator('[data-field=tujuan]').focus();
+await first.locator('[data-field=tujuan]').evaluate(el=>{const transfer=new DataTransfer();transfer.setData('text/plain','Bas JPNT\t3\t200\t12');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));});
+if(await first.locator('[data-output=preview]').textContent()!=='7,200.00')throw Error('Touch n Go paste');
+await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Touch n Go duplicate');
+let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak Kadar Bulanan.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(payload.rekod.some(row=>'kekerapan'in row||'kategori1'in row||'unit'in row||'preview'in row))throw Error('Touch n Go derived payload');
+if(payload.rekod[0].kadar!=='200'||payload.rekod[0].tujuan!=='Bas JPNT')throw Error('Touch n Go source lost');
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/touchngo-validation-'+width+'.png',fullPage:true});}
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 

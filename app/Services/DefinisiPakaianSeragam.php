@@ -11,7 +11,7 @@ use stdClass;
 
 class DefinisiPakaianSeragam extends DefinisiAnggaran
 {
-    public const VERSION='os27000.pakaian-seragam.v1';
+    public const VERSION='os27000.pakaian-seragam.v2';
 
     public function supports(RujukanOs $os): bool
     {
@@ -25,7 +25,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>190],
             ['key'=>'jawatan','label'=>'Jawatan','type'=>'select','options'=>'values','values'=>app(RujukanJawatan::class)->names(),'width'=>270],
             ['key'=>'bil_unit','label'=>'Bil. Pengisian','type'=>'decimal','width'=>130],
-            ['key'=>'kekerapan','label'=>'Bil. Pasang','type'=>'decimal','width'=>120],
+            ['key'=>'kekerapan','label'=>'Bil. Pasang','type'=>'output','value'=>'2','numeric'=>true,'width'=>120],
             ['key'=>'unit','label'=>'Unit','type'=>'output','value'=>'Pasang','width'=>90],
             ['key'=>'kadar','label'=>'Kadar (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'money'=>true,'width'=>140],
             ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,'money'=>true,
@@ -36,7 +36,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
     public function selector(): string { return 'kategori1'; }
     // Secondary lookup attribute is a personnel field, not a dependent category level.
     public function childSelector(): string { return 'jawatan'; }
-    public function inputHelp(): string { return 'Jawatan menggunakan rujukan bersama. Kadar mengikut Jenis Bekalan dan Jawatan; Unit kekal Pasang.'; }
+    public function inputHelp(): string { return 'Jawatan menggunakan rujukan bersama. Kadar mengikut Jenis Bekalan dan Jawatan; Unit kekal Pasang; Bil. Pasang ditetapkan kepada 2 dan tidak boleh dipinda.'; }
 
     public function references(): array
     {
@@ -62,27 +62,29 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
     {
         $decimal=['nullable','string','max:128','regex:/^-?\d+(?:\.\d+)?$/D'];
         return Validator::make(['rekod'=>$rows],[
-            'rekod'=>'present|array','rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,kategori1,jawatan,bil_unit,kekerapan',
+            'rekod'=>'present|array','rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,kategori1,jawatan,bil_unit',
             'rekod.*.butiran_id'=>'sometimes|required|integer|min:1|distinct','rekod.*.semakan_butiran'=>'sometimes|required|integer|min:0',
             'rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
             'rekod.*.kategori1'=>['nullable','string',Rule::in(array_keys($this->references()))],
             'rekod.*.jawatan'=>['nullable','string',Rule::in(app(RujukanJawatan::class)->names())],
-            'rekod.*.bil_unit'=>$decimal,'rekod.*.kekerapan'=>$decimal,
+            'rekod.*.bil_unit'=>$decimal,
         ],['in'=>'Pilih nilai daripada rujukan yang sah.','regex'=>'Gunakan nombor perpuluhan biasa tanpa pemisah ribu.','array'=>'Struktur baris tidak sah.'])->validate()['rekod'];
     }
 
     public function source(array $row): stdClass
     {
         return (object)['definition'=>self::VERSION,'kategori1'=>$row['kategori1'] ?? null,'jawatan'=>$row['jawatan'] ?? null,
-            'bil_unit'=>$row['bil_unit'] ?? null,'kekerapan'=>$row['kekerapan'] ?? null];
+            'bil_unit'=>$row['bil_unit'] ?? null,'kekerapan'=>'2'];
     }
 
     public function readable(mixed $source): bool
     {
         $keys=['definition','kategori1','jawatan','bil_unit','kekerapan'];
-        if(!$source instanceof stdClass||($source->definition ?? null)!==self::VERSION||
+        if(!$source instanceof stdClass||!in_array($source->definition ?? null,[self::VERSION,'os27000.pakaian-seragam.v1'],true)||
             array_diff($keys,array_keys(get_object_vars($source)))||array_diff(array_keys(get_object_vars($source)),$keys))return false;
-        $row=get_object_vars($source);unset($row['definition']);$row['tempat_bertugas_id']=1;
+        if($source->definition===self::VERSION && $source->kekerapan!=='2')return false;
+        if($source->definition==='os27000.pakaian-seragam.v1' && $source->kekerapan!==null && $source->kekerapan!=='' && (!is_string($source->kekerapan)||strlen($source->kekerapan)>128||!preg_match('/^-?\d+(?:\.\d+)?$/D',$source->kekerapan)))return false;
+        $row=get_object_vars($source);unset($row['definition'],$row['kekerapan']);$row['tempat_bertugas_id']=1;
         try { $this->validate([$row]); } catch(\Illuminate\Validation\ValidationException) { return false; }
         return true;
     }
@@ -90,7 +92,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
     public function preview(stdClass $source): ?string
     {
         $rate=$this->references()[$source->kategori1 ?? ''][$source->jawatan ?? '']['kadar'] ?? null;
-        $factors=[$source->bil_unit ?? null,$source->kekerapan ?? null,$rate];
+        $factors=[$source->bil_unit ?? null,'2',$rate];
         if(in_array(null,$factors,true)||in_array('',$factors,true))return null;
         $value=BigDecimal::of('1');foreach($factors as $factor)$value=$value->multipliedBy($factor);
         $text=(string)$value;return str_contains($text,'.')?rtrim(rtrim($text,'0'),'.'):$text;
