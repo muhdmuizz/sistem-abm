@@ -36,3 +36,7 @@ Keep server running. From a clean dev tree pull --ff-only, verify .env uses pgsq
 ## Merge checkpoint
 
 PR #72 merged at `8ac02d13c0304a115783fa49190634e0b27812f9`. Evidence-only final head `3f166ca15183f2edf597fe9c9b24d79b7151aaf9` preserves tested application code. This close-out changes Markdown only; no local execution or new test run claimed.
+
+## Local update confirmed — 15 November 2026
+
+User reported **“Clean, proceed.”** after the supplied guarded dev pull, database-config check, config clear, targeted normal migration and optimize:clear commands. Record this local update/cleanup migration as user-confirmed. It does not certify unexecuted financial/role/device checks or independent Windows/database inspection; earlier acceptance limits remain.

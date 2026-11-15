@@ -24,6 +24,15 @@
  function output(row,tr){
   const ref=reference(row),values={...row};
   for(const column of inputColumns)if(fixed(row,column))values[column.key]=ref.kadar;
+  for(const column of inputColumns.filter(c=>c.hintReference||c.labelReference)){
+   const cell=tr.children[columns.indexOf(column)+2],field=cell.querySelector('[data-field]');
+   if(field&&column.labelReference)field.setAttribute('aria-label',(ref?.[column.labelReference]||column.label)+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
+   let hint=cell.querySelector('[data-reference-hint]');const text=plain(ref?.[column.hintReference]);
+   const hintId='grid-hint-'+row.key+'-'+column.key;
+   if(!text){hint?.remove();if(field){const ids=(field.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&id!==hintId);if(ids.length)field.setAttribute('aria-describedby',ids.join(' '));else field.removeAttribute('aria-describedby');}continue;}
+   if(!hint){hint=document.createElement('p');hint.className='small';hint.dataset.referenceHint='';hint.id=hintId;cell.append(hint);}hint.textContent=text;
+   if(field){const ids=(field.getAttribute('aria-describedby')||'').split(' ').filter(Boolean);if(!ids.includes(hintId))ids.push(hintId);field.setAttribute('aria-describedby',ids.join(' '));}
+  }
   for(const column of columns.filter(c=>c.type==='output')){
    const columnReference=column.referenceKey ? references[column.referenceKey] : ref;
    let value=column.value??columnReference?.[column.reference];
@@ -33,7 +42,7 @@
    }
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
-    value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
+    value=(!column.formula.requiresReference||ref)&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
@@ -124,7 +133,7 @@
   data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });
- function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});}
+ function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');const ids=(el.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('grid-error-'));if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');});}
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(submitting)return;clearErrors();
   const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
@@ -145,7 +154,7 @@
    for(const [key,values] of Object.entries(data.errors||{})){
     const match=key.match(/(?:kelompok\.)?rekod\.(\d+)\.(\w+)/);if(!match)continue;const row=retained[Number(match[1])];if(!row)continue;
     const field=body.querySelector('tr[data-key="'+row.key+'"] [data-field="'+match[2]+'"]');if(!field)continue;
-    const help=document.createElement('p');help.className='grid-cell-error';help.id='grid-error-'+row.key+'-'+match[2];help.textContent=values.join(' ');field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',help.id);field.parentElement.append(help);
+    const help=document.createElement('p');help.className='grid-cell-error';help.id='grid-error-'+row.key+'-'+match[2];help.textContent=values.join(' ');field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',[(field.getAttribute('aria-describedby')||''),help.id].filter(Boolean).join(' '));field.parentElement.append(help);
    }
    error.focus();dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
   }catch{error.hidden=false;error.textContent='Sambungan gagal. Perubahan anda dikekalkan; cuba lagi.';error.focus();dirty();if(status)status.textContent='Gagal disimpan.';}
