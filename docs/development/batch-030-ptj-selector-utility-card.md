@@ -34,3 +34,7 @@ Keep the server running; clean dev pull --ff-only, php artisan optimize:clear an
 ## Merge checkpoint
 
 PR #70 merged at `4458d0ec490de4492e9b6f008dd11615d8322257`. Evidence-only head `4c0a66a16f45d7d189b72ffad9720be180d2027f` preserves the tested application code. This close-out changes Markdown only; no new test run or local confirmation.
+
+## Preservation approach superseded — Batch 031
+
+Owner clarified there is no real data and explicitly rejected maintaining obsolete Pukal test budgets. PR #72 at `8ac02d13c0304a115783fa49190634e0b27812f9` removes this batch's preservation UI/compatibility helpers and supplies targeted deletion of the obsolete identity/test budgets plus canonical source-mapping reconciliation. The searchable PTJ selector remains. Do not reintroduce Rekod sedia ada based on this historical batch scope. Batch 031 local migration remains pending.
