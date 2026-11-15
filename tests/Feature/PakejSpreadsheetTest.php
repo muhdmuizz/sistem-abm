@@ -187,7 +187,7 @@ class PakejSpreadsheetTest extends TestCase
         $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$response=$this->get($url)->assertOk();$this->assertCount(25,$response->viewData('records'));foreach($response->viewData('records') as $record)$this->assertCount(2,$record['komponen']);
         $response=$this->get($url.'?page=2')->assertOk();$this->assertCount(1,$response->viewData('records'));$this->assertCount(2,$response->viewData('records')[0]['komponen']);
         $otherPlace=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->groupRow($otherPlace,[$this->pakejComponent()])]))->assertNotFound();$this->assertDatabaseCount('butiran_anggaran',26);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->groupRow($otherPlace,[$this->pakejComponent()])]))->assertForbidden();$this->assertDatabaseCount('butiran_anggaran',26);
     }
     public function test_four_components_have_manual_rates_and_contextual_units_and_charge_labels(): void
     {
