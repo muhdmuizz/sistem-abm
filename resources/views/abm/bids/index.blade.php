@@ -12,7 +12,7 @@
 @else
 <form method="get" action="{{ route('bids.index') }}" class="workspace-context" aria-label="Pilihan Bidaan">
 <div><label for="bid-cycle">Kitaran ABM <span class="required">*</span></label><select id="bid-cycle" name="kitaran_id" required><option value="">Pilih Kitaran</option>@foreach($cycles as $option)<option value="{{ $option->id }}" @selected($cycle?->id === $option->id)>{{ $option->tahun }}</option>@endforeach</select></div>
-<div><label for="bid-ptj">PTJ <span class="required">*</span></label><input class="selector-search" aria-label="Cari PTJ" placeholder="Cari PTJ" data-search-select="bid-ptj"><select id="bid-ptj" name="ptj_id" required><option value="">Pilih PTJ</option>@foreach($ptjs as $option)<option value="{{ $option->id }}" @selected($ptj?->id === $option->id)>{{ $option->nama }}</option>@endforeach</select></div>
+<div><label for="bid-ptj">PTJ <span class="required">*</span></label><div data-ptj-combobox><select id="bid-ptj" name="ptj_id" required><option value="">Pilih PTJ</option>@foreach($ptjs as $option)<option value="{{ $option->id }}" @selected($ptj?->id === $option->id)>{{ $option->nama }}</option>@endforeach</select></div></div>
 <div class="context-actions"><button class="button primary" type="submit">Papar Bidaan</button><a class="button subtle" href="{{ route('bids.index') }}">Set Semula</a></div>
 </form>
 @if(! $cycle || ! $ptj)

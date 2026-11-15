@@ -96,6 +96,59 @@
             form.querySelectorAll('button[type=submit]').forEach(button => { button.disabled = false; button.removeAttribute('aria-busy'); });
         });
     });
+    // Progressive enhancement: the scoped native select remains usable without JavaScript.
+    document.querySelectorAll('[data-ptj-combobox]').forEach(root => {
+        const select = root.querySelector('select');
+        if (!select || !select.options.length) return;
+        const choices = [...select.options].filter(option => option.value && !option.disabled).map(option => ({ value: option.value, label: option.text }));
+        const shell = document.createElement('div'); shell.className = 'ptj-picker';
+        const input = document.createElement('input'); input.id = select.id + '-search'; input.type = 'text'; input.autocomplete = 'off'; input.placeholder = 'Pilih atau cari PTJ'; input.required = select.required;
+        input.setAttribute('role', 'combobox'); input.setAttribute('aria-autocomplete', 'list'); input.setAttribute('aria-expanded', 'false'); input.setAttribute('aria-haspopup', 'listbox');
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'ptj-picker-toggle'; button.setAttribute('aria-label', 'Buka senarai PTJ'); button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+        const list = document.createElement('ul'); list.id = select.id + '-options'; list.className = 'ptj-options'; list.setAttribute('role', 'listbox'); list.setAttribute('aria-label', 'Pilihan PTJ'); list.hidden = true; input.setAttribute('aria-controls', list.id);
+        const status = document.createElement('span'); status.className = 'sr-only'; status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
+        shell.append(input, button, list, status); root.append(shell);
+        const label = document.querySelector('label[for="' + select.id + '"]'); if (label) label.htmlFor = input.id;
+        let filtered = choices, active = -1, query = '';
+        function selectedLabel() { return choices.find(choice => choice.value === select.value)?.label || ''; }
+        input.value = selectedLabel(); select.hidden = true; select.required = false;
+        function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
+        function highlight(index) {
+            active = index;
+            [...list.querySelectorAll('[role=option]')].forEach((option, i) => { option.classList.toggle('is-active', i === active); });
+            const option = list.querySelectorAll('[role=option]')[active];
+            if (option) { input.setAttribute('aria-activedescendant', option.id); option.scrollIntoView({ block: 'nearest' }); }
+            else input.removeAttribute('aria-activedescendant');
+        }
+        function choose(choice) {
+            select.value = choice.value; input.value = choice.label; query = ''; input.setCustomValidity(''); close();
+            select.dispatchEvent(new Event('change', { bubbles: true })); input.focus({ preventScroll: true }); close();
+        }
+        function draw() {
+            filtered = choices.filter(choice => choice.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+            list.replaceChildren(); active = -1; input.removeAttribute('aria-activedescendant');
+            filtered.forEach((choice, i) => {
+                const option = document.createElement('li'); option.id = list.id + '-' + i; option.setAttribute('role', 'option'); option.setAttribute('aria-selected', String(choice.value === select.value)); option.textContent = choice.label;
+                option.addEventListener('mousedown', event => event.preventDefault()); option.addEventListener('click', () => choose(choice)); list.append(option);
+            });
+            if (!filtered.length) { const empty = document.createElement('li'); empty.className = 'ptj-no-results'; empty.textContent = 'Tiada PTJ sepadan.'; list.append(empty); }
+            list.hidden = false; input.setAttribute('aria-expanded', 'true'); status.textContent = filtered.length ? filtered.length + ' PTJ ditemui.' : 'Tiada PTJ sepadan.';
+        }
+        input.addEventListener('focus', () => { query = ''; input.select(); draw(); });
+        input.addEventListener('input', () => { query = input.value; select.value = ''; input.setCustomValidity(query ? 'Pilih PTJ daripada senarai.' : ''); draw(); });
+        input.addEventListener('keydown', event => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); if (list.hidden) draw(); highlight(filtered.length ? (active < 0 ? (event.key === 'ArrowDown' ? 0 : filtered.length - 1) : (active + (event.key === 'ArrowDown' ? 1 : -1) + filtered.length) % filtered.length) : -1); }
+            else if (event.key === 'Enter' && !list.hidden) { event.preventDefault(); if (active >= 0) choose(filtered[active]); }
+            else if (event.key === 'Escape') { event.preventDefault(); close(); }
+            else if (event.key === 'Tab') close();
+        });
+        button.addEventListener('mousedown', event => event.preventDefault());
+        button.addEventListener('click', () => { if (!list.hidden) close(); else { input.focus(); query = ''; draw(); } });
+        root.addEventListener('focusout', event => { if (!root.contains(event.relatedTarget)) close(); });
+        document.addEventListener('pointerdown', event => { if (!root.contains(event.target)) close(); });
+        select.addEventListener('change', () => { input.value = selectedLabel(); input.setCustomValidity(''); });
+    });
+
     const deadline = Number(document.body.dataset.deadline) * 1000;
     if (deadline > 0) {
         const warning = document.getElementById('session-warning');

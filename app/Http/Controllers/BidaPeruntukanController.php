@@ -50,6 +50,18 @@ class BidaPeruntukanController extends Controller
         $cards = $catalogue->map(fn ($os) => ['os' => $os, 'estimate' => $estimates->get($os->id),
             'activation' => $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
                 $record->aktiviti_kewangan_id, $record, $os, $estimates->get($os->id))]);
+        // Retain scoped old records, but never offer a second OS23000 preparation card.
+        $previous = $cards->filter(fn ($card) => $card['os']->isLegacyUtility() && $card['estimate'] !== null)->values();
+        $cards = $cards->reject(fn ($card) => $card['os']->isLegacyUtility())->values();
+        $utility = $cards->search(fn ($card) => $card['os']->kod_objek === '23000' && $card['os']->butiran_perbelanjaan === 'Perhubungan dan Utiliti');
+        if ($utility !== false) {
+            $card = $cards[$utility]; $card['previous'] = $previous; $cards[$utility] = $card;
+        } elseif ($previous->isNotEmpty()) {
+            // No canonical permission is inferred from an old-identity permission.
+            $cards->push(['os'=>$previous->first()['os'],'label'=>'Perhubungan dan Utiliti','estimate'=>null,
+                'activation'=>['allowed'=>false,'explanation'=>'Penyediaan Perhubungan dan Utiliti tidak tersedia dalam skop semasa.'],
+                'previous'=>$previous]);
+        }
         $open = $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id);
         return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open]);
     }
