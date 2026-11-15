@@ -1,6 +1,6 @@
 # Batch 026 — OS28000 and Shared Monetary Presentation
 
-**Status:** Merged in PR #61; local update/functional checks pending. Owner authorised 15 November 2026.
+**Status:** Merged in PR #61; local sync user-confirmed, bounded TASKA monetary screenshot reviewed; header casing correction queued. Owner authorised 15 November 2026.
 **Baseline:** `eeca0f056288d62e27d0fb0946c91560d4c54877` on dev.
 
 ## Approved scope
@@ -32,3 +32,7 @@ Keep the server running; use a clean dev pull --ff-only, php artisan optimize:cl
 ## Merge checkpoint
 
 [PR #61](https://github.com/muhdmuizz/sistem-abm/pull/61) merged into dev at `0343ac972b1f366443e9508088e7d5d7fc2286d6`. Evidence-only final commit `d74a831110bf1f91f2ea0f6e9596e4b836918120` changes Markdown; application code remains the tested head `d9f2742950eb6e071ad003bc4609971a09173b96`. Local update has not been executed by the cloud agent or confirmed by the user.
+
+## Local confirmation and header refinement — 15 November 2026
+
+User reported “Everything else is clean.” and supplied the TASKA screenshot. Synchronisation/cache clear are user-confirmed; its visible 180.00 and 4,320.00 presentation is confirmed at the supplied viewport. Broader financial/role/device/audit checks are not inferred. Header casing mixes BIL. ANAK/UNIT/KADAR with title-case headers; the next shared-grid task must apply AD-013 Section 06.1 (Bil. Anak, Unit, Kadar Bulanan (RM/ Anak), preserving RM/OS/PTJ acronyms). Official canonical Excel headers/reference data stay unchanged. This documentation update records the rule and issue, not a code fix or new test execution.
