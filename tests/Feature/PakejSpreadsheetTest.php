@@ -166,6 +166,8 @@ class PakejSpreadsheetTest extends TestCase
         $blank=$this->groupRow($place,[],['tujuan'=>null,'tarikh_mula'=>null,'tarikh_tamat'=>null]);$this->postJson($url,$this->payload($bid,$estimate,[$blank]))->assertOk();$this->assertDatabaseCount('butiran_anggaran',0);
         $row=$this->groupRow($place,[$this->pakejComponent(),$this->pakejComponent('Makan Minum','20',null,null)]);$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$this->assertNull($definition->preview($source->data_sumber));
         $this->gridCapture('pakej-grouped-partial',$this->get($url)->assertOk());
+        $malformed=clone $source->data_sumber;$malformed->komponen=(object)[];$this->assertFalse($definition->readable($malformed));
+        $malformed=unserialize(serialize($source->data_sumber));$malformed->komponen[0]->kadar='1,234.50';$this->assertFalse($definition->readable($malformed));
         $row['komponen']=[];$row+=['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertCount(0,$source->fresh()->data_sumber->komponen);$this->assertNull($definition->preview($source->fresh()->data_sumber));
     }
     public function test_old_components_reopen_separately_and_group_updates_keep_live_guards_and_audit(): void
@@ -184,7 +186,7 @@ class PakejSpreadsheetTest extends TestCase
         for($i=0;$i<26;$i++)$rows[]=$this->groupRow($place,[$this->pakejComponent(),$this->pakejComponent('Makan Minum','20','35','3')],['tujuan'=>'Aktiviti '.($i+1)]);
         $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$response=$this->get($url)->assertOk();$this->assertCount(25,$response->viewData('records'));foreach($response->viewData('records') as $record)$this->assertCount(2,$record['komponen']);
         $response=$this->get($url.'?page=2')->assertOk();$this->assertCount(1,$response->viewData('records'));$this->assertCount(2,$response->viewData('records')[0]['komponen']);
-        $otherPlace=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'PPD Kuala Nerus','jenis'=>'ppd']);
+        $otherPlace=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->groupRow($otherPlace,[$this->pakejComponent()])]))->assertNotFound();$this->assertDatabaseCount('butiran_anggaran',26);
     }
     public function test_four_components_have_manual_rates_and_contextual_units_and_charge_labels(): void

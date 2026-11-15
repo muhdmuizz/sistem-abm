@@ -76,6 +76,7 @@ class DefinisiPakejBerkumpulan extends DefinisiPakej
         if(($source instanceof stdClass)&&($source->definition??null)===parent::VERSION)return parent::readable($source);
         $keys=['definition','tujuan','tarikh_mula','tarikh_tamat','komponen'];
         if(!$source instanceof stdClass||($source->definition??null)!==self::GROUP_VERSION||array_diff($keys,array_keys(get_object_vars($source)))||array_diff(array_keys(get_object_vars($source)),$keys))return false;
+        if(!is_array($source->komponen)||!array_is_list($source->komponen))return false;
         try{
             $row=json_decode(json_encode($source,JSON_THROW_ON_ERROR),true,512,JSON_THROW_ON_ERROR);unset($row['definition']);$row['tempat_bertugas_id']=1;
             $this->validate([$row]);
