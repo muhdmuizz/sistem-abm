@@ -1,6 +1,6 @@
 # Batch 033 — Grouped Pakej activities
 
-**Status:** Verified; PR #76 merge/local update pending. Authorised by “Let's have a go” after the interactive grouped preview on 15 November 2026.
+**Status:** Merged in PR #76; local update pending. Authorised by “Let's have a go” after the interactive grouped preview on 15 November 2026.
 **Baseline:** `b3785d014671ad512fff9289f3a64916b1cad64a` on dev. Batch 032 merge/CI recorded; its local sync/financial acceptance remains unconfirmed.
 
 ## Approved refinement
@@ -27,4 +27,8 @@ The first browser regression exposed integration with the shared abm.js submit h
 
 Fifteen final-head captures inspected: grouped empty 1440/390 left; grouped populated 1440 left/390 right; grouped partial 1440/390 right; grouped read-only 1440/390 right; collapsed 1440/390; validation 1440/390; saving 1440/390; desktop exact-value expanded. Checked shared fields entered once, readable group identity/count/subtotal, component unit/rate/day/night hints, title-case headers, accounting-style amounts, incomplete subtotal, retained errors, restored save action, disabled pending controls, comfortable empty-state spacing and contained mobile table scroll. No new blocking defect identified in the grouped content. Full-page saving/expanded captures include shared-shell focused skip-link/fixed-navigation capture behaviour; no shell-focus refinement is claimed. Other 288 PNGs were generated/automatically checked but not individually visually reviewed. Initial navigation/loading/filter states have no new asynchronous retrieval/filter UI in this batch; no new visual certification is claimed for those states.
 
-**Merge/local:** PR #76 merge pending. No migration/seed or reference CSV change. Batch 033 local sync/financial acceptance pending; Batch 032 local confirmation remains unreceived. Existing server can keep running; pull dev, optimize:clear and Ctrl+F5 suffice. Programme association/inheritance and official financial totals/completeness/submission remain pending.
+**Merge/local:** PR #76 merged at `a9c51a29720d5d833aef86a51f2af568d075bffd`. No migration/seed or reference CSV change. Batch 033 local sync/financial acceptance pending; Batch 032 local confirmation remains unreceived. Existing server can keep running; pull dev, optimize:clear and Ctrl+F5 suffice. Programme association/inheritance and official financial totals/completeness/submission remain pending.
+
+## Local verification to run
+
+Pull dev and run `php artisan optimize:clear` in another terminal; retain the running server and Ctrl+F5. No migration/seed. In OS29000 Pakej, create one activity, enter shared details once and add Penginapan 10 × RM180 × 2 nights, Makan Minum 20 × RM35 × 3 days and Sewaan Dewan 1 × RM500 × 3 days: subtotal RM7,200.00. Save/reopen, expand/collapse, copy an activity/component and verify independent editing. Changing dates must not change charged nights/days. Local execution remains pending.
