@@ -254,5 +254,7 @@ class SbkSpreadsheetTest extends TestCase
         $this->assertSame('51840.012',app(\App\Services\DefinisiUtilitiSbk::class)->preview($source->data_sumber));
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['kadar'=>'4,32.00'])]))->assertUnprocessable();
         $this->assertDatabaseCount('butiran_anggaran',1);
+        $source->forceFill(['data_sumber'=>(object)['definition'=>'os42000.sbk.v1','kategori2'=>'Air','kadar'=>'4,320.001']])->save();
+        $response=$this->get($url)->assertOk();$this->assertFalse($response->viewData('records')->first()['compatible']);
     }
 }

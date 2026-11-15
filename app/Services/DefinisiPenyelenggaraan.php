@@ -107,6 +107,7 @@ class DefinisiPenyelenggaraan extends DefinisiAnggaran
 
     public function readable(mixed $source): bool
     {
+        if($source instanceof stdClass && SumberWang::normalise($source->kadar ?? null)!==($source->kadar ?? null))return false;
         $keys=['definition','tujuan','kategori1','kategori2','bil_unit','kadar','kekerapan','bil_bulan'];
         if(!$source instanceof stdClass || ($source->definition ?? null)!==self::VERSION ||
             array_diff($keys,array_keys(get_object_vars($source))) || array_diff(array_keys(get_object_vars($source)),$keys))return false;

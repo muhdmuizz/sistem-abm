@@ -90,6 +90,7 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
 
     public function readable(mixed $source): bool
     {
+        if($source instanceof stdClass && SumberWang::normalise($source->kadar ?? null)!==($source->kadar ?? null))return false;
         if (! $source instanceof stdClass || ($source->definition ?? null) !== self::VERSION ||
             array_diff(['definition','kategori2','kadar'], array_keys(get_object_vars($source))) ||
             array_diff(array_keys(get_object_vars($source)), ['definition','kategori2','kadar'])) { return false; }
