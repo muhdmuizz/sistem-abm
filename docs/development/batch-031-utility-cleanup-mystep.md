@@ -1,6 +1,6 @@
 # Batch 031 — Remove Obsolete Utility Test Data and Add MySTEP
 
-**Status:** In progress; owner authorised 15 November 2026.
+**Status:** Merged; local targeted migration/acceptance pending. Owner authorised 15 November 2026.
 **Baseline:** `680aafd7f2a3253909c578230795097c4d149842` on dev.
 
 ## Owner correction and cleanup
@@ -32,3 +32,7 @@ No application changes after tested head. Local update/migration pending; the cl
 
 Keep server running. From a clean dev tree pull --ff-only, verify .env uses pgsql/sistem_abm, clear config, run normal php artisan migrate, then optimize:clear and Ctrl+F5. No fresh/reset, reference reseed, npm build or restart. The targeted migration removes only obsolete OS23000 Utiliti Pukal test budgets/reference; current canonical Pukal/Bukan Pukal budgets remain. Confirm one OS23000 card without Rekod sedia ada. Open eligible MySTEP; choose academic qualification, 2 units and 12 months: degree rate RM2,638.35 => **63,320.40**. Save/reopen, check date-year restriction, independent months and reference choices.
 
+
+## Merge checkpoint
+
+PR #72 merged at `8ac02d13c0304a115783fa49190634e0b27812f9`. Evidence-only final head `3f166ca15183f2edf597fe9c9b24d79b7151aaf9` preserves tested application code. This close-out changes Markdown only; no local execution or new test run claimed.
