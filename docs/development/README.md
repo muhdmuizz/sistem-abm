@@ -361,3 +361,7 @@ Tested application head `24e40b2cc29b5b0a309ca0d9d0ea91f258808578`; [CI 43674654
 ## Batch 031 — owner-authorised development cleanup and MySTEP in progress
 
 Owner explicitly states there is no real data and directs removal of obsolete Utiliti Pukal test data/preservation handling, then continuation to the next OS. Baseline `680aafd7f2a3253909c578230795097c4d149842`. [Batch 031](batch-031-utility-cleanup-mystep.md) targets only the obsolete OS23000 identity and test budgets, repoints four source-code mappings to canonical Perhubungan dan Utiliti, removes Batch 030 preservation UI and adds the approved shared MySTEP source definition. Normal targeted migration required; no whole-database reset or compatibility/data-preservation project. New catalogue count 32/30 eligible/2 excluded; mappings remain 105/103 eligible. Prior local confirmations remain unreceived.
+
+## Batch 031 — pre-merge verification passed
+
+Tested `005776cec1c85ebd3cdbabcb889b04925e31f228`; [CI 43679552938](https://github.com/muhdmuizz/sistem-abm/actions/runs/43679552938): 474 tests / 3925 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Representative final-head desktop/mobile review completed; [Batch 031](batch-031-utility-cleanup-mystep.md) records evidence limits. Merge and local targeted migration pending. Obsolete development data is discarded rather than exposed through preservation UI; official financial integration remains pending.

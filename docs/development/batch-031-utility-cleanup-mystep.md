@@ -19,4 +19,16 @@ Keep actual title-case headers, right-aligned/tabular grouped/two-decimal money 
 
 ## Verification
 
-Pending isolated PostgreSQL regression including targeted cleanup/reimport/idempotence/unrelated-data cases, MySTEP persistence/mapping/date/rate guards, build/formatter/Chromium and desktop/mobile states. Record actual tested SHA/results before merge. Local migration/update pending.
+
+## Verification — passed before merge
+
+Tested application head `005776cec1c85ebd3cdbabcb889b04925e31f228`; [CI 43679552938](https://github.com/muhdmuizz/sistem-abm/actions/runs/43679552938), job 132706974322: **474 tests / 3925 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Production build, money formatter and Chromium regression passed. Cleanup tests exercise dependent-output deletion, source/Anggaran removal, retained canonical budgets, revision bump, permission isolation, mapping collision/repoint, idempotence and reimport. MySTEP HTTP tests cover all 18 category/purpose combinations, four monthly rates, seven mappings, exact persistence/edit/no-op, date-year/order/leap-day guards, partial drafts and existing access/Fasa/stale/removal guards. Inventory assertions now reflect 32 identities and eight actual OS23000 source mappings.
+
+Artifact **14148295570** contains 264 PNGs, including 20 new captures (18 MySTEP and two clean utility-card states), replacing six preservation-specific captures. Representative final-head visual review covered 12 captures: clean utility card and MySTEP empty/populated/partial/read-only/validation at desktop/mobile widths. Internal horizontal scrolling, right-aligned grouped/two-decimal amounts, date controls and padded states retained. Native editable date formatting follows browser locale; read-only dates use dd/mm/yyyy. Not all old captures, middle-column mobile positions, expanded precision details or physical devices were inspected. Actual persistence/cleanup are covered by HTTP/database tests; browser validation responses are intercepted static fixtures, not live browser-save certification.
+
+No application changes after tested head. Local update/migration pending; the cloud agent has not accessed Windows. Official outputs/totals/completeness, programme inheritance and submission remain pending.
+
+## Local follow-through — pending
+
+Keep server running. From a clean dev tree pull --ff-only, verify .env uses pgsql/sistem_abm, clear config, run normal php artisan migrate, then optimize:clear and Ctrl+F5. No fresh/reset, reference reseed, npm build or restart. The targeted migration removes only obsolete OS23000 Utiliti Pukal test budgets/reference; current canonical Pukal/Bukan Pukal budgets remain. Confirm one OS23000 card without Rekod sedia ada. Open eligible MySTEP; choose academic qualification, 2 units and 12 months: degree rate RM2,638.35 => **63,320.40**. Save/reopen, check date-year restriction, independent months and reference choices.
+
