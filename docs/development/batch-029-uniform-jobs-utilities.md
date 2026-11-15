@@ -1,6 +1,6 @@
 # Batch 029 — Applicable Uniform Jawatan and OS23000 Utilities
 
-**Status:** In progress; owner authorised 15 November 2026.
+**Status:** Merged; local acceptance pending. Owner authorised 15 November 2026.
 **Baseline:** `dffc449c439e9cc5c4181bb1177bffa2a6f8011d` on dev.
 
 ## Correction and approved scope
@@ -30,3 +30,7 @@ No application changes after tested head. No migration/seed or official financia
 
 Keep existing server running. Clean dev pull --ff-only, php artisan optimize:clear, Ctrl+F5; no migration/seed/build/restart. Pakaian Seragam Jawatan should offer only Pembantu Khidmat Am/Pembantu Makmal, with fixed Bil. Pasang 2. For older unrelated-job drafts choose a replacement and save/reopen; original stored job is retained until explicit save. Open active OS23000 Perhubungan dan Utiliti, select either category path and enter monthly RM360: fixed 12 months gives **4,320.00**. Check save/reopen/edit/copy/removal and internal scrolling. Older Utiliti Pukal identity is not enabled or merged; reconciliation remains pending. Official financial integration remains pending.
 
+
+## Merge checkpoint
+
+PR #68 merged at `4c5a112ff31892df04156c62d69aeb13cb27a360`. Final evidence-only commit `ca2fb2f1a69cb70061a6101108cc8abce115a29a` preserves tested application code. This close-out changes Markdown only; no new test execution or local confirmation.
