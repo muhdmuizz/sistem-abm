@@ -376,3 +376,11 @@ Tested `005776cec1c85ebd3cdbabcb889b04925e31f228`; [CI 43679552938](https://gith
 The approved shared **OS29000 MySTEP** source grid is now implemented for all three existing variants/seven mappings, using the unchanged four JUMLAH monthly rates, independent categories/purposes, Kitaran-year dates and manual budgeted months. Exact preview = Bil. Unit × Kadar × Bilangan Bulan; date duration does not determine months. Title-case headers and accounting-style money retained.
 
 Tested application head `005776cec1c85ebd3cdbabcb889b04925e31f228`; [CI 43679552938](https://github.com/muhdmuizz/sistem-abm/actions/runs/43679552938): **474 tests / 3925 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated test DB, production build/formatter/Chromium passed. Twelve representative final-head desktop/mobile captures reviewed; [Batch 031](batch-031-utility-cleanup-mystep.md) records limits. Local targeted migration/update remains pending. Official outputs/totals/completeness, programme inheritance and submission remain pending; AD-008 remains Draft.
+
+## Local update confirmed — 15 November 2026
+
+User reported **“Clean, proceed.”** after the supplied guarded dev pull, database-config check, config clear, targeted normal migration and optimize:clear commands. Record this local update/cleanup migration as user-confirmed. It does not certify unexecuted financial/role/device checks or independent Windows/database inspection; earlier acceptance limits remain.
+
+## Batch 032 — Pakej source spreadsheet in progress
+
+User authorised continuation after confirming Batch 031 local update. Baseline `26d464660a91464f6bfb22c8bcddeef2a66f0c1c`. [Batch 032](batch-032-pakej-spreadsheet.md) implements four approved Pakej components, manual rate bases and independent chargeable nights/days in the shared source editor. No migration/seed, reference/mapping changes or automatic programme/official financial integration. Apply title-case headers and exact accounting-style monetary display.
