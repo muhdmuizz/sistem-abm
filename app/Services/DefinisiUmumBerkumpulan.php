@@ -29,7 +29,7 @@ class DefinisiUmumBerkumpulan extends DefinisiUmum
                 $data=Validator::make(['rekod'=>[$row]],[
                     'rekod.0'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,tujuan,tarikh_mula,tarikh_tamat,komponen',
                     'rekod.0.komponen'=>['present','array',$list],
-                    'rekod.0.komponen.*'=>'required|array:id,kategori1,bil_unit,kadar,bil_hari',
+                    'rekod.0.komponen.*'=>'required|array:id,kategori1,kategori2,nama,jawatan,gred,bil_unit,kadar',
                     'rekod.0.komponen.*.id'=>'required|uuid|distinct',
                 ])->validate()['rekod'][0];
                 $shared=array_diff_key($data,['komponen'=>true]);
