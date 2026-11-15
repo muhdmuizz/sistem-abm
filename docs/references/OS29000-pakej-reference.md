@@ -1,6 +1,6 @@
 # OS29000 — Pakej: confirmed category reference and Program/ Aktiviti alignment
 
-**Owner-confirmed:** 12 November 2026. **Scope:** Reference design and confirmed change to existing Program/ Aktiviti Pakej component options; no application implementation.
+**Owner-confirmed:** 12 November 2026. **Original scope:** Reference design and confirmed Program/ Aktiviti component choices. Application implementation status is recorded below.
 
 ## Kategori1 — Komponen Pakej
 
@@ -57,4 +57,12 @@ The Program/ Aktiviti start/end dates may inform the budget period but must **no
 
 These are separate Pakej component Anggaran rows. Retain the approved Program/ Aktiviti four-component selection and existing Pakej/Bukan Pakej behaviour without adding unapproved programme-trigger, eligibility or migration rules.
 
-**Boundary:** Documentation update only. No change to underlying four-row CSV, master catalogue, other OS29000 variants, Laravel, database or actual Excel exporter. AD-008 remains Draft.
+**Boundary at the specification approval checkpoint:** Documentation update only. No change to underlying four-row CSV, master catalogue, other OS29000 variants, Laravel, database or actual Excel exporter. AD-008 remains Draft.
+
+## Batch 032 checkpoint — 15 November 2026
+
+[PR #74](https://github.com/muhdmuizz/sistem-abm/pull/74) merged at `3494a318fda11ecc8468d26f13e3e2f8f56caff5`. OS29000 **Pakej (Mesyuarat/ Bengkel/ Kursus)** now has the approved direct source spreadsheet across its five existing activity mappings. Four components retain separate manual rate bases: Penginapan uses rooms/nights; Makan Minum people/days; Sewaan Dewan halls/days; Sewaan Peralatan units/days. Exact preview = Bil. Unit × Kadar × chargeable duration. Calendar dates/Tempoh do not set charged nights/days. Partial drafts, source precision, title-case headers and tabular/grouped/two-decimal money are retained. Shared validation keeps rate/duration descriptions alongside errors.
+
+Tested application head `5dfb64a5fbeab18df512772ec89de6812802ceea`; [CI 43689211251](https://github.com/muhdmuizz/sistem-abm/actions/runs/43689211251): **480 tests / 4030 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Eleven representative final-head desktop/mobile captures reviewed from 18 Pakej captures (282 total). See [Batch 032](../development/batch-032-pakej-spreadsheet.md) for evidence and limits. No migration/seed or catalogue/mapping/permission/reference CSV changes. Local Batch 032 update and financial acceptance remain pending. Batch 031 supplied local synchronisation/targeted cleanup migration is user-confirmed; detailed financial/role/device acceptance remains unverified. Official outputs/totals/completeness, programme inheritance and submission remain pending; Steps 02/03 remain in progress and AD-008 remains Draft.
+
+The earlier reference-only/no-Laravel status is historical and superseded for direct source entry by Batch 032. The approved quantities, rate bases, canonical column mapping and deferred programme fields are unchanged. No actual Excel exporter or automatic programme association is implemented by this batch.
