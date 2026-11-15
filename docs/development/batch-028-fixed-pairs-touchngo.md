@@ -30,3 +30,7 @@ Keep existing server running; clean dev pull --ff-only, php artisan optimize:cle
 ## Merge checkpoint
 
 PR #66 merged at `496dbfb0d9cb30f982bc02f8470f6b46773b5269`. Evidence-only head `b38b844307d804552ef906a0c69d4d57a90e8997` preserves tested application code. This documentation close-out adds no test execution or local acceptance.
+
+## Subsequent owner correction — Batch 029
+
+Owner required applicable Jawatan only after this checkpoint. PR #68 at `4c5a112ff31892df04156c62d69aeb13cb27a360` restricts Pakaian Seragam choices to the two rate-supported posts, preserving fixed two pairs and older affected drafts for explicit repair. This supersedes the earlier full shared-job selection behaviour; Batch 028 local acceptance remains unconfirmed.
