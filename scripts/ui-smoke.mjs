@@ -160,7 +160,8 @@ for (const name of ['bid-context','bid-list','bid-os','bid-empty','bid-no-result
     if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(name + ' desktop overflow');
     await page.screenshot({ path: 'storage/app/ui-qa/' + name + '-desktop.png', fullPage: true });
     if (name === 'bid-context') {
-        await page.locator('[data-search-select="bid-ptj"]').fill('JPNT');
+        await page.getByRole('combobox',{name:'PTJ',exact:false}).fill('JPNT');
+        await page.getByRole('option',{name:'JPNT',exact:true}).click();
         if (!(await page.locator('#bid-ptj option').evaluateAll(nodes => nodes.some(n => n.textContent === 'JPNT' && !n.hidden)))) throw Error('Scoped PTJ search failed');
     }
     if (name === 'bid-activation') {
@@ -749,6 +750,50 @@ if(payload.rekod.some(row=>'bil_bulan'in row||'preview'in row||'bil_unit'in row|
 if(payload.rekod[0].kategori2!=='Bil Telefon'||payload.rekod[0].kadar!=='360')throw Error('Utility source lost');
 for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/utilities-validation-'+width+'.png',fullPage:true});}
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
+// Single searchable PTJ control: native fallback, explicit selection and scoped values.
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/combobox-context.html');
+ const input=page.getByRole('combobox',{name:'PTJ',exact:false});
+ if(await page.locator('[data-search-select="bid-ptj"]').count()||await input.count()!==1)throw Error('PTJ retains separate search/select UI');
+ await input.focus();
+ if(await input.getAttribute('aria-expanded')!=='true'||await page.getByRole('option').count()<8)throw Error('PTJ dropdown did not expose scoped choices');
+ if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('PTJ combobox outer overflow');
+ await page.screenshot({path:'storage/app/ui-qa/ptj-combobox-open-'+width+'.png',fullPage:true});
+ await input.fill('nErUs');if(await page.getByRole('option').count()!==1)throw Error('PTJ case-insensitive filtering');
+ await page.screenshot({path:'storage/app/ui-qa/ptj-combobox-filtered-'+width+'.png',fullPage:true});
+ await input.press('ArrowDown');await input.press('Enter');
+ if(await input.inputValue()!=='PPD Kuala Nerus'||await input.getAttribute('aria-expanded')!=='false')throw Error('PTJ keyboard choice/close');
+ const choice=await page.locator('#bid-ptj').inputValue();
+ if(!choice||await page.locator('form.workspace-context').evaluate(form=>new FormData(form).get('ptj_id'))!==choice)throw Error('PTJ selected identity lost');
+ await input.fill('No such PTJ');if(await page.locator('#bid-ptj').inputValue()!==''||!await page.getByText('Tiada PTJ sepadan.',{exact:true}).isVisible())throw Error('PTJ arbitrary text retained selection');
+ if(await input.evaluate(el=>el.checkValidity()))throw Error('PTJ free text passes validation');
+ await page.screenshot({path:'storage/app/ui-qa/ptj-combobox-no-results-'+width+'.png',fullPage:true});
+ await input.press('Escape');if(await input.getAttribute('aria-expanded')!=='false')throw Error('PTJ Escape');
+ await input.fill('JPNT');await page.getByRole('option',{name:'JPNT',exact:true}).click();
+ if(!await input.evaluate(el=>el.checkValidity()))throw Error('PTJ valid selection rejected');
+ await page.screenshot({path:'storage/app/ui-qa/ptj-combobox-selected-'+width+'.png',fullPage:true});
+}
+{
+ const context=await browser.newContext({javaScriptEnabled:false,viewport:{width:1440,height:900}});const fallback=await context.newPage();
+ await fallback.goto('http://127.0.0.1:4173/combobox-context.html');
+ if(!await fallback.locator('#bid-ptj').isVisible())throw Error('Native PTJ fallback missing');
+ await fallback.selectOption('#bid-ptj',{label:'PPD Kuala Nerus'});
+ await fallback.screenshot({path:'storage/app/ui-qa/ptj-combobox-no-js.png',fullPage:true});await context.close();
+}
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/utility-single-card.html');
+ if(await page.locator('.os-reference').filter({hasText:/^OS23000$/}).count()!==1)throw Error('Duplicate utility preparation cards');
+ if(await page.getByRole('heading',{name:'Utiliti Pukal',exact:true}).count())throw Error('Old utility standalone heading');
+ await page.screenshot({path:'storage/app/ui-qa/utility-one-card-'+width+'.png',fullPage:true});
+ await page.goto('http://127.0.0.1:4173/utility-existing-records.html');
+ if(await page.locator('.os-reference').filter({hasText:/^OS23000$/}).count()!==1)throw Error('Duplicate utility card with old records');
+ await page.screenshot({path:'storage/app/ui-qa/utility-records-collapsed-'+width+'.png',fullPage:true});
+ await page.getByText('Rekod sedia ada',{exact:true}).click();
+ if(!await page.getByRole('link',{name:'Buka rekod Utiliti Pukal',exact:true}).isVisible())throw Error('Old utility records stranded');
+ if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Utility record card outer overflow');
+ await page.screenshot({path:'storage/app/ui-qa/utility-records-expanded-'+width+'.png',fullPage:true});
 }
 
 await browser.close();

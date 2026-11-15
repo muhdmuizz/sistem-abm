@@ -75,3 +75,8 @@ input[type=number],output{font-variant-numeric:tabular-nums}
 .login-form>.notice{margin:16px 0}.login-form .full{min-height:44px}.table-empty{overflow-wrap:anywhere}
 
 :is(.sidebar,#mobile-navigation) .nav-link:focus-visible{outline-offset:-3px}.button[aria-busy=true]::after{content:'…'}
+
+/* One searchable PTJ selector; constrained results scroll independently. */
+.ptj-picker{position:relative}.ptj-picker input{padding-right:42px}.ptj-picker-toggle{position:absolute;right:1px;top:1px;min-height:38px;width:38px;padding:8px;border:0;background:transparent;color:inherit;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:4px}
+.ptj-options{position:absolute;z-index:30;top:calc(100% + 5px);left:0;right:0;list-style:none;margin:0;padding:6px;max-height:240px;overflow-y:auto;border:1px solid #bdc9d5;border-radius:5px;background:#fff;box-shadow:0 4px 12px #1f334414}.ptj-options[hidden]{display:none}.ptj-options [role=option]{padding:10px 12px;cursor:pointer;border-radius:3px;overflow-wrap:anywhere}.ptj-options [role=option]:hover,.ptj-options .is-active{background:#eaf1f8;color:#234f78}.ptj-options [aria-selected=true]{font-weight:600}.ptj-no-results{padding:14px 12px;color:var(--muted)}
+.os-previous{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.os-previous summary{cursor:pointer;font-size:12px;font-weight:500}.os-previous p{margin:12px 0}
