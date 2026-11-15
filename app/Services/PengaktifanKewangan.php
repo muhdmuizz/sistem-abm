@@ -80,12 +80,11 @@ class PengaktifanKewangan
             $this->guard->current($bid, $expectedBidRevision);
             abort_unless($bid->diaktifkan, 409, 'Aktifkan Bidaan terlebih dahulu.');
             // Superadmin overrides permission/time scope, never catalogue exclusion or activity parentage.
-            $reference = $this->guard->catalogue($bid, $osId);
+            $this->guard->catalogue($bid, $osId);
             $estimate = $bid->anggaran()->where('rujukan_os_id', $osId)->lockForUpdate()->first();
             if ($estimate?->diaktifkan) {
                 return $estimate;
             }
-            abort_if($reference->isLegacyUtility(), 409, 'Pukal dan Bukan Pukal disediakan dalam Perhubungan dan Utiliti.');
             abort_if($estimate && $estimate->butiran()->exists(), 409,
                 'Aktifkan semula OS berdata memerlukan pengesahan dan pengiraan terkini.');
             $before = $this->state($bid, $estimate);

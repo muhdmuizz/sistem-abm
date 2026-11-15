@@ -153,7 +153,7 @@ class AksesPeruntukanTest extends TestCase
         $this->assertTrue($access->tetapanOs($this->ptj(), $this->activity(), $this->os()));
         $this->assertFalse($access->bolehAksesOs($this->ptj(), $this->activity(), $this->os()));
         $this->assertTrue($osSetting->fresh()->dibenarkan);
-        $this->assertDatabaseCount('rujukan_os', 33);
+        $this->assertDatabaseCount('rujukan_os', 32);
         $this->assertDatabaseCount('pemetaan_os', 105);
         $this->setting('PPD', null, $this->activity(), null, true);
         $this->assertTrue($access->bolehAksesOs($this->ptj(), $this->activity(), $this->os()));

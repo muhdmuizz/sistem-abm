@@ -26,11 +26,11 @@ class OsReferenceSeederTest extends TestCase
     public function test_imports_the_committed_catalogue_and_mappings_without_financial_records(): void
     {
         $this->importReferences();
-        $this->assertDatabaseCount('rujukan_os', 33);
+        $this->assertDatabaseCount('rujukan_os', 32);
         $this->assertDatabaseCount('pemetaan_os', 105);
         $this->assertDatabaseCount('kod_aktivitis', 38);
         $this->assertDatabaseCount('aktiviti_kewangans', 5);
-        $this->assertSame(31, RujukanOs::untukPelaksanaan()->count());
+        $this->assertSame(30, RujukanOs::untukPelaksanaan()->count());
         $this->assertSame(103, PemetaanOs::untukPelaksanaan()->count());
 
         foreach (PemetaanOs::with(['kodAktiviti', 'aktivitiKewangan', 'rujukanOs'])->get() as $mapping) {
@@ -140,7 +140,7 @@ class OsReferenceSeederTest extends TestCase
             'singkatan_sumber' => 'Custom', 'butiran_asal' => 'Custom source', 'status_sumber' => 'Custom',
         ]);
         $this->seed(OsReferenceSeeder::class);
-        $this->assertDatabaseCount('rujukan_os', 34);
+        $this->assertDatabaseCount('rujukan_os', 33);
         $this->assertDatabaseCount('pemetaan_os', 106);
         $this->assertSame($referenceIds, RujukanOs::whereKeyNot($custom->id)->orderBy('id')->pluck('id')->all());
         $this->assertSame($mappingIds, PemetaanOs::whereKeyNot($mapping->id)->orderBy('id')->pluck('id')->all());
