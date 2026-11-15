@@ -36,3 +36,7 @@ Keep the server running; use a clean dev pull --ff-only, php artisan optimize:cl
 ## Local confirmation and header refinement — 15 November 2026
 
 User reported “Everything else is clean.” and supplied the TASKA screenshot. Synchronisation/cache clear are user-confirmed; its visible 180.00 and 4,320.00 presentation is confirmed at the supplied viewport. Broader financial/role/device/audit checks are not inferred. Header casing mixes BIL. ANAK/UNIT/KADAR with title-case headers; the next shared-grid task must apply AD-013 Section 06.1 (Bil. Anak, Unit, Kadar Bulanan (RM/ Anak), preserving RM/OS/PTJ acronyms). Official canonical Excel headers/reference data stay unchanged. This documentation update records the rule and issue, not a code fix or new test execution.
+
+## Header issue resolved by Batch 027
+
+Actual title-case grid headers corrected in PR #64 at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`; official Excel/reference labels remain unchanged. Batch 026 local confirmation above remains bounded; Batch 027 local checks pending.

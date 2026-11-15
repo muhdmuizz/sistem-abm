@@ -1,6 +1,6 @@
 # Batch 027 — Pakaian Seragam and Consistent UI Headers
 
-**Status:** In progress; owner authorised 15 November 2026.
+**Status:** Merged; local acceptance pending. Owner authorised 15 November 2026.
 **Baseline:** `8a165cb8a39cc94f363e68767fa7b7b0cc805de1` on dev.
 
 ## Approved scope
@@ -30,3 +30,7 @@ No application edits after the tested head. No migration/seed, official financia
 Keep the server running; from a clean tree switch to dev, pull --ff-only and run php artisan optimize:clear, then Ctrl+F5. No migration/seeder/npm build or restart.
 
 Confirm title-case headers across existing grids: Unit, Kadar, Bil. Anak (RM/OS/PTJ acronyms retained), with grouped/two-decimal amounts unchanged. Open an eligible active PPN OS27000 Pakaian Seragam Anggaran, then Buka Jadual Butiran. Choose Pakaian Seragam + PEMBANTU KHIDMAT AM; 5 pengisian × 2 pasang × RM230 previews **2,300.00**. Changing to Kasut retains Jawatan and gives RM150; PEMBANTU MAKMAL gives RM250. Unit stays Pasang. Check save/reopen/edit/copy/remove and horizontal scrolling. Shared jobs without a prescribed combination show no rate/amount and remain incomplete drafts; no fabricated eligibility/rate policy. Official outputs/completeness/programme inheritance remain pending.
+
+## Merge checkpoint
+
+PR #64 merged into dev at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Final evidence-only head `528cd178bf4fcd0d95c84ee2c3e67a7cc0ccdfc5` preserves the tested application code. This close-out changes Markdown only; no new test run or local acceptance is claimed.

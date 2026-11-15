@@ -402,3 +402,9 @@ Each major implemented interface must be checked against the applicable categori
 - Detailed implementation tokens, exact screen columns and component measurements must be verified against actual source and authoritative data; they are **implementation refinements**, not pending design-section approvals.
 - No new standalone Konfigurasi page, Tetingkap Penghantaran concept, unapproved filters, additional export sheets or extra workflow statuses are introduced.
 - The repository's architecture documentation is not evidence of a functional Laravel application. Implementation, testing and release gates remain outstanding.
+
+## Batch 027 implementation checkpoint — 15 November 2026
+
+[PR #64](https://github.com/muhdmuizz/sistem-abm/pull/64) merged at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Pakaian Seragam source drafts now use existing PPN/010808 mapping, shared Reference 07 Jawatan, four approved category/job rates, fixed Pasang and exact Bil. Pengisian × Bil. Pasang × Kadar preview. Actual title-case headers are implemented across OS25000/SBK/TASKA/OS28000/Pakaian Seragam, preserving canonical Excel/reference headings and accounting-style money.
+
+Tested application head `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://github.com/muhdmuizz/sistem-abm/actions/runs/43665138171): 452 tests / 3626 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium and representative desktop/mobile review passed. See [Batch 027](../development/batch-027-uniform-headers.md) for evidence limits. Local acceptance pending. No migration/seed or new policy. Other OS27000 variants, official output/totals/completeness and programme inheritance remain pending; Steps 02/03 remain in progress. AD-008 remains Draft.

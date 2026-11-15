@@ -59,3 +59,9 @@ Both `Pembantu Khidmat Am` and `Pembantu Makmal` are present in the 131-row shar
 Illustration (not an additional rate policy): 5 pengisian × 2 pasang × RM230 = **RM2,300**. Follow the established AD-008 deterministic decimal arithmetic, independent Butiran identities, reference attribution and immutable submitted snapshots. No unapproved eligibility, rounding, rate revisions or new category choices are inferred.
 
 **Change control:** This is approved specification **only**; no Laravel implementation, database migration, source reference CSV changes or Excel implementation are claimed. AD-008 remains Draft.
+
+## Batch 027 implementation checkpoint — 15 November 2026
+
+[PR #64](https://github.com/muhdmuizz/sistem-abm/pull/64) merged at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Pakaian Seragam source drafts now use existing PPN/010808 mapping, shared Reference 07 Jawatan, four approved category/job rates, fixed Pasang and exact Bil. Pengisian × Bil. Pasang × Kadar preview. Actual title-case headers are implemented across OS25000/SBK/TASKA/OS28000/Pakaian Seragam, preserving canonical Excel/reference headings and accounting-style money.
+
+Tested application head `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://github.com/muhdmuizz/sistem-abm/actions/runs/43665138171): 452 tests / 3626 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium and representative desktop/mobile review passed. See [Batch 027](../development/batch-027-uniform-headers.md) for evidence limits. Local acceptance pending. No migration/seed or new policy. Other OS27000 variants, official output/totals/completeness and programme inheritance remain pending; Steps 02/03 remain in progress. AD-008 remains Draft.
