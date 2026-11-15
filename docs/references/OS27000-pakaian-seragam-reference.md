@@ -48,7 +48,7 @@ Both `Pembantu Khidmat Am` and `Pembantu Makmal` are present in the 131-row shar
 - 12 **JAWATAN** uses the existing shared personnel reference and remains separate from category levels; 14 **KATEGORI1** is `Pakaian Seragam` or `Kasut`; 15–16 are Inactive. 21 **KADAR** is mandatory, automatically looked up from **KATEGORI1 + JAWATAN** using the four unchanged combinations above.
 - 17 **UNIT** is Active and **fixed to `Pasang` for both Pakaian Seragam and Kasut**.
 - 19 **BIL. UNIT** is Active, displayed in the editor as **BIL. PENGISIAN**, user-entered.
-- 23 **KEKERAPAN** is Active, displayed in the editor as **BIL. PASANG**, user-entered.
+- 23 **KEKERAPAN** is Active, displayed in the editor as **Bil. Pasang**, fixed to **2** and not editable (owner correction, 15 November 2026).
 - 27 **ANGGARAN JUMLAH SETAHUN** is calculated. Columns 08–10 are Inactive and exported blank; columns 29–30 remain Deferred.
 - Editor-specific labels do **not** rename the canonical Excel headers or alter the approved 30-column position/order.
 
@@ -65,3 +65,7 @@ Illustration (not an additional rate policy): 5 pengisian × 2 pasang × RM230 =
 [PR #64](https://github.com/muhdmuizz/sistem-abm/pull/64) merged at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Pakaian Seragam source drafts now use existing PPN/010808 mapping, shared Reference 07 Jawatan, four approved category/job rates, fixed Pasang and exact Bil. Pengisian × Bil. Pasang × Kadar preview. Actual title-case headers are implemented across OS25000/SBK/TASKA/OS28000/Pakaian Seragam, preserving canonical Excel/reference headings and accounting-style money.
 
 Tested application head `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://github.com/muhdmuizz/sistem-abm/actions/runs/43665138171): 452 tests / 3626 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium and representative desktop/mobile review passed. See [Batch 027](../development/batch-027-uniform-headers.md) for evidence limits. Local acceptance pending. No migration/seed or new policy. Other OS27000 variants, official output/totals/completeness and programme inheritance remain pending; Steps 02/03 remain in progress. AD-008 remains Draft.
+
+## Owner correction — 15 November 2026
+
+**Bil. Pasang must default to and remain fixed at 2**, with editing restricted and server enforcement. This supersedes earlier user-entered KEKERAPAN wording and applies to the existing Pakaian Seragam/Kasut definition. Formula remains Bil. Pengisian × **2** × Kadar. Existing stored draft inputs are retained on read; current preview follows the correction and explicit audited save upgrades the source. No bulk rewriting of historical/submitted data or new rate/eligibility rule. Batch 028 implementation/verification pending.

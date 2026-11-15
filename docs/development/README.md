@@ -306,3 +306,11 @@ Tested `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://gith
 [PR #64](https://github.com/muhdmuizz/sistem-abm/pull/64) merged at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Pakaian Seragam source drafts now use existing PPN/010808 mapping, shared Reference 07 Jawatan, four approved category/job rates, fixed Pasang and exact Bil. Pengisian × Bil. Pasang × Kadar preview. Actual title-case headers are implemented across OS25000/SBK/TASKA/OS28000/Pakaian Seragam, preserving canonical Excel/reference headings and accounting-style money.
 
 Tested application head `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://github.com/muhdmuizz/sistem-abm/actions/runs/43665138171): 452 tests / 3626 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium and representative desktop/mobile review passed. See [Batch 027](batch-027-uniform-headers.md) for evidence limits. Local acceptance pending. No migration/seed or new policy. Other OS27000 variants, official output/totals/completeness and programme inheritance remain pending; Steps 02/03 remain in progress. AD-008 remains Draft.
+
+## Batch 027 local confirmation and Batch 028 start — 15 November 2026
+
+User reported “Clean” after Batch 027 guarded sync/cache instructions. Record synchronisation/cache clear as user-confirmed, without inferring full financial/role/device acceptance. User corrected Bil. Pasang: mandatory fixed **2**, defaulted and locked. This explicitly supersedes its previous editable-input specification for both existing Pakaian Seragam/Kasut choices. User authorised repair and next definition.
+
+## Batch 028 — fixed pairs and Touch ’n Go in progress
+
+Baseline `8ca2c50ce2e026d1e1f404f676c3962d58b39cc6`. [Batch 028](batch-028-fixed-pairs-touchngo.md): enforce fixed two pairs, server rejection of multiplier injection, preserve old stored source until explicit audited save, and add approved monthly Touch ’n Go source definition in its three existing activity mappings. Keep title-case headers and exact accounting display. No migration/seed, catalogue/reference-rate change, official financial outputs/completeness or programme inheritance.
