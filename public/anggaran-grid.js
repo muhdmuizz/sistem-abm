@@ -6,7 +6,8 @@
  rows.forEach(r=>r.key=++next);
  const columns=JSON.parse(form.dataset.columns),inputColumns=columns.filter(c=>c.type!=='output'),fieldNames=inputColumns.map(c=>c.key);
  const selector=form.dataset.referenceSelector,childSelector=form.dataset.referenceChildSelector,money=globalThis.AbmMoney;
- const reference=row=>{const group=references[row[selector]];return childSelector?group?.[plain(row[childSelector])]:group;};
+ const reference=row=>{const group=references[row[selector]],ref=childSelector?group?.[plain(row[childSelector])]:group;if(!ref?.ratesByGrade)return ref;const grades=columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[];return {...ref,...(grades.includes(row.gred)?ref.ratesByGrade[row.gred]:{})};};
+ const active=(row,column)=>!column.activeWhenReference||!!reference(row)?.[column.activeWhenReference];
  const fixed=(row,column)=>column.mixed&&reference(row)?.mode==='FIXED_REFERENCE';
  const exactHelp=(cell,value)=>{cell.querySelector('.money-exact')?.remove();if(!money.precise(plain(value)))return;const detail=document.createElement('details');detail.className='money-exact';const summary=document.createElement('summary');summary.textContent='Nilai tepat';const text=document.createElement('span');text.textContent=value;detail.append(summary,text);cell.append(detail);};
  const notice=(cell,row,name)=>{const message=row.notices?.[name];if(typeof message!=='string')return;const p=document.createElement('p');p.className='small grid-cell-notice';p.textContent=message;cell.append(p);};
@@ -24,6 +25,7 @@
  function output(row,tr){
   const ref=reference(row),values={...row};
   for(const column of inputColumns)if(fixed(row,column))values[column.key]=ref.kadar;
+  for(const column of inputColumns)if(!active(row,column))values[column.key]=null;
   for(const column of inputColumns.filter(c=>c.hintReference||c.labelReference)){
    const cell=tr.children[columns.indexOf(column)+2],field=cell.querySelector('[data-field]');
    if(field&&column.labelReference)field.setAttribute('aria-label',(ref?.[column.labelReference]||column.label)+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
@@ -42,7 +44,7 @@
    }
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
-    value=(!column.formula.requiresReference||ref)&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
+    value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
@@ -69,6 +71,7 @@
    inputColumns.forEach((column,index)=>{
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
+    if(!active(row,column)){cell.textContent='Tidak berkenaan';return;}
     if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
@@ -81,7 +84,7 @@
     }
     else{
      option(input,'','Pilih '+column.label);
-     if(column.dependsOn){const choices=Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
+     if(column.dependsOn){const choices=column.valuesByParent?(column.valuesByParent[row[column.dependsOn]]||[]):Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
      else if(column.options==='values')column.values.forEach(v=>option(input,v,v));
      else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(!column.strictValues&&plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
@@ -92,6 +95,7 @@
      if(column.type==='select'&&childSelector){
       if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
+      for(const c of inputColumns){if(c.dependsOn===name&&c.key!==childSelector)row[c.key]=null;if(!active(row,c))row[c.key]=null;}
       const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
      }else output(row,tr);
     });
@@ -130,7 +134,7 @@
   if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya lajur input: '+inputColumns.map(c=>c.label).join(', ')+'.';event.preventDefault();return;}
   event.preventDefault();
   if(data.some(line=>line.some((value,j)=>{const c=inputColumns[start+j];return c.strictValues&&value!==''&&!c.values.includes(value);}))) {error.hidden=false;error.textContent='Pilih Jawatan yang terpakai daripada senarai.';return;}
-  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
+  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)||!active(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });
  function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');const ids=(el.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('grid-error-'));if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');});}
@@ -138,7 +142,7 @@
   event.preventDefault();if(submitting)return;clearErrors();
   const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
   const deleted=rows.filter(r=>r.deleted),payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
-   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,fixed(r,columns.find(c=>c.key===key))||plain(r[key])===''?null:String(r[key])]))})),
+   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,(!active(r,columns.find(c=>c.key===key))||fixed(r,columns.find(c=>c.key===key)))||plain(r[key])===''?null:String(r[key])]))})),
    padam:deleted.map(r=>({butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}))};
   const buttons=form.querySelectorAll('button[type=submit]');
   function restore(){delete form.dataset.submitting;buttons.forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});submitting=false;}
