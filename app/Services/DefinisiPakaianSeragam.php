@@ -83,7 +83,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
         if(!$source instanceof stdClass||!in_array($source->definition ?? null,[self::VERSION,'os27000.pakaian-seragam.v1'],true)||
             array_diff($keys,array_keys(get_object_vars($source)))||array_diff(array_keys(get_object_vars($source)),$keys))return false;
         if($source->definition===self::VERSION && $source->kekerapan!=='2')return false;
-        if($source->definition==='os27000.pakaian-seragam.v1' && $source->kekerapan!==null && (!is_string($source->kekerapan)||!preg_match('/^-?\d+(?:\.\d+)?$/D',$source->kekerapan)))return false;
+        if($source->definition==='os27000.pakaian-seragam.v1' && $source->kekerapan!==null && $source->kekerapan!=='' && (!is_string($source->kekerapan)||strlen($source->kekerapan)>128||!preg_match('/^-?\d+(?:\.\d+)?$/D',$source->kekerapan)))return false;
         $row=get_object_vars($source);unset($row['definition'],$row['kekerapan']);$row['tempat_bertugas_id']=1;
         try { $this->validate([$row]); } catch(\Illuminate\Validation\ValidationException) { return false; }
         return true;

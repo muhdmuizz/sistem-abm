@@ -208,7 +208,7 @@ class UniformSpreadsheetTest extends TestCase
         $legacy=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$estimate->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,'semakan'=>0,
             'data_sumber'=>(object)['definition'=>'os27000.pakaian-seragam.v1','kategori1'=>'Pakaian Seragam','jawatan'=>'PEMBANTU KHIDMAT AM','bil_unit'=>'5','kekerapan'=>'7']]);
         $this->get($this->gridUrl($bid,$estimate))->assertOk();$this->assertSame('7',$legacy->fresh()->data_sumber->kekerapan);
-        $this->assertTrue($definition->readable($legacy->data_sumber));$this->assertSame('2300',$definition->preview($legacy->data_sumber));
+        $this->assertTrue($definition->readable($legacy->data_sumber));foreach([null,''] as $blank){$partial=clone $legacy->data_sumber;$partial->kekerapan=$blank;$this->assertTrue($definition->readable($partial));}$this->assertSame('2300',$definition->preview($legacy->data_sumber));
         $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$legacy->id,'semakan_butiran'=>0])]))->assertOk();
         $this->assertSame('2',$legacy->fresh()->data_sumber->kekerapan);$this->assertSame($definition::VERSION,$legacy->fresh()->data_sumber->definition);
         $this->assertDatabaseCount('rekod_audit',1);
