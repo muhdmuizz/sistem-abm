@@ -113,9 +113,7 @@ class RuangBidaPeruntukan
         $central = $os ? $this->osAllowed($ptj, $activity, $os->id) : $this->permissions->bolehAksesAktiviti($ptj, $activity);
         $open = $this->open($cycle, $ptj, $activity);
         $explanation = null;
-        if ($os?->isLegacyUtility()) {
-            $explanation = 'Pukal dan Bukan Pukal disediakan dalam Perhubungan dan Utiliti.';
-        } elseif ($bid && $bid->status !== StatusBidaan::DalamPenyediaan) {
+        if ($bid && $bid->status !== StatusBidaan::DalamPenyediaan) {
             $explanation = 'Pengaktifan awal tidak tersedia untuk status Bidaan semasa.';
         } elseif ($os && ! $bid?->diaktifkan) {
             $explanation = 'Aktifkan Bidaan terlebih dahulu.';

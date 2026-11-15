@@ -792,19 +792,6 @@ SQL);
         $this->assertDatabaseCount('rekod_audit', 4);
     }
 
-    private function utilityReferences(): array
-    {
-        $refs=[];
-        foreach(['Perhubungan dan Utiliti'=>'010801','Utiliti Pukal'=>'010809'] as $label=>$code){
-            $os=RujukanOs::create(['kod_objek'=>'23000','butiran_perbelanjaan'=>$label]);
-            $activityCode=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>$code]);
-            PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'kod_aktiviti_id'=>$activityCode->id,
-                'singkatan_sumber'=>'PPN','butiran_asal'=>$label,'status_sumber'=>'Aktif']);
-            TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'dibenarkan'=>true]);$refs[]=$os;
-        }
-        return $refs;
-    }
-
     public function test_ptj_selector_has_scoped_native_fallback_for_one_searchable_control(): void
     {
         $this->get('/bida-peruntukan')->assertOk()->assertSee('data-ptj-combobox',false)->assertDontSee('data-search-select="bid-ptj"',false)
@@ -815,52 +802,13 @@ SQL);
         $this->assertDatabaseCount('bidaan',0);$this->assertDatabaseCount('rekod_audit',0);
     }
 
-    public function test_only_one_os23000_card_is_offered_and_old_identity_cannot_be_newly_activated(): void
+    public function test_clean_utility_identity_has_one_card_without_previous_records_interface(): void
     {
-        [$canonical,$old]=$this->utilityReferences();$bid=$this->workspaceBid();
-        $response=$this->get(route('bids.show',$bid))->assertOk();$cards=$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='23000');
-        $this->assertCount(1,$cards);$this->assertSame($canonical->id,$cards->first()['os']->id);
-        $response->assertDontSee('id="os-'.$old->id.'"',false);$this->workspaceCapture('utility-single-card',$response);
-        $this->get(route('bids.os-form',[$bid,$old]))->assertForbidden();
-        $this->post(route('bids.os-activate',[$bid,$old]),['semakan'=>$bid->semakan])->assertRedirect();
-        $this->assertDatabaseCount('anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
-        $this->assertSame(1,$bid->fresh()->semakan);
-    }
-
-    public function test_old_utility_records_remain_scoped_and_accessible_inside_the_single_card(): void
-    {
-        [$canonical,$old]=$this->utilityReferences();$bid=$this->workspaceBid();
-        $current=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$canonical->id,'diaktifkan'=>true,'semakan'=>1]);
-        $previous=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$old->id,'diaktifkan'=>true,'semakan'=>1]);
-        $place=\App\Models\TempatBertugas::create(['ptj_id'=>$bid->ptj_id,'nama'=>'Sektor Pengurusan','jenis'=>'sektor']);
-        $source=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$previous->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,'semakan'=>0,'data_sumber'=>(object)['unchanged'=>'preserved']]);
-        $response=$this->get(route('bids.show',$bid))->assertOk()->assertSee('Rekod sedia ada')->assertSee(route('estimates.show',[$bid,$previous]),false);
-        $this->assertCount(1,$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='23000'));
-        $this->assertSame('preserved',$source->fresh()->data_sumber->unchanged);$this->assertSame($previous->id,$source->fresh()->anggaran_id);
-        $this->get(route('estimates.show',[$bid,$previous]))->assertOk();$this->assertDatabaseCount('rekod_audit',0);$this->assertDatabaseCount('anggaran',2);
-        $this->workspaceCapture('utility-existing-records',$response);
-        TetapanAksesPtj::where('rujukan_os_id',$old->id)->update(['dibenarkan'=>false]);
-        $this->get(route('bids.show',$bid))->assertOk()->assertDontSee('Rekod sedia ada');
-        $this->get(route('estimates.show',[$bid,$previous]))->assertNotFound();
-        TetapanAksesPtj::where('rujukan_os_id',$old->id)->update(['dibenarkan'=>true]);$previous->forceFill(['diaktifkan'=>false])->save();
-        $this->get(route('bids.show',$bid))->assertOk()->assertSee('Rekod Utiliti Pukal belum aktif. Rekod dikekalkan.')->assertDontSee(route('estimates.show',[$bid,$previous]),false);
-        $this->assertSame('preserved',$source->fresh()->data_sumber->unchanged);
-    }
-
-    public function test_old_utility_permission_does_not_grant_canonical_permission_or_group_other_os_variants(): void
-    {
-        [$canonical,$old]=$this->utilityReferences();$bid=$this->workspaceBid();
-        $previous=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$old->id,'diaktifkan'=>true,'semakan'=>1]);
-        TetapanAksesPtj::where('rujukan_os_id',$canonical->id)->update(['dibenarkan'=>false]);
-        $response=$this->get(route('bids.show',$bid))->assertOk()->assertSee('Rekod sedia ada');
-        $card=$response->viewData('cards')->first(fn($card)=>$card['os']->kod_objek==='23000');$this->assertFalse($card['activation']['allowed']);
-        $this->get(route('bids.os-form',[$bid,$canonical]))->assertNotFound();
-        foreach(['Pakaian Seragam','Bekalan dan Bahan-bahan Lain'] as $label){
-            $os=RujukanOs::create(['kod_objek'=>'27000','butiran_perbelanjaan'=>$label]);
-            PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'singkatan_sumber'=>'PPN','butiran_asal'=>$label,'status_sumber'=>'Aktif']);
-            TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'dibenarkan'=>true]);
-        }
-        $response=$this->get(route('bids.show',$bid))->assertOk();$this->assertCount(2,$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='27000'));
+        $os=RujukanOs::create(['kod_objek'=>'23000','butiran_perbelanjaan'=>'Perhubungan dan Utiliti']);
+        foreach(['010801','010809'] as $value){$code=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>$value]);PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'kod_aktiviti_id'=>$code->id,'singkatan_sumber'=>'PPN','butiran_asal'=>'Perhubungan dan Utiliti','status_sumber'=>'Eligible reference']);}
+        TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'dibenarkan'=>true]);
+        $bid=$this->workspaceBid();$response=$this->get(route('bids.show',$bid))->assertOk()->assertDontSee('Rekod sedia ada')->assertDontSee('Utiliti Pukal');
+        $this->assertCount(1,$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='23000'));$this->workspaceCapture('utility-clean-card',$response);
     }
 
 }

@@ -27,6 +27,10 @@
   for(const column of columns.filter(c=>c.type==='output')){
    const columnReference=column.referenceKey ? references[column.referenceKey] : ref;
    let value=column.value??columnReference?.[column.reference];
+   if(column.formula?.operation==='inclusiveDays'){
+    const day=value=>{const match=plain(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!match)return null;const d=new Date(0);d.setUTCHours(0,0,0,0);d.setUTCFullYear(Number(match[1]),Number(match[2])-1,Number(match[3]));return d.getUTCFullYear()===Number(match[1])&&d.getUTCMonth()===Number(match[2])-1&&d.getUTCDate()===Number(match[3])?d.getTime():null;};
+    const [start,end]=column.formula.inputs.map(key=>day(row[key]));value=start!==null&&end!==null&&end>=start?String((end-start)/86400000+1):'—';
+   }
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
@@ -56,11 +60,11 @@
    inputColumns.forEach((column,index)=>{
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
-    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
+    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
-    if(column.type==='decimal'||column.type==='text'){
-     input.type='text';if(column.type==='decimal')input.inputMode='decimal';
+    if(column.type==='decimal'||column.type==='text'||column.type==='date'){
+     input.type=column.type==='date'?'date':'text';if(column.type==='date'){input.min=column.min;input.max=column.max;}if(column.type==='decimal')input.inputMode='decimal';
      input.maxLength=column.maxLength??(column.money?180:128);
      const value=fixed(row,column)?reference(row).kadar:row[name];input.value=column.money?money.format(value)==='—'?'':money.format(value):plain(value);
      if(column.money){exactHelp(cell,value);input.addEventListener('focus',()=>{if(!input.readOnly)input.value=plain(row[name]);});input.addEventListener('blur',()=>{if(!input.readOnly){input.value=plain(row[name])===''?'':money.format(row[name]);exactHelp(cell,row[name]);}});}

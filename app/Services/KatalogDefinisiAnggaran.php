@@ -11,6 +11,20 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        $mystep=new DefinisiMystep($bid->kitaran->tahun);
+        if($mystep->supports($os)) {
+            $codes=match($bid->aktivitiKewangan->nama){
+                'Pengurusan Pentadbiran Negeri'=>['MySTEP'=>'010812'],
+                'Pendidikan Rendah'=>['MySTEP - Guru Ganti'=>'030223','MySTEP - Pembantu Pengurusan Murid (PPM) Ganti'=>'030226'],
+                'Pendidikan Awal'=>['MySTEP - Guru Ganti'=>'030106','MySTEP - Pembantu Pengurusan Murid (PPM) Ganti'=>'030105'],
+                'Pendidikan Menengah'=>['MySTEP - Guru Ganti'=>'030305','MySTEP - Pembantu Pengurusan Murid (PPM) Ganti'=>'030309'],default=>[],
+            };
+            $code=$codes[$os->butiran_perbelanjaan] ?? null;if($code===null)return null;
+            $mapped=PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($query)=>$query->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists();
+            return $mapped?$mystep:null;
+        }
+
         $food = app(DefinisiAnggaran::class);
         if ($food->supports($os)) { return $food; }
 

@@ -783,17 +783,37 @@ for(const width of [1440,390]){
  await fallback.screenshot({path:'storage/app/ui-qa/ptj-combobox-no-js.png',fullPage:true});await context.close();
 }
 for(const width of [1440,390]){
- await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/utility-single-card.html');
- if(await page.locator('.os-reference').filter({hasText:/^OS23000$/}).count()!==1)throw Error('Duplicate utility preparation cards');
- if(await page.getByRole('heading',{name:'Utiliti Pukal',exact:true}).count())throw Error('Old utility standalone heading');
- await page.screenshot({path:'storage/app/ui-qa/utility-one-card-'+width+'.png',fullPage:true});
- await page.goto('http://127.0.0.1:4173/utility-existing-records.html');
- if(await page.locator('.os-reference').filter({hasText:/^OS23000$/}).count()!==1)throw Error('Duplicate utility card with old records');
- await page.screenshot({path:'storage/app/ui-qa/utility-records-collapsed-'+width+'.png',fullPage:true});
- await page.getByText('Rekod sedia ada',{exact:true}).click();
- if(!await page.getByRole('link',{name:'Buka rekod Utiliti Pukal',exact:true}).isVisible())throw Error('Old utility records stranded');
- if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Utility record card outer overflow');
- await page.screenshot({path:'storage/app/ui-qa/utility-records-expanded-'+width+'.png',fullPage:true});
+ await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/utility-clean-card.html');
+ if(await page.locator('.os-reference').filter({hasText:/^OS23000$/}).count()!==1||await page.getByText('Rekod sedia ada',{exact:true}).count())throw Error('Obsolete utility preservation UI remains');
+ await page.screenshot({path:'storage/app/ui-qa/utility-clean-card-'+width+'.png',fullPage:true});
+}
+for(const fixture of ['mystep-empty','mystep-populated','mystep-partial','mystep-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('MySTEP outer overflow');
+  if(await page.locator('[data-field=nama],[data-field=jawatan],[data-field=gred],[data-field=kadar]').count())throw Error('MySTEP inactive/derived inputs exposed');
+  if(fixture==='mystep-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('MySTEP readonly save');
+  for(const edge of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});}
+ }
+}
+{
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/mystep-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();const first=page.locator('[data-grid-body] tr').first();
+if(await first.locator('[data-field=kategori1] option').count()!==4||await first.locator('[data-field=tujuan] option').count()!==7||await first.locator('[data-field=kategori2] option').count()!==5)throw Error('MySTEP reference options');
+await first.locator('[data-field=kategori1]').selectOption('Guru Ganti');await first.locator('[data-field=tujuan]').selectOption('Projek/ Program/ Ad Hoc/ Tugas Bermusim (Seasonal)');
+await first.locator('[data-field=kategori1]').selectOption('Pengurusan');if(await first.locator('[data-field=tujuan]').inputValue()!=='Projek/ Program/ Ad Hoc/ Tugas Bermusim (Seasonal)')throw Error('MySTEP inferred purpose filtering');
+await first.locator('[data-field=kategori2]').selectOption('Setaraf Ijazah Sarjana Muda');await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=bil_bulan]').fill('12');
+await first.locator('[data-field=tarikh_mula]').fill('2028-02-28');await first.locator('[data-field=tarikh_tamat]').fill('2028-03-01');
+if(await first.locator('[data-output=kadar]').textContent()!=='2,638.35'||await first.locator('[data-output=preview]').textContent()!=='63,320.40'||await first.locator('[data-output=tempoh]').textContent()!=='3')throw Error('MySTEP formula/duration/accounting');
+if(await first.locator('[data-field=tarikh_mula]').getAttribute('min')!=='2028-01-01'||await first.locator('[data-field=tarikh_tamat]').getAttribute('max')!=='2028-12-31')throw Error('MySTEP date year bounds');
+await first.locator('[data-field=tarikh_tamat]').fill('2028-12-31');if(await first.locator('[data-field=bil_bulan]').inputValue()!=='12')throw Error('MySTEP dates overwrote budget months');
+await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('MySTEP duplicate');
+let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak Bil. Unit.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(payload.rekod.some(row=>'kadar'in row||'unit'in row||'tempoh'in row||'nama'in row||'jawatan'in row||'gred'in row))throw Error('MySTEP derived payload');
+if(payload.rekod[0].bil_unit!=='2'||payload.rekod[0].bil_bulan!=='12'||payload.rekod[0].tarikh_mula!=='2028-02-28')throw Error('MySTEP source lost');
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/mystep-validation-'+width+'.png',fullPage:true});}
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
 await browser.close();
