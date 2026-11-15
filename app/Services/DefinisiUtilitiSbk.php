@@ -25,10 +25,10 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
         return [
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori2','label'=>'Kategori2 — Utiliti','type'=>'select','options'=>'references','width'=>190],
-            ['key'=>'kadar','label'=>'KADAR Bulanan (RM)','type'=>'decimal','width'=>180],
+            ['key'=>'kadar','money'=>true,'label'=>'KADAR Bulanan (RM)','type'=>'decimal','width'=>180],
             ['key'=>'kategori1','label'=>'Kategori1','type'=>'output','value'=>'Pukal','width'=>110],
             ['key'=>'bil_bulan','label'=>'Bilangan Bulan','type'=>'output','value'=>'12','numeric'=>true,'width'=>130],
-            ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
+            ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
                 'formula'=>['operation'=>'multiply','inputs'=>['kadar','bil_bulan']],'width'=>200],
         ];
     }
@@ -68,6 +68,7 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
 
     public function validate(array $rows): array
     {
+        foreach($rows as &$row) { if(is_array($row)&&array_key_exists('kadar',$row))$row['kadar']=SumberWang::normalise($row['kadar']); } unset($row);
         return Validator::make(['rekod'=>$rows], [
             'rekod'=>'present|array',
             'rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,kategori2,kadar',
@@ -89,6 +90,7 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
 
     public function readable(mixed $source): bool
     {
+        if($source instanceof stdClass && SumberWang::normalise($source->kadar ?? null)!==($source->kadar ?? null))return false;
         if (! $source instanceof stdClass || ($source->definition ?? null) !== self::VERSION ||
             array_diff(['definition','kategori2','kadar'], array_keys(get_object_vars($source))) ||
             array_diff(array_keys(get_object_vars($source)), ['definition','kategori2','kadar'])) { return false; }

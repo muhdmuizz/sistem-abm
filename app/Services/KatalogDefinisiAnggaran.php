@@ -14,6 +14,9 @@ class KatalogDefinisiAnggaran
         $food = app(DefinisiAnggaran::class);
         if ($food->supports($os)) { return $food; }
 
+        $maintenance=app(DefinisiPenyelenggaraan::class);
+        if($maintenance->supports($os)) { return $maintenance; }
+
         $taska = app(DefinisiTaska::class);
         if ($taska->supports($os)) {
             if ($bid->aktivitiKewangan->nama !== 'Pengurusan Pentadbiran Negeri') { return null; }

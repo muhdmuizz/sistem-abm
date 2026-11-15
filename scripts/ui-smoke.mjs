@@ -1,3 +1,4 @@
+import './money-check.mjs';
 import { chromium } from '@playwright/test';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -384,7 +385,7 @@ if(await page.locator('[data-grid-body] tr').count()!==5)throw Error('Bulk rows 
 const first=page.locator('[data-grid-body] tr').first();
 await first.locator('[data-field=kategori1]').selectOption('Gula-gula');await first.locator('[data-field=bil_unit]').fill('2.625');
 if(await first.locator('[data-output=unit]').textContent()!=='Balang/ Paket')throw Error('Reference compound unit split');
-if(await first.locator('[data-output=preview]').textContent()!=='39.375')throw Error('Preview was rounded or lost precision');
+if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='39.375')throw Error('Preview was rounded or lost precision');
 await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==6)throw Error('Local row duplication failed');
 if(await page.locator('[data-grid-body] tr').last().locator('[data-field=bil_unit]').inputValue()!=='2.625')throw Error('Copy dropped current inputs');
@@ -392,7 +393,7 @@ const place=await grid.evaluate(el=>JSON.parse(el.dataset.places)[0].nama);
 await first.locator('[data-field=tempat_bertugas_id]').evaluate((el,text)=>{
  const transfer=new DataTransfer();transfer.setData('text/plain',text);el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
 },place+'\tAir Minuman\t9007199254740993\n'+place+'\tBiskut\t3');
-if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='135107988821114895')throw Error('Clipboard quantity precision lost');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').getAttribute('data-exact')!=='135107988821114895')throw Error('Clipboard quantity precision lost');
 const second=page.locator('[data-grid-body] tr').nth(1);await second.locator('[data-field=kategori1]').focus();await page.keyboard.press('Tab');
 if(!(await second.locator('[data-field=bil_unit]').evaluate(el=>document.activeElement===el)))throw Error('Tab between inline inputs failed');
 let lastPayload;
@@ -448,15 +449,15 @@ if(await first.locator('[data-field=kadar]').inputValue()!=='')throw Error('SBK 
 await first.locator('[data-field=kategori2]').selectOption('Air');await first.locator('[data-field=kadar]').fill('123.4567');
 if(await first.locator('[data-output=kategori1]').textContent()!=='Pukal')throw Error('SBK fixed Pukal missing');
 if(await first.locator('[data-output=bil_bulan]').textContent()!=='12')throw Error('SBK fixed months missing');
-if(await first.locator('[data-output=preview]').textContent()!=='1481.4804')throw Error('SBK monthly calculation rounded');
+if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='1481.4804')throw Error('SBK monthly calculation rounded');
 await first.locator('[data-field=kategori2]').focus();await page.keyboard.press('Tab');
 if(!(await first.locator('[data-field=kadar]').evaluate(el=>document.activeElement===el)))throw Error('SBK Tab does not reach manual rate');
 await first.locator('[data-field=kategori2]').evaluate(el=>{
  const transfer=new DataTransfer();transfer.setData('text/plain','Telefon/ Faks\t9007199254740993\nElektrik\t0.001');
  el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
 });
-if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='108086391056891916')throw Error('SBK pasted rate lost precision');
-if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').textContent()!=='0.012')throw Error('SBK fractional rate lost precision');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').getAttribute('data-exact')!=='108086391056891916')throw Error('SBK pasted rate lost precision');
+if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').getAttribute('data-exact')!=='0.012')throw Error('SBK fractional rate lost precision');
 await page.locator('[data-grid-body] tr').first().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==3)throw Error('SBK local duplication failed');
 let payload;
@@ -470,6 +471,7 @@ if(payload.rekod[0].kadar!=='9007199254740993'||payload.rekod[0].kategori2!=='Te
 for(const width of [1440,390]){
  await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/sbk-validation-'+width+'.png',fullPage:true});
 }
+await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]').focus();
 if(await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]').inputValue()!=='9007199254740993')throw Error('SBK validation lost edits');
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
@@ -495,9 +497,9 @@ if(await first.locator('[data-output=unit]').textContent()!=='Anak'||await first
 await first.locator('[data-field=nama]').fill('Ibu Contoh');await page.keyboard.press('Tab');
 if(!(await first.locator('[data-field=bil_unit]').evaluate(el=>document.activeElement===el)))throw Error('TASKA Tab text to quantity');
 await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=bil_bulan]').fill('12');
-if(await first.locator('[data-output=preview]').textContent()!=='4320')throw Error('TASKA multi-child formula');
+if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='4320')throw Error('TASKA multi-child formula');
 await first.locator('[data-field=bil_bulan]').fill('-0.5');
-if(await first.locator('[data-output=preview]').textContent()!=='-180')throw Error('TASKA signed draft factor preview differs from server');
+if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='-180')throw Error('TASKA signed draft factor preview differs from server');
 const pastedName='Bapa <script>window.TASKA_XSS=1</script>';
 await first.locator('[data-field=nama]').focus();
 await first.locator('[data-field=nama]').evaluate((el,name)=>{
@@ -506,8 +508,8 @@ await first.locator('[data-field=nama]').evaluate((el,name)=>{
 },pastedName);
 if(await page.evaluate(()=>window.TASKA_XSS!==undefined))throw Error('TASKA name executed HTML');
 if(await page.locator('[data-grid-body] tr').first().locator('[data-field=nama]').inputValue()!==pastedName)throw Error('TASKA paste lost parent name');
-if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').textContent()!=='19455550390240544880')throw Error('TASKA exact preview lost digits: '+await page.locator('[data-grid-body] tr').first().innerText());
-if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').textContent()!=='5400')throw Error('TASKA second row formula');
+if(await page.locator('[data-grid-body] tr').first().locator('[data-output=preview]').getAttribute('data-exact')!=='19455550390240544880')throw Error('TASKA exact preview lost digits: '+await page.locator('[data-grid-body] tr').first().innerText());
+if(await page.locator('[data-grid-body] tr').nth(1).locator('[data-output=preview]').getAttribute('data-exact')!=='5400')throw Error('TASKA second row formula');
 await page.locator('[data-grid-body] tr').nth(1).locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==3||await page.locator('[data-grid-body] tr').last().locator('[data-field=nama]').inputValue()!=='Ibu Contoh')throw Error('TASKA duplicate current name/quantities');
 let payload;
@@ -522,6 +524,79 @@ for(const width of [1440,390]){
  await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/taska-validation-'+width+'.png',fullPage:true});
 }
 if(await page.locator('[data-grid-body] tr').first().locator('[data-field=nama]').inputValue()!==pastedName)throw Error('TASKA validation lost name');
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
+
+{
+// Shared monetary contract on existing definitions.
+for(const [fixture,expected] of [['grid-populated','39.38'],['sbk-populated','1,481.48'],['taska-populated','4,320.00']]){
+ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+ const row=page.locator('[data-grid-body] tr').first(),out=row.locator('[data-output=preview]');
+ if(await out.textContent()!==expected)throw Error(fixture+' monetary presentation');
+ if(!(await out.evaluate(el=>getComputedStyle(el).fontVariantNumeric.includes('tabular-nums'))))throw Error('Money is not tabular');
+ if(fixture==='grid-populated'){
+  await row.locator('.money-exact summary').first().click();
+  if(!(await row.locator('.money-exact').first().textContent()).includes('39.375'))throw Error('Exact preview inaccessible');
+ }
+ await page.screenshot({path:'storage/app/ui-qa/money-'+fixture+'-1440.png',fullPage:true});
+}
+await page.goto('http://127.0.0.1:4173/sbk-populated.html');
+const rate=page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]');
+if(await rate.inputValue()!=='123.46')throw Error('Idle manual money not formatted');
+await rate.focus();if(await rate.inputValue()!=='123.4567')throw Error('Focus destroyed source precision');
+await rate.fill('4,320.001');await page.locator('[data-grid-add-count]').focus();
+if(await rate.inputValue()!=='4,320.00')throw Error('Blur money format incorrect');
+await rate.focus();if(await rate.inputValue()!=='4320.001')throw Error('Grouped input round-trip precision lost');
+await page.locator('[data-grid-body] tr').first().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+let moneyPayload;
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{moneyPayload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak KADAR.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(moneyPayload.rekod[0].kadar!=='4320.001'||moneyPayload.rekod.at(-1).kadar!=='4320.001')throw Error('Money save/copy used rounded display');
+await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]').focus();
+if(await page.locator('[data-grid-body] tr').first().locator('[data-field=kadar]').inputValue()!=='4320.001')throw Error('Validation destroyed precise money');
+await page.screenshot({path:'storage/app/ui-qa/money-validation-1440.png',fullPage:true});
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+
+for(const fixture of ['maintenance-empty','maintenance-populated','maintenance-partial','maintenance-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(fixture+' outer overflow');
+  if(!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('Maintenance detailed grid lost scrolling');
+  if(fixture==='maintenance-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Maintenance read-only save exposed');
+  for(const edge of ['left','right']){
+   await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);
+   await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});
+  }
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/maintenance-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
+const first=page.locator('[data-grid-body] tr').first();
+await first.locator('[data-field=tujuan]').fill('Penyelenggaraan aset');
+await first.locator('[data-field=kategori1]').selectOption('Penyelenggaraan Alat Pemadam Api');
+await first.locator('[data-field=kategori2]').selectOption('Alat Pemadam Api');
+if(!(await first.locator('[data-field=kadar]').evaluate(el=>el.readOnly))||await first.locator('[data-field=kadar]').inputValue()!=='100.00')throw Error('Fixed extinguisher rate editable/wrong');
+await first.locator('[data-field=bil_unit]').fill('3');await first.locator('[data-field=kekerapan]').fill('1');await first.locator('[data-field=bil_bulan]').fill('12');
+if(await first.locator('[data-output=preview]').textContent()!=='3,600.00')throw Error('Maintenance fixed formula');
+await first.locator('[data-field=kategori2]').selectOption('Sistem Pencegahan Kebakaran');
+if(!(await first.locator('[data-field=kadar]').isEditable())||await first.locator('[data-field=kadar]').inputValue()!=='')throw Error('Manual rate fabricated or locked');
+await first.locator('[data-field=kadar]').fill('1,234.5678');await first.locator('[data-field=tujuan]').focus();
+if(await first.locator('[data-field=kadar]').inputValue()!=='1,234.57'||await first.locator('[data-output=preview]').textContent()!=='44,444.44')throw Error('Maintenance grouped manual rate/formula');
+await first.locator('[data-field=kategori1]').selectOption('Tebang Pokok');
+if(!(await first.locator('[data-field=kategori2]').isDisabled()))throw Error('Tree cutting fabricated child selector');
+if(await first.locator('[data-field=kadar]').inputValue()!=='1,500.00'||!(await first.locator('[data-field=kadar]').evaluate(el=>el.readOnly)))throw Error('Tree fixed rate');
+if(await first.locator('[data-output=preview]').textContent()!=='54,000.00')throw Error('Tree formula');
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});
+ for(const edge of ['left','right']){
+  await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);
+  await page.screenshot({path:'storage/app/ui-qa/maintenance-dynamic-'+width+'-'+edge+'.png',fullPage:true});
+ }
+}
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{moneyPayload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.tujuan':['Semak tujuan.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(moneyPayload.rekod[0].kategori2!==null||moneyPayload.rekod[0].kadar!==null)throw Error('Fixed reference or fake child submitted');
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 

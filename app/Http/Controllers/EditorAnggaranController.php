@@ -43,7 +43,7 @@ class EditorAnggaranController extends Controller
                 'compatible'=>$valid];
         })->values();
         return view('abm.estimates.editor',['bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)

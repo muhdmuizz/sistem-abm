@@ -27,8 +27,8 @@ class DefinisiTaska extends DefinisiAnggaran
             ['key'=>'bil_unit','label'=>'BIL. ANAK','type'=>'decimal','width'=>130],
             ['key'=>'bil_bulan','label'=>'Bilangan Bulan','type'=>'decimal','width'=>140],
             ['key'=>'unit','label'=>'UNIT','type'=>'output','value'=>'Anak','width'=>90],
-            ['key'=>'kadar','label'=>'KADAR Bulanan (RM/ Anak)','type'=>'output','reference'=>'kadar','referenceKey'=>'TASKA','numeric'=>true,'width'=>160],
-            ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
+            ['key'=>'kadar','money'=>true,'label'=>'KADAR Bulanan (RM/ Anak)','type'=>'output','reference'=>'kadar','referenceKey'=>'TASKA','numeric'=>true,'width'=>160],
+            ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
                 'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar','bil_bulan']],'width'=>200],
         ];
     }
