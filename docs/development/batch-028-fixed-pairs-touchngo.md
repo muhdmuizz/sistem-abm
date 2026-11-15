@@ -13,4 +13,16 @@ Retain existing source identities, access/Fasa/session/revision/audit guards, co
 
 ## Verification
 
-Pending isolated PostgreSQL regression, production build, formatter/Chromium and representative desktop/mobile state inspection. Record actual tested SHA and limits before merge. Local update pending.
+
+## Verification — passed before merge
+
+Tested application head `c780d2dbb6cb5dcb40d10e6e7e7b78fcb7033a28`; [CI 43669111898](https://github.com/muhdmuizz/sistem-abm/actions/runs/43669111898), job 132674973027: **458 tests / 3701 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Production build, formatter/browser checks and full Chromium regression passed. Six new HTTP tests (five Touch ’n Go, one legacy/fixed-pairs correction) plus updated uniform assertions cover exact persistence, no-op/edit, all three activity mappings, injection/atomic rollback, partial drafts, stale/Fasa/read-only guards, removal and legacy protection.
+
+Final artifact **14143164930** contains 215 PNGs, including 18 new Touch ’n Go captures; existing uniform captures now reflect fixed pairs. Initial visual pass at `8193c17e627e021ca59e97658004c46d6bfaeee1` reviewed 13 representative desktop/mobile captures: uniform empty/populated and Touch ’n Go empty/populated/partial/read-only/validation. Final-head recheck reviewed uniform populated desktop, Touch ’n Go populated desktop and mobile validation. Comfortable empty/error insets, actual title-case headers and grouped/right-aligned money retained; wide grids scroll internally. Not every capture, loading/expanded state or physical device was inspected. HTTP tests establish real database persistence; browser error responses are intercepted static-fixture checks, not live browser save certification.
+
+No application edits after tested head. No migration/seed or official financial output/completeness. Local acceptance pending.
+
+## Local follow-through — pending
+
+Keep existing server running; clean dev pull --ff-only, php artisan optimize:clear, Ctrl+F5. Confirm Pakaian Seragam Bil. Pasang shows fixed **2** on new/reopened rows and cannot be edited; 5 × 2 × RM230 = **2,300.00**. Save/reopen an older draft if applicable; only explicit save upgrades its stored source through audit. Open eligible OS27000 Bekalan dan Bahan-bahan Lain (Touch ’n Go): Tujuan, 3 units, RM200 monthly, 12 months => **7,200.00**. Check save/reopen/edit/copy/remove and horizontal scrolling. No frequency/category/unit fields in Touch ’n Go. Official financial integration remains pending.
+

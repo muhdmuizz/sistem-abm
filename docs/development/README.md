@@ -314,3 +314,7 @@ User reported “Clean” after Batch 027 guarded sync/cache instructions. Recor
 ## Batch 028 — fixed pairs and Touch ’n Go in progress
 
 Baseline `8ca2c50ce2e026d1e1f404f676c3962d58b39cc6`. [Batch 028](batch-028-fixed-pairs-touchngo.md): enforce fixed two pairs, server rejection of multiplier injection, preserve old stored source until explicit audited save, and add approved monthly Touch ’n Go source definition in its three existing activity mappings. Keep title-case headers and exact accounting display. No migration/seed, catalogue/reference-rate change, official financial outputs/completeness or programme inheritance.
+
+## Batch 028 — pre-merge verification passed
+
+Tested `c780d2dbb6cb5dcb40d10e6e7e7b78fcb7033a28`; [CI 43669111898](https://github.com/muhdmuizz/sistem-abm/actions/runs/43669111898): 458 tests / 3701 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium passed. Representative desktop/mobile state review and final-head rechecks completed; [Batch 028](batch-028-fixed-pairs-touchngo.md) records limits. Merge/local acceptance pending; no migration/seed or official financial integration.
