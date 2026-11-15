@@ -9,6 +9,7 @@
  const reference=row=>{const group=references[row[selector]];return childSelector?group?.[plain(row[childSelector])]:group;};
  const fixed=(row,column)=>column.mixed&&reference(row)?.mode==='FIXED_REFERENCE';
  const exactHelp=(cell,value)=>{cell.querySelector('.money-exact')?.remove();if(!money.precise(plain(value)))return;const detail=document.createElement('details');detail.className='money-exact';const summary=document.createElement('summary');summary.textContent='Nilai tepat';const text=document.createElement('span');text.textContent=value;detail.append(summary,text);cell.append(detail);};
+ const notice=(cell,row,name)=>{const message=row.notices?.[name];if(typeof message!=='string')return;const p=document.createElement('p');p.className='small grid-cell-notice';p.textContent=message;cell.append(p);};
  const dirty=()=>{if(status)status.textContent='Perubahan belum disimpan.';form.dispatchEvent(new Event('input',{bubbles:true}));};
  const plain=value=>value===null||value===undefined?'':String(value);
  function decimalMultiply(a,b){
@@ -55,7 +56,7 @@
    inputColumns.forEach((column,index)=>{
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
-    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):plain(value);if(column.money)exactHelp(cell,value);return;}
+    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     if(column.type==='decimal'||column.type==='text'){
@@ -70,18 +71,18 @@
      if(column.dependsOn){const choices=Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
      else if(column.options==='values')column.values.forEach(v=>option(input,v,v));
      else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
-     if(plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
+     if(!column.strictValues&&plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
      input.value=plain(row[name]);
     }
     input.addEventListener(column.type==='select'?'change':'input',()=>{
-     if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;
+     if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;if(row.notices){delete row.notices[name];cell.querySelector('.grid-cell-notice')?.remove();}
      if(column.type==='select'&&childSelector){
       if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
       const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
      }else output(row,tr);
     });
-    cell.append(input);if(column.money)exactHelp(cell,fixed(row,column)?reference(row).kadar:row[name]);
+    cell.append(input);notice(cell,row,name);if(column.money)exactHelp(cell,fixed(row,column)?reference(row).kadar:row[name]);
    });
    columns.forEach((column,index)=>{if(column.type!=='output')return;const el=document.createElement('output');el.dataset.output=column.key;cells[index+2].append(el);});
    output(row,tr);fragment.append(tr);
@@ -115,7 +116,8 @@
   const data=tsv(text),start=fieldNames.indexOf(input.dataset.field),visible=rows.filter(r=>!r.deleted),first=visible.findIndex(r=>r.key===Number(input.closest('tr').dataset.key));
   if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya lajur input: '+inputColumns.map(c=>c.label).join(', ')+'.';event.preventDefault();return;}
   event.preventDefault();
-  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
+  if(data.some(line=>line.some((value,j)=>{const c=inputColumns[start+j];return c.strictValues&&value!==''&&!c.values.includes(value);}))) {error.hidden=false;error.textContent='Pilih Jawatan yang terpakai daripada senarai.';return;}
+  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });
  function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});}
