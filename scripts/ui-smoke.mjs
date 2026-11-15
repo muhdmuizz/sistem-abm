@@ -816,42 +816,54 @@ for(const width of [1440,390]){await page.setViewportSize({width,height:900});aw
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
-for(const fixture of ['pakej-empty','pakej-populated','pakej-partial','pakej-readonly']){
+for(const fixture of ['pakej-empty','pakej-populated','pakej-partial','pakej-readonly','pakej-grouped-empty','pakej-grouped-populated','pakej-grouped-partial','pakej-grouped-readonly']){
  for(const width of [1440,390]){
-  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
-  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Pakej outer overflow');
-  if(await page.locator('[data-field=kategori2],[data-field=kategori3],[data-field=bil_bulan]').count())throw Error('Pakej inactive fields exposed');
-  if(fixture==='pakej-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Pakej readonly save');
-  for(const edge of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});}
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.waitForSelector('[data-pakej-grid]');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Pakej page overflow '+fixture);
+  if(fixture.endsWith('readonly')&&await page.locator('[data-add-activity]').count())throw Error('Pakej readonly edit action');
+  for(const edge of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluateAll((elements,edge)=>elements.forEach(el=>el.scrollLeft=edge==='left'?0:el.scrollWidth),edge);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});}
+  if(fixture==='pakej-grouped-populated'){await page.locator('.pakej-activity>summary').first().click();await page.screenshot({path:'storage/app/ui-qa/pakej-collapsed-'+width+'.png',fullPage:true});}
  }
 }
 {
-await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pakej-empty.html');
-await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();const first=page.locator('[data-grid-body] tr').first();
-await first.locator('[data-field=tujuan]').fill('Bengkel Pengurusan');await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=kadar]').focus();await first.locator('[data-field=kadar]').fill('180');await first.locator('[data-field=bil_hari]').fill('2');
-if(await first.locator('[data-output=preview]').textContent()!=='—')throw Error('Pakej preview fabricated without a component');
-await first.locator('[data-field=kategori1]').selectOption('Penginapan');
-if(await first.locator('[data-output=unit]').textContent()!=='Bilik'||await first.locator('[data-output=preview]').textContent()!=='720.00')throw Error('Pakej lodging formula/unit');
-if(!(await first.locator('[data-field=bil_hari]').getAttribute('aria-label')).startsWith('Bil. Malam ')||!await first.getByText('RM sebilik semalam',{exact:true}).count())throw Error('Pakej night label/rate basis');
-await first.locator('[data-field=tarikh_mula]').fill('2028-02-28');await first.locator('[data-field=tarikh_tamat]').fill('2028-03-01');
-if(await first.locator('[data-output=tempoh]').textContent()!=='3'||await first.locator('[data-field=bil_hari]').inputValue()!=='2')throw Error('Pakej calendar duration replaced nights');
-await first.locator('[data-field=kategori1]').selectOption('Makan Minum');await first.locator('[data-field=bil_unit]').fill('20');await first.locator('[data-field=kadar]').focus();await first.locator('[data-field=kadar]').fill('35');await first.locator('[data-field=bil_hari]').fill('3');
-const mealState={unit:await first.locator('[data-output=unit]').textContent(),preview:await first.locator('[data-output=preview]').textContent(),hints:await first.locator('[data-reference-hint]').allTextContents(),values:await first.locator('[data-field]').evaluateAll(fields=>fields.map(el=>[el.dataset.field,el.value]))};
-if(mealState.unit!=='Orang'||mealState.preview!=='2,100.00'||!mealState.hints.includes('RM seorang sehari')){await page.screenshot({path:'storage/app/ui-qa/pakej-meal-diagnostic.png',fullPage:true});throw Error('Pakej daily meal state: '+JSON.stringify(mealState));}
-if(!(await first.locator('[data-field=bil_hari]').getAttribute('aria-label')).startsWith('Bilangan Hari '))throw Error('Pakej changed component kept night label');
-await first.locator('[data-field=tarikh_tamat]').fill('2028-12-31');if(await first.locator('[data-field=bil_hari]').inputValue()!=='3'||await first.locator('[data-output=preview]').textContent()!=='2,100.00')throw Error('Pakej dates changed chargeable days or amount');
-await first.locator('[data-field=kadar]').focus();await first.locator('[data-field=kadar]').fill('1,234.567');await first.locator('[data-field=bil_unit]').focus();if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='74074.02')throw Error('Pakej exact grouped manual rate');
-await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Pakej duplicate');
-let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_hari':['Semak hari bercaj.']}})});});
-await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
-if(payload.rekod.some(row=>'unit'in row||'tempoh'in row||'bil_bulan'in row||'program_id'in row))throw Error('Pakej derived/unapproved payload');
-if(payload.rekod[0].kadar!=='1234.567'||payload.rekod[0].bil_hari!=='3')throw Error('Pakej source lost');
-for(const key of ['kadar','bil_hari']){const ids=(await first.locator('[data-field='+key+']').getAttribute('aria-describedby')||'').split(' ');if(!ids.includes('grid-hint-1-'+key))throw Error('Pakej validation lost rate/duration description');}
-for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/pakej-validation-'+width+'.png',fullPage:true});}
-await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pakej-grouped-empty.html');
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();if(!await page.getByRole('button',{name:'Simpan Draf',exact:true}).isEnabled())throw Error('Empty Pakej save left busy button');
+await page.locator('[data-add-activity]').click();const group=page.locator('.pakej-activity').first();
+await group.locator('[data-shared=tujuan]').fill('Bengkel Pengurusan');await group.locator('[data-shared=tarikh_mula]').fill('2028-02-28');await group.locator('[data-shared=tarikh_tamat]').fill('2028-03-01');
+if(await group.locator('[data-calendar-days]').textContent()!=='3')throw Error('Pakej calendar duration');
+for(const [name,qty,rate,days] of [['Penginapan','10','180','2'],['Makan Minum','20','35','3'],['Sewaan Dewan','1','500','3']]){
+ await group.getByRole('button',{name:'Tambah Komponen',exact:true}).click();const row=group.locator('tbody tr').last();
+ await row.locator('[data-field=kategori1]').selectOption(name);await row.locator('[data-field=bil_unit]').fill(qty);await row.locator('[data-field=kadar]').focus();await row.locator('[data-field=kadar]').fill(rate);await row.locator('[data-field=bil_hari]').fill(days);
 }
-
+if(await group.locator('[data-subtotal]').textContent()!=='7,200.00')throw Error('Grouped Pakej subtotal');
+const first=group.locator('tbody tr').first();if(!(await first.locator('[data-field=bil_hari]').getAttribute('aria-label')).startsWith('Bil. Malam')||await first.locator('[data-basis]').textContent()!=='RM sebilik semalam')throw Error('Pakej night basis');
+await group.locator('[data-shared=tarikh_tamat]').fill('2028-12-31');if(await first.locator('[data-field=bil_hari]').inputValue()!=='2'||await group.locator('[data-subtotal]').textContent()!=='7,200.00')throw Error('Dates overwrote charged duration');
+await group.getByRole('button',{name:'Salin Aktiviti',exact:true}).click();if(await page.locator('.pakej-activity').count()!==2)throw Error('Pakej copy activity');
+const other=page.locator('.pakej-activity').nth(1);await other.locator('tbody tr').first().locator('[data-field=bil_unit]').fill('99');if(await first.locator('[data-field=bil_unit]').inputValue()!=='10')throw Error('Pakej activity copy shares state');
+await other.getByRole('button',{name:'Padam Aktiviti',exact:true}).click();await page.locator('[data-undo-activity]').click();if(await page.locator('.pakej-activity').count()!==2)throw Error('Pakej undo activity');
+await page.locator('.pakej-activity').nth(1).getByRole('button',{name:'Padam Aktiviti',exact:true}).click();
+await first.locator('[data-component-select]').check();await group.getByRole('button',{name:'Salin Komponen Dipilih',exact:true}).click();if(await group.locator('tbody tr').count()!==4)throw Error('Pakej copy component');
+await group.locator('tbody tr').last().locator('[data-component-select]').check();await group.getByRole('button',{name:'Padam Komponen Dipilih',exact:true}).click();await group.getByRole('button',{name:'Batal Padam Komponen',exact:true}).click();if(await group.locator('tbody tr').count()!==4)throw Error('Pakej undo component');
+await group.locator('tbody tr').last().locator('[data-component-select]').check();await group.getByRole('button',{name:'Padam Komponen Dipilih',exact:true}).click();
+await first.locator('[data-field=kadar]').focus();await first.locator('[data-field=kadar]').fill('1,234.567');await first.locator('[data-field=bil_unit]').focus();
+if(await group.locator('[data-subtotal]').getAttribute('data-exact')!=='28291.34')throw Error('Pakej exact subtotal');
+await first.locator('.money-exact summary').first().click();await page.screenshot({path:'storage/app/ui-qa/pakej-exact-expanded.png',fullPage:true});
+let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.komponen.1.kadar':['Semak kadar komponen.']}})});});
+await group.locator('summary').first().click();await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(!await group.evaluate(el=>el.open))throw Error('Pakej nested error stayed collapsed');
+if(payload.rekod.length!==1||payload.rekod[0].komponen.length!==3||payload.rekod[0].komponen[0].kadar!=='1234.567'||'preview'in payload.rekod[0]||'unit'in payload.rekod[0].komponen[0])throw Error('Pakej grouped source payload');
+const ids=payload.rekod[0].komponen.map(c=>c.id);if(new Set(ids).size!==3)throw Error('Pakej duplicate component IDs');
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await group.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/pakej-grouped-validation-'+width+'.png',fullPage:true});}
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-pakej-error]').textContent.includes('telah berubah'));if(await first.locator('[data-field=kadar]').inputValue()!=='1,234.57')throw Error('Pakej stale save lost exact source display');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.abort());await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-pakej-error]').textContent.includes('Sambungan gagal'));await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+let release;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>new Promise(resolve=>{release=()=>route.fulfill({status:503,contentType:'application/json',body:'{}'}).then(resolve);}));
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-pakej-grid]').hasAttribute('data-submitting'));
+if(!await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej permits edits during pending save');
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/pakej-grouped-saving-'+width+'.png',fullPage:true});}
+await release();await page.waitForFunction(()=>!document.querySelector('[data-pakej-grid]').hasAttribute('data-submitting'));if(await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej controls not restored after save failure');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+await first.locator('[data-field=kategori1]').evaluate(el=>el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:new DataTransfer()})));
+await first.locator('[data-field=kategori1]').evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','Penginapan\t2\t180\t2\nMakan Minum\t20\t35\t3');el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));});
+if(await group.locator('tbody tr').nth(0).locator('[data-component-amount]').textContent()!=='720.00'||await group.locator('tbody tr').nth(1).locator('[data-component-amount]').textContent()!=='2,100.00')throw Error('Pakej component paste');
+}
 await browser.close();
-
-
-

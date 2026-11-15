@@ -25,7 +25,7 @@ class KatalogDefinisiAnggaran
             return $mapped?$mystep:null;
         }
 
-        $pakej=new DefinisiPakej($bid->kitaran->tahun);
+        $pakej=new DefinisiPakejBerkumpulan($bid->kitaran->tahun);
         if($pakej->supports($os)) {
             $code=match($bid->aktivitiKewangan->nama){
                 'Pengurusan Pentadbiran Negeri'=>'010810','Pendidikan Rendah'=>'030225','Pendidikan Awal'=>'030104',
