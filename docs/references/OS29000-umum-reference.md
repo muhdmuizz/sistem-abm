@@ -1,6 +1,6 @@
 # OS29000 — Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti (Umum)
 
-**Owner-approved reference and Excel mapping:** 12 November 2026. **Scope:** documentation of supplied categories, dedicated Gred Penceramah/ Fasilitator and mandatory Kadar treatment only. No wizard, database, or export implementation.
+**Owner-approved reference and Excel mapping:** 12 November 2026. **Original scope:** supplied category/classification/Kadar documentation. Source-editor implementation status is recorded below; official financial/export integration remains pending.
 
 ## Field mapping and separation from universal personnel reference
 
@@ -111,3 +111,9 @@ The current shared reference has **131 rows / 82 distinct grade codes**, all syn
 ### Implementation and change-control boundary
 
 Preserve AD-004's single Anggaran wizard and stable Butiran IDs, AD-008's 30-column Perbelanjaan output, historical snapshots and authorised organisational scope. This documentation commit does **not** change Laravel, database schema/data, CSV sources, reference amounts or the actual exporter; AD-008 remains Draft.
+
+## Batch 034 checkpoint — 15 November 2026
+
+[PR #79](https://github.com/muhdmuizz/sistem-abm/pull/79) merged at `b77a97df189d2a274d32af633a2712be3bedb746`. OS29000 **Umum** source entry is implemented for its five existing mappings, using the unchanged 22 reference rows (18 automatic/four manual) and shared 131 Jawatan/Gred pairs. Dependent personnel inputs derive the dedicated speaker/facilitator classification/rate; other services retain their approved units and rates. Inactive fields and automatic-rate overrides are rejected. Exact row preview = Bil. Unit × Kadar; partial drafts remain saveable with missing required preview inputs withheld. Title-case headers and accounting-style monetary presentation retained.
+
+Tested `44a27bfda1c2046d322df43f12ff39f5e4111096`; [CI 43697537069](https://github.com/muhdmuizz/sistem-abm/actions/runs/43697537069): **491 tests / 4570 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Twelve representative final-head state captures reviewed from 19 Umum captures (322 total); see [Batch 034](../development/batch-034-umum-spreadsheet.md) for coverage and limits. No migration/seed, CSV/rate/catalogue/mapping/permission changes. Local update/financial acceptance pending; previous local statuses unchanged. Programme inheritance, official outputs/totals/completeness and submission remain pending; Steps 02/03 remain in progress, AD-008 remains Draft. Pakej programme-only entry remains a documented proposal.

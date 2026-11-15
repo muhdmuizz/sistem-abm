@@ -1,6 +1,6 @@
 # Batch 034 — OS29000 Umum source spreadsheet
 
-**Status:** Verified; PR #79 merge/local update pending. User authorised “Proceed” on 15 November 2026.
+**Status:** Merged in PR #79; local update pending. User authorised “Proceed” on 15 November 2026.
 **Baseline:** `e7fb9632b15798e8137cbd8f338b51f947158154` on dev. Batch 033 remains merged/verified; local sync and detailed acceptance remain unconfirmed.
 
 ## Approved scope
@@ -25,4 +25,8 @@ The first full application head passed CI 43696906575 (491 tests / 4569 assertio
 
 Twelve final-head captures inspected: empty 1440/390 left; populated 1440 left/right and 390 right; partial 1440/390 right; read-only partial 1440/390 right; validation 1440/390 right; exact-value expanded desktop. Checked title-case headers, right-aligned tabular/grouped/two-decimal money, shared-job/grade controls and dedicated classification, contextual rate/quantity hints, inactive-field presentation, incomplete previews, retained validation inputs, comfortable empty-state padding and contained mobile scroll. Leading cells are partly outside the viewport at the right edge and remain available by scrolling left; populated captures expose the current internal vertical viewport, not all 14 services simultaneously. No new blocking defect found in reviewed content. Other 310 PNGs were generated/automated but not individually visually inspected. New Umum saving/network/loading/filter states were not visually reviewed; no new filter/async retrieval UI was introduced. This is bounded source-editor verification, not full accessibility, financial or production-readiness certification.
 
-**Merge/local:** PR #79 merge pending. Local Batch 034 synchronisation/financial acceptance pending; previous local statuses remain unchanged. No migration/seed or server restart. Programme inheritance/official calculations and submission remain pending; the recorded Pakej programme-only proposal remains unchanged.
+**Merge/local:** PR #79 merged at `b77a97df189d2a274d32af633a2712be3bedb746`. Local Batch 034 synchronisation/financial acceptance pending; previous local statuses remain unchanged. No migration/seed or server restart. Programme inheritance/official calculations and submission remain pending; the recorded Pakej programme-only proposal remains unchanged.
+
+## Local checks to run
+
+Pull dev and `php artisan optimize:clear` in another terminal; keep the existing server running and Ctrl+F5. No migration/seed. Penceramah + JURUTERA/J14 + 3 hours should show RM200.00/hour and RM600.00; Fasilitator with the same grade/quantity should show RM100.00/hour and RM300.00. Dobi with quantity 3 and manual rate 1,234.567 should show RM3,703.70 while preserving exact rate/preview. Switching to Hadiah Penghargaan Pesara must make personnel fields inapplicable; switching Jawatan clears the old Gred. Save/reopen and confirm stable rows. Local execution remains pending.
