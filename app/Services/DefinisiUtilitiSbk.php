@@ -25,7 +25,7 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
         return [
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori2','label'=>'Kategori2 — Utiliti','type'=>'select','options'=>'references','width'=>190],
-            ['key'=>'kadar','money'=>true,'label'=>'KADAR Bulanan (RM)','type'=>'decimal','width'=>180],
+            ['key'=>'kadar','money'=>true,'label'=>'Kadar Bulanan (RM)','type'=>'decimal','width'=>180],
             ['key'=>'kategori1','label'=>'Kategori1','type'=>'output','value'=>'Pukal','width'=>110],
             ['key'=>'bil_bulan','label'=>'Bilangan Bulan','type'=>'output','value'=>'12','numeric'=>true,'width'=>130],
             ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
@@ -37,7 +37,7 @@ class DefinisiUtilitiSbk extends DefinisiAnggaran
 
     public function inputHelp(): string
     {
-        return 'KADAR ialah anggaran bulanan yang diisi sendiri. Kategori1 kekal Pukal; Bilangan Bulan kekal 12.';
+        return 'Kadar ialah anggaran bulanan yang diisi sendiri. Kategori1 kekal Pukal; Bilangan Bulan kekal 12.';
     }
 
     public function references(): array

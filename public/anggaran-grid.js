@@ -32,6 +32,7 @@
    }
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
+   if(column.reference==='kadar'&&childSelector&&!column.mixed){el.parentElement.querySelector('.rate-missing')?.remove();if(!columnReference&&row[selector]&&row[childSelector]){const note=document.createElement('p');note.className='small rate-missing';note.textContent='Tiada kadar rujukan bagi gabungan ini.';el.parentElement.append(note);}}
   }
  }
  function render(){
@@ -67,6 +68,7 @@
     else{
      option(input,'','Pilih '+column.label);
      if(column.dependsOn){const choices=Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
+     else if(column.options==='values')column.values.forEach(v=>option(input,v,v));
      else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
      input.value=plain(row[name]);
@@ -74,7 +76,7 @@
     input.addEventListener(column.type==='select'?'change':'input',()=>{
      if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;
      if(column.type==='select'&&childSelector){
-      if(name===selector)row[childSelector]=null;
+      if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
       const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
      }else output(row,tr);

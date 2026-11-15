@@ -24,10 +24,10 @@ class DefinisiTaska extends DefinisiAnggaran
         return [
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'nama','label'=>'Nama Ibu/ Bapa','type'=>'text','maxLength'=>500,'width'=>240],
-            ['key'=>'bil_unit','label'=>'BIL. ANAK','type'=>'decimal','width'=>130],
+            ['key'=>'bil_unit','label'=>'Bil. Anak','type'=>'decimal','width'=>130],
             ['key'=>'bil_bulan','label'=>'Bilangan Bulan','type'=>'decimal','width'=>140],
-            ['key'=>'unit','label'=>'UNIT','type'=>'output','value'=>'Anak','width'=>90],
-            ['key'=>'kadar','money'=>true,'label'=>'KADAR Bulanan (RM/ Anak)','type'=>'output','reference'=>'kadar','referenceKey'=>'TASKA','numeric'=>true,'width'=>160],
+            ['key'=>'unit','label'=>'Unit','type'=>'output','value'=>'Anak','width'=>90],
+            ['key'=>'kadar','money'=>true,'label'=>'Kadar Bulanan (RM/ Anak)','type'=>'output','reference'=>'kadar','referenceKey'=>'TASKA','numeric'=>true,'width'=>160],
             ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
                 'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar','bil_bulan']],'width'=>200],
         ];
@@ -37,7 +37,7 @@ class DefinisiTaska extends DefinisiAnggaran
 
     public function inputHelp(): string
     {
-        return 'Isi nama ibu/ bapa, BIL. ANAK dan bilangan bulan yang dianggarkan. UNIT Anak dan KADAR bulanan diisi daripada rujukan.';
+        return 'Isi nama ibu/ bapa, Bil. Anak dan bilangan bulan yang dianggarkan. Unit Anak dan Kadar bulanan diisi daripada rujukan.';
     }
 
     public function references(): array

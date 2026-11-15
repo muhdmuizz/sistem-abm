@@ -25,13 +25,13 @@ class DefinisiAnggaran
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>200],
             ['key'=>'bil_unit','label'=>'Bil. Unit','type'=>'decimal','width'=>120],
-            ['key'=>'unit','label'=>'UNIT','type'=>'output','reference'=>'unit','width'=>130],
-            ['key'=>'kadar','money'=>true,'label'=>'KADAR (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'width'=>110],
+            ['key'=>'unit','label'=>'Unit','type'=>'output','reference'=>'unit','width'=>130],
+            ['key'=>'kadar','money'=>true,'label'=>'Kadar (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'width'=>110],
             ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
                 'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar']],'width'=>160],
         ];
     }
-    public function inputHelp(): string { return 'UNIT dan KADAR diisi daripada rujukan.'; }
+    public function inputHelp(): string { return 'Unit dan Kadar diisi daripada rujukan.'; }
 
     public function hasInput(array $row): bool
     {

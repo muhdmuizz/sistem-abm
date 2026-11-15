@@ -27,7 +27,7 @@ class DefinisiPenyelenggaraan extends DefinisiAnggaran
             ['key'=>'kategori1','label'=>'Kategori1 — Kategori','type'=>'select','options'=>'references','width'=>280],
             ['key'=>'kategori2','label'=>'Kategori2 — Peralatan','type'=>'select','dependsOn'=>'kategori1','width'=>210],
             ['key'=>'bil_unit','label'=>'Bil. Unit','type'=>'decimal','width'=>120],
-            ['key'=>'kadar','label'=>'KADAR (RM)','type'=>'decimal','money'=>true,'mixed'=>true,'width'=>180],
+            ['key'=>'kadar','label'=>'Kadar (RM)','type'=>'decimal','money'=>true,'mixed'=>true,'width'=>180],
             ['key'=>'kekerapan','label'=>'Kekerapan Sebulan','type'=>'decimal','width'=>150],
             ['key'=>'bil_bulan','label'=>'Bilangan Bulan','type'=>'decimal','width'=>140],
             ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,'money'=>true,
@@ -37,7 +37,7 @@ class DefinisiPenyelenggaraan extends DefinisiAnggaran
 
     public function selector(): string { return 'kategori1'; }
     public function childSelector(): string { return 'kategori2'; }
-    public function inputHelp(): string { return 'Kekerapan ialah bilangan penyelenggaraan sebulan. KADAR rujukan diisi automatik; kadar lain diisi sendiri.'; }
+    public function inputHelp(): string { return 'Kekerapan ialah bilangan penyelenggaraan sebulan. Kadar rujukan diisi automatik; kadar lain diisi sendiri.'; }
 
     public function references(): array
     {
