@@ -1,6 +1,6 @@
 # Batch 032 — OS29000 Pakej Source Grid
 
-**Status:** Implementation verified; PR #74 merge/local update pending. User authorised continuation 15 November 2026 after Batch 031 local update.
+**Status:** Merged in PR #74; local update pending. User authorised continuation 15 November 2026 after Batch 031 local update.
 **Baseline:** `26d464660a91464f6bfb22c8bcddeef2a66f0c1c` on dev.
 
 ## Approved scope
@@ -29,4 +29,8 @@ Chromium uses rendered HTML fixtures and intercepts save requests for client val
 
 Final-head screenshots are reviewed separately below. No physical-device, screen-reader, authenticated local Google session or local financial acceptance is claimed. Loading/network-loss states and expanded precise-value disclosures are not newly visually reviewed in this batch; existing shared behaviour remains, and passing regression is not a complete UI/readiness certification.
 
-**Merge/local status:** PR #74 merge pending; no migration/seed required. Local Batch 032 synchronisation/financial acceptance pending. Batch 031 supplied local update/targeted cleanup migration is user-confirmed, without certifying unexecuted financial/role/device tests.
+**Merge/local status:** PR #74 merged at `3494a318fda11ecc8468d26f13e3e2f8f56caff5`; no migration/seed required. Local Batch 032 synchronisation/financial acceptance pending. Batch 031 supplied local update/targeted cleanup migration is user-confirmed, without certifying unexecuted financial/role/device tests.
+
+## Local update
+
+Pull dev and run `php artisan optimize:clear` in another terminal; keep the existing server running and refresh with Ctrl+F5. No migration/seed. Check Penginapan 2 × RM180 × 2 nights = RM720.00, Makan Minum 20 × RM35 × 3 days = RM2,100.00; changing dates must leave charged duration unchanged. Save/reopen and confirm stable rows. User execution remains pending.
