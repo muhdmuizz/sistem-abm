@@ -42,7 +42,7 @@
     const tr=document.createElement('tr');tr.dataset.component=c.id;
     for(let i=0;i<7;i++)tr.append(document.createElement('td'));
     const cells=tr.children;let check;
-    if(canEdit){check=document.createElement('input');check.type='checkbox';check.checked=!!c.selected;check.setAttribute('aria-label','Pilih komponen '+(index+1)+' '+identity(g));check.dataset.componentSelect='';check.addEventListener('change',()=>c.selected=check.checked);cells[0].append(check);}else cells[0].textContent='—';
+    if(canEdit){check=document.createElement('input');check.type='checkbox';check.checked=!!c.selected;check.setAttribute('aria-label','Pilih komponen '+(index+1)+' '+identity(g));check.dataset.componentSelect='';check.addEventListener('input',event=>event.stopPropagation());check.addEventListener('change',()=>c.selected=check.checked);cells[0].append(check);}else cells[0].textContent='—';
     for(const [key,col] of [['kategori1',1],['bil_unit',2],['kadar',4],['bil_hari',5]]){
      const cell=cells[col];if(key!=='kategori1')cell.className='grid-numeric';
      if(canEdit){const input=document.createElement(key==='kategori1'?'select':'input');input.dataset.field=key;input.setAttribute('aria-label',key==='kategori1'?'Komponen '+(index+1):key==='kadar'?'Kadar (RM)':key==='bil_unit'?'Bil. Unit':'Bilangan Hari/ Malam');
@@ -65,7 +65,7 @@
     actions.append(button('Tambah Komponen',()=>{g.komponen.push(blank());g.open=true;render();container.querySelector('[data-activity="'+g.key+'"] tbody tr:last-child select')?.focus();}),button('Salin Komponen Dipilih',()=>{const copies=g.komponen.filter(c=>c.selected).map(c=>({...c,id:crypto.randomUUID(),selected:false}));g.komponen.forEach(c=>c.selected=false);g.komponen.push(...copies);render();if(copies.length)dirty();}),button('Padam Komponen Dipilih',()=>{g.removed.push(...g.komponen.map((c,i)=>({c,i})).filter(({c})=>c.selected));g.komponen=g.komponen.filter(c=>!c.selected);render();dirty();},true));
     // Adding a component is a draft change even before any of its cells is filled.
     actions.firstChild.addEventListener('click',dirty);
-    if(g.removed.length)actions.append(button('Batal Padam Komponen',()=>{for(const {c,i} of g.removed){c.selected=false;g.komponen.splice(i,0,c);}g.removed=[];render();dirty();}));componentBox.append(actions);
+    if(g.removed.length)actions.append(button('Batal Padam Komponen',()=>{for(const {c,i} of [...g.removed].reverse()){c.selected=false;g.komponen.splice(i,0,c);}g.removed=[];render();dirty();}));componentBox.append(actions);
     const help=document.createElement('p');help.className='small pakej-component-help';help.textContent='Tampal lajur input: Komponen, Bil. Unit, Kadar, Bilangan Hari/ Malam. Tarikh tidak menetapkan malam atau hari bercaj.';componentBox.append(help);
     tbody.addEventListener('paste',event=>{
      const input=event.target.closest('[data-field]'),text=event.clipboardData?.getData('text/plain');if(!input||!text||!/[\t\n]/.test(text))return;
@@ -90,7 +90,7 @@
   if(deleted.length&&!window.confirm('Padam '+deleted.length+' aktiviti tersimpan bersama komponennya dan simpan perubahan lain?'))return;
   const payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
    rekod:retained.map(g=>({...g.butiran_id?{butiran_id:g.butiran_id,semakan_butiran:g.semakan_butiran}:{},...Object.fromEntries(shared.map(k=>[k,plain(g[k])===''?null:String(g[k])])),komponen:g.komponen.map(c=>({id:c.id,...Object.fromEntries(fields.map(k=>[k,plain(c[k])===''?null:String(c[k])]))}))})),padam:deleted.map(g=>({butiran_id:g.butiran_id,semakan_butiran:g.semakan_butiran}))};
-  submitting=true;form.dataset.submitting='';const buttons=form.querySelectorAll('button');buttons.forEach(b=>b.disabled=true);if(status)status.textContent='Menyimpan draf…';
+  submitting=true;form.dataset.submitting='';const controls=Array.from(form.querySelectorAll('button,input,select,textarea'),el=>[el,el.disabled]);controls.forEach(([el])=>el.disabled=true);if(status)status.textContent='Menyimpan draf…';
   try{
    const response=await fetch(form.action,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':form.querySelector('[name=_token]').value},body:JSON.stringify(payload)});const data=await response.json().catch(()=>({}));
    if(response.ok&&data.url){window.location.assign(data.url);return;}
@@ -103,7 +103,7 @@
    }
    error.focus();
   }catch{error.hidden=false;error.textContent='Sambungan gagal. Perubahan anda dikekalkan; cuba lagi.';error.focus();}
-  submitting=false;delete form.dataset.submitting;buttons.forEach(b=>b.disabled=false);dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
+  submitting=false;delete form.dataset.submitting;controls.forEach(([el,disabled])=>el.disabled=disabled);dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
  });
  render();
 })();
