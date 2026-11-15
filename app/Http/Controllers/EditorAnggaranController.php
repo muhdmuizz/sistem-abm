@@ -42,7 +42,7 @@ class EditorAnggaranController extends Controller
                 'editable'=>$valid && $access['editable'] && $access['places']->contains('id',$source->tempat_bertugas_id),
                 'compatible'=>$valid];
         })->values();
-        return view('abm.estimates.editor',['bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
+        return view($definition instanceof \App\Services\DefinisiPakejBerkumpulan ? 'abm.estimates.pakej' : 'abm.estimates.editor',['bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
             'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
