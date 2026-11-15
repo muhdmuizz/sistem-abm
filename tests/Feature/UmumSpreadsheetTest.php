@@ -150,6 +150,7 @@ class UmumSpreadsheetTest extends TestCase
         foreach(['J14'=>'200.00','J13'=>'150.00','J12'=>'150.00','J10'=>'120.00','J9'=>'120.00'] as $grade=>$rate){$s=$d->source($this->personnelRow($place,['gred'=>$grade]));$this->assertSame($rate,$d->rowReference(get_object_vars($s))['kadar']);}
         $s=$d->source($this->personnelRow($place,['jawatan'=>'PENGARAH PENDIDIKAN NEGERI','gred'=>'VU7']));$this->assertSame('600',$d->preview($s));
         foreach(['nama','jawatan','gred'] as $key)$this->assertNull($d->preview($d->source($this->personnelRow($place,[$key=>null]))));
+        $this->assertSame('400',$d->preview($d->source($this->personnelRow($place,['nama'=>'0']))));
         $fee=$this->personnelRow($place,['kategori1'=>'Bayaran Yuran Bengkel/ Kursus/ Taklimat/ Seminar','kategori2'=>'Bayaran Yuran','kadar'=>'1234.567']);$this->assertSame('2469.134',$d->preview($d->source($fee)));$this->assertArrayNotHasKey('payment_grade',$d->rowReference($fee));
         $gift=$this->row($place,['kategori2'=>'Hadiah Penghargaan Pesara']);$this->assertSame('1200',$d->preview($d->source($gift)));$this->assertFalse($d->rowReference($gift)['personnel']);
     }

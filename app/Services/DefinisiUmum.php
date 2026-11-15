@@ -103,7 +103,7 @@ class DefinisiUmum extends DefinisiPakej
     public function preview(stdClass $source): ?string
     {
         $ref=$this->rowReference(get_object_vars($source));if(!$ref)return null;
-        if($ref['personnel']&&(!$source->nama||!$source->jawatan||!$source->gred))return null;
+        if($ref['personnel']&&(in_array(null,[$source->nama,$source->jawatan,$source->gred],true)||in_array('',[$source->nama,$source->jawatan,$source->gred],true)))return null;
         $rate=$ref['mode']==='FIXED_REFERENCE'?$ref['kadar']:$source->kadar;
         if($rate===null||$rate===''||$source->bil_unit===null||$source->bil_unit==='')return null;
         $text=(string)BigDecimal::of($source->bil_unit)->multipliedBy($rate);return str_contains($text,'.')?rtrim(rtrim($text,'0'),'.'):$text;
