@@ -291,3 +291,7 @@ The user reported “Everything else is clean.” after the prior update instruc
 **Next proposed implementation:** correct current shared-grid headers across OS25000/SBK/TASKA/OS28000, preserve the mandatory accounting-style display, and add the approved OS27000 Pakaian Seragam definition (shared Jawatan reference, four category/job rates, fixed Pasang, Bil. Pengisian × Bil. Pasang × Kadar). This is the proposed next bounded scope, not implementation started or completed. Read its current reference and actual catalogue/mappings before implementation. The header correction must accompany the next task rather than being postponed behind a new definition.
 
 This commit changes Markdown only; application code/CI remains 445 tests / 3544 assertions at d9f2742950eb6e071ad003bc4609971a09173b96. Header strings remain unchanged until the next code task.
+
+## Batch 027 — uniform source definition and UI headers in progress
+
+Owner authorised proceeding from `8a165cb8a39cc94f363e68767fa7b7b0cc805de1`. [Batch 027](batch-027-uniform-headers.md) combines the approved Pakaian Seragam template with the shared title-case header correction across existing grids, preserving accounting-style money. Jawatan uses Reference 07 independently of categories. No new policy or official output/completeness; no migration/seed.
