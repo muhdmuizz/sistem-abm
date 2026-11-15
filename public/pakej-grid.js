@@ -82,15 +82,16 @@
  }
  form.querySelector('[data-add-activity]')?.addEventListener('click',()=>{const g={key:++next,editable:true,compatible:true,open:true,komponen:[],removed:[],tujuan:null,tarikh_mula:null,tarikh_tamat:null,tempat_bertugas_id:places.length===1?places[0].id:null};groups.push(g);render();dirty();container.lastElementChild.querySelector('[data-shared=tujuan]')?.focus();});
  form.querySelector('[data-undo-activity]')?.addEventListener('click',()=>{groups.forEach(g=>g.deleted=false);render();dirty();});
+ function resetSubmit(){delete form.dataset.submitting;form.querySelectorAll('button[type=submit]').forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});}
  function hasInput(g){return shared.some(k=>k!=='tempat_bertugas_id'&&plain(g[k])!=='')||g.komponen.some(c=>fields.some(k=>plain(c[k])!==''));}
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(submitting)return;error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');const ids=(el.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('pakej-error-'));if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');});
   const retained=groups.filter(g=>g.editable&&!g.deleted&&(g.butiran_id||hasInput(g))),deleted=groups.filter(g=>g.deleted&&g.butiran_id);
-  if(!retained.length&&!deleted.length){if(status)status.textContent='Tiada perubahan untuk disimpan.';return;}
-  if(deleted.length&&!window.confirm('Padam '+deleted.length+' aktiviti tersimpan bersama komponennya dan simpan perubahan lain?'))return;
+  if(!retained.length&&!deleted.length){if(status)status.textContent='Tiada perubahan untuk disimpan.';resetSubmit();return;}
+  if(deleted.length&&!window.confirm('Padam '+deleted.length+' aktiviti tersimpan bersama komponennya dan simpan perubahan lain?')){resetSubmit();dirty();return;}
   const payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
    rekod:retained.map(g=>({...g.butiran_id?{butiran_id:g.butiran_id,semakan_butiran:g.semakan_butiran}:{},...Object.fromEntries(shared.map(k=>[k,plain(g[k])===''?null:String(g[k])])),komponen:g.komponen.map(c=>({id:c.id,...Object.fromEntries(fields.map(k=>[k,plain(c[k])===''?null:String(c[k])]))}))})),padam:deleted.map(g=>({butiran_id:g.butiran_id,semakan_butiran:g.semakan_butiran}))};
-  submitting=true;form.dataset.submitting='';const controls=Array.from(form.querySelectorAll('button,input,select,textarea'),el=>[el,el.disabled]);controls.forEach(([el])=>el.disabled=true);if(status)status.textContent='Menyimpan draf…';
+  submitting=true;form.dataset.submitting='yes';const controls=Array.from(form.querySelectorAll('button,input,select,textarea'),el=>[el,el.matches('button[type=submit]')?false:el.disabled]);controls.forEach(([el])=>el.disabled=true);if(status)status.textContent='Menyimpan draf…';
   try{
    const response=await fetch(form.action,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':form.querySelector('[name=_token]').value},body:JSON.stringify(payload)});const data=await response.json().catch(()=>({}));
    if(response.ok&&data.url){window.location.assign(data.url);return;}
@@ -103,7 +104,7 @@
    }
    error.focus();
   }catch{error.hidden=false;error.textContent='Sambungan gagal. Perubahan anda dikekalkan; cuba lagi.';error.focus();}
-  submitting=false;delete form.dataset.submitting;controls.forEach(([el,disabled])=>el.disabled=disabled);dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
+  submitting=false;delete form.dataset.submitting;controls.forEach(([el,disabled])=>el.disabled=disabled);resetSubmit();dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
  });
  render();
 })();

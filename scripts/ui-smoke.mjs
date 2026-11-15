@@ -827,6 +827,7 @@ for(const fixture of ['pakej-empty','pakej-populated','pakej-partial','pakej-rea
 }
 {
 await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pakej-grouped-empty.html');
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();if(!await page.getByRole('button',{name:'Simpan Draf',exact:true}).isEnabled())throw Error('Empty Pakej save left busy button');
 await page.locator('[data-add-activity]').click();const group=page.locator('.pakej-activity').first();
 await group.locator('[data-shared=tujuan]').fill('Bengkel Pengurusan');await group.locator('[data-shared=tarikh_mula]').fill('2028-02-28');await group.locator('[data-shared=tarikh_tamat]').fill('2028-03-01');
 if(await group.locator('[data-calendar-days]').textContent()!=='3')throw Error('Pakej calendar duration');
