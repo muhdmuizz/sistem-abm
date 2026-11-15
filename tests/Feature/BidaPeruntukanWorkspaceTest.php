@@ -842,6 +842,9 @@ SQL);
         TetapanAksesPtj::where('rujukan_os_id',$old->id)->update(['dibenarkan'=>false]);
         $this->get(route('bids.show',$bid))->assertOk()->assertDontSee('Rekod sedia ada');
         $this->get(route('estimates.show',[$bid,$previous]))->assertNotFound();
+        TetapanAksesPtj::where('rujukan_os_id',$old->id)->update(['dibenarkan'=>true]);$previous->forceFill(['diaktifkan'=>false])->save();
+        $this->get(route('bids.show',$bid))->assertOk()->assertSee('Rekod Utiliti Pukal belum aktif. Rekod dikekalkan.')->assertDontSee(route('estimates.show',[$bid,$previous]),false);
+        $this->assertSame('preserved',$source->fresh()->data_sumber->unchanged);
     }
 
     public function test_old_utility_permission_does_not_grant_canonical_permission_or_group_other_os_variants(): void
