@@ -159,6 +159,16 @@ The owner reaffirmed tabular numbers and made the expected monetary presentation
 
 Column sets, business actions and financial data structures remain governed by the relevant approved functional ADs.
 
+### 06.1 Consistent UI header casing — owner clarification, 15 November 2026
+
+Use **consistent title case** for user-interface column headers across all OS spreadsheet definitions and shared tables. Do not mix all-capital labels with title-case labels in the same interface.
+
+- Examples: **Bil. Anak**, **Bil. Pengisian**, **Bil. Pasang**, **Unit**, **Kadar (RM)** and **Kadar Bulanan (RM/ Anak)**; retain the existing **Nama Ibu/ Bapa**, **Tempat Bertugas** and **Bilangan Bulan** style.
+- Preserve recognised acronyms/codes such as **RM, OS, PTJ, JPNT and PPD**. Preserve approved label meaning, punctuation and slash typography; do not mechanically lowercase acronyms or rewrite reference values.
+- This is a UI presentation rule. The official canonical Excel headers, approved export positions, machine-readable keys and reference CSV wording remain unchanged. Earlier uppercase editor examples in individual OS specifications do not require uppercase UI rendering after this later owner clarification.
+- Do not use a blanket CSS `text-transform` to conceal inconsistent labels. Keep the actual displayed/accessibility labels consistent in the shared definitions.
+- Apply the rule from the next implementation task onward, and correct existing OS25000/SBK/TASKA/OS28000 headers in that same task. Include desktop/mobile and accessible-header inspection alongside the existing monetary formatting checks.
+
 ## Section 07 — Loading, Feedback & System States (Approved; complete)
 
 1. **Skeleton loading:** Contextual skeletons match the actual content layout; application shell remains visible and stable.
