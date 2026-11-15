@@ -68,3 +68,7 @@ This subsequent owner decision supersedes the earlier pending quantity/formula s
 Illustrative only: 3 fire extinguishers × RM100 × 1 maintenance occurrence per month × 12 months = RM3,600. Preserve AD-008's exact-decimal calculations, stable Butiran identities, attribution to original reference inputs, totals and immutable submitted snapshots. No additional rounding, category, rate or eligibility rule is inferred.
 
 **Implementation boundary:** Documentation only; the original reference CSVs, master catalogue, Kod Aktiviti mappings, Laravel, PostgreSQL and Excel implementation are unchanged. AD-008 remains Draft.
+
+## Implementation status — Batch 026, 15 November 2026
+
+Owner-authorised [Batch 026](../development/batch-026-maintenance-money.md), [PR #61](https://github.com/muhdmuizz/sistem-abm/pull/61), merged `0343ac972b1f366443e9508088e7d5d7fc2286d6`, implements the approved source-draft spreadsheet, exact reference rates/formula and shared monetary display. The ten-row CSV, catalogue, mapping and permission data are unchanged. Blank tree equipment is preserved; fixed rates cannot be overridden and manual rates have no fabricated default. [CI 43662888155](https://github.com/muhdmuizz/sistem-abm/actions/runs/43662888155) passed 445 tests / 3544 assertions plus build/formatter/Chromium. Official outputs/completeness, snapshots/export integration and local acceptance remain pending. This status supersedes earlier documentation-only implementation statements, without changing their approved financial rules.

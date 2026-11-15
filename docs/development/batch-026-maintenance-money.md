@@ -1,6 +1,6 @@
 # Batch 026 — OS28000 and Shared Monetary Presentation
 
-**Status:** Verification passed; merge pending. Owner authorised 15 November 2026.
+**Status:** Merged in PR #61; local update/functional checks pending. Owner authorised 15 November 2026.
 **Baseline:** `eeca0f056288d62e27d0fb0946c91560d4c54877` on dev.
 
 ## Approved scope
@@ -28,3 +28,7 @@ No migration/seeder, reference/catalogue/mapping/permission changes, official ou
 ## Local follow-through — pending
 
 Keep the server running; use a clean dev pull --ff-only, php artisan optimize:clear and Ctrl+F5. No migration/seeder/npm build or restart. In an eligible active OS28000 open Buka Jadual Butiran; check categories/equipment, blank tree equipment and fixed reference rates; 3 extinguishers × RM100 × 1 × 12 previews **3,600.00**. Save/reopen and test manual-rate changes. Check existing TASKA **4,320.00** and shared reference/manual rates. For a high-precision rate, verify the two-decimal idle display, exact value on focus/Nilai tepat, grouped paste, duplicate/save/reopen and validation retention. Live access/Fasa controls still apply. Local execution has not been performed by the cloud agent.
+
+## Merge checkpoint
+
+[PR #61](https://github.com/muhdmuizz/sistem-abm/pull/61) merged into dev at `0343ac972b1f366443e9508088e7d5d7fc2286d6`. Evidence-only final commit `d74a831110bf1f91f2ea0f6e9596e4b836918120` changes Markdown; application code remains the tested head `d9f2742950eb6e071ad003bc4609971a09173b96`. Local update has not been executed by the cloud agent or confirmed by the user.
