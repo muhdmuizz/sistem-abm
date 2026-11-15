@@ -690,7 +690,7 @@ for(const fixture of ['touchngo-empty','touchngo-populated','touchngo-partial','
 }
 {
 await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/touchngo-empty.html');
-await page.locator('[data-grid-count]').fill('1');await page.locator('[data-grid-add]').click();
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
 const first=page.locator('[data-grid-body] tr').first();
 await first.locator('[data-field=tujuan]').fill('Van JPNT');await first.locator('[data-field=bil_unit]').fill('3');
 await first.locator('[data-field=kadar]').fill('2,000.125');await first.locator('[data-field=bil_bulan]').fill('12');
