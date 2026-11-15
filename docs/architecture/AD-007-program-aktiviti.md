@@ -121,3 +121,7 @@ Headcounts are **financial estimation inputs**, not merely descriptive metadata.
 - **AD-004 is finalised**; this document reuses its shared wizard, autosave, row validation, safe navigation, deletion and audit rules.
 - **AD-008** will determine precise OS mapping, package eligibility, automatic prepopulation, rates, calculation formulas and specialised OS wizard behaviour.
 - **AD-007 is finalised.** Its programme workflow, data contract, validations and change-management principles are approved. Detailed OS pages and their calculation mappings are the next design task under AD-008.
+
+## OS29000 Pakej entry-route follow-up — 15 November 2026
+
+The owner reaffirmed Program/ Aktiviti as Pakej's intended future entry point and is considering making it the **only** entry route by restricting direct Pakej entry. This is a recorded proposal pending a final decision/implementation, scoped to OS29000 Pakej. The general direct-entry contract above and Batch 033's current editor are unchanged. Revisit the proposal during programme-to-Pakej integration, reusing the existing grouped editor and actual programme ID. See the [Pakej entry-point direction](../references/OS29000-pakej-reference.md#pakej-entry-point-direction--owner-note-15-november-2026). No new approval status, financial rule or application behaviour is introduced by this note.
