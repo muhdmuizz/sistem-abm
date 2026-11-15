@@ -37,7 +37,7 @@ class KatalogDefinisiAnggaran
             return $mapped?$pakej:null;
         }
 
-        $umum=new DefinisiUmum($bid->kitaran->tahun);
+        $umum=new DefinisiUmumBerkumpulan($bid->kitaran->tahun);
         if($umum->supports($os)){
             $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
             if($code===null)return null;
