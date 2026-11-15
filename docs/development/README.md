@@ -295,3 +295,7 @@ This commit changes Markdown only; application code/CI remains 445 tests / 3544 
 ## Batch 027 — uniform source definition and UI headers in progress
 
 Owner authorised proceeding from `8a165cb8a39cc94f363e68767fa7b7b0cc805de1`. [Batch 027](batch-027-uniform-headers.md) combines the approved Pakaian Seragam template with the shared title-case header correction across existing grids, preserving accounting-style money. Jawatan uses Reference 07 independently of categories. No new policy or official output/completeness; no migration/seed.
+
+## Batch 027 — verification passed; merge pending
+
+Tested `bea2bed2522e2b9fb816fb1a6a0a13d9d52bed11`; [CI 43665138171](https://github.com/muhdmuizz/sistem-abm/actions/runs/43665138171): 452 tests / 3626 assertions on PHP 8.4.27 / PostgreSQL 18.7 isolated testing database; build/formatter/Chromium passed. Representative desktop/mobile state review completed; [Batch 027](batch-027-uniform-headers.md) records coverage and limits. No migration/seed or official financial integration. Local acceptance pending.
