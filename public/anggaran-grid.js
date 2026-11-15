@@ -133,7 +133,7 @@
   data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });
- function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});}
+ function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');const ids=(el.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&!id.startsWith('grid-error-'));if(ids.length)el.setAttribute('aria-describedby',ids.join(' '));else el.removeAttribute('aria-describedby');});}
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(submitting)return;clearErrors();
   const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
@@ -154,7 +154,7 @@
    for(const [key,values] of Object.entries(data.errors||{})){
     const match=key.match(/(?:kelompok\.)?rekod\.(\d+)\.(\w+)/);if(!match)continue;const row=retained[Number(match[1])];if(!row)continue;
     const field=body.querySelector('tr[data-key="'+row.key+'"] [data-field="'+match[2]+'"]');if(!field)continue;
-    const help=document.createElement('p');help.className='grid-cell-error';help.id='grid-error-'+row.key+'-'+match[2];help.textContent=values.join(' ');field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',help.id);field.parentElement.append(help);
+    const help=document.createElement('p');help.className='grid-cell-error';help.id='grid-error-'+row.key+'-'+match[2];help.textContent=values.join(' ');field.setAttribute('aria-invalid','true');field.setAttribute('aria-describedby',[(field.getAttribute('aria-describedby')||''),help.id].filter(Boolean).join(' '));field.parentElement.append(help);
    }
    error.focus();dirty();if(status)status.textContent='Gagal disimpan. Perubahan dikekalkan.';
   }catch{error.hidden=false;error.textContent='Sambungan gagal. Perubahan anda dikekalkan; cuba lagi.';error.focus();dirty();if(status)status.textContent='Gagal disimpan.';}
