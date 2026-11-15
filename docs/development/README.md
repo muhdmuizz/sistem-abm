@@ -276,3 +276,7 @@ User explicitly reaffirmed tabular numeric presentation and monetary `4,320.00` 
 ## Batch 026 — OS28000 and monetary display in progress
 
 Owner authorised proceeding after the explicit monetary display clarification. Baseline `eeca0f056288d62e27d0fb0946c91560d4c54877`. [Batch 026](batch-026-maintenance-money.md) combines the approved maintenance source definition with the mandatory shared format correction for OS25000/SBK/TASKA. Existing Batch 025 local sync confirmation is already recorded. No migration/seed or official financial output/completeness planned.
+
+## Batch 026 — verification passed; merge pending
+
+OS28000 typed maintenance sources and shared accounting-style money presentation implemented for OS25000/SBK/TASKA/OS28000. Tested `d9f2742950eb6e071ad003bc4609971a09173b96`, [CI 43662888155](https://github.com/muhdmuizz/sistem-abm/actions/runs/43662888155): 445 tests / 3544 assertions, PHP 8.4.27 / PostgreSQL 18.7 isolated test DB; build, formatter and Chromium checks passed. Representative 16 new desktop/mobile money/maintenance states reviewed, with three final-head rechecks; see [Batch 026](batch-026-maintenance-money.md) for capture/verification limits. No migration/seed or official financial completeness/output. Local update/checks pending.
