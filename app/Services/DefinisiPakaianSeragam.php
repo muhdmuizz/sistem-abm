@@ -11,7 +11,7 @@ use stdClass;
 
 class DefinisiPakaianSeragam extends DefinisiAnggaran
 {
-    public const VERSION='os27000.pakaian-seragam.v2';
+    public const VERSION='os27000.pakaian-seragam.v3';
 
     public function supports(RujukanOs $os): bool
     {
@@ -23,7 +23,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
         return [
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>190],
-            ['key'=>'jawatan','label'=>'Jawatan','type'=>'select','options'=>'values','values'=>app(RujukanJawatan::class)->names(),'width'=>270],
+            ['key'=>'jawatan','label'=>'Jawatan','type'=>'select','options'=>'values','strictValues'=>true,'values'=>$this->applicableJobs(),'width'=>270],
             ['key'=>'bil_unit','label'=>'Bil. Pengisian','type'=>'decimal','width'=>130],
             ['key'=>'kekerapan','label'=>'Bil. Pasang','type'=>'output','value'=>'2','numeric'=>true,'width'=>120],
             ['key'=>'unit','label'=>'Unit','type'=>'output','value'=>'Pasang','width'=>90],
@@ -36,7 +36,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
     public function selector(): string { return 'kategori1'; }
     // Secondary lookup attribute is a personnel field, not a dependent category level.
     public function childSelector(): string { return 'jawatan'; }
-    public function inputHelp(): string { return 'Jawatan menggunakan rujukan bersama. Kadar mengikut Jenis Bekalan dan Jawatan; Unit kekal Pasang; Bil. Pasang ditetapkan kepada 2 dan tidak boleh dipinda.'; }
+    public function inputHelp(): string { return 'Jawatan terhad kepada Pembantu Khidmat Am dan Pembantu Makmal daripada rujukan bersama. Kadar mengikut Jenis Bekalan dan Jawatan; Unit kekal Pasang; Bil. Pasang ditetapkan kepada 2 dan tidak boleh dipinda.'; }
 
     public function references(): array
     {
@@ -58,6 +58,22 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
         } finally { fclose($handle); }
     }
 
+    public function applicableJobs(): array
+    {
+        $jobs=[];foreach($this->references() as $group)$jobs=array_merge($jobs,array_keys($group));
+        $jobs=array_values(array_unique($jobs));sort($jobs);return $jobs;
+    }
+
+    public function project(stdClass $source): array
+    {
+        $result=parent::project($source);
+        if(($source->jawatan ?? null)!==null && $source->jawatan!=='' && !in_array($source->jawatan,$this->applicableJobs(),true)) {
+            $result['jawatan']=null;
+            $result['notices']=['jawatan'=>'Jawatan asal tidak terpakai. Pilih semula Jawatan sebelum menyimpan.'];
+        }
+        return $result;
+    }
+
     public function validate(array $rows): array
     {
         $decimal=['nullable','string','max:128','regex:/^-?\d+(?:\.\d+)?$/D'];
@@ -66,7 +82,7 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
             'rekod.*.butiran_id'=>'sometimes|required|integer|min:1|distinct','rekod.*.semakan_butiran'=>'sometimes|required|integer|min:0',
             'rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
             'rekod.*.kategori1'=>['nullable','string',Rule::in(array_keys($this->references()))],
-            'rekod.*.jawatan'=>['nullable','string',Rule::in(app(RujukanJawatan::class)->names())],
+            'rekod.*.jawatan'=>['nullable','string',Rule::in($this->applicableJobs())],
             'rekod.*.bil_unit'=>$decimal,
         ],['in'=>'Pilih nilai daripada rujukan yang sah.','regex'=>'Gunakan nombor perpuluhan biasa tanpa pemisah ribu.','array'=>'Struktur baris tidak sah.'])->validate()['rekod'];
     }
@@ -80,11 +96,16 @@ class DefinisiPakaianSeragam extends DefinisiAnggaran
     public function readable(mixed $source): bool
     {
         $keys=['definition','kategori1','jawatan','bil_unit','kekerapan'];
-        if(!$source instanceof stdClass||!in_array($source->definition ?? null,[self::VERSION,'os27000.pakaian-seragam.v1'],true)||
+        if(!$source instanceof stdClass||!in_array($source->definition ?? null,[self::VERSION,'os27000.pakaian-seragam.v2','os27000.pakaian-seragam.v1'],true)||
             array_diff($keys,array_keys(get_object_vars($source)))||array_diff(array_keys(get_object_vars($source)),$keys))return false;
-        if($source->definition===self::VERSION && $source->kekerapan!=='2')return false;
+        if($source->definition!=='os27000.pakaian-seragam.v1' && $source->kekerapan!=='2')return false;
         if($source->definition==='os27000.pakaian-seragam.v1' && $source->kekerapan!==null && $source->kekerapan!=='' && (!is_string($source->kekerapan)||strlen($source->kekerapan)>128||!preg_match('/^-?\d+(?:\.\d+)?$/D',$source->kekerapan)))return false;
         $row=get_object_vars($source);unset($row['definition'],$row['kekerapan']);$row['tempat_bertugas_id']=1;
+        // Older valid shared-job drafts remain repairable, without reoffering unrelated jobs.
+        if($source->definition!==self::VERSION && ($row['jawatan'] ?? null)!==null && $row['jawatan']!=='' && !in_array($row['jawatan'],$this->applicableJobs(),true)) {
+            if(!in_array($row['jawatan'],app(RujukanJawatan::class)->names(),true))return false;
+            $row['jawatan']=null;
+        }
         try { $this->validate([$row]); } catch(\Illuminate\Validation\ValidationException) { return false; }
         return true;
     }

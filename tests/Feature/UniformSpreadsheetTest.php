@@ -130,7 +130,7 @@ class UniformSpreadsheetTest extends TestCase
         [$bid,$estimate]=$this->gridContext();$response=$this->get($this->gridUrl($bid,$estimate))->assertOk();
         $columns=collect($response->viewData('columns'))->keyBy('key');
         $this->assertSame('Jawatan',$columns['jawatan']['label']);$this->assertSame('values',$columns['jawatan']['options']);
-        $names=app(\App\Services\RujukanJawatan::class)->names();$this->assertSame($names,$columns['jawatan']['values']);
+        $names=app(\App\Services\RujukanJawatan::class)->names();$this->assertSame(['PEMBANTU KHIDMAT AM','PEMBANTU MAKMAL'],$columns['jawatan']['values']);
         $this->assertContains('PEMBANTU KHIDMAT AM',$names);$this->assertContains('PEMBANTU MAKMAL',$names);$this->assertGreaterThan(2,count($names));
         $this->assertFalse($columns->has('kategori2'));$this->assertFalse($columns->has('gred'));
         $this->assertSame('Pasang',$columns['unit']['value']);$this->assertSame('Bil. Pengisian',$columns['bil_unit']['label']);$this->assertSame('Bil. Pasang',$columns['kekerapan']['label']);$this->assertSame('output',$columns['kekerapan']['type']);$this->assertSame('2',$columns['kekerapan']['value']);
@@ -153,12 +153,21 @@ class UniformSpreadsheetTest extends TestCase
         $row['semakan_butiran']=$first->fresh()->semakan;$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertDatabaseCount('rekod_audit',5);
     }
 
-    public function test_other_shared_job_can_remain_incomplete_draft_without_fabricated_price_or_eligibility_rule(): void
+    public function test_unrelated_shared_jobs_are_rejected_and_old_drafts_remain_repairable(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$job=collect(app(\App\Services\RujukanJawatan::class)->names())->first(fn($name)=>!in_array($name,['PEMBANTU KHIDMAT AM','PEMBANTU MAKMAL'],true));
-        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place,['jawatan'=>$job])]))->assertOk();
-        $source=$estimate->butiran()->sole();$this->assertSame($job,$source->data_sumber->jawatan);$this->assertNull(app(\App\Services\DefinisiPakaianSeragam::class)->preview($source->data_sumber));
-        $this->gridCapture('uniform-unpriced',$this->get($this->gridUrl($bid,$estimate))->assertOk());$this->assertDatabaseCount('hasil_pengiraan',0);
+        $url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,['jawatan'=>$job])]))->assertUnprocessable();
+        $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
+        $source=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$estimate->id,'ptj_id'=>$bid->ptj_id,'tempat_bertugas_id'=>$place->id,'semakan'=>0,
+            'data_sumber'=>(object)['definition'=>'os27000.pakaian-seragam.v2','kategori1'=>'Pakaian Seragam','jawatan'=>$job,'bil_unit'=>'5','kekerapan'=>'2']]);
+        $response=$this->get($url)->assertOk();$record=$response->viewData('records')->sole();
+        $this->assertTrue($record['editable']);$this->assertNull($record['jawatan']);$this->assertArrayHasKey('jawatan',$record['notices']);
+        $this->assertNull($record['preview']);$this->assertSame($job,$source->fresh()->data_sumber->jawatan);$this->assertDatabaseCount('rekod_audit',0);
+        $this->gridCapture('uniform-unpriced',$response);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>0])]))->assertOk();
+        $this->assertSame('PEMBANTU KHIDMAT AM',$source->fresh()->data_sumber->jawatan);$this->assertSame('2',$source->fresh()->data_sumber->kekerapan);
+        $this->assertSame('os27000.pakaian-seragam.v3',$source->fresh()->data_sumber->definition);$this->assertDatabaseCount('rekod_audit',1);
+        $definition=app(\App\Services\DefinisiPakaianSeragam::class);$invalid=clone $source->fresh()->data_sumber;$invalid->jawatan=$job;$this->assertFalse($definition->readable($invalid));
     }
 
     public function test_fixed_unit_rate_grade_and_category_injection_are_rejected_atomically(): void
