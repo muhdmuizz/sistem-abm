@@ -1,6 +1,6 @@
 # Batch 028 — Fixed Bil. Pasang and Touch ’n Go
 
-**Status:** In progress; owner authorised 15 November 2026.
+**Status:** Merged; local acceptance pending. Owner authorised 15 November 2026.
 **Baseline:** `8ca2c50ce2e026d1e1f404f676c3962d58b39cc6` on dev.
 
 ## Scope and authority
@@ -26,3 +26,7 @@ No application edits after tested head. No migration/seed or official financial 
 
 Keep existing server running; clean dev pull --ff-only, php artisan optimize:clear, Ctrl+F5. Confirm Pakaian Seragam Bil. Pasang shows fixed **2** on new/reopened rows and cannot be edited; 5 × 2 × RM230 = **2,300.00**. Save/reopen an older draft if applicable; only explicit save upgrades its stored source through audit. Open eligible OS27000 Bekalan dan Bahan-bahan Lain (Touch ’n Go): Tujuan, 3 units, RM200 monthly, 12 months => **7,200.00**. Check save/reopen/edit/copy/remove and horizontal scrolling. No frequency/category/unit fields in Touch ’n Go. Official financial integration remains pending.
 
+
+## Merge checkpoint
+
+PR #66 merged at `496dbfb0d9cb30f982bc02f8470f6b46773b5269`. Evidence-only head `b38b844307d804552ef906a0c69d4d57a90e8997` preserves tested application code. This documentation close-out adds no test execution or local acceptance.

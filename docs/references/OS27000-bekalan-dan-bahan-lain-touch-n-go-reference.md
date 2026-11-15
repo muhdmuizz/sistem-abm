@@ -34,3 +34,9 @@ This is a **monthly budgeting projection**; KADAR is user-entered and should not
 ## Scope and change control
 
 This specification does not change OS27000 **Bekalan Alat Pejabat** or **Pakaian Seragam**, their separate references or Kod Aktiviti. The existing source mappings, CSV files, application, database and actual Excel exporter are unchanged. AD-008 remains Draft.
+
+## Batch 028 checkpoint — 15 November 2026
+
+[PR #66](https://github.com/muhdmuizz/sistem-abm/pull/66) merged into dev at `496dbfb0d9cb30f982bc02f8470f6b46773b5269`. Bil. Pasang is now fixed at **2** on the screen and server, superseding the previous editable source input. Valid v1 drafts remain readable; read does not rewrite stored input, current preview uses two, and explicit audited save upgrades the row to v2. OS27000 Touch ’n Go (canonical Bekalan dan Bahan-bahan Lain) now has source editing under existing PPN/010809, Pendidikan Menengah/030304 and Pengurusan Asrama/030316 mappings, with exact Bil. Unit × Kadar Bulanan × Bilangan Bulan previews. No frequency/category/unit input or new rate policy.
+
+Tested application head `c780d2dbb6cb5dcb40d10e6e7e7b78fcb7033a28`; [CI 43669111898](https://github.com/muhdmuizz/sistem-abm/actions/runs/43669111898): **458 tests / 3701 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB, build/formatter/Chromium and representative desktop/mobile review passed. [Batch 028](../development/batch-028-fixed-pairs-touchngo.md) records review limits. No migration/seed; local acceptance pending. Official outputs/totals/completeness, programme inheritance, remaining OS and submission remain pending; Steps 02/03 remain in progress and AD-008 remains Draft.

@@ -34,3 +34,7 @@ Confirm title-case headers across existing grids: Unit, Kadar, Bil. Anak (RM/OS/
 ## Merge checkpoint
 
 PR #64 merged into dev at `dffc2c44ebcf50f757cb1588488b6924f0b95c55`. Final evidence-only head `528cd178bf4fcd0d95c84ee2c3e67a7cc0ccdfc5` preserves the tested application code. This close-out changes Markdown only; no new test run or local acceptance is claimed.
+
+## Local confirmation and subsequent correction
+
+User reported “Clean” after supplied sync/cache-clear instructions: record those commands as user-confirmed, not complete financial/role/device acceptance. Owner then required Bil. Pasang fixed at 2. Batch 028 / PR #66 at `496dbfb0d9cb30f982bc02f8470f6b46773b5269` implements that correction; supersedes Batch 027 editable multiplier behaviour. Batch 028 local checks remain pending.
