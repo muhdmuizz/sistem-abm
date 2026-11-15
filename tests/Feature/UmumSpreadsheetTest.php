@@ -123,7 +123,7 @@ class UmumSpreadsheetTest extends TestCase
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
-        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
+        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js','pakej-grid.css','pakej-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
     }
     private function personnelRow($place,array $extra=[]): array {return $this->row($place,array_replace(['kategori1'=>'Bayaran Penceramah/ Fasilitator','kategori2'=>'Bayaran Penceramah','nama'=>'AHMAD','jawatan'=>'JURUTERA','gred'=>'J14'],$extra));}
     public function test_shared_reference_grades_classify_all_131_pairs_and_rates_keep_18_auto_four_manual(): void
@@ -173,4 +173,55 @@ class UmumSpreadsheetTest extends TestCase
         [$bid,$estimate]=$this->gridContext();$code=\App\Models\KodAktiviti::where('aktiviti_kewangan_id',$this->activity->id)->sole();foreach(['Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313'] as $name=>$value){$this->activity->update(['nama'=>$name]);$code->update(['kod_aktiviti'=>$value]);$this->get($this->gridUrl($bid,$estimate))->assertOk();$code->update(['kod_aktiviti'=>'999999']);$this->get($this->gridUrl($bid,$estimate))->assertNotFound();}
         $this->assertNull(app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->unconfigured,$bid->fresh()));
     }
+    private function umumComponent(array $row): array
+    {
+        return ['id'=>(string)\Illuminate\Support\Str::uuid()]+array_intersect_key($row,array_flip(['kategori1','kategori2','nama','jawatan','gred','bil_unit','kadar']));
+    }
+    private function umumActivity($place,array $components,array $extra=[]): array
+    {
+        return array_replace(['tempat_bertugas_id'=>$place->id,'tujuan'=>'Bengkel Pengurusan Kewangan','tarikh_mula'=>'2028-02-28','tarikh_tamat'=>'2028-03-01','komponen'=>$components],$extra);
+    }
+    public function test_grouped_umum_shares_activity_fields_and_keeps_component_personnel_rates_and_exact_subtotal(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$d=new \App\Services\DefinisiUmumBerkumpulan(2028);
+        $row=$this->umumActivity($place,[$this->umumComponent($this->personnelRow($place,['bil_unit'=>'3'])),$this->umumComponent($this->row($place,['bil_unit'=>'20'])),$this->umumComponent($this->row($place,['kategori2'=>'Dobi','kadar'=>'1,234.567']))]);
+        $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$this->assertSame('os29000.umum.v2',$source->data_sumber->definition);$this->assertSame('3229.134',$d->preview($source->data_sumber));$this->assertTrue($d->readable($source->data_sumber));$this->assertCount(3,$source->data_sumber->komponen);$this->assertObjectNotHasProperty('nama',$source->data_sumber);
+        foreach($source->data_sumber->komponen as $component){$this->assertObjectNotHasProperty('tujuan',$component);$this->assertObjectNotHasProperty('tarikh_mula',$component);$this->assertObjectNotHasProperty('payment_grade',$component);}
+        $this->assertSame('AHMAD',$source->data_sumber->komponen[0]->nama);$this->assertNull($source->data_sumber->komponen[1]->nama);$this->assertNull($source->data_sumber->komponen[0]->kadar);$this->assertSame('1234.567',$source->data_sumber->komponen[2]->kadar);
+        $response=$this->get($url)->assertOk()->assertViewIs('abm.estimates.pakej');$this->assertCount(1,$response->viewData('records'));$this->assertCount(3,$response->viewData('records')[0]['komponen']);$this->gridCapture('umum-grouped-populated',$response);
+        $row['komponen'][2]['kadar']='1234.567';$row+=['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$audit=RekodAudit::count();$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertSame($audit,RekodAudit::count());
+        $row['tujuan']='Bengkel Baharu';$row['tarikh_tamat']='2028-12-31';$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source->refresh();$this->assertSame($row['komponen'][0]['id'],$source->data_sumber->komponen[0]->id);$this->assertSame('3229.134',$d->preview($source->data_sumber));$this->assertSame('source.draft_updated',RekodAudit::orderByDesc('id')->first()->tindakan);$this->assertDatabaseCount('hasil_pengiraan',0);
+    }
+    public function test_grouped_umum_invalid_component_and_shared_inputs_roll_back_every_activity(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$good=$this->umumActivity($place,[$this->umumComponent($this->personnelRow($place))]);
+        foreach([['kadar'=>'200'],['payment_grade'=>'Other'],['tujuan'=>'Override'],['nama'=>[]],['gred'=>'W1'],['kategori2'=>'Dobi'],['id'=>'bad']] as $change){$bad=$good;$bad['komponen'][0]=array_replace($bad['komponen'][0],$change);$this->postJson($url,$this->payload($bid,$estimate,[$good,$bad]))->assertUnprocessable();$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);}
+        $bad=$good;$bad['komponen'][]=$bad['komponen'][0];$this->postJson($url,$this->payload($bid,$estimate,[$bad]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.komponen.0.id');
+        $bad=$good;$bad['komponen'][0]['gred']='J99';$this->postJson($url,$this->payload($bid,$estimate,[$bad]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.komponen.0.gred');
+        $bad=$good;$bad['tarikh_mula']='2027-01-01';$this->postJson($url,$this->payload($bid,$estimate,[$bad]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.tarikh_mula');
+        $bad=$good;$bad['komponen']=['x'=>$bad['komponen'][0]];$this->postJson($url,$this->payload($bid,$estimate,[$bad]))->assertUnprocessable();
+    }
+    public function test_grouped_umum_partial_and_component_free_drafts_have_no_invented_subtotal(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$d=new \App\Services\DefinisiUmumBerkumpulan(2028);$this->gridCapture('umum-grouped-empty',$this->get($url)->assertOk());
+        $blank=$this->umumActivity($place,[],['tujuan'=>null,'tarikh_mula'=>null,'tarikh_tamat'=>null]);$this->postJson($url,$this->payload($bid,$estimate,[$blank]))->assertOk();$this->assertDatabaseCount('butiran_anggaran',0);
+        $row=$this->umumActivity($place,[$this->umumComponent($this->personnelRow($place,['gred'=>null])),$this->umumComponent($this->row($place))]);$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$source=$estimate->butiran()->sole();$this->assertNull($d->preview($source->data_sumber));$this->gridCapture('umum-grouped-partial',$this->get($url)->assertOk());
+        $malformed=clone $source->data_sumber;$malformed->komponen=(object)[];$this->assertFalse($d->readable($malformed));
+        $row['komponen']=[];$row+=['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertCount(0,$source->fresh()->data_sumber->komponen);$this->assertNull($d->preview($source->fresh()->data_sumber));
+    }
+    public function test_umum_v1_rows_reopen_separately_and_grouped_updates_keep_guards_and_audit(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place)]))->assertOk();$records=$this->get($url)->assertOk()->viewData('records');$this->assertCount(2,$records);foreach($records as $record)$this->assertCount(1,$record['komponen']);
+        $source=$estimate->butiran()->orderBy('id')->first();$row=$this->umumActivity($place,[$this->umumComponent($this->personnelRow($place,['bil_unit'=>'3'])),$this->umumComponent($this->row($place,['bil_unit'=>'20']))],['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);$payload=$this->payload($bid,$estimate,[$row]);$this->postJson($url,$payload)->assertOk();$this->assertSame($source->id,$source->fresh()->id);$this->postJson($url,$payload)->assertConflict();
+        $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertForbidden();$this->phase->forceFill(['dibuka'=>true])->save();
+        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);$this->gridCapture('umum-grouped-readonly',$this->get($url)->assertOk());$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertForbidden();
+        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PenyediaAnggaran);$this->postJson($url,$this->payload($bid,$estimate,[],[['butiran_id'=>$source->id,'semakan_butiran'=>$source->fresh()->semakan]]))->assertOk();$this->assertDatabaseCount('butiran_anggaran',1);$this->assertSame('source.draft_deleted',RekodAudit::orderByDesc('id')->first()->tindakan);
+    }
+    public function test_grouped_umum_pagination_keeps_components_together_and_rejects_cross_ptj_owner(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$rows=[];for($i=0;$i<26;$i++)$rows[]=$this->umumActivity($place,[$this->umumComponent($this->personnelRow($place)),$this->umumComponent($this->row($place))],['tujuan'=>'Aktiviti '.($i+1)]);
+        $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$response=$this->get($url)->assertOk();$this->assertCount(25,$response->viewData('records'));foreach($response->viewData('records') as $record)$this->assertCount(2,$record['komponen']);$response=$this->get($url.'?page=2')->assertOk();$this->assertCount(1,$response->viewData('records'));$this->assertCount(2,$response->viewData('records')[0]['komponen']);
+        $otherPlace=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);$this->postJson($url,$this->payload($bid,$estimate,[$this->umumActivity($otherPlace,[$this->umumComponent($this->row($otherPlace))])]))->assertForbidden();$this->assertDatabaseCount('butiran_anggaran',26);
+    }
+
 }
