@@ -26,8 +26,8 @@ class DefinisiAnggaran
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Bekalan','type'=>'select','options'=>'references','width'=>200],
             ['key'=>'bil_unit','label'=>'Bil. Unit','type'=>'decimal','width'=>120],
             ['key'=>'unit','label'=>'UNIT','type'=>'output','reference'=>'unit','width'=>130],
-            ['key'=>'kadar','label'=>'KADAR (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'width'=>110],
-            ['key'=>'preview','label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
+            ['key'=>'kadar','money'=>true,'label'=>'KADAR (RM)','type'=>'output','reference'=>'kadar','numeric'=>true,'width'=>110],
+            ['key'=>'preview','money'=>true,'label'=>'Anggaran Setahun (RM) — Pratonton','type'=>'output','numeric'=>true,
                 'formula'=>['operation'=>'multiply','inputs'=>['bil_unit','kadar']],'width'=>160],
         ];
     }
@@ -41,6 +41,8 @@ class DefinisiAnggaran
         }
         return false;
     }
+
+    public function childSelector(): string { return ''; }
 
     public function selector(): string { return 'kategori1'; }
     public function project(stdClass $source): array

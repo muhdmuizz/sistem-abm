@@ -123,7 +123,7 @@ class TaskaSpreadsheetTest extends TestCase
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
-        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
+        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
     }
     public function test_taska_grid_uses_parent_name_child_quantity_and_single_prescribed_monthly_reference(): void
     {

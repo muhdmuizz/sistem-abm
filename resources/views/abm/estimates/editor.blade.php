@@ -3,6 +3,7 @@
 @section('cycle-context','Kitaran ABM '.$bid->kitaran->tahun)
 @section('content')
 <link rel="stylesheet" href="{{ asset('anggaran-grid.css') }}">
+<script src="{{ asset('abm-money.js') }}" defer></script>
 <script src="{{ asset('anggaran-grid.js') }}" defer></script>
 <div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ route('estimates.show',[$bid->id,$estimate->id]) }}">Kembali ke Anggaran</a></div>
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
@@ -10,7 +11,7 @@
 @if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tertakluk pada peranan, kebenaran OS, status Bidaan dan Fasa semasa.</p>@endif
 <form data-anggaran-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id]) }}"
  data-records="{{ json_encode($records) }}" data-places="{{ json_encode($places) }}" data-references="{{ json_encode($references) }}"
- data-columns="{{ json_encode($columns) }}" data-reference-selector="{{ $referenceSelector }}"
+ data-columns="{{ json_encode($columns) }}" data-reference-selector="{{ $referenceSelector }}" data-reference-child-selector="{{ $referenceChildSelector }}"
  data-editable="{{ $editable ? 'yes' : 'no' }}" data-bid-revision="{{ $bid->semakan }}" data-estimate-revision="{{ $estimate->semakan }}">
 @csrf
 <div class="notice error" role="alert" tabindex="-1" data-grid-error hidden></div>

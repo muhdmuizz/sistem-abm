@@ -123,7 +123,7 @@ class SbkSpreadsheetTest extends TestCase
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
-        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
+        if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
     }
     private function secondaryContext(): array
     {
@@ -205,7 +205,7 @@ class SbkSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
         foreach([['kategori1'=>'Pukal'],['bil_bulan'=>'1'],['preview'=>'0'],['bil_unit'=>'1'],['definition'=>'os25000.v1'],
-            ['kategori2'=>'Pos/ Mesin Franking'],['kategori2'=>'Lain-lain'],['kadar'=>'1e4'],['kadar'=>1.5],['kadar'=>'1,000']] as $change){
+            ['kategori2'=>'Pos/ Mesin Franking'],['kategori2'=>'Lain-lain'],['kadar'=>'1e4'],['kadar'=>1.5],['kadar'=>'1,00']] as $change){
             $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,$change)]))->assertUnprocessable();
             $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         }
@@ -244,5 +244,15 @@ class SbkSpreadsheetTest extends TestCase
         $response=$this->get($url)->assertOk()->assertDontSee('<button type="submit" class="button primary">',false);$this->gridCapture('sbk-readonly',$response);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
         $this->assertDatabaseCount('butiran_anggaran',1);$this->assertDatabaseCount('rekod_audit',1);
+    }
+    public function test_grouped_monetary_paste_round_trips_exact_source_through_http_save_and_reopen(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['kadar'=>'4,320.001'])]))->assertOk();
+        $source=$estimate->butiran()->sole();$this->assertSame('4320.001',$source->data_sumber->kadar);
+        $response=$this->get($url)->assertOk();$this->assertSame('4320.001',$response->viewData('records')->first()['kadar']);
+        $this->assertSame('51840.012',app(\App\Services\DefinisiUtilitiSbk::class)->preview($source->data_sumber));
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['kadar'=>'4,32.00'])]))->assertUnprocessable();
+        $this->assertDatabaseCount('butiran_anggaran',1);
     }
 }

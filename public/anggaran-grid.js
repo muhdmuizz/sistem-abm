@@ -5,7 +5,10 @@
  const rows=JSON.parse(form.dataset.records); let next=0,submitting=false;
  rows.forEach(r=>r.key=++next);
  const columns=JSON.parse(form.dataset.columns),inputColumns=columns.filter(c=>c.type!=='output'),fieldNames=inputColumns.map(c=>c.key);
- const selector=form.dataset.referenceSelector;
+ const selector=form.dataset.referenceSelector,childSelector=form.dataset.referenceChildSelector,money=globalThis.AbmMoney;
+ const reference=row=>{const group=references[row[selector]];return childSelector?group?.[plain(row[childSelector])]:group;};
+ const fixed=(row,column)=>column.mixed&&reference(row)?.mode==='FIXED_REFERENCE';
+ const exactHelp=(cell,value)=>{cell.querySelector('.money-exact')?.remove();if(!money.precise(plain(value)))return;const detail=document.createElement('details');detail.className='money-exact';const summary=document.createElement('summary');summary.textContent='Nilai tepat';const text=document.createElement('span');text.textContent=value;detail.append(summary,text);cell.append(detail);};
  const dirty=()=>{if(status)status.textContent='Perubahan belum disimpan.';form.dispatchEvent(new Event('input',{bubbles:true}));};
  const plain=value=>value===null||value===undefined?'':String(value);
  function decimalMultiply(a,b){
@@ -18,7 +21,8 @@
  }
  function option(select,value,label){const o=document.createElement('option');o.value=plain(value);o.textContent=label;select.append(o);}
  function output(row,tr){
-  const ref=references[row[selector]],values={...row};
+  const ref=reference(row),values={...row};
+  for(const column of inputColumns)if(fixed(row,column))values[column.key]=ref.kadar;
   for(const column of columns.filter(c=>c.type==='output')){
    const columnReference=column.referenceKey ? references[column.referenceKey] : ref;
    let value=column.value??columnReference?.[column.reference];
@@ -27,7 +31,7 @@
     value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    values[column.key]=value??'';
-   tr.querySelector('[data-output="'+column.key+'"]').textContent=value??'—';
+   const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
   }
  }
  function render(){
@@ -50,22 +54,32 @@
    inputColumns.forEach((column,index)=>{
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
-    if(!editable||!row.editable){cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:plain(row[name]);return;}
+    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):plain(value);if(column.money)exactHelp(cell,value);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     if(column.type==='decimal'||column.type==='text'){
      input.type='text';if(column.type==='decimal')input.inputMode='decimal';
-     input.maxLength=column.maxLength??128;input.value=plain(row[name]);
+     input.maxLength=column.maxLength??(column.money?180:128);
+     const value=fixed(row,column)?reference(row).kadar:row[name];input.value=column.money?money.format(value)==='—'?'':money.format(value):plain(value);
+     if(column.money){exactHelp(cell,value);input.addEventListener('focus',()=>{if(!input.readOnly)input.value=plain(row[name]);});input.addEventListener('blur',()=>{if(!input.readOnly){input.value=plain(row[name])===''?'':money.format(row[name]);exactHelp(cell,row[name]);}});}
+     if(fixed(row,column)){input.readOnly=true;input.dataset.fixedRate='';}
     }
     else{
      option(input,'','Pilih '+column.label);
-     if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
+     if(column.dependsOn){const choices=Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
+     else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
      input.value=plain(row[name]);
     }
-    input.addEventListener('input',()=>{row[name]=input.value;output(row,tr);});
-    input.addEventListener('change',()=>{row[name]=input.value;output(row,tr);});
-    cell.append(input);
+    input.addEventListener(column.type==='select'?'change':'input',()=>{
+     if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;
+     if(column.type==='select'&&childSelector){
+      if(name===selector)row[childSelector]=null;
+      if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
+      const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
+     }else output(row,tr);
+    });
+    cell.append(input);if(column.money)exactHelp(cell,fixed(row,column)?reference(row).kadar:row[name]);
    });
    columns.forEach((column,index)=>{if(column.type!=='output')return;const el=document.createElement('output');el.dataset.output=column.key;cells[index+2].append(el);});
    output(row,tr);fragment.append(tr);
@@ -99,7 +113,7 @@
   const data=tsv(text),start=fieldNames.indexOf(input.dataset.field),visible=rows.filter(r=>!r.deleted),first=visible.findIndex(r=>r.key===Number(input.closest('tr').dataset.key));
   if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya lajur input: '+inputColumns.map(c=>c.label).join(', ')+'.';event.preventDefault();return;}
   event.preventDefault();
-  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=value;});});
+  data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });
  function clearErrors(){error.hidden=true;error.textContent='';form.querySelectorAll('.grid-cell-error').forEach(el=>el.remove());form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});}
@@ -107,7 +121,7 @@
   event.preventDefault();if(submitting)return;clearErrors();
   const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
   const deleted=rows.filter(r=>r.deleted),payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
-   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,plain(r[key])===''?null:String(r[key])]))})),
+   rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,fixed(r,columns.find(c=>c.key===key))||plain(r[key])===''?null:String(r[key])]))})),
    padam:deleted.map(r=>({butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}))};
   const buttons=form.querySelectorAll('button[type=submit]');
   function restore(){delete form.dataset.submitting;buttons.forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});submitting=false;}
