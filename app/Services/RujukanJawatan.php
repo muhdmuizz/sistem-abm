@@ -7,7 +7,9 @@ use RuntimeException;
 /** Shared personnel names projected from Reference 07; no duplicated OS-specific roster. */
 class RujukanJawatan
 {
-    public function names(): array
+    public function names(): array { return array_keys($this->grades()); }
+
+    public function grades(): array
     {
         $handle=fopen(base_path('docs/references/jawatan-gred-gaji-kgt.csv'),'rb');
         if($handle===false)throw new RuntimeException('Rujukan Jawatan tidak tersedia.');
@@ -16,10 +18,10 @@ class RujukanJawatan
             $names=[];$count=0;
             while(($row=fgetcsv($handle,0,',','"',''))!==false){
                 if(count($row)!==7||$row[1]==='')throw new RuntimeException('Rekod Jawatan tidak sah.');
-                $names[$row[1]]=true;$count++;
+                $names[$row[1]][$row[2]]=true;$count++;
             }
             if($count!==131)throw new RuntimeException('Rujukan Jawatan tidak lengkap.');
-            $values=array_keys($names);sort($values,SORT_STRING);return $values;
+            ksort($names,SORT_STRING);return array_map(fn($grades)=>array_keys($grades),$names);
         } finally { fclose($handle); }
     }
 }
