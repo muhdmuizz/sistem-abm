@@ -399,3 +399,7 @@ Tested application head `5dfb64a5fbeab18df512772ec89de6812802ceea`; [CI 43689211
 ## Batch 033 — grouped Pakej implementation started
 
 Owner approved the expandable-activity preview and directed implementation. [Batch 033](batch-033-grouped-pakej.md) records shared activity fields, nested component inputs and draft subtotals, with existing transactional guards. Baseline `b3785d014671ad512fff9289f3a64916b1cad64a`. Direct entry only; Program/ Aktiviti linking remains pending. No migration/seed, rate or canonical-column change. Batch 032 local sync remains unconfirmed.
+
+## Batch 033 — pre-merge verification passed
+
+Tested `54ddebf271de5a979a089beaabd5cb0688ce2d1e`; [CI 43694224425](https://github.com/muhdmuizz/sistem-abm/actions/runs/43694224425): **485 tests / 4137 assertions**, PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Fifteen representative final-head captures reviewed from 39 Pakej captures (303 total). [Batch 033](batch-033-grouped-pakej.md) records grouped persistence, resolved save-recovery integration and evidence limits. Merge/local sync pending; no migration/seed. Batch 032 local confirmation remains unreceived.
