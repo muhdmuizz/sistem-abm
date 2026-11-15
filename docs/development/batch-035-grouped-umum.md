@@ -1,6 +1,6 @@
 # Batch 035 — Grouped OS29000 Umum activities
 
-**Status:** In progress; owner explicitly approved following Pakej's expandable activity/component pattern on 15 November 2026.
+**Status:** Implementation and CI verified; merge pending; owner explicitly approved following Pakej's expandable activity/component pattern on 15 November 2026.
 **Baseline:** `d7038551bd543a847cf2892fe1de64a45e307ef3` on dev. Batch 034 merged/CI verified; local sync/financial acceptance remains unconfirmed.
 
 ## Approved scope
@@ -13,4 +13,12 @@ Add/copy/remove/undo both components and activities; retain error/pending-save r
 
 ## Verification
 
-Pending grouped persistence/partial/guard/precision regressions, full isolated PostgreSQL/build/formatter/Chromium and desktop/mobile expanded/collapsed/empty/partial/read-only/error review. Record actual SHA/counts before merge. Local update remains pending.
+Verified application head `27791b5f619cb033936178079e5d03a02598054d`: [CI 43700580952](https://github.com/muhdmuizz/sistem-abm/actions/runs/43700580952), job 132770603346, passed on PHP 8.4.27/PostgreSQL 18.7 in isolated `sistem_abm_testing`: **496 tests / 4,688 assertions**, production build, money formatter and full Chromium regression. Initial run exposed a Pakej-only nested whitelist; corrected before this passing head.
+
+Five new HTTP regressions cover a mixed-service activity, exact manual precision/subtotals, shared-only purpose/dates and component-specific personnel, stable parent/component IDs, reopening/no-op auditing, atomic rejection of nested overrides/derived fields/bad grades/UUIDs and invalid dates, partial/component-free drafts, v1-to-v2 updates without name-based merging, live Fasa/role/revision guards, audited activity removal, whole-activity pagination and cross-PTJ denial. Existing Umum/Pakej definition and grouped tests remain in the full suite.
+
+Chromium exercises both earlier one-component and new grouped Umum fixtures, expand/collapse, automatic and manual rates, grade reset/VU7/classification, inactive personnel and fee behaviour, mixed-service subtotals, date/quantity independence, exact-value expansion, distinct component/activity copies, removal/undo, nested validation with retained values, repeated stale/network failures and pending-save locking/recovery. Existing Pakej browser checks run against the same metadata-driven grouped renderer, including copy/undo, nights/day labels, exact calculations, source payloads, error recovery and paste. Browser save routes are intercepted for client checks; real persistence/guards are verified separately by HTTP/PostgreSQL tests. Local Node syntax checks passed; no local PHP/Windows/authenticated Google, physical-device or screen-reader execution is claimed.
+
+Artifact 14156720561 contains 342 PNGs (39 Umum, 39 Pakej). Visually inspected 17 final captures: Umum empty desktop/mobile; populated desktop left/right and mobile right; partial desktop/mobile right; read-only desktop/mobile right; collapsed desktop/mobile; validation desktop/mobile; mobile pending save; desktop exact-value expansion; Pakej populated desktop left/mobile right. Shared fields, expandable components, accounting money, withheld partial totals, error text and mobile horizontal scrolling are readable in those captures. Focused skip-link/fixed-sidebar full-page stitching appears in saving/exact captures; this is not certification of the shell or uninspected screenshots. No blocking grouped-editor defect found in inspected states. Physical devices, screen readers, authenticated owner session, Windows sync and financial acceptance remain unverified.
+
+Local update remains pending; no migration required.
