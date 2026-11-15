@@ -141,7 +141,7 @@ class SbkSpreadsheetTest extends TestCase
     public function test_empty_sbk_grid_has_only_four_shared_utilities_and_manual_rate_with_fixed_outputs(): void
     {
         [$bid,$estimate]=$this->gridContext();
-        $response=$this->get($this->gridUrl($bid,$estimate))->assertOk()->assertSee('KADAR Bulanan')->assertSee('diisi sendiri')->assertDontSee('UNIT dan KADAR diisi daripada rujukan');
+        $response=$this->get($this->gridUrl($bid,$estimate))->assertOk()->assertSee('Kadar Bulanan')->assertSee('diisi sendiri')->assertDontSee('Unit dan Kadar diisi daripada rujukan');
         $this->assertSame(['Air','Elektrik','Telefon/ Faks','Pembetungan'],array_keys($response->viewData('references')));
         $columns=collect($response->viewData('columns'))->keyBy('key');
         $this->assertSame('decimal',$columns['kadar']['type']);$this->assertSame('Pukal',$columns['kategori1']['value']);

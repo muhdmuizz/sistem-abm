@@ -600,6 +600,81 @@ if(moneyPayload.rekod[0].kategori2!==null||moneyPayload.rekod[0].kadar!==null)th
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
+
+{
+// Header casing is checked on the actual shared table and accessible input labels.
+for(const [fixture,labels] of [
+ ['grid-populated',['Unit','Kadar (RM)']],['sbk-populated',['Kadar Bulanan (RM)']],
+ ['taska-populated',['Bil. Anak','Unit','Kadar Bulanan (RM/ Anak)']],
+ ['maintenance-populated',['Kadar (RM)']],['uniform-populated',['Jawatan','Bil. Pengisian','Bil. Pasang','Unit','Kadar (RM)']]
+]){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  const headers=await page.locator('.anggaran-grid th').allTextContents();
+  for(const label of labels)if(!headers.includes(label))throw Error(fixture+' missing title-case header '+label);
+  if(headers.some(label=>/(^|\W)(UNIT|KADAR|BIL\.)(?=\W|$)/.test(label)))throw Error(fixture+' uppercase header remains');
+  const columns=await page.locator('[data-anggaran-grid]').evaluate(el=>JSON.parse(el.dataset.columns));
+  for(const column of columns.filter(c=>c.type!=='output')){
+   const input=page.locator('[data-grid-body] tr').first().locator('[data-field='+column.key+']');
+   if(await input.count()&&!(await input.getAttribute('aria-label')).startsWith(column.label+' '))throw Error('Header/accessibility casing mismatch');
+  }
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(fixture+' header overflow');
+  await page.screenshot({path:'storage/app/ui-qa/headers-'+fixture+'-'+width+'.png',fullPage:true});
+ }
+}
+for(const fixture of ['uniform-empty','uniform-populated','uniform-partial','uniform-unpriced','uniform-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(fixture+' outer overflow');
+  if(fixture==='uniform-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Uniform read-only save exposed');
+  for(const edge of ['left','right']){
+   await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);
+   await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});
+  }
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/uniform-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
+const first=page.locator('[data-grid-body] tr').first();
+if(await first.locator('[data-field=kategori2]').count()||await first.locator('[data-field=gred]').count())throw Error('Uniform introduced category/grade personnel hierarchy');
+const jobs=await first.locator('[data-field=jawatan] option').evaluateAll(options=>options.map(o=>o.value));
+if(jobs.length<=3||!jobs.includes('PEMBANTU KHIDMAT AM')||!jobs.includes('PEMBANTU MAKMAL'))throw Error('Uniform did not reuse full shared Jawatan names');
+await first.locator('[data-field=jawatan]').selectOption('PEMBANTU KHIDMAT AM');
+await first.locator('[data-field=kategori1]').selectOption('Pakaian Seragam');
+if(await first.locator('[data-field=jawatan]').inputValue()!=='PEMBANTU KHIDMAT AM')throw Error('Category reset independent Jawatan');
+if(await first.locator('[data-output=kadar]').textContent()!=='230.00'||await first.locator('[data-output=unit]').textContent()!=='Pasang')throw Error('Uniform prescribed rate/unit');
+await first.locator('[data-field=bil_unit]').fill('5');await first.locator('[data-field=kekerapan]').fill('2');
+if(await first.locator('[data-output=preview]').textContent()!=='2,300.00')throw Error('Uniform formula/accounting display');
+await first.locator('[data-field=kategori1]').selectOption('Kasut');
+if(await first.locator('[data-field=jawatan]').inputValue()!=='PEMBANTU KHIDMAT AM'||await first.locator('[data-output=kadar]').textContent()!=='150.00')throw Error('Shoe Khidmat Am lookup');
+await first.locator('[data-field=jawatan]').selectOption('PEMBANTU MAKMAL');
+if(await first.locator('[data-output=kadar]').textContent()!=='250.00'||await first.locator('[data-output=unit]').textContent()!=='Pasang')throw Error('Shoe Makmal lookup');
+const unpriced=jobs.find(job=>job&&!['PEMBANTU KHIDMAT AM','PEMBANTU MAKMAL'].includes(job));
+await first.locator('[data-field=jawatan]').selectOption(unpriced);
+if(await first.locator('[data-output=kadar]').textContent()!=='—'||await first.locator('[data-output=preview]').textContent()!=='—'||!(await first.locator('.rate-missing').count()))throw Error('Uniform fabricated a price for unpriced shared job');
+await first.locator('[data-field=jawatan]').selectOption('PEMBANTU MAKMAL');
+await page.keyboard.press('Tab');if(!(await first.locator('[data-field=bil_unit]').evaluate(el=>el===document.activeElement)))throw Error('Uniform Jawatan keyboard flow');
+await first.locator('[data-field=kategori1]').focus();
+await first.locator('[data-field=kategori1]').evaluate(el=>{
+ const transfer=new DataTransfer();transfer.setData('text/plain','Pakaian Seragam\tPEMBANTU KHIDMAT AM\t5\t2');
+ el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));
+});
+if(await first.locator('[data-output=preview]').textContent()!=='2,300.00')throw Error('Uniform paste formula');
+await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+if(await page.locator('[data-grid-body] tr').count()!==2||await page.locator('[data-grid-body] tr').last().locator('[data-field=jawatan]').inputValue()!=='PEMBANTU KHIDMAT AM')throw Error('Uniform copied source lost job');
+let uniformPayload;
+await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{uniformPayload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak Bil. Pengisian.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(uniformPayload.rekod.some(row=>'kadar'in row||'unit'in row||'gred'in row||'kategori2'in row))throw Error('Uniform submits derived/unapproved fields');
+if(uniformPayload.rekod[0].jawatan!=='PEMBANTU KHIDMAT AM'||uniformPayload.rekod[0].bil_unit!=='5')throw Error('Uniform save payload source lost');
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));
+ await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);
+ await page.screenshot({path:'storage/app/ui-qa/uniform-validation-'+width+'.png',fullPage:true});
+}
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();
 
 

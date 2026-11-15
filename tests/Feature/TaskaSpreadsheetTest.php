@@ -130,7 +130,7 @@ class TaskaSpreadsheetTest extends TestCase
         [$bid,$estimate]=$this->gridContext();$response=$this->get($this->gridUrl($bid,$estimate))->assertOk();
         $columns=collect($response->viewData('columns'))->keyBy('key');
         $this->assertSame('Nama Ibu/ Bapa',$columns['nama']['label']);$this->assertSame('text',$columns['nama']['type']);
-        $this->assertSame('BIL. ANAK',$columns['bil_unit']['label']);$this->assertSame('Anak',$columns['unit']['value']);
+        $this->assertSame('Bil. Anak',$columns['bil_unit']['label']);$this->assertSame('Anak',$columns['unit']['value']);
         $this->assertSame('output',$columns['kadar']['type']);$this->assertSame('TASKA',$columns['kadar']['referenceKey']);
         $this->assertSame(['TASKA'=>['kadar'=>'180.00']],$response->viewData('references'));
         $this->assertSame(['tempat_bertugas_id','nama','bil_unit','bil_bulan'],$columns->where('type','!=','output')->keys()->all());
