@@ -346,3 +346,7 @@ Tested application head `f7cdd2553615c4620804fa21359348338c7b1887`; [CI 43670963
 ## Batch 030 — searchable PTJ and OS23000 card correction in progress
 
 Owner accepted one searchable PTJ control and reported duplicate OS23000 cards, explicitly reaffirming Batch 029 already covers both paths. Baseline `5c6ce7d30ee38cde15d6e5856506d0b954859c45`. [Batch 030](batch-030-ptj-selector-utility-card.md) records one scoped combobox, one Perhubungan dan Utiliti card, preserved scoped older-record access and blocking further old-identity activation. No migration/seed, permission union, financial record merge, new OS editor or financial-policy change. Underlying legacy data reconciliation and prior local confirmation remain pending.
+
+## Batch 030 — pre-merge verification passed
+
+Tested `24e40b2cc29b5b0a309ca0d9d0ea91f258808578`; [CI 43674654094](https://github.com/muhdmuizz/sistem-abm/actions/runs/43674654094): 468 tests / 3842 assertions on PHP 8.4.27 / PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Fifteen new final-head desktop/mobile selector/card captures reviewed; [Batch 030](batch-030-ptj-selector-utility-card.md) records limits. Merge/local update pending. No migration/seed or financial/permission data merge; earlier local confirmations remain unreceived.

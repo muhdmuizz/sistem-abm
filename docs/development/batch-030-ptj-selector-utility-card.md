@@ -15,4 +15,18 @@ Apply AD-013 spacing/title-case/keyboard/mobile rules and preserve tabular accou
 
 ## Verification
 
-Pending isolated PostgreSQL regression, production build, formatter/Chromium and representative desktop/mobile selector/card states, including expanded previous records and native fallback. Record actual tested head/results before merge; local follow-through pending.
+
+## Verification — passed before merge
+
+Tested application head `24e40b2cc29b5b0a309ca0d9d0ea91f258808578`; [CI 43674654094](https://github.com/muhdmuizz/sistem-abm/actions/runs/43674654094), job 132692044846: **468 tests / 3842 assertions**, PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Production build, exact money formatter and Chromium regression passed. Four new HTTP tests cover native/scoped selector markup, one-card presentation, blocked old activation without writes, preserved old source/record access, revoked/old-only permission boundaries, inactive older-record messaging and distinct OS27000 variants. Initial browser selector assertions were corrected to exclude Kitaran options/live announcements; a subsequent Blade directive error in inactive-record presentation was corrected before this verified head.
+
+Chromium checks case-insensitive filtering, explicit keyboard/mouse selection, submitted ID, invalid free text, no-results, Escape, no-JavaScript fallback, single OS23000 card and expanded scoped older-record link at 1440/390. Actual HTTP tests exercise server scope/mutation guards; browser fixtures are static, and selector FormData checks do not claim a successful live financial browser save.
+
+Artifact **14145771525** contains 250 PNGs (15 new). Final-head visual review covered all 15 new captures: selector open/filtered/no-results/selected at desktop/mobile, desktop native fallback, and single-card/existing-record collapsed/expanded states at desktop/mobile. Existing grid regression passed; not every old capture was re-reviewed. Inactive-old/old-only-role visual states, physical touch devices and manual screen-reader behaviour were not separately inspected. One scrolled full-page mobile expanded capture includes the fixed offscreen skip-link in the page image; its negative viewport positioning is inferred from existing CSS, not a new selector/card element. No blanket UI-complete/accessibility certification is claimed.
+
+No application edits after tested head. No migration/seed, data/permission merge or new financial formula. Batches 028–030 local execution remains unconfirmed.
+
+## Local follow-through — pending
+
+Keep the server running; clean dev pull --ff-only, php artisan optimize:clear and Ctrl+F5. No migration/seed/build/restart. Confirm PTJ has one searchable selector: type Nerus, select PPD Kuala Nerus (or use arrows/Enter), then Papar Bidaan. Check no-result wording, explicit selection and Set Semula. Within a Bidaan confirm one **OS23000 Perhubungan dan Utiliti** card whose existing editor covers Pukal/Bukan Pukal. If old Utiliti Pukal records exist, expand **Rekod sedia ada**; active ones retain scoped read access and inactive ones display preserved-record wording. Other OS27000 cards remain separate. No financial data migration is performed.
+
