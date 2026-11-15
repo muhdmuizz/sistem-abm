@@ -816,6 +816,39 @@ for(const width of [1440,390]){await page.setViewportSize({width,height:900});aw
 await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
+for(const fixture of ['pakej-empty','pakej-populated','pakej-partial','pakej-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Pakej outer overflow');
+  if(await page.locator('[data-field=kategori2],[data-field=kategori3],[data-field=bil_bulan]').count())throw Error('Pakej inactive fields exposed');
+  if(fixture==='pakej-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Pakej readonly save');
+  for(const edge of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,edge)=>el.scrollLeft=edge==='left'?0:el.scrollWidth,edge);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+edge+'.png',fullPage:true});}
+ }
+}
+{
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pakej-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();const first=page.locator('[data-grid-body] tr').first();
+await first.locator('[data-field=tujuan]').fill('Bengkel Pengurusan');await first.locator('[data-field=bil_unit]').fill('2');await first.locator('[data-field=kadar]').fill('180');await first.locator('[data-field=bil_hari]').fill('2');
+if(await first.locator('[data-output=preview]').textContent()!=='—')throw Error('Pakej preview fabricated without a component');
+await first.locator('[data-field=kategori1]').selectOption('Penginapan');
+if(await first.locator('[data-output=unit]').textContent()!=='Bilik'||await first.locator('[data-output=preview]').textContent()!=='720.00')throw Error('Pakej lodging formula/unit');
+if(!(await first.locator('[data-field=bil_hari]').getAttribute('aria-label')).startsWith('Bil. Malam ')||!await first.getByText('RM sebilik semalam',{exact:true}).count())throw Error('Pakej night label/rate basis');
+await first.locator('[data-field=tarikh_mula]').fill('2028-02-28');await first.locator('[data-field=tarikh_tamat]').fill('2028-03-01');
+if(await first.locator('[data-output=tempoh]').textContent()!=='3'||await first.locator('[data-field=bil_hari]').inputValue()!=='2')throw Error('Pakej calendar duration replaced nights');
+await first.locator('[data-field=kategori1]').selectOption('Makan Minum');await first.locator('[data-field=bil_unit]').fill('20');await first.locator('[data-field=kadar]').fill('35');await first.locator('[data-field=bil_hari]').fill('3');
+if(await first.locator('[data-output=unit]').textContent()!=='Orang'||await first.locator('[data-output=preview]').textContent()!=='2,100.00'||!await first.getByText('RM seorang sehari',{exact:true}).count())throw Error('Pakej daily meal basis/formula');
+if(!(await first.locator('[data-field=bil_hari]').getAttribute('aria-label')).startsWith('Bilangan Hari '))throw Error('Pakej changed component kept night label');
+await first.locator('[data-field=tarikh_tamat]').fill('2028-12-31');if(await first.locator('[data-field=bil_hari]').inputValue()!=='3'||await first.locator('[data-output=preview]').textContent()!=='2,100.00')throw Error('Pakej dates changed chargeable days or amount');
+await first.locator('[data-field=kadar]').fill('1,234.567');await first.locator('[data-field=bil_unit]').focus();if(await first.locator('[data-output=preview]').getAttribute('data-exact')!=='74074.02')throw Error('Pakej exact grouped manual rate');
+await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Pakej duplicate');
+let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_hari':['Semak hari bercaj.']}})});});
+await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForSelector('[aria-invalid=true]');
+if(payload.rekod.some(row=>'unit'in row||'tempoh'in row||'bil_bulan'in row||'program_id'in row))throw Error('Pakej derived/unapproved payload');
+if(payload.rekod[0].kadar!=='1234.567'||payload.rekod[0].bil_hari!=='3')throw Error('Pakej source lost');
+for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);await page.screenshot({path:'storage/app/ui-qa/pakej-validation-'+width+'.png',fullPage:true});}
+await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();
 
 

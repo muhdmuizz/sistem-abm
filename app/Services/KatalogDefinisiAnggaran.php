@@ -25,6 +25,18 @@ class KatalogDefinisiAnggaran
             return $mapped?$mystep:null;
         }
 
+        $pakej=new DefinisiPakej($bid->kitaran->tahun);
+        if($pakej->supports($os)) {
+            $code=match($bid->aktivitiKewangan->nama){
+                'Pengurusan Pentadbiran Negeri'=>'010810','Pendidikan Rendah'=>'030225','Pendidikan Awal'=>'030104',
+                'Pendidikan Menengah'=>'030307','Pengurusan Asrama'=>'030317',default=>null,
+            };
+            if($code===null)return null;
+            $mapped=PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($query)=>$query->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists();
+            return $mapped?$pakej:null;
+        }
+
         $food = app(DefinisiAnggaran::class);
         if ($food->supports($os)) { return $food; }
 

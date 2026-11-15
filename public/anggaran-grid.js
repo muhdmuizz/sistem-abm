@@ -24,6 +24,15 @@
  function output(row,tr){
   const ref=reference(row),values={...row};
   for(const column of inputColumns)if(fixed(row,column))values[column.key]=ref.kadar;
+  for(const column of inputColumns.filter(c=>c.hintReference||c.labelReference)){
+   const cell=tr.children[columns.indexOf(column)+2],field=cell.querySelector('[data-field]');
+   if(field&&column.labelReference)field.setAttribute('aria-label',(ref?.[column.labelReference]||column.label)+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
+   let hint=cell.querySelector('[data-reference-hint]');const text=plain(ref?.[column.hintReference]);
+   const hintId='grid-hint-'+row.key+'-'+column.key;
+   if(!text){hint?.remove();if(field){const ids=(field.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&id!==hintId);if(ids.length)field.setAttribute('aria-describedby',ids.join(' '));else field.removeAttribute('aria-describedby');}continue;}
+   if(!hint){hint=document.createElement('p');hint.className='small';hint.dataset.referenceHint='';hint.id=hintId;cell.append(hint);}hint.textContent=text;
+   if(field){const ids=(field.getAttribute('aria-describedby')||'').split(' ').filter(Boolean);if(!ids.includes(hintId))ids.push(hintId);field.setAttribute('aria-describedby',ids.join(' '));}
+  }
   for(const column of columns.filter(c=>c.type==='output')){
    const columnReference=column.referenceKey ? references[column.referenceKey] : ref;
    let value=column.value??columnReference?.[column.reference];
@@ -33,7 +42,7 @@
    }
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
-    value=inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
+    value=(!column.formula.requiresReference||ref)&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
