@@ -1,6 +1,6 @@
 # Batch 035 — Grouped OS29000 Umum activities
 
-**Status:** Implementation and CI verified; merge pending; owner explicitly approved following Pakej's expandable activity/component pattern on 15 November 2026.
+**Status:** Merged via PR #81 at `c5bb00945e5ea10a0b16ccba13b5e67f46bc2b7e`; local acceptance pending; owner explicitly approved following Pakej's expandable activity/component pattern on 15 November 2026.
 **Baseline:** `d7038551bd543a847cf2892fe1de64a45e307ef3` on dev. Batch 034 merged/CI verified; local sync/financial acceptance remains unconfirmed.
 
 ## Approved scope
@@ -22,3 +22,9 @@ Chromium exercises both earlier one-component and new grouped Umum fixtures, exp
 Artifact 14156720561 contains 342 PNGs (39 Umum, 39 Pakej). Visually inspected 17 final captures: Umum empty desktop/mobile; populated desktop left/right and mobile right; partial desktop/mobile right; read-only desktop/mobile right; collapsed desktop/mobile; validation desktop/mobile; mobile pending save; desktop exact-value expansion; Pakej populated desktop left/mobile right. Shared fields, expandable components, accounting money, withheld partial totals, error text and mobile horizontal scrolling are readable in those captures. Focused skip-link/fixed-sidebar full-page stitching appears in saving/exact captures; this is not certification of the shell or uninspected screenshots. No blocking grouped-editor defect found in inspected states. Physical devices, screen readers, authenticated owner session, Windows sync and financial acceptance remain unverified.
 
 Local update remains pending; no migration required.
+
+## Batch 035 checkpoint — 15 November 2026
+
+[PR #81](https://github.com/muhdmuizz/sistem-abm/pull/81) merged at `c5bb00945e5ea10a0b16ccba13b5e67f46bc2b7e`. Owner approved Umum following Pakej's expandable activity/component pattern: workplace, purpose and dates are shared once; multiple service components retain their approved categories, conditional personnel, units, rates and exact calculations. Activity subtotals are withheld when any component preview is incomplete. Add/copy/remove/undo operate on components and whole activities. Existing v1 records reopen separately as one-component activities; explicit edits write v2 through existing atomic/audited guards. No name-based merging, migration, reset or reference/rate/catalogue/mapping/permission changes.
+
+Application head `27791b5f619cb033936178079e5d03a02598054d` passed [CI 43700580952](https://github.com/muhdmuizz/sistem-abm/actions/runs/43700580952): **496 tests / 4,688 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB, production build, formatter and Chromium including Pakej regressions. Seventeen final desktop/mobile captures reviewed from 342 PNGs (39 Umum/39 Pakej); full coverage/limits in Batch 035. Local sync and financial acceptance remain pending, including prior unconfirmed batches. Steps 02/03 remain in progress; AD-008 remains Draft. Programme inheritance, official outputs/totals/completeness and submission remain pending; Pakej programme-only entry remains a proposal.
