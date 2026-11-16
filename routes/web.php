@@ -17,6 +17,10 @@ Route::get('/auth/google', [GoogleSignInController::class, 'redirect'])->middlew
 Route::get('/auth/google/callback', [GoogleSignInController::class, 'callback'])->middleware('throttle:20,1')->name('google.callback');
 Route::post('/logout', [GoogleSignInController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
+    Route::get('/bida-peruntukan/{bid}/fotostat/pautan',[\App\Http\Controllers\FotostatController::class,'links'])->whereNumber('bid')->name('fotostat.links');
+    Route::post('/bida-peruntukan/{bid}/fotostat/pautan',[\App\Http\Controllers\FotostatController::class,'attach'])->whereNumber('bid')->middleware('throttle:30,1')->name('fotostat.attach');
+    Route::get('/bida-peruntukan/{bid}/fotostat/nyahaktifkan',[\App\Http\Controllers\FotostatController::class,'deactivateForm'])->whereNumber('bid')->name('fotostat.deactivate-form');
+    Route::post('/bida-peruntukan/{bid}/fotostat/nyahaktifkan',[\App\Http\Controllers\FotostatController::class,'deactivate'])->whereNumber('bid')->middleware('throttle:30,1')->name('fotostat.deactivate');
     Route::get('/bida-peruntukan/{bid}/program', [\App\Http\Controllers\ProgramAktivitiController::class, 'index'])->whereNumber('bid')->name('programs.index');
     Route::get('/bida-peruntukan/{bid}/program/tambah', [\App\Http\Controllers\ProgramAktivitiController::class, 'form'])->whereNumber('bid')->name('programs.create');
     Route::post('/bida-peruntukan/{bid}/program', [\App\Http\Controllers\ProgramAktivitiController::class, 'save'])->whereNumber('bid')->middleware('throttle:30,1')->name('programs.store');

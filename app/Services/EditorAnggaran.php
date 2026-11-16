@@ -52,7 +52,8 @@ class EditorAnggaran
                 'editor'=>'required|array:semakan_bidaan,semakan_anggaran,reason,rekod,padam',
                 'editor.semakan_bidaan'=>'required|integer|min:0','editor.semakan_anggaran'=>'required|integer|min:0',
                 'editor.reason'=>'nullable|string|max:1000','editor.rekod'=>['present','array',$list],
-                'editor.padam'=>['present','array',$list],'editor.padam.*'=>'required|array:butiran_id,semakan_butiran',
+                'editor.padam'=>['present','array',$list],'editor.padam.*'=>'required|array:butiran_id,semakan_butiran,sahkan_meter,semakan_meter',
+                'editor.padam.*.sahkan_meter'=>'sometimes|boolean','editor.padam.*.semakan_meter'=>'sometimes|integer|min:0',
                 'editor.padam.*.butiran_id'=>'required|integer|min:1|distinct','editor.padam.*.semakan_butiran'=>'required|integer|min:0',
             ])->validate()['editor'];
             $this->guard->current($bid,(int)$data['semakan_bidaan'],[StatusBidaan::DalamPenyediaan,StatusBidaan::Dikembalikan]);
@@ -86,7 +87,7 @@ class EditorAnggaran
                 'semakan_anggaran'=>$estimate->semakan,'reason'=>$data['reason'] ?? null,'rekod'=>$save]); }
             foreach($data['padam'] as $row) {
                 $this->drafts->padam($estimateId,(int)$row['butiran_id'],['semakan_bidaan'=>$bid->fresh()->semakan,
-                    'semakan_anggaran'=>$estimate->fresh()->semakan,'semakan_butiran'=>$row['semakan_butiran'],'reason'=>$data['reason'] ?? null]);
+                    'semakan_anggaran'=>$estimate->fresh()->semakan,'semakan_butiran'=>$row['semakan_butiran'],'reason'=>$data['reason'] ?? null,...array_intersect_key($row,array_flip(['sahkan_meter','semakan_meter']))]);
             }
         });
     }

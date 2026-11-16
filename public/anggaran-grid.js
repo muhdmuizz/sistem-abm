@@ -69,11 +69,11 @@
    for(let i=0;i<columns.length+2;i++)tr.append(document.createElement('td'));
    const cells=tr.children;
    columns.forEach((column,index)=>{if(column.numeric||column.type==='decimal')cells[index+2].classList.add('grid-numeric');});
-   if(row.editable&&editable){
+   if(row.editable&&editable&&row.selectable!==false){
     const check=document.createElement('input');check.type='checkbox';check.dataset.rowSelect='';check.checked=!!row.selected;check.setAttribute('aria-label','Pilih '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     check.addEventListener('input',event=>event.stopPropagation());check.addEventListener('change',event=>{row.selected=check.checked;event.stopPropagation();});cells[0].append(check);
    }else cells[0].textContent='—';
-   cells[1].textContent=row.butiran_id?'#'+row.butiran_id:'Baharu';
+   cells[1].textContent=row.butiran_id?'#'+row.butiran_id:'Baharu';if(row.origin_url){const a=document.createElement('a');a.href=row.origin_url;a.textContent=row.origin_label;cells[1].append(document.createElement('br'),a);}
    if(!row.compatible&&row.butiran_id){
     tr.className='grid-quarantine';cells[2].textContent=row.tempat_bertugas;
     cells[3].colSpan=columns.length-1;cells[3].textContent='Rekod asal dikekalkan. Penyesuaian diperlukan sebelum dipinda.';
@@ -83,7 +83,7 @@
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
     if(!active(row,column)){cell.textContent='Tidak berkenaan';return;}
-    if(!editable||!row.editable){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
+    if(!editable||!row.editable||row.readonly_fields?.includes(name)){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     if(column.type==='decimal'||column.type==='text'||column.type==='date'){
@@ -154,11 +154,11 @@
   const retained=rows.filter(r=>!r.deleted&&r.editable&&(r.butiran_id||fieldNames.some(key=>key!=='tempat_bertugas_id'&&plain(r[key])!=='')));
   const deleted=rows.filter(r=>r.deleted),payload={semakan_bidaan:form.dataset.bidRevision,semakan_anggaran:form.dataset.estimateRevision,reason:form.querySelector('[name=reason]')?.value||null,
    rekod:retained.map(r=>({...r.butiran_id?{butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}:{},...Object.fromEntries(fieldNames.map(key=>[key,(!active(r,columns.find(c=>c.key===key))||fixed(r,columns.find(c=>c.key===key)))||plain(r[key])===''?null:String(r[key])]))})),
-   padam:deleted.map(r=>({butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran}))};
+   padam:deleted.map(r=>({butiran_id:r.butiran_id,semakan_butiran:r.semakan_butiran,...r.linked_meter?{sahkan_meter:true,semakan_meter:r.linked_meter.revision}:{}}))};
   const buttons=form.querySelectorAll('button[type=submit]');
   function restore(){delete form.dataset.submitting;buttons.forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});submitting=false;}
   if(!retained.length&&!deleted.length){if(status)status.textContent='Tiada perubahan untuk disimpan.';restore();return;}
-  if(deleted.length&&!window.confirm('Padam '+deleted.length+' Butiran tersimpan dan simpan perubahan lain?')){dirty();restore();return;}
+  if(deleted.length&&!window.confirm('Padam '+deleted.length+' Butiran tersimpan dan simpan perubahan lain?'+deleted.filter(r=>r.linked_meter).map(r=>'\nPadam juga '+r.linked_meter.summary).join(''))){dirty();restore();return;}
   submitting=true;if(status)status.textContent='Menyimpan draf…';
   try{
    const response=await fetch(form.action,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':form.querySelector('[name=_token]').value},body:JSON.stringify(payload)});

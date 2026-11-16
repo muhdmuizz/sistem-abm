@@ -46,6 +46,13 @@ class KatalogDefinisiAnggaran
             return $mapped?$umum:null;
         }
 
+        $photocopier=new DefinisiSewaanFotostat($bid->kitaran->tahun);
+        if($photocopier->supports($os)){
+            $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010807','Pendidikan Rendah'=>'030221','Pendidikan Menengah'=>'030303','Pengurusan Asrama'=>'030315',default=>null};
+            if($code===null)return null;
+            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$photocopier:null;
+        }
+
         $meter=new DefinisiBacaanMeter($bid->kitaran->tahun);
         if($meter->supports($os)) {
             $code=match($bid->aktivitiKewangan->nama){

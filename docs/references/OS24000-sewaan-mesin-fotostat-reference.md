@@ -57,3 +57,13 @@ Columns 01–03 and 28 retain approved global organisational and sumber peruntuk
 **Contract durations:** Each period is calculated independently from its respective start/end dates, using inclusive end dates, expressed in calendar **tahun, bulan dan hari**. Do not approximate every year as 365 days or month as 30 days. Month-end and leap-year boundary rules must be verified through tests before implementation without overriding the approved concept. Neither duration automatically determines BILANGAN BULAN.
 
 **Boundaries:** No change to the existing two-row category reference, Sewaan (Umum) references, catalogue, application, database, or Excel workbook is made by this documentation commit. The exact 30-column schema, compatibility measures and change-control gates are recorded in AD-008.
+
+## Owner-approved Fotostat dependency and entry pathway — 16 November 2026
+
+OS24000 can also use Program/ Aktiviti as an entry pathway; direct entry is not restricted by that note. Programme linkage/inheritance implementation remains separate.
+
+OS24000 Sewaan Mesin Fotostat dan Riso activates its paired OS29000 Bacaan Meter atomically in the same Bidaan, respecting both permissions/catalogue mappings/Fasa/role guards. Direct meter activation is blocked. Paired deactivation retains drafts and links; explicit reactivation retains source-only drafts. Each saved rental item creates/updates one linked meter item, sharing workplace/category/location/current and overall contract dates. Meter copies, per-copy rate and months remain independent/initially blank. Rental is authoritative for shared details; no automatic financial copying or duplicate creation on repeated saves.
+
+Existing unlinked meter drafts remain separate until explicit user selection/review. Linking preserves chosen meter financial inputs; only a financially blank generated meter may be explicitly replaced and deleted. Deletion of a rental requires confirmation displaying linked meter values and current revisions, then atomically audits/removes both sources/link. Direct copy/removal of linked meters uses rental instead; rental copy creates an independent pair. No name-based matching. Submitted/finalised and generated-output safeguards remain. These approved dependency rules supersede earlier standalone activation/source-ownership boundaries only for this pair; the financial identities/formulas and reference CSVs remain separate.
+
+Implementation/verification tracked in [Batch 038](../development/batch-038-fotostat-meter-linkage.md); not evidence of completion.

@@ -2,6 +2,7 @@
 @section('title', $os ? 'Aktifkan OS' : 'Aktifkan Bidaan')
 @section('cycle-context', 'Kitaran ABM '.$cycle->tahun)
 @section('content')
+@if($os && app(\App\Services\PautanFotostat::class)->rental($os))<p class="notice">OS24000 Sewaan Mesin Fotostat dan Riso dan OS29000 Bacaan Meter akan diaktifkan bersama. Draf sedia ada dikekalkan.</p>@endif
 <div class="page-heading"><div><p class="eyebrow">Bida Peruntukan</p><h1>{{ $os ? 'Aktifkan OS' : 'Aktifkan Bidaan' }}</h1></div><a class="button" href="{{ $backUrl }}">Kembali</a></div>
 @include('abm.bids.feedback')
 <section class="activation-panel">

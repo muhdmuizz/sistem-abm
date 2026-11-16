@@ -9,6 +9,11 @@
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
 <p class="notice">Simpan Draf untuk menyimpan butiran. Jumlah setiap baris ialah pratonton berdasarkan rujukan semasa; jumlah rasmi dan kelengkapan Anggaran belum diaktifkan.</p>
 @if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tertakluk pada peranan, kebenaran OS, status Bidaan dan Fasa semasa.</p>@endif
+@if($photocopier ?? false)
+<p class="notice">Butiran sewaan ini dipautkan kepada Bacaan Meter. Butiran bersama dikemas kini melalui sewaan; nilai kewangan meter diisi berasingan.</p>
+@if($editable)<div class="grid-toolbar"><a class="button" href="{{ route('fotostat.links',$bid->id) }}">Pautan Bacaan Meter</a><a class="button" href="{{ route('fotostat.deactivate-form',$bid->id) }}">Nyahaktifkan Pasangan</a></div>@endif
+@endif
+@if(($dependentMeter ?? false) && !($pairActive ?? true))<p class="notice">Aktifkan pasangan melalui OS24000 Sewaan Mesin Fotostat dan Riso sebelum menyediakan Bacaan Meter.</p>@endif
 <form data-anggaran-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id]) }}"
  data-records="{{ json_encode($records) }}" data-places="{{ json_encode($places) }}" data-references="{{ json_encode($references) }}"
  data-columns="{{ json_encode($columns) }}" data-reference-selector="{{ $referenceSelector }}" data-reference-child-selector="{{ $referenceChildSelector }}"

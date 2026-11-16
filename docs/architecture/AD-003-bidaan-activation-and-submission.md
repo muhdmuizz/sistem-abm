@@ -90,3 +90,13 @@ Menetapkan pengalaman pengguna dari Bidaan tersedia sehingga penghantaran rasmi,
 - Peraturan pengiraan, struktur input, import Excel dan prestasi bagi setiap wizard Anggaran diperhalus semasa pembangunan, bukan keputusan tambahan AD-003.
 
 **Nota:** Contoh status, jumlah OS dan jumlah kewangan dalam lakaran UI terdahulu ialah ilustrasi sahaja, bukan data atau peraturan sistem yang telah disahkan.
+
+## Owner-approved Fotostat dependency and entry pathway — 16 November 2026
+
+OS24000 can also use Program/ Aktiviti as an entry pathway; direct entry is not restricted by that note. Programme linkage/inheritance implementation remains separate.
+
+OS24000 Sewaan Mesin Fotostat dan Riso activates its paired OS29000 Bacaan Meter atomically in the same Bidaan, respecting both permissions/catalogue mappings/Fasa/role guards. Direct meter activation is blocked. Paired deactivation retains drafts and links; explicit reactivation retains source-only drafts. Each saved rental item creates/updates one linked meter item, sharing workplace/category/location/current and overall contract dates. Meter copies, per-copy rate and months remain independent/initially blank. Rental is authoritative for shared details; no automatic financial copying or duplicate creation on repeated saves.
+
+Existing unlinked meter drafts remain separate until explicit user selection/review. Linking preserves chosen meter financial inputs; only a financially blank generated meter may be explicitly replaced and deleted. Deletion of a rental requires confirmation displaying linked meter values and current revisions, then atomically audits/removes both sources/link. Direct copy/removal of linked meters uses rental instead; rental copy creates an independent pair. No name-based matching. Submitted/finalised and generated-output safeguards remain. These approved dependency rules supersede earlier standalone activation/source-ownership boundaries only for this pair; the financial identities/formulas and reference CSVs remain separate.
+
+Implementation/verification tracked in [Batch 038](../development/batch-038-fotostat-meter-linkage.md); not evidence of completion.

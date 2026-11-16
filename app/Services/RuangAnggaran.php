@@ -50,7 +50,7 @@ class RuangAnggaran
             ->with('tempatBertugas:id,nama');
     }
     public const ACTIONS = [
-        'estimate.activated' => 'OS diaktifkan',
+        'estimate.activated' => 'OS diaktifkan','estimate.deactivated'=>'OS dinyahaktifkan','source.meter_linked'=>'Bacaan Meter dipautkan','source.meter_unlinked'=>'Pautan Bacaan Meter diganti/ dipadam',
         'source.draft_created' => 'Draf Butiran ditambah',
         'source.draft_updated' => 'Draf Butiran dipinda',
         'source.draft_duplicated' => 'Draf Butiran disalin',
@@ -76,12 +76,12 @@ class RuangAnggaran
             ->where(function ($events) use ($bid, $estimate, $sourceIds, $workplaces) {
                 $events->where(function ($activation) use ($estimate) {
                     $activation->where('jenis_entiti', Anggaran::class)->where('id_entiti', (string) $estimate->id)
-                        ->where('tindakan', 'estimate.activated');
+                        ->whereIn('tindakan', ['estimate.activated','estimate.deactivated']);
                 })->orWhere(function ($sources) use ($bid, $estimate, $sourceIds, $workplaces) {
                     $sources->where('jenis_entiti', ButiranAnggaran::class)
                         ->whereIn('id_entiti', $sourceIds)
                         ->whereRaw("rekod_audit.selepas @> jsonb_build_object('anggaran_id', CAST(? AS bigint), 'bidaan_id', CAST(? AS bigint))", [$estimate->id, $bid->id])
-                        ->whereIn('tindakan', ['source.draft_created', 'source.draft_updated', 'source.draft_duplicated'])
+                        ->whereIn('tindakan', ['source.draft_created', 'source.draft_updated', 'source.draft_duplicated','source.meter_linked','source.meter_unlinked'])
                         ->whereIn('tempat_bertugas_id', (clone $workplaces)->select('id'))
                         ->whereExists(function ($after) use ($workplaces) {
                             $after->selectRaw('1')->fromSub((clone $workplaces)->select('id'), 'visible_after')

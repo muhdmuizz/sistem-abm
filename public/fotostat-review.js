@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-review-money]').forEach(el=>{const value=el.dataset.reviewMoney;el.textContent=AbmMoney.format(value);if(AbmMoney.precise(value)){const d=document.createElement('details'),s=document.createElement('summary'),v=document.createElement('span');d.className='money-exact';s.textContent='Nilai tepat';v.textContent=value;d.append(s,v);el.append(d);}});

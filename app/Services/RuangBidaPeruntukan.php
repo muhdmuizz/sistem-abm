@@ -113,13 +113,19 @@ class RuangBidaPeruntukan
         $central = $os ? $this->osAllowed($ptj, $activity, $os->id) : $this->permissions->bolehAksesAktiviti($ptj, $activity);
         $open = $this->open($cycle, $ptj, $activity);
         $explanation = null;
-        if ($bid && $bid->status !== StatusBidaan::DalamPenyediaan) {
+        $linked=$os && app(PautanFotostat::class)->rental($os);
+        $pairError=null;
+        if($linked&&$bid){try{[, $meter]=app(PautanFotostat::class)->pair($bid);$central=$central&&$this->osAllowed($ptj,$activity,$meter->id);}catch(\Illuminate\Database\Eloquent\ModelNotFoundException){$pairError='Pemetaan pasangan Bacaan Meter belum tersedia.';}}
+        if ($os && app(PautanFotostat::class)->meter($os)) {
+            $explanation='Diaktifkan bersama melalui OS24000 Sewaan Mesin Fotostat dan Riso.';
+        } elseif($pairError){$explanation=$pairError;
+        } elseif ($bid && $bid->status !== StatusBidaan::DalamPenyediaan && !($linked&&$bid->status===StatusBidaan::Dikembalikan)) {
             $explanation = 'Pengaktifan awal tidak tersedia untuk status Bidaan semasa.';
         } elseif ($os && ! $bid?->diaktifkan) {
             $explanation = 'Aktifkan Bidaan terlebih dahulu.';
         } elseif (($os && $estimate?->diaktifkan) || (! $os && $bid?->diaktifkan)) {
             $explanation = 'Rekod telah diaktifkan.';
-        } elseif (($os && $estimate && $estimate->butiran()->exists()) || (! $os && $bid && $bid->anggaran()->exists())) {
+        } elseif (($os && !$linked && $estimate && $estimate->butiran()->exists()) || (! $os && $bid && $bid->anggaran()->exists())) {
             $explanation = 'Rekod sedia ada memerlukan semakan sebelum pengaktifan.';
         } elseif (! $assigned) {
             $explanation = $os ? 'Pengaktifan oleh Penyedia Anggaran.' : 'Pengaktifan oleh Penyedia Bidaan.';
