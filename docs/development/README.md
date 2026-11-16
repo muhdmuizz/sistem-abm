@@ -481,3 +481,7 @@ Tested `ef1b7c2c21b21fb7686f629ca81e79d6a94fb117`; [CI 43793891272](https://gith
 ## Batch 037 — OS24000 Sewaan Umum started
 
 Owner explicitly requested Sewaan Umum next, ahead of the separate photocopier-rental editor. [Batch 037](batch-037-sewaan-umum-spreadsheet.md) records baseline `7a9cc09691fdf2a84e0e31a53fc48dcde466794b`, five existing mappings, 64 paths, conditional contract dates and exact quantity × manual rate × manual months. No migration/reference/policy change. Batch 036 local acceptance remains unconfirmed; UI refinement timing unchanged.
+
+### Verification interruption
+
+Initial application head `5d8827fc3402d46c523bf3b8d5670747c024db23` reached the suite, but all seven new rental tests used an incorrect OS29000 fixture identity. The application correctly rejected that identity. Corrected the test fixture to OS24000 at `f87fac4aa4bc331544f7d9ab9b3adf9e070b98e7`; no application/financial rule changed. CI 43799356712 attempts 1 and 2 then failed during checkout (`Repository not found`, exit 128), before PHP/build/browser execution. This is an infrastructure/access failure, not a test pass. Recording the interruption and starting a fresh workflow event; merge and local update remain pending until full verification succeeds.
