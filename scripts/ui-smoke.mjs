@@ -934,7 +934,7 @@ await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-
  await field('tarikh_mula_kontrak').fill('2026-02-01');await field('tarikh_tamat_kontrak').fill('2030-01-31');
  await field('kategori1').selectOption('Hitam dan Putih');if(await field('kadar').inputValue()!=='0.03')throw Error('Meter user rate lost across type change');
  await field('kadar').focus();await field('kadar').fill('0.012345');await field('bil_unit').fill('12345.6');await field('bil_bulan').fill('7');
- if(await row.locator('[data-output=preview]').getAttribute('data-exact')!=='1066.808484'||await row.locator('[data-output=preview]').textContent()!=='1,066.81')throw Error('Meter exact precision');
+ if(await row.locator('[data-output=preview]').getAttribute('data-exact')!=='1066.845024'||await row.locator('[data-output=preview]').textContent()!=='1,066.85')throw Error('Meter exact precision');
  await field('kadar').focus();if(await field('kadar').inputValue()!=='0.012345')throw Error('Meter exact edit value lost');await field('lokasi').fill('Bilik Cetak');
  await row.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
  if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Meter copy failed');

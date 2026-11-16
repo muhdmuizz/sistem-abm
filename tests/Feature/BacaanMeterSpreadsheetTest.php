@@ -142,7 +142,7 @@ class BacaanMeterSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$definition=new \App\Services\DefinisiBacaanMeter(2028);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,['kategori1'=>'Hitam dan Putih','kadar'=>'0.012345','bil_unit'=>'12345.6','bil_bulan'=>'7'])]))->assertOk();
         $sources=$estimate->butiran()->orderBy('id')->get();$first=$sources[0];
-        $this->assertSame('4320',$definition->preview($first->data_sumber));$this->assertSame('1066.808484',$definition->preview($sources[1]->data_sumber));
+        $this->assertSame('4320',$definition->preview($first->data_sumber));$this->assertSame('1066.845024',$definition->preview($sources[1]->data_sumber));
         $projection=$definition->project($first->data_sumber);$this->assertSame('1 tahun, 0 bulan, 0 hari',$projection['tempoh']);$this->assertSame('4 tahun, 0 bulan, 0 hari',$projection['tempoh_kontrak']);
         $this->gridCapture('meter-populated',$this->get($url)->assertOk());
         $this->assertSame('0.012345',$sources[1]->data_sumber->kadar);
@@ -215,7 +215,7 @@ class BacaanMeterSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$data=$this->payload($bid,$estimate,[$this->row($place)]);
         $this->postJson($url,$data)->assertOk();$this->postJson($url,$data)->assertConflict();$source=$estimate->butiran()->sole();
         $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();$this->phase->forceFill(['dibuka'=>true])->save();
-        $other=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'PPD Kuala Nerus','jenis'=>'ppd']);
+        $other=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($other)]))->assertForbidden();
         $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);$this->gridCapture('meter-readonly',$this->get($url)->assertOk());
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
