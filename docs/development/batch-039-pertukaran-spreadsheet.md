@@ -1,6 +1,6 @@
 # Batch 039 — OS21000 Tuntutan Perbelanjaan Pertukaran
 
-**Status:** In progress; owner approved 16 November 2026.
+**Status:** Implementation and cloud verification complete; merge/local acceptance pending. Owner approved 16 November 2026.
 **Baseline:** `3f8638cae2ce0d0430f44918623991aa588ce318`. Batch 038 merged at `9f294dc9a33c6b6dbb544e0505fa7b0bfe83a42d`; local sync/additive migration/financial acceptance remains unconfirmed. “Proceed” authorises this batch, not a claim of prior local acceptance.
 
 ## Approved scope and authority
@@ -11,6 +11,24 @@ Use the shared flat spreadsheet and existing audited atomic draft service. Sourc
 
 Title-case headers, slash typography and tabular/right-aligned grouped/two-decimal monetary presentation are mandatory; exact inputs remain unrounded. Validate malicious/inactive fields, malformed dependent choices, stale sources, Fasa/roles/PTJ and scope; retain partial drafts and source IDs/copy/delete behaviour. No migration/seed/reset, reference/rate/catalogue changes, official outputs/totals/completeness/submission, programme inheritance or export-schema changes. AD-008 stays Draft; Steps 02/03 in progress. Consolidated editor UI refinement follows remaining OS editors.
 
-## Verification
+## Verification — 16 November 2026
 
-Pending PHP/PostgreSQL tests in isolated sistem_abm_testing, build/exact-money/Chromium regression and desktop/mobile state review. Record tested head/run/counts and limitations before merge; actual merge checkpoint/local acceptance pending.
+Application head: `1c150db0d391d9a3c89deae03df9cc2802194fab`. [CI 43834725263](https://github.com/muhdmuizz/sistem-abm/actions/runs/43834725263), [job 133188408042](https://github.com/muhdmuizz/sistem-abm/actions/runs/43834725263/job/133188408042): **528 tests passed / 5,330 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`. Production build, exact monetary presentation checks and Chromium passed.
+
+Seven new HTTP/PostgreSQL tests cover the eight approved paths and component-specific formulas, all five exact existing activity mappings and OS22000 separation, raw 83-row reference inventory/blank and C preservation, numeric full-grade lookup and unmapped VU7, fixed-rate override rejection, matched-blank manual rates, exact source save/reopen/edit/no-op, partial drafts, invalid dependent selections, malformed/derived/inactive injections with atomic rollback, source/Bidaan revisions, copy identity/financial independence, deletion, PTJ/workplace/Fasa/role guards and populated read-only presentation. No official generated outputs are created. Shared source guards remain authoritative.
+
+The source-only component and location-reference selectors disambiguate the owner's approved matches; they add no canonical category, numerical-grade input or export column. Full SSPA grades remain selected through the shared Jawatan/Gred catalogue; the universal numerical-level rule is reused. No special C equivalence or VU7-to-numbered-grade mapping is introduced. Only an existing matched blank source rate allows manual Kadar; missing grade matches remain incomplete with no preview.
+
+Chromium covers existing shared-grid regressions and new empty/populated/partial/read-only fixtures at desktop/mobile horizontal endpoints, vehicle/public-transport distinction, manual blank-rate withholding, dependent resets, exact monetary focus/blur and expanded exact-value details, source-only save payloads, field validation/stale error retention and independent copy/removal. Client POST responses in browser checks are intercepted; actual persistence and guards are exercised independently through HTTP/PostgreSQL. Local Node syntax checks passed; PHP execution is cloud CI, not a local-host claim.
+
+Earlier heads `a16e8ad` (CI 43834011353) and `f17f46b` (CI 43834156784) each had 527 passing tests and one test-fixture failure (5,325 assertions): the cross-PTJ workplace used unsupported type `sekolah`, violating the existing DB check. Corrected the fixture to existing type `sektor` at `1c150db`; no application rule or database constraint was weakened. A test-only browser readonly check was also changed to the supported DOM attribute API before successful browser verification. These earlier failures are historical and superseded by the final successful run above.
+
+## Visual review and limits
+
+Artifact **14210935903** contains **426 PNGs / 20 Pertukaran captures**. Reviewed 13 Pertukaran captures: empty desktop/mobile left; populated desktop left/right and mobile right; partial desktop/mobile right; populated read-only desktop/mobile right; validation desktop/mobile; expanded exact amount desktop/mobile. Also inspected linked Bacaan Meter desktop-right (14 total). Comfortable insets, title-case column headers, editable/fixed rates, withheld partial preview, error summary/cell, right-aligned/tabular and grouped/two-decimal monetary values remain readable in inspected states. No blocking new visual defect found there. Remaining seven Pertukaran captures and most middle columns were not visually inspected; dependent choices are covered by browser checks. Long native-select labels truncate while closed; their full options/read-only wrapped labels remain available. Helper-text density remains for consolidated refinement. No filtered-empty or hierarchical expanded-row state applies to this flat editor. Pending-save/loading, physical devices, screen readers, real local Google sessions and owner financial acceptance remain independently unverified unless recorded otherwise. Horizontal endpoint captures do not certify every middle column; long helper text/table density remain for consolidated UI refinement. Do not claim UI-complete or production readiness.
+
+## Delivery/local checkpoint
+
+Merge pending. Batch 039 requires no migration/seed/reset; Batch 038's additive linkage migration and local acceptance remain unconfirmed. Ordinary local migration may be included in the consolidated sync instructions to apply any pending Batch 038 migration; never use fresh/reset. Keep the development server running, clear caches and Ctrl+F5.
+
+Official calculation outputs/totals/completeness, submission, programme inheritance and export remain outside this batch. No reference/rate/catalogue/mapping/permission policy changes. AD-008 remains Draft; Steps 02/03 remain in progress. Consolidated editor UI refinement follows the remaining OS editors.
