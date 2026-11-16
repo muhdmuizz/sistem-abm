@@ -1,6 +1,6 @@
 # Batch 039 — OS21000 Tuntutan Perbelanjaan Pertukaran
 
-**Status:** Implementation and cloud verification complete; merge/local acceptance pending. Owner approved 16 November 2026.
+**Status:** Merged; local sync/financial/device acceptance pending. Owner approved 16 November 2026.
 **Baseline:** `3f8638cae2ce0d0430f44918623991aa588ce318`. Batch 038 merged at `9f294dc9a33c6b6dbb544e0505fa7b0bfe83a42d`; local sync/additive migration/financial acceptance remains unconfirmed. “Proceed” authorises this batch, not a claim of prior local acceptance.
 
 ## Approved scope and authority
@@ -29,6 +29,6 @@ Artifact **14210935903** contains **426 PNGs / 20 Pertukaran captures**. Reviewe
 
 ## Delivery/local checkpoint
 
-Merge pending. Batch 039 requires no migration/seed/reset; Batch 038's additive linkage migration and local acceptance remain unconfirmed. Ordinary local migration may be included in the consolidated sync instructions to apply any pending Batch 038 migration; never use fresh/reset. Keep the development server running, clear caches and Ctrl+F5.
+[PR #89](https://github.com/muhdmuizz/sistem-abm/pull/89) merged into `dev` at `874f7bf923fb9179231c38bae524e46b71f141b5`; later pre-merge changes were documentation only. Batch 039 requires no migration/seed/reset; Batch 038's additive linkage migration and local acceptance remain unconfirmed. Ordinary local migration may be included in the consolidated sync instructions to apply any pending Batch 038 migration; never use fresh/reset. Keep the development server running, clear caches and Ctrl+F5.
 
 Official calculation outputs/totals/completeness, submission, programme inheritance and export remain outside this batch. No reference/rate/catalogue/mapping/permission policy changes. AD-008 remains Draft; Steps 02/03 remain in progress. Consolidated editor UI refinement follows the remaining OS editors.
