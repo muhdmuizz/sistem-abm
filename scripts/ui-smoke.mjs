@@ -1066,4 +1066,49 @@ await page.goto('http://127.0.0.1:4173/fotostat-populated.html');
  await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 }
 
+// Pertukaran uses the shared grid with source-only component/reference selection.
+for(const fixture of ['pertukaran-empty','pertukaran-populated','pertukaran-partial','pertukaran-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Pertukaran page overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pertukaran-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Pertukaran mileage preview');
+ if(!await field('kadar').isReadOnly())throw Error('Pertukaran fixed rate editable');
+ await field('komponen').selectOption('Tambang Pengangkutan Awam');await field('padanan').selectOption('Semenanjung/ Sabah/ Sarawak/ WP Labuan');
+ if(await row().locator('[data-output=preview]').textContent()!=='1.00'||await field('jarak').count())throw Error('Pertukaran public fare multiplier');
+ await field('kategori1').selectOption('Berpindah Rumah');await field('kategori2').selectOption('Bujang');await field('kategori3').selectOption('Tambang Perjalanan');
+ await field('komponen').selectOption('Bayaran Kapal Terbang');await field('padanan').selectOption('Semenanjung/ Sabah/ Sarawak/ WP Labuan');
+ if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Pertukaran blank rate assumed zero');
+ await field('kadar').focus();await field('kadar').fill('4320.12345');await field('nama').focus();
+ if(await row().locator('[data-output=preview]').textContent()!=='4,320.12'||await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4320.12345')throw Error('Pertukaran manual precision');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);
+  await page.screenshot({path:'storage/app/ui-qa/pertukaran-exact-'+width+'.png',fullPage:true});
+ }
+ await field('komponen').selectOption('Bayaran Tambang Kereta Api');await field('padanan').selectOption('Semenanjung/ Sabah/ Sarawak/ WP Labuan');
+ if(await field('kadar').inputValue()!==''||await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Pertukaran stale rate after component change');
+ await field('kadar').focus();await field('kadar').fill('1234.567');await field('nama').focus();
+ let payload;
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak kadar tuntutan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kadar tuntutan'));
+ if(payload.rekod[0].kadar!=='1234.567'||payload.rekod[0].jarak!==null||'tujuan' in payload.rekod[0]||'preview' in payload.rekod[0]||'lokasi' in payload.rekod[0])throw Error('Pertukaran source payload');
+ if(await field('kadar').getAttribute('aria-invalid')!=='true')throw Error('Pertukaran rate validation missing');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await field('kadar').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/pertukaran-validation-'+width+'.png',fullPage:true});
+ }
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='1234.567')throw Error('Pertukaran stale recovery lost source');
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+ if(await page.locator('[data-grid-body] tr').count()!==4)throw Error('Pertukaran copy missing');
+ const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('Pertukaran copy shares financial values');
+ await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();if(await page.locator('[data-grid-body] tr').count()!==3)throw Error('Pertukaran remove copy');
+}
 await browser.close();

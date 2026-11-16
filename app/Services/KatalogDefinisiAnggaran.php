@@ -11,6 +11,13 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        $transfer=new DefinisiPertukaran;
+        if($transfer->supports($os)){
+            $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010805','Pendidikan Rendah'=>'030220','Pendidikan Awal'=>'030102','Pendidikan Menengah'=>'030302','Pengurusan Asrama'=>'030314',default=>null};
+            if($code===null)return null;
+            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$transfer:null;
+        }
+
         $mystep=new DefinisiMystep($bid->kitaran->tahun);
         if($mystep->supports($os)) {
             $codes=match($bid->aktivitiKewangan->nama){
