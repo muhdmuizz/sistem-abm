@@ -45,7 +45,7 @@ class RentalSpreadsheetTest extends TestCase
             'jenis' => 'bidaan_awal', 'tarikh_mula' => '2028-05-01', 'tarikh_tamat' => '2028-05-31',
             'jenis_skop' => 'global', 'dibuka' => true, 'pernah_dibuka' => true]);
         $this->phase->skop()->create(['jenis_skop' => 'global']);
-        $this->os = RujukanOs::create(['kod_objek' => '29000', 'butiran_perbelanjaan' => 'Sewaan']);
+        $this->os = RujukanOs::create(['kod_objek' => '24000', 'butiran_perbelanjaan' => 'Sewaan']);
         $this->unconfigured = RujukanOs::create(['kod_objek' => '29000', 'butiran_perbelanjaan' => 'Pakej (Mesyuarat/ Bengkel/ Kursus)']);
         $code=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>'010801']);
         foreach ([$this->os, $this->unconfigured] as $os) {
