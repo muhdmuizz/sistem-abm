@@ -897,4 +897,66 @@ let release;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>n
 await second.locator('[data-field=kategori1]').selectOption('Bayaran Yuran Bengkel/ Kursus/ Taklimat/ Seminar');await second.locator('[data-field=kategori2]').selectOption('Bayaran Yuran');await second.locator('[data-field=nama]').fill('AHMAD');await second.locator('[data-field=jawatan]').selectOption('PEMBANTU AKAUNTAN');await second.locator('[data-field=gred]').selectOption('W1');await second.locator('[data-field=kadar]').focus();await second.locator('[data-field=kadar]').fill('50');await second.locator('[data-field=bil_unit]').focus();if(await second.locator('[data-output=payment_grade]').textContent()!=='—')throw Error('Grouped fee speaker classification leakage');
 await second.locator('[data-field=kategori1]').selectOption('Keraian, Hospitaliti, Honorarium dll.');await second.locator('[data-field=kategori2]').selectOption('Hadiah Penghargaan Pesara');if(await second.locator('[data-field=nama]').count())throw Error('Umum group inactive personnel retained');
 }
+
+for(const fixture of ['meter-empty','meter-populated','meter-partial','meter-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Meter page overflow '+fixture);
+  for(const side of ['left','right']){
+   await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);
+   await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});
+  }
+  if(fixture==='meter-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Meter readonly save');
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/meter-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
+{
+ const row=page.locator('[data-grid-body] tr').first(),field=key=>row.locator('[data-field="'+key+'"]');
+ await field('tempat_bertugas_id').selectOption({index:1});await field('kategori1').selectOption('Berwarna');
+ await field('tarikh_mula').fill('2028-01-01');await field('tarikh_tamat').fill('2028-12-31');
+ await field('tarikh_mula_kontrak').fill('2026-02-01');await field('tarikh_tamat_kontrak').fill('2030-01-31');
+ await field('bil_unit').fill('12000');await field('kadar').focus();await field('kadar').fill('0.03');await field('bil_bulan').fill('12');
+ if(await row.locator('[data-output=tempoh]').textContent()!=='1 tahun, 0 bulan, 0 hari'||await row.locator('[data-output=tempoh_kontrak]').textContent()!=='4 tahun, 0 bulan, 0 hari')throw Error('Meter contract duration mismatch');
+ if(await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Meter monthly copy formula');
+ for(const [start,end,expected] of [
+ ['2028-02-29','2028-02-29','0 tahun, 0 bulan, 1 hari'],
+ ['2028-02-01','2028-02-29','0 tahun, 1 bulan, 0 hari'],
+ ['2028-01-31','2028-02-28','0 tahun, 1 bulan, 0 hari'],
+ ['2028-01-31','2028-02-29','0 tahun, 1 bulan, 1 hari'],
+ ['2028-02-29','2029-02-28','1 tahun, 0 bulan, 1 hari'],
+ ['9999-12-31','9999-12-31','0 tahun, 0 bulan, 1 hari']
+ ]){
+  await field('tarikh_mula_kontrak').fill(start);await field('tarikh_tamat_kontrak').fill(end);
+  if(await row.locator('[data-output=tempoh_kontrak]').textContent()!==expected)throw Error('Meter calendar boundary '+start+' / '+end);
+  if(await field('bil_bulan').inputValue()!=='12'||await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Meter contract auto-filled chargeable months');
+ }
+ await field('tarikh_mula_kontrak').fill('2026-02-01');await field('tarikh_tamat_kontrak').fill('2030-01-31');
+ await field('kategori1').selectOption('Hitam dan Putih');if(await field('kadar').inputValue()!=='0.03')throw Error('Meter user rate lost across type change');
+ await field('kadar').focus();await field('kadar').fill('0.012345');await field('bil_unit').fill('12345.6');await field('bil_bulan').fill('7');
+ if(await row.locator('[data-output=preview]').getAttribute('data-exact')!=='1066.845024'||await row.locator('[data-output=preview]').textContent()!=='1,066.85')throw Error('Meter exact precision');
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='0.012345')throw Error('Meter exact edit value lost');await field('lokasi').fill('Bilik Cetak');
+ await row.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+ if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Meter copy failed');
+ const second=page.locator('[data-grid-body] tr').nth(1);await second.locator('[data-field=bil_bulan]').fill('5');
+ if(await field('bil_bulan').inputValue()!=='7')throw Error('Meter copied row not independent');
+ await second.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+ let payload;
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak kadar sesalinan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kadar'));
+ if(payload.rekod[0].kadar!=='0.012345'||payload.rekod[0].bil_bulan!=='7'||'tempoh' in payload.rekod[0]||'tempoh_kontrak' in payload.rekod[0]||'preview' in payload.rekod[0])throw Error('Meter source payload drift');
+ if(await field('kadar').getAttribute('aria-invalid')!=='true')throw Error('Meter nested field error missing');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollLeft=el.scrollWidth);
+  await page.screenshot({path:'storage/app/ui-qa/meter-validation-'+width+'.png',fullPage:true});
+ }
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+ if(await field('kadar').inputValue()!=='0.01')throw Error('Meter retry lost formatted input');
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='0.012345')throw Error('Meter retry lost exact input');
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await field('kadar').fill('');await field('bil_bulan').focus();if(await row.locator('[data-output=preview]').textContent()!=='—')throw Error('Meter missing rate assumed');
+}
+
 await browser.close();
