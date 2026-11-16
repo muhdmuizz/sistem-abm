@@ -900,7 +900,7 @@ await second.locator('[data-field=kategori1]').selectOption('Keraian, Hospitalit
 
 for(const fixture of ['meter-empty','meter-populated','meter-partial','meter-readonly']){
  for(const width of [1440,390]){
-  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-grid-body]').waitFor();
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Meter page overflow '+fixture);
   for(const side of ['left','right']){
    await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);
