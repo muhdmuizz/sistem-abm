@@ -6,8 +6,8 @@
  rows.forEach(r=>r.key=++next);
  const columns=JSON.parse(form.dataset.columns),inputColumns=columns.filter(c=>c.type!=='output'),fieldNames=inputColumns.map(c=>c.key);
  const selector=form.dataset.referenceSelector,childSelector=form.dataset.referenceChildSelector,money=globalThis.AbmMoney;
- const reference=row=>{const group=references[row[selector]],ref=childSelector?group?.[plain(row[childSelector])]:group;if(!ref?.ratesByGrade)return ref;const grades=columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[];return {...ref,...(grades.includes(row.gred)?ref.ratesByGrade[row.gred]:{})};};
- const active=(row,column)=>!column.activeWhenReference||!!reference(row)?.[column.activeWhenReference];
+ const reference=row=>{const group=references[row[selector]];let ref=childSelector?group?.[plain(row[childSelector])]:group;for(const c of columns.filter(c=>c.referenceLeaf))ref=ref?.[plain(row[c.key])];if(!ref?.ratesByGrade)return ref;const grades=columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[];return {...ref,...(grades.includes(row.gred)?ref.ratesByGrade[row.gred]:{})};};
+ const active=(row,column)=>(!column.activeWhen||row[column.activeWhen.field]===column.activeWhen.value)&&(!column.inactiveWhen||row[column.inactiveWhen.field]!==column.inactiveWhen.value)&&(!column.activeWhenReference||!!reference(row)?.[column.activeWhenReference]);
  const fixed=(row,column)=>column.mixed&&reference(row)?.mode==='FIXED_REFERENCE';
  const exactHelp=(cell,value)=>{cell.querySelector('.money-exact')?.remove();if(!money.precise(plain(value)))return;const detail=document.createElement('details');detail.className='money-exact';const summary=document.createElement('summary');summary.textContent='Nilai tepat';const text=document.createElement('span');text.textContent=value;detail.append(summary,text);cell.append(detail);};
  const notice=(cell,row,name)=>{const message=row.notices?.[name];if(typeof message!=='string')return;const p=document.createElement('p');p.className='small grid-cell-notice';p.textContent=message;cell.append(p);};
@@ -56,6 +56,7 @@
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
+   if(!active(row,column))value='Tidak berkenaan';
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
    if(column.reference==='kadar'&&childSelector&&!column.mixed){el.parentElement.querySelector('.rate-missing')?.remove();if(!columnReference&&row[selector]&&row[childSelector]){const note=document.createElement('p');note.className='small rate-missing';note.textContent='Tiada kadar rujukan bagi gabungan ini.';el.parentElement.append(note);}}
@@ -94,7 +95,7 @@
     }
     else{
      option(input,'','Pilih '+column.label);
-     if(column.dependsOn){const choices=column.valuesByParent?(column.valuesByParent[row[column.dependsOn]]||[]):Object.keys(references[row[column.dependsOn]]||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(references[row[column.dependsOn]]||{},'')){input.options[0].textContent='Tidak berkenaan';}}
+     if(column.dependsOn){const branch=(column.referenceParents||[column.dependsOn]).reduce((ref,key)=>ref?.[plain(row[key])],references);const choices=column.valuesByParent?(column.valuesByParent[row[column.dependsOn]]||[]):Object.keys(branch||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(branch||{},'')){input.options[0].textContent='Tidak berkenaan';}}
      else if(column.options==='values')column.values.forEach(v=>option(input,v,v));
      else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(!column.strictValues&&plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
@@ -105,7 +106,7 @@
      if(column.type==='select'&&childSelector){
       if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
-      for(const c of inputColumns){if(c.dependsOn===name&&c.key!==childSelector)row[c.key]=null;if(!active(row,c))row[c.key]=null;}
+      const invalidated=new Set([name]);for(const c of inputColumns){if(c.dependsOn&&invalidated.has(c.dependsOn)){row[c.key]=null;invalidated.add(c.key);}if(!active(row,c))row[c.key]=null;}
       const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
      }else output(row,tr);
     });

@@ -477,3 +477,7 @@ Artifact 14193737345 contains **360 PNGs / 18 meter captures**. All 18 meter cap
 Tested `ef1b7c2c21b21fb7686f629ca81e79d6a94fb117`; [CI 43793891272](https://github.com/muhdmuizz/sistem-abm/actions/runs/43793891272): **503 tests / 4,830 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. All 18 meter state captures plus two representative existing-editor captures reviewed from 360 PNGs; [Batch 036](batch-036-bacaan-meter-spreadsheet.md) records coverage and visual limits. Local sync/financial acceptance remains pending, including earlier unconfirmed batches. Programme inheritance, official financial outputs/totals/completeness and submission remain pending; AD-008 remains Draft and Steps 02/03 remain in progress.
 
 **UI sequencing approved:** Complete remaining OS editors, then pause for consolidated editor UI refinement before another major module. Fix usability defects as encountered and apply AD-013 throughout. This is an implementation checkpoint, not a change to financial or design approval rules.
+
+## Batch 037 — OS24000 Sewaan Umum started
+
+Owner explicitly requested Sewaan Umum next, ahead of the separate photocopier-rental editor. [Batch 037](batch-037-sewaan-umum-spreadsheet.md) records baseline `7a9cc09691fdf2a84e0e31a53fc48dcde466794b`, five existing mappings, 64 paths, conditional contract dates and exact quantity × manual rate × manual months. No migration/reference/policy change. Batch 036 local acceptance remains unconfirmed; UI refinement timing unchanged.
