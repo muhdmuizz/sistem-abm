@@ -1032,7 +1032,7 @@ await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-
 }
 
 
-for(const fixture of ['fotostat-empty','fotostat-populated','fotostat-linked-meter']){
+for(const fixture of ['fotostat-empty','fotostat-populated','fotostat-linked-meter','fotostat-readonly']){
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Fotostat overflow '+fixture);

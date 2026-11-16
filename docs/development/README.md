@@ -520,7 +520,7 @@ Local sync/financial acceptance remains pending; prior unconfirmed local statuse
 # Batch 038 — Fotostat/Riso rental and dependent Bacaan Meter
 
 **Status:** In progress; owner approved 16 November 2026.
-**Baseline:** `55c2143430ccbb888f5225bc2ec0935dbf1c0be2`. Batch 037 merged/verified. Owner said “Good, let's proceed”; this confirms supplied local sync commands only, not independent financial/device certification.
+**Baseline:** `55c2143430ccbb888f5225bc2ec0935dbf1c0be2`. Batch 037 merged/verified. Owner acknowledged and proceeded; local sync/financial/device acceptance remains unconfirmed.
 
 ## Approved scope
 

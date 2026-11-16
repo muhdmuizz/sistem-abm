@@ -56,10 +56,10 @@ class PautanFotostat
    'semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,
    ...($source?['semakan_butiran'=>$source->semakan]:[]),'tempat_bertugas_id'=>$place,'data_sumber'=>$data,'reason'=>$reason]));
  }
- private function event(Bidaan $bid,ButiranAnggaran $r,?int $meter,string $action,callable $fn): void {
-  $this->audit->jalankan(Peranan::PenyediaAnggaran,function()use($bid,$r,$meter,$action,$fn){$fn();return new PeristiwaAudit($action,ButiranAnggaran::class,(string)$r->id,
+ private function event(Bidaan $bid,ButiranAnggaran $r,?int $meter,string $action,callable $fn,?string $reason=null): void {
+  $this->audit->jalankan(Peranan::PenyediaAnggaran,function()use($bid,$r,$meter,$action,$fn,$reason){$fn();return new PeristiwaAudit($action,ButiranAnggaran::class,(string)$r->id,
    ['tempat_bertugas_id'=>$r->tempat_bertugas_id],['bidaan_id'=>$bid->id,'anggaran_id'=>$r->anggaran_id,'tempat_bertugas_id'=>$r->tempat_bertugas_id,'meter_id'=>$meter],
-   'Pautan Sewaan Fotostat dan Bacaan Meter.',ptjId:$bid->ptj_id,aktivitiId:$bid->aktiviti_kewangan_id,tempatBertugasId:$r->tempat_bertugas_id,kitaranId:$bid->kitaran_id);});
+   $reason?:'Pautan Sewaan Fotostat dan Bacaan Meter.',ptjId:$bid->ptj_id,aktivitiId:$bid->aktiviti_kewangan_id,tempatBertugasId:$r->tempat_bertugas_id,kitaranId:$bid->kitaran_id);});
  }
  public function afterSave(ButiranAnggaran $source,?string $reason): void {
   $estimate=$source->anggaran;if(!$this->rental($estimate->rujukanOs))return;
@@ -70,7 +70,7 @@ class PautanFotostat
   $data=$target?clone $target->data_sumber:(new DefinisiBacaanMeter($bid->kitaran->tahun))->source([]);
   foreach(self::SHARED as $key)$data->$key=$source->data_sumber->$key??null;
   $target=$this->write($bid,$meter,$target,$data,$source->tempat_bertugas_id,$reason);
-  if(!$link)$this->event($bid,$source,$target->id,'source.meter_linked',fn()=>DB::table('pautan_fotostat')->insert(['sewaan_id'=>$source->id,'meter_id'=>$target->id,'created_at'=>now(),'updated_at'=>now()]));
+  if(!$link)$this->event($bid,$source,$target->id,'source.meter_linked',fn()=>DB::table('pautan_fotostat')->insert(['sewaan_id'=>$source->id,'meter_id'=>$target->id,'created_at'=>now(),'updated_at'=>now()]),$reason);
  }
  public function beforeCopy(Bidaan $bid,Anggaran $estimate,ButiranAnggaran $source,?string $reason): void {
   $os=$estimate->rujukanOs;if(!$this->rental($os)&&!$this->meter($os))return;
@@ -83,9 +83,9 @@ class PautanFotostat
   if($this->meter($os))abort_if(DB::table('pautan_fotostat')->where('meter_id',$source->id)->exists(),409,'Padam butiran melalui Sewaan Fotostat.');
   $link=DB::table('pautan_fotostat')->where('sewaan_id',$source->id)->lockForUpdate()->first();if(!$link)return;
   $target=ButiranAnggaran::whereKey($link->meter_id)->lockForUpdate()->firstOrFail();$this->sameContext($bid,$source,$target);
-  abort_unless(($input['sahkan_meter']??false)===true&&($input['semakan_meter']??-1)===$target->semakan,409,'Semak dan sahkan nilai Bacaan Meter sebelum memadam pasangan.');
+  abort_unless((bool)($input['sahkan_meter']??false)===true&&(int)($input['semakan_meter']??-1)===$target->semakan,409,'Semak dan sahkan nilai Bacaan Meter sebelum memadam pasangan.');
   $this->authority($bid,$input['reason']??null,$target->tempat_bertugas_id);
-  $this->event($bid,$source,$target->id,'source.meter_unlinked',fn()=>DB::table('pautan_fotostat')->where('id',$link->id)->delete());
+  $this->event($bid,$source,$target->id,'source.meter_unlinked',fn()=>DB::table('pautan_fotostat')->where('id',$link->id)->delete(),$input['reason']??null);
   app(DrafButiranAnggaran::class)->padam($target->anggaran_id,$target->id,['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$target->anggaran->fresh()->semakan,'semakan_butiran'=>$target->semakan,'reason'=>$input['reason']??null]);
  }
  public function attach(int $rentalId,int $meterId,array $input): void {
@@ -105,7 +105,7 @@ class PautanFotostat
    }
    $data=clone $m->data_sumber;foreach(self::SHARED as $key)$data->$key=$r->data_sumber->$key??null;
    [, $estimate]=$this->active($bid);$m=$this->write($bid,$estimate,$m,$data,$r->tempat_bertugas_id,$input['reason']??null);
-   $this->event($bid,$r,$m->id,'source.meter_linked',fn()=>DB::table('pautan_fotostat')->insert(['sewaan_id'=>$r->id,'meter_id'=>$m->id,'created_at'=>now(),'updated_at'=>now()]));
+   $this->event($bid,$r,$m->id,'source.meter_linked',fn()=>DB::table('pautan_fotostat')->insert(['sewaan_id'=>$r->id,'meter_id'=>$m->id,'created_at'=>now(),'updated_at'=>now()]),$input['reason']??null);
    // Linking an otherwise identical draft must still stale all existing editor forms.
    DB::table('bidaan')->where('id',$bid->id)->increment('semakan');
   });

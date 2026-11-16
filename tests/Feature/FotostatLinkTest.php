@@ -207,4 +207,34 @@ class FotostatLinkTest extends TestCase
         TetapanAksesPtj::where('rujukan_os_id',$this->meter->id)->update(['dibenarkan'=>true]);$this->phase->forceFill(['dibuka'=>false])->save();
         $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();$this->assertDatabaseCount('pautan_fotostat',0);
     }
+
+    public function test_audit_failure_rolls_back_rental_meter_link_and_all_revisions(): void {
+        [$bid,$estimate,$place]=$this->gridContext();$revision=$bid->fresh()->semakan;$estimateRevision=$estimate->fresh()->semakan;$audit=RekodAudit::count();
+        DB::unprepared("CREATE FUNCTION pg_temp.reject_fotostat_link() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'test link audit failure'; END $$");
+        DB::unprepared("CREATE TRIGGER reject_fotostat_link BEFORE INSERT ON rekod_audit FOR EACH ROW WHEN (NEW.tindakan = 'source.meter_linked') EXECUTE FUNCTION pg_temp.reject_fotostat_link()");
+        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertStatus(503);
+        $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('pautan_fotostat',0);$this->assertSame($revision,$bid->fresh()->semakan);$this->assertSame($estimateRevision,$estimate->fresh()->semakan);$this->assertSame($audit,RekodAudit::count());
+    }
+    public function test_populated_linked_meter_cannot_be_replaced_and_cross_ptj_writes_fail(): void {
+        [$bid,$estimate,$place]=$this->gridContext();$this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertOk();
+        $r=$estimate->butiran()->sole();$meter=$this->meterEstimate($bid);$m=$meter->butiran()->sole();
+        $this->postJson($this->gridUrl($bid,$meter),$this->payload($bid,$meter,[$this->row($place,['butiran_id'=>$m->id,'semakan_butiran'=>$m->semakan,'bil_unit'=>'0','kadar'=>'0','bil_bulan'=>'0']),$this->row($place,['bil_unit'=>'1000','kadar'=>'0.03'])]))->assertOk();
+        $other=$meter->butiran()->where('id','<>',$m->id)->sole();$oldLink=DB::table('pautan_fotostat')->where('sewaan_id',$r->id)->sole();
+        $this->postJson(route('fotostat.attach',$bid->id),['sewaan_id'=>$r->id,'meter_id'=>$other->id,'semakan_bidaan'=>$bid->fresh()->semakan,'semakan_sewaan'=>$r->semakan,'semakan_meter'=>$other->semakan,'sahkan'=>'1'])->assertConflict();
+        $this->assertSame($oldLink->meter_id,DB::table('pautan_fotostat')->where('sewaan_id',$r->id)->value('meter_id'));$this->assertDatabaseCount('butiran_anggaran',3);
+        $foreign=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);
+        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($foreign,['butiran_id'=>$r->id,'semakan_butiran'=>$r->fresh()->semakan])]))->assertForbidden();
+        $this->assertSame($place->id,$r->fresh()->tempat_bertugas_id);
+    }
+    public function test_four_exact_mappings_and_readonly_role_preserve_pair_boundaries(): void {
+        [$bid,$estimate,$place]=$this->gridContext();$code=\App\Models\KodAktiviti::where('aktiviti_kewangan_id',$this->activity->id)->sole();
+        foreach([['Pengurusan Pentadbiran Negeri','010807'],['Pendidikan Rendah','030221'],['Pendidikan Menengah','030303'],['Pengurusan Asrama','030315']] as [$name,$value]){
+            $this->activity->update(['nama'=>$name]);$code->update(['kod_aktiviti'=>$value]);$this->get($this->gridUrl($bid,$estimate))->assertOk();
+            $this->assertInstanceOf(\App\Services\DefinisiSewaanFotostat::class,app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$bid->fresh()));
+        }
+        $this->activity->update(['nama'=>'Pengurusan Pentadbiran Negeri']);$code->update(['kod_aktiviti'=>'010807']);
+        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);$this->gridCapture('fotostat-readonly',$this->get($this->gridUrl($bid,$estimate))->assertOk());
+        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
+        $this->postJson(route('fotostat.deactivate',$bid->id),['semakan_bidaan'=>$bid->fresh()->semakan,'sahkan'=>'1'])->assertForbidden();
+    }
 }
