@@ -87,3 +87,11 @@ The combined claim labels above remain unchanged; these matches do not add KATEG
 - This document captures the owner's approved **27-column applicability, final field hierarchy, exact eight combinations, four reference matches, and calculation modes**.
 - General organisational, authorisation, source-to-Butiran, Program/ Aktiviti and export rules continue to apply under AD-004, AD-008 and related decisions.
 - Documentation-only change. **Application code, database, UI, end-to-end calculations and tests were not modified or verified by this commit.**
+
+## Batch 039 checkpoint — 16 November 2026
+
+[PR #89](https://github.com/muhdmuizz/sistem-abm/pull/89) merged at `874f7bf923fb9179231c38bae524e46b71f141b5`. OS21000 Tuntutan Perbelanjaan Pertukaran source editing supports eight approved category paths/five existing mappings, shared full-SSPA numeric grade lookup, explicit claim-component/reference-location choices, read-only fixed rates and matched-blank manual rates. Mileage preview = Kadar × Jarak; other approved claims = Kadar × 1. Special C/VU7 mapping remains unassumed. Source-only selectors add no canonical categories/export columns. Shared draft/audit/revision/Fasa/role/PTJ guards remain.
+
+Tested `1c150db0d391d9a3c89deae03df9cc2802194fab`; [CI 43834725263](https://github.com/muhdmuizz/sistem-abm/actions/runs/43834725263), job 133188408042: **528 tests / 5,330 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/exact-money/Chromium passed. Thirteen Pertukaran and one existing-editor capture inspected from 426 PNGs (20 Pertukaran). Batch 039 records resolved fixture failures and visual/manual limits.
+
+No new migration/seed/reset or reference/rate/catalogue/mapping/export-schema changes. Local sync/financial/device acceptance and Batch 038's additive migration remain unconfirmed. Official outputs/totals/completeness, programme inheritance and submission remain deferred; AD-008 remains Draft, Steps 02/03 remain in progress. Complete remaining OS editors before consolidated UI refinement; keep the development server running.
