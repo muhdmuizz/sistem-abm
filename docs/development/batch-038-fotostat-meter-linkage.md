@@ -1,6 +1,6 @@
 # Batch 038 — Fotostat/Riso rental and dependent Bacaan Meter
 
-**Status:** Implementation and cloud verification complete; merge/local acceptance pending. Owner approved 16 November 2026.
+**Status:** Merged; local sync/additive migration/financial/device acceptance pending. Owner approved 16 November 2026.
 **Baseline:** `55c2143430ccbb888f5225bc2ec0935dbf1c0be2`. Batch 037 merged/verified. Owner acknowledged and proceeded; local sync/financial/device acceptance remains unconfirmed.
 
 ## Approved scope
@@ -33,6 +33,6 @@ Uninspected/limits: remaining screenshots, dedicated new loading/pending-save an
 
 ## Delivery boundary and local follow-up
 
-Merge checkpoint pending; [PR #87](https://github.com/muhdmuizz/sistem-abm/pull/87) targets `dev`. One additive migration creates `pautan_fotostat`; use ordinary `php artisan migrate` against the verified development database, with no reset/seed. Local sync/migration/financial/device acceptance remains pending; earlier unconfirmed local statuses unchanged. Keep the development server running and refresh assets.
+[PR #87](https://github.com/muhdmuizz/sistem-abm/pull/87) merged into `dev` at `9f294dc9a33c6b6dbb544e0505fa7b0bfe83a42d`. Tested head remains `75809c99be402bf0d0805837286557e2519d247a`; pre-merge verification commit changes documentation only. One additive migration creates `pautan_fotostat`; use ordinary `php artisan migrate` against the verified development database, with no reset/seed. Local sync/migration/financial/device acceptance remains pending; earlier unconfirmed local statuses unchanged. Keep the development server running and refresh assets.
 
 No official calculation outputs, totals, completeness/submission changes, export-schema changes, reference/rate/catalogue/mapping reassignment or programme association implementation. AD-008 remains Draft; Steps 02/03 remain in progress. Complete remaining OS editors before consolidated UI refinement.
