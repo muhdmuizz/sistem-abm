@@ -1058,7 +1058,7 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
 await page.goto('http://127.0.0.1:4173/fotostat-populated.html');
 {
  const row=page.locator('[data-grid-body] tr').first();await row.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
- let message='',payload;page.once('dialog',async d=>{message=d.message();await d.accept();});
+ let message='',payload;page.removeAllListeners('dialog');page.once('dialog',async d=>{message=d.message();await d.accept();});
  await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:409,contentType:'application/json',body:'{}'});});
  await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
  if(!message.includes('Bacaan Meter #')||!message.includes('12000')||!message.includes('0.03'))throw Error('Paired deletion does not disclose meter values');
