@@ -191,7 +191,7 @@ class PertukaranSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$payload=$this->payload($bid,$estimate,[$this->row($place)]);
         $this->postJson($url,$payload)->assertOk();$this->postJson($url,$payload)->assertConflict();$this->assertDatabaseCount('butiran_anggaran',1);
-        $outside=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sekolah Luar','jenis'=>'sekolah']);
+        $outside=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($outside)]))->assertForbidden();
         $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
         $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);
@@ -199,7 +199,7 @@ class PertukaranSpreadsheetTest extends TestCase
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
     }
 
-    public function test_source_revision_deletion_confirmation_and_copy_independence(): void
+    public function test_source_revision_deletion_and_copy_independence(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->manual($place)]))->assertOk();$r=$estimate->butiran()->sole();
         $copy=app(\App\Services\DrafButiranAnggaran::class)->salin($estimate->id,$r->id,['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,'semakan_butiran'=>$r->semakan]);
