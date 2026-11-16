@@ -1,6 +1,6 @@
 # Batch 036 — OS29000 Bacaan Meter Mesin Fotostat
 
-**Status:** In progress; owner authorised implementation on 16 November 2026.
+**Status:** Implementation/verification passed; merge and local sync pending; owner authorised implementation on 16 November 2026.
 **Baseline:** `1ca2ac10e93917a33b6681d4cc3db03363566169` on dev. Batch 035 merged and verified; local sync/financial acceptance remains unconfirmed.
 
 ## Approved scope
@@ -19,4 +19,12 @@ Owner approved completing remaining OS editors before a consolidated editor UI r
 
 ## Verification
 
-Pending isolated PostgreSQL/full suite/build/formatter/Chromium and representative desktop/mobile empty, populated, partial, read-only and validation review. No filtered-empty state applies (no grid filter). Record actual execution evidence before merge; local update remains pending.
+Tested application head `ef1b7c2c21b21fb7686f629ca81e79d6a94fb117`: [CI 43793891272](https://github.com/muhdmuizz/sistem-abm/actions/runs/43793891272), job 133058225694, **503 tests / 4,830 assertions**, PHP 8.4.27/PostgreSQL 18.7 in isolated `sistem_abm_testing`. Production build, exact-money formatter and full Chromium regression passed. Initial runs exposed two test-fixture errors (incorrect hand-calculated multiplication and unsupported workplace type); corrected and independently checked using decimal arithmetic. The empty-fixture browser wait was also corrected before final verification. No financial formula was changed to satisfy an expected test value.
+
+Seven new HTTP/PostgreSQL regressions cover the two shared print choices and editor labels; all four exact activity mappings and rental/other-variant separation; save/reopen/edit/no-op audit with exact per-copy precision; current-year and overall-contract date validation; independent inclusive calendar durations across same-day, month-end, leap-year and maximum supported date boundaries; blank/partial drafts without invented rates or months; atomic rejection of inactive/derived-field injections; live revision/Fasa/role and cross-PTJ guards, read-only access and audited deletion. Existing source/output separation remains (no generated financial outputs).
+
+Chromium checks empty/populated/partial/read-only fixtures at 1440/390 widths and horizontal endpoints; copy/remove independence; current/overall duration parity and boundary changes without altering months or amount; exact rate focus/blur and derived display/payload precision; nested validation and stale-save recovery with retained edits. Client save routes are intercepted; real persistence/guards are separately exercised by HTTP/PostgreSQL. No new filtered-empty or expanded activity states apply to this flat editor. Local Node syntax/calendar checks passed. Browser checks and screenshots are fixtures, not authenticated owner-device acceptance.
+
+Artifact 14193737345 contains **360 PNGs / 18 meter captures**. All 18 meter captures were visually reviewed: empty/populated/partial/read-only at 1440/390 widths and both horizontal endpoints, plus validation at both widths. Also reviewed MySTEP populated desktop-left and grouped Umum populated mobile-right (20 captures total). Spacing, title-case headers, withheld partial results, read-only rendering, error summary/desktop rate error and accounting figures are readable in the inspected views; no blocking new visual defect found. The long input-help text/table density remain candidates for the scheduled consolidated refinement. Horizontal endpoints do not show every middle column or the mobile rate error cell; automated field/duration/error checks cover those interactions. Pending-save/loading and expanded exact-value details were not newly captured for meter; no filtered-empty state applies. Authenticated local Windows, physical-device, screen-reader and owner financial acceptance remain unverified. This is not a UI-complete or production-readiness claim.
+
+No migration/seed or routine server restart required. Keep the existing local server running; pull/cache-clear in another terminal and Ctrl+F5. Previous local confirmations remain unchanged.
