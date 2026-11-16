@@ -1031,4 +1031,39 @@ await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-
  await field('kadar').focus();await field('kadar').fill('');await field('bil_bulan').focus();if(await row.locator('[data-output=preview]').textContent()!=='—')throw Error('Rental missing manual rate assumed');
 }
 
+
+for(const fixture of ['fotostat-empty','fotostat-populated','fotostat-linked-meter','fotostat-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Fotostat overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+for(const fixture of ['fotostat-activation','fotostat-links-empty','fotostat-deactivate','fotostat-link-review']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Fotostat review overflow '+fixture);
+  await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'.png',fullPage:true});
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/fotostat-linked-meter.html');
+{
+ const row=page.locator('[data-grid-body] tr').first();
+ for(const key of ['tempat_bertugas_id','kategori1','lokasi','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'])if(await row.locator('[data-field='+key+']').count())throw Error('Linked meter shared input editable '+key);
+ if(await row.locator('[data-row-select]').count())throw Error('Linked meter independently selectable');
+ if(await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Linked meter financial preview');
+ await row.locator('[data-field=kadar]').focus();await row.locator('[data-field=kadar]').fill('0.012345');await row.locator('[data-field=bil_bulan]').fill('7');
+ if(await row.locator('[data-output=preview]').getAttribute('data-exact')!=='1036.98')throw Error('Linked meter exact rate independent');
+}
+await page.goto('http://127.0.0.1:4173/fotostat-populated.html');
+{
+ const row=page.locator('[data-grid-body] tr').first();await row.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+ let message='',payload;page.removeAllListeners('dialog');page.once('dialog',async d=>{message=d.message();await d.accept();});
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:409,contentType:'application/json',body:'{}'});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+ if(!message.includes('Bacaan Meter #')||!message.includes('12000')||!message.includes('0.03'))throw Error('Paired deletion does not disclose meter values');
+ if(!payload.padam[0].sahkan_meter||!Number.isInteger(payload.padam[0].semakan_meter))throw Error('Paired deletion revision missing');
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+
 await browser.close();

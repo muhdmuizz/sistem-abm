@@ -57,10 +57,12 @@ class DrafButiranAnggaran
             $this->currentSource($bid, $estimate, $source, $data);
             // Explicit parent and concrete workplace; IDs in opaque data cannot affect ownership.
             TempatBertugas::whereKey($workplaceId)->where('ptj_id', $bid->ptj_id)->sharedLock()->firstOrFail();
+            app(PautanFotostat::class)->beforeSave($bid,$estimate,$source,$data['data_sumber'],$workplaceId,$data['reason'] ?? null);
             $encoded = $this->sourceJson($data['data_sumber']);
             $unchanged = $source !== null && $source->tempat_bertugas_id === $workplaceId &&
                 $this->sourceJson($source->data_sumber) === $encoded;
             if ($unchanged) {
+                app(PautanFotostat::class)->afterSave($source,$data['reason'] ?? null);
                 return $source;
             }
             abort_if($source && $source->hasilPengiraan()->exists(), 409,
@@ -88,6 +90,7 @@ class DrafButiranAnggaran
                     ptjId: $bid->ptj_id, aktivitiId: $bid->aktiviti_kewangan_id,
                     tempatBertugasId: $workplaceId, kitaranId: $bid->kitaran_id);
             });
+            app(PautanFotostat::class)->afterSave($source->fresh(),$data['reason'] ?? null);
             return $source->fresh();
         });
     }
@@ -168,6 +171,7 @@ class DrafButiranAnggaran
             TempatBertugas::whereKey($workplaceId)->where('ptj_id', $bid->ptj_id)->sharedLock()->firstOrFail();
             abort_if($source->hasilPengiraan()->exists(), 409,
                 'Butiran berpengiraan memerlukan pengiraan semula yang diluluskan sebelum disalin.');
+            app(PautanFotostat::class)->beforeCopy($bid,$estimate,$source,$data['reason'] ?? null);
             $payload = $source->data_sumber;
             if (! $payload instanceof stdClass) {
                 throw ValidationException::withMessages(['rekod.data_sumber' => 'Data sumber draf tidak sah untuk disalin.']);
@@ -194,6 +198,7 @@ class DrafButiranAnggaran
                     ptjId: $bid->ptj_id, aktivitiId: $bid->aktiviti_kewangan_id,
                     tempatBertugasId: $workplaceId, kitaranId: $bid->kitaran_id);
             });
+            app(PautanFotostat::class)->afterSave($copy->fresh(),$data['reason'] ?? null);
             return $copy->fresh();
         });
     }
@@ -205,7 +210,8 @@ class DrafButiranAnggaran
         DB::transaction(function () use ($estimateId,$sourceId,$input) {
             [$actor,$bid,$estimate,$source]=$this->lockedContext($estimateId,$sourceId);
             $data=Validator::make(['rekod'=>$input],[
-                'rekod'=>'required|array:semakan_bidaan,semakan_anggaran,semakan_butiran,reason',
+                'rekod'=>'required|array:semakan_bidaan,semakan_anggaran,semakan_butiran,reason,sahkan_meter,semakan_meter',
+                'rekod.sahkan_meter'=>'sometimes|boolean','rekod.semakan_meter'=>'sometimes|integer|min:0',
                 'rekod.semakan_bidaan'=>'required|integer|min:0','rekod.semakan_anggaran'=>'required|integer|min:0',
                 'rekod.semakan_butiran'=>'required|integer|min:0','rekod.reason'=>'nullable|string|max:1000',
             ])->validate()['rekod'];
@@ -213,6 +219,8 @@ class DrafButiranAnggaran
                 $bid->aktiviti_kewangan_id,$estimate->rujukan_os_id,$data['reason'] ?? null,$source->tempat_bertugas_id);
             $this->currentSource($bid,$estimate,$source,$data);
             abort_if($source->hasilPengiraan()->exists(),409,'Butiran berpengiraan tidak boleh dipadam melalui draf ini.');
+            app(PautanFotostat::class)->beforeDelete($bid,$estimate,$source,$data);
+            $bid->refresh();$estimate->refresh();
             $before=$this->snapshot($source,$bid,$estimate);
             $this->audit->jalankan(Peranan::PenyediaAnggaran,function() use($source,$bid,$estimate,$before,$authority) {
                 $source->delete(); $bid->semakan++; $bid->save(); $estimate->semakan++; $estimate->save();

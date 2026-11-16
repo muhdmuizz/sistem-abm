@@ -109,6 +109,10 @@ class BacaanMeterSpreadsheetTest extends TestCase
     {
         $bid=$this->workspaceBid();
         $estimate=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$this->os->id,'diaktifkan'=>true,'semakan'=>1]);
+        $rentalOs=RujukanOs::create(['kod_objek'=>'24000','butiran_perbelanjaan'=>'Sewaan Mesin Fotostat dan Riso']);
+        PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$rentalOs->id,'kod_aktiviti_id'=>\App\Models\KodAktiviti::where('aktiviti_kewangan_id',$this->activity->id)->sole()->id,'singkatan_sumber'=>'PPN','butiran_asal'=>$rentalOs->butiran_perbelanjaan,'status_sumber'=>'Aktif']);
+        TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$rentalOs->id,'dibenarkan'=>true]);
+        Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$rentalOs->id,'diaktifkan'=>true,'semakan'=>1]);
         $place=\App\Models\TempatBertugas::create(['ptj_id'=>$bid->ptj_id,'nama'=>'Sektor Pembangunan Murid','jenis'=>'sektor']);
         $this->operator->forceFill(['tempat_bertugas_id'=>$place->id])->save();
         $this->withCookie(session()->getName(),session()->getId());
