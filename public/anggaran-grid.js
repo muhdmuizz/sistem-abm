@@ -21,6 +21,15 @@
   if(scale){raw=raw.padStart(scale+1,'0');raw=raw.slice(0,-scale)+'.'+raw.slice(-scale);raw=raw.replace(/0+$/,'').replace(/\.$/,'');}
   return (negative&&raw!=='0'?'-':'')+raw;
  }
+ function inclusiveCalendar(start,end){
+  const date=value=>{const m=plain(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m||+m[1]<1)return null;const d=new Date(0);d.setUTCHours(0,0,0,0);d.setUTCFullYear(+m[1],+m[2]-1,+m[3]);return d.getUTCFullYear()===+m[1]&&d.getUTCMonth()===+m[2]-1&&d.getUTCDate()===+m[3]?d:null;};
+  const a=date(start),b=date(end);if(!a||!b||b<a)return '—';
+  const limit=new Date(b);limit.setUTCDate(limit.getUTCDate()+1);
+  const shift=(d,months)=>{const first=new Date(d);first.setUTCDate(1);first.setUTCMonth(first.getUTCMonth()+months);const last=new Date(first);last.setUTCMonth(last.getUTCMonth()+1);last.setUTCDate(0);first.setUTCDate(Math.min(d.getUTCDate(),last.getUTCDate()));return first;};
+  let years=limit.getUTCFullYear()-a.getUTCFullYear();if(shift(a,years*12)>limit)years--;
+  const anchor=shift(a,years*12);let months=(limit.getUTCFullYear()-anchor.getUTCFullYear())*12+limit.getUTCMonth()-anchor.getUTCMonth();if(shift(anchor,months)>limit)months--;
+  const days=(limit-shift(anchor,months))/86400000;return years+' tahun, '+months+' bulan, '+days+' hari';
+ }
  function option(select,value,label){const o=document.createElement('option');o.value=plain(value);o.textContent=label;select.append(o);}
  function output(row,tr){
   const ref=reference(row),values={...row};
@@ -42,6 +51,7 @@
     const day=value=>{const match=plain(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!match)return null;const d=new Date(0);d.setUTCHours(0,0,0,0);d.setUTCFullYear(Number(match[1]),Number(match[2])-1,Number(match[3]));return d.getUTCFullYear()===Number(match[1])&&d.getUTCMonth()===Number(match[2])-1&&d.getUTCDate()===Number(match[3])?d.getTime():null;};
     const [start,end]=column.formula.inputs.map(key=>day(row[key]));value=start!==null&&end!==null&&end>=start?String((end-start)/86400000+1):'—';
    }
+   if(column.formula?.operation==='inclusiveCalendar')value=inclusiveCalendar(...column.formula.inputs.map(key=>row[key]));
    if(column.formula?.operation==='multiply'){
     const inputs=column.formula.inputs.map(key=>plain(values[key]));
     value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
