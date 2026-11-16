@@ -1,6 +1,6 @@
 # Batch 037 — OS24000 Sewaan Umum
 
-**Status:** Checkout recovered; implementation and verification passed. PR #85 merge/local acceptance pending.
+**Status:** Merged via PR #85 at `d95b86029a72a77da72e7e0932b6dadeb3f4be3f`; checkout recovered and verification passed; local acceptance pending.
 **Baseline:** `7a9cc09691fdf2a84e0e31a53fc48dcde466794b` on dev. Batch 036 merge/verification recorded; local sync/financial acceptance remains unconfirmed.
 
 ## Scope and authoritative rules
@@ -38,3 +38,11 @@ Chromium exercises empty/populated/partial/read-only fixtures at desktop/mobile 
 Artifact **14196960746** contains **382 PNGs / 22 rental captures**. Visually reviewed 14 rental captures: empty desktop/mobile left; populated desktop left/right and mobile right; partial desktop/mobile right; read-only desktop/mobile right; non-contract desktop/mobile; validation desktop/mobile; expanded exact amount on mobile. Also inspected populated Bacaan Meter desktop-right, grouped Umum mobile-right and utilities desktop-left (17 captures total). No blocking new visual defect found in inspected states; title-case headers, conditional inactive dates, partial values, error summary/cell, spacing and tabular/accounting amounts remain readable. Mobile category cells wider than the viewport require horizontal scrolling; snapshot endpoints do not certify every column at once. Remaining captures, pending-save/loading, physical devices, screen readers and owner-local financial acceptance were not independently reviewed here. Long helper text/table density remain candidates for the consolidated refinement. No filtered-empty state applies. This is not a UI-complete or production-readiness claim.
 
 Merge and local update remain pending. No migration/seed or routine server restart is required.
+
+## Batch 037 checkpoint — 16 November 2026
+
+[PR #85](https://github.com/muhdmuizz/sistem-abm/pull/85) merged at `d95b86029a72a77da72e7e0932b6dadeb3f4be3f`. OS24000 Sewaan Umum source editor implements five existing mappings and all 64 approved paths, three-level dependent categories with cascading resets, blank Tanah leaves, distinct broadcasting labels and Berkontrak-only Kitaran-year dates/inclusive day duration. Exact draft preview = Bil. Unit × manual Kadar × manual Bilangan Bulan; dates never set months. No migration/seed/reset, reference/rate/catalogue/mapping/permission/export-schema changes. Photocopier rental remains separate and unimplemented.
+
+Checkout access recovered without changing workflow/credentials/permissions after browser inspection confirmed existing settings were correct; precise transient upstream cause unconfirmed. [CI 43799773291 attempt 2](https://github.com/muhdmuizz/sistem-abm/actions/runs/43799773291) at `29932d87de94f89a018d01c15595a403b3337520`: **510 tests / 5,119 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Later commits changed documentation only. Reviewed 14 rental and three existing-editor captures from 382 PNGs / 22 rental captures; [Batch 037](batch-037-sewaan-umum-spreadsheet.md) records coverage, earlier failures and review limits.
+
+Local sync/financial acceptance remains pending; prior unconfirmed local statuses are unchanged. Official outputs/totals/completeness, programme inheritance and submission remain pending; AD-008 remains Draft and Steps 02/03 in progress. Complete remaining OS editors before consolidated editor UI refinement; usability defects fixed as encountered. No routine server restart required.

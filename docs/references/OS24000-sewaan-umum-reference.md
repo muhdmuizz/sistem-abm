@@ -1,10 +1,10 @@
 # OS24000 — Sewaan (Umum): category and Kadar reference
 
-**Owner-confirmed reference:** 12 November 2026. **Owner-approved column applicability and calculation:** 14 November 2026. **Scope:** Documentation only; no application/DB changes.
+**Owner-confirmed reference:** 12 November 2026. **Owner-approved column applicability and calculation:** 14 November 2026. **Scope:** Approved reference/specification; source-editor implementation is recorded in the Batch 037 checkpoint below.
 
 ## Identity
 
-This is the reference for **OS24000 — Sewaan (Umum)**. **Sewaan (Mesin Fotostat)** has a separate reference to be supplied; this document does not assume its categories or rates.
+This is the reference for **OS24000 — Sewaan (Umum)**. **Sewaan (Mesin Fotostat)** has a [separate approved reference](OS24000-sewaan-mesin-fotostat-reference.md); this document does not merge its categories or rates.
 
 ## Approved category mapping
 
@@ -82,4 +82,12 @@ For both Berkontrak and Tidak Berkontrak:
 
 KADAR is mandatory manual input, and BILANGAN BULAN is manual rather than fixed at 12. No further multiplier, rate, rounding, or eligibility rule is introduced.
 
-**Status:** Approved specification committed; no Laravel code, database, master reference CSV or Excel export was modified.
+**Historical specification checkpoint (14 November 2026):** Approved specification committed; that documentation commit did not modify Laravel code, database, master reference CSV or Excel export. Later implementation is recorded below.
+
+## Batch 037 checkpoint — 16 November 2026
+
+[PR #85](https://github.com/muhdmuizz/sistem-abm/pull/85) merged at `d95b86029a72a77da72e7e0932b6dadeb3f4be3f`. OS24000 Sewaan Umum source editor implements five existing mappings and all 64 approved paths, three-level dependent categories with cascading resets, blank Tanah leaves, distinct broadcasting labels and Berkontrak-only Kitaran-year dates/inclusive day duration. Exact draft preview = Bil. Unit × manual Kadar × manual Bilangan Bulan; dates never set months. No migration/seed/reset, reference/rate/catalogue/mapping/permission/export-schema changes. Photocopier rental remains separate and unimplemented.
+
+Checkout access recovered without changing workflow/credentials/permissions after browser inspection confirmed existing settings were correct; precise transient upstream cause unconfirmed. [CI 43799773291 attempt 2](https://github.com/muhdmuizz/sistem-abm/actions/runs/43799773291) at `29932d87de94f89a018d01c15595a403b3337520`: **510 tests / 5,119 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/formatter/Chromium passed. Later commits changed documentation only. Reviewed 14 rental and three existing-editor captures from 382 PNGs / 22 rental captures; [Batch 037](../development/batch-037-sewaan-umum-spreadsheet.md) records coverage, earlier failures and review limits.
+
+Local sync/financial acceptance remains pending; prior unconfirmed local statuses are unchanged. Official outputs/totals/completeness, programme inheritance and submission remain pending; AD-008 remains Draft and Steps 02/03 in progress. Complete remaining OS editors before consolidated editor UI refinement; usability defects fixed as encountered. No routine server restart required.
