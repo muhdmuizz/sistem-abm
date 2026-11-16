@@ -525,3 +525,7 @@ Tested `75809c99be402bf0d0805837286557e2519d247a`; [CI 43817060723](https://gith
 OS24000's Program/ Aktiviti entry pathway is recorded; programme association/inheritance remains separate and direct entry remains available. Official outputs/totals/completeness and submission remain pending; AD-008 remains Draft and Steps 02/03 in progress. Complete remaining OS editors before consolidated editor UI refinement. Keep the development server running.
 
 See [Batch 038](batch-038-fotostat-meter-linkage.md) for exact scope, earlier resolved failures, screenshot coverage and local instructions.
+
+## Batch 039 — verified, merge pending
+
+OS21000 Pertukaran source spreadsheet implements the approved eight paths, five existing mappings, explicit component/reference selection, automatic/manual rates and mileage-only distance multiplier. Tested `1c150db0d391d9a3c89deae03df9cc2802194fab`; [CI 43834725263](https://github.com/muhdmuizz/sistem-abm/actions/runs/43834725263), job 133188408042: **528 tests / 5,330 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB, production build/exact-money/Chromium passed. Thirteen Pertukaran plus one existing-editor capture reviewed from 426 PNGs. See [Batch 039](batch-039-pertukaran-spreadsheet.md) for exact scope, resolved fixture failures and review limits. No new migration/seed/reset or reference/financial-rule changes; Batch 038 migration and prior local acceptance remain unconfirmed. Merge checkpoint pending.

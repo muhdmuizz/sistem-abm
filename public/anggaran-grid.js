@@ -53,8 +53,8 @@
    }
    if(column.formula?.operation==='inclusiveCalendar')value=inclusiveCalendar(...column.formula.inputs.map(key=>row[key]));
    if(column.formula?.operation==='multiply'){
-    const inputs=column.formula.inputs.map(key=>plain(values[key]));
-    value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
+    const keys=[...column.formula.inputs];if(column.formula.factorWhenReference&&ref?.[column.formula.factorWhenReference])keys.push(column.formula.factor);const inputs=keys.map(key=>plain(values[key]));
+    value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresMatched||ref?.matched)&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    if(!active(row,column))value='Tidak berkenaan';
    values[column.key]=value??'';
@@ -105,6 +105,7 @@
      if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;if(row.notices){delete row.notices[name];cell.querySelector('.grid-cell-notice')?.remove();}
      if(column.type==='select'&&childSelector){
       if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
+      for(const c of inputColumns)if(c.resetOn?.includes(name))row[c.key]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);
       const invalidated=new Set([name]);for(const c of inputColumns){if(c.dependsOn&&invalidated.has(c.dependsOn)){row[c.key]=null;invalidated.add(c.key);}if(!active(row,c))row[c.key]=null;}
       const key=row.key;render();body.querySelector('tr[data-key="'+key+'"] [data-field="'+name+'"]')?.focus();dirty();
