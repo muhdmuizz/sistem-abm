@@ -1078,7 +1078,7 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
 {
  const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
  if(await row().locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Pertukaran mileage preview');
- if(!await field('kadar').isReadOnly())throw Error('Pertukaran fixed rate editable');
+ if(await field('kadar').getAttribute('readonly')===null)throw Error('Pertukaran fixed rate editable');
  await field('komponen').selectOption('Tambang Pengangkutan Awam');await field('padanan').selectOption('Semenanjung/ Sabah/ Sarawak/ WP Labuan');
  if(await row().locator('[data-output=preview]').textContent()!=='1.00'||await field('jarak').count())throw Error('Pertukaran public fare multiplier');
  await field('kategori1').selectOption('Berpindah Rumah');await field('kategori2').selectOption('Bujang');await field('kategori3').selectOption('Tambang Perjalanan');
