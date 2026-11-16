@@ -1,0 +1,40 @@
+# Batch 037 — OS24000 Sewaan Umum
+
+**Status:** Checkout recovered; implementation and verification passed. PR #85 merge/local acceptance pending.
+**Baseline:** `7a9cc09691fdf2a84e0e31a53fc48dcde466794b` on dev. Batch 036 merge/verification recorded; local sync/financial acceptance remains unconfirmed.
+
+## Scope and authoritative rules
+
+Implement [Sewaan Umum](../references/OS24000-sewaan-umum-reference.md) for the existing Sewaan identity and five mappings (PPN 010801, Rendah 030219, Awal 030101, Menengah 030301, Asrama 030313). Preserve its unchanged 64-path CSV: Kategori1 → Kategori2 → Kategori3, distinct contracted/non-contracted broadcasting labels and intentionally blank Tanah third category. Extend shared metadata-driven dependent selection by one level; clear all dependent descendants when a parent changes. No separate OS24000 photocopier/rental editor in this batch.
+
+Source inputs: purpose, categories, quantity, manual exact Kadar and manual months. Berkontrak alone enables Kitaran-year start/end dates and calculated inclusive Tempoh (Hari), using the established shared date-day presentation. Tidak Berkontrak dates/duration are inactive and nonempty date injection is rejected. No whole-contract fields or borrowing of photocopier-specific year/month/day duration rules. Bilangan Bulan remains manual in both arrangements. Preview = Bil. Unit × Kadar × Bilangan Bulan, independent of dates; partial drafts are saveable and missing category/rate/quantity/month factors withhold preview.
+
+Preserve shared atomic/audited source saves, revision/Fasa/role/PTJ guards, pagination, read-only states, exact precision and AD-013 title-case/accounting presentation. No migration/seed/reset, rate/reference/catalogue/mapping/permission/schema changes or official outputs/totals/completeness/submission/programme inheritance. Interpret historical 27-column reference by field identity under AD-008's 30-column contract; new 08–10 inactive here. UI refinement checkpoint remains after remaining OS editors; usability defects fixed as encountered.
+
+## Verification
+
+Pending full isolated PostgreSQL/build/formatter/Chromium and representative desktop/mobile empty, populated, partial, read-only, conditional, validation and expanded exact-value review. No filtered-empty state applies. Record actual evidence before merge; local acceptance remains pending.
+
+### Verification interruption
+
+Initial application head `5d8827fc3402d46c523bf3b8d5670747c024db23` reached the suite, but all seven new rental tests used an incorrect OS29000 fixture identity. The application correctly rejected that identity. Corrected the test fixture to OS24000 at `f87fac4aa4bc331544f7d9ab9b3adf9e070b98e7`; no application/financial rule changed. CI 43799356712 attempts 1 and 2 then failed during checkout (`Repository not found`, exit 128), before PHP/build/browser execution. This is an infrastructure/access failure, not a test pass. Recording the interruption and starting a fresh workflow event; merge and local update remain pending until full verification succeeds.
+
+### Verification blocked — 16 November 2026
+
+Fresh workflow event [43799773291](https://github.com/muhdmuizz/sistem-abm/actions/runs/43799773291) at `29932d87de94f89a018d01c15595a403b3337520`, job 133076870625, also failed at actions/checkout with `Repository not found` / exit 128. Thus both attempts of run 43799356712 and the fresh event failed before execution. Connected repository reads/writes remain available; the checkout access failure's root cause is not established. Do not change credentials/workflow permissions speculatively or merge unverified work.
+
+[PR #85](https://github.com/muhdmuizz/sistem-abm/pull/85) remains open/unmerged. JavaScript syntax checks passed locally; corrected final PHP/HTTP tests, production build, formatter/browser regression and visual review remain unverified. No new successful test count is claimed. Last verified dev remains Batch 036 (`7a9cc09691fdf2a84e0e31a53fc48dcde466794b`, 503 tests / 4,830 assertions at the recorded application head). No local pull/migration instructions issued for this unmerged batch. Resume by repairing/confirming Actions checkout access, rerunning the corrected head, resolving any test failures and completing desktop/mobile visual review before merge. UI refinement sequencing is unchanged.
+
+## Verification recovered and passed — 16 November 2026
+
+Owner requested investigation/repair. Browser inspection confirmed the private repository exists, Actions is enabled and workflow defaults allow reading repository contents/packages. Failed jobs already declared `contents: read`; both successful/failed runners used Git 2.56.1 and the same checkout action. No credentials, repository permissions, workflow YAML or financial/application code were changed during recovery. Re-running [CI 43799773291](https://github.com/muhdmuizz/sistem-abm/actions/runs/43799773291), **attempt 2 / job 133082975399**, recovered checkout and passed end-to-end. The precise upstream cause remains unconfirmed; operational recovery is verified, not a claimed configuration repair.
+
+**Tested head:** `29932d87de94f89a018d01c15595a403b3337520`; **510 tests / 5,119 assertions**, PHP 8.4.27/PostgreSQL 18.7 in isolated `sistem_abm_testing`; production build, exact-money formatter and full Chromium regression passed. Compare with later head `9c6dfbd1bf23bd71422bad28e12c276f8725a466` confirms only two documentation files changed; application/workflow/test code is identical. Earlier failed fixture/checkout records above are historical and superseded by this verified result.
+
+Seven new HTTP/PostgreSQL tests exercise all 64 exact reference paths (including both blank Tanah leaves and distinct broadcasting labels), three-level metadata, all five exact activity mappings, photocopier/other-OS separation, source save/reopen/edit/no-op audit and exact manual-rate precision, independent inclusive contract days/manual months, conditional date injection rejection, malformed hierarchy/array/derived/inactive-field rejection with atomic rollback, blank/partial drafts, whole-source pagination and live revision/Fasa/role/PTJ guards, read-only access and audited deletion. Official generated outputs remain untouched.
+
+Chromium exercises empty/populated/partial/read-only fixtures at desktop/mobile horizontal endpoints, three-level cascades, Tanah without a fabricated third category, both broadcasting labels, removal of inactive dates and no date resurrection, leap-year duration/amount independence, copy/remove independence, exact money focus/blur and source payloads, field validation and stale-save recovery. Conditional non-contract and expanded exact-value states are captured. Browser save calls are intercepted for client checks; persistence/guards are independently tested through HTTP/PostgreSQL. Shared editor regressions run in the full browser suite.
+
+Artifact **14196960746** contains **382 PNGs / 22 rental captures**. Visually reviewed 14 rental captures: empty desktop/mobile left; populated desktop left/right and mobile right; partial desktop/mobile right; read-only desktop/mobile right; non-contract desktop/mobile; validation desktop/mobile; expanded exact amount on mobile. Also inspected populated Bacaan Meter desktop-right, grouped Umum mobile-right and utilities desktop-left (17 captures total). No blocking new visual defect found in inspected states; title-case headers, conditional inactive dates, partial values, error summary/cell, spacing and tabular/accounting amounts remain readable. Mobile category cells wider than the viewport require horizontal scrolling; snapshot endpoints do not certify every column at once. Remaining captures, pending-save/loading, physical devices, screen readers and owner-local financial acceptance were not independently reviewed here. Long helper text/table density remain candidates for the consolidated refinement. No filtered-empty state applies. This is not a UI-complete or production-readiness claim.
+
+Merge and local update remain pending. No migration/seed or routine server restart is required.

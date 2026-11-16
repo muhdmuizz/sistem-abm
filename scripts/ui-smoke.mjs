@@ -959,4 +959,76 @@ await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-
  await field('kadar').fill('');await field('bil_bulan').focus();if(await row.locator('[data-output=preview]').textContent()!=='—')throw Error('Meter missing rate assumed');
 }
 
+
+for(const fixture of ['rental-empty','rental-populated','rental-partial','rental-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Rental page overflow '+fixture);
+  for(const side of ['left','right']){
+   await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);
+   await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});
+  }
+  if(fixture==='rental-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('Rental readonly save');
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/rental-empty.html');
+await page.locator('[data-grid-add-count]').fill('1');await page.locator('[data-grid-add]').click();
+{
+ const row=page.locator('[data-grid-body] tr').first(),field=key=>row.locator('[data-field="'+key+'"]');
+ await field('tempat_bertugas_id').selectOption({index:1});await field('tujuan').fill('Sewaan Dewan Mesyuarat');await field('kategori1').selectOption('Berkontrak');
+ await field('kategori2').selectOption('Pelbagai');await field('kategori3').selectOption('Dewan (Venue)');
+ await field('tarikh_mula').fill('2028-02-28');await field('tarikh_tamat').fill('2028-03-01');
+ await field('bil_unit').fill('2');await field('kadar').focus();await field('kadar').fill('180');await field('bil_bulan').fill('12');
+ if(await row.locator('[data-output=preview]').textContent()!=='4,320.00'||await row.locator('[data-output=tempoh]').textContent()!=='3')throw Error('Rental formula or leap duration');
+ await field('tarikh_mula').fill('2028-01-01');await field('tarikh_tamat').fill('2028-12-31');
+ if(await row.locator('[data-output=tempoh]').textContent()!=='366'||await field('bil_bulan').inputValue()!=='12'||await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Rental duration sets chargeable months');
+ await field('kategori2').selectOption('Kenderaan');
+ if(await field('kategori3').inputValue()!==''||await row.locator('[data-output=preview]').textContent()!=='—')throw Error('Rental stale third category after equipment change');
+ await field('kategori3').selectOption('Van');
+ await field('kategori1').selectOption('Tidak Berkontrak');
+ if(await field('kategori2').inputValue()!==''||await field('kategori3').inputValue()!==''||await field('tarikh_mula').count()||await field('tarikh_tamat').count())throw Error('Rental arrangement fails to clear descendants or dates');
+ if(await row.locator('[data-output=tempoh]').textContent()!=='Tidak berkenaan')throw Error('Rental inactive duration shown');
+ await field('kategori2').selectOption('Tanah');if(await field('kategori3').count())throw Error('Rental invented land type');
+ if(await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Rental blank land leaf not resolved');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));
+  await row.locator('[data-output=tempoh]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));
+  await page.screenshot({path:'storage/app/ui-qa/rental-noncontract-'+width+'.png',fullPage:true});
+ }
+ await field('kategori2').selectOption('Alat Kelengkapan Penyiaran');await field('kategori3').selectOption('Alat Kelengkapan Penyiaran');
+ await field('kategori1').selectOption('Berkontrak');
+ const choices=await field('kategori2').locator('option').allTextContents();
+ if(!choices.includes('Sewa Alat Kelengkapan Penyiaran')||choices.includes('Alat Kelengkapan Penyiaran'))throw Error('Rental broadcast labels merged');
+ await field('kategori2').selectOption('Sewa Alat Kelengkapan Penyiaran');await field('kategori3').selectOption('Alat Kelengkapan Penyiaran');
+ if(await field('tarikh_mula').inputValue()!==''||await field('tarikh_tamat').inputValue()!=='')throw Error('Rental inactive dates resurrected');
+ await field('kadar').focus();await field('kadar').fill('1234.567');await field('bil_bulan').fill('3');
+ if(await row.locator('[data-output=preview]').getAttribute('data-exact')!=='7407.402'||await row.locator('[data-output=preview]').textContent()!=='7,407.40')throw Error('Rental exact precision');
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='1234.567')throw Error('Rental exact edit lost');await field('bil_unit').focus();
+ await row.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
+ if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Rental row copy');
+ const copy=page.locator('[data-grid-body] tr').nth(1);await copy.locator('[data-field=bil_bulan]').fill('5');if(await field('bil_bulan').inputValue()!=='3')throw Error('Rental copy shared values');
+ await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+ let payload;
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kategori3':['Semak Jenis Peralatan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak Jenis'));
+ if(payload.rekod[0].kadar!=='1234.567'||payload.rekod[0].bil_bulan!=='3'||'tempoh' in payload.rekod[0]||'preview' in payload.rekod[0])throw Error('Rental source payload drift');
+ if(await field('kategori3').getAttribute('aria-invalid')!=='true')throw Error('Rental category error missing');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await field('kategori3').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));
+  await page.screenshot({path:'storage/app/ui-qa/rental-validation-'+width+'.png',fullPage:true});
+ }
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='1234.567')throw Error('Rental retry lost exact source');
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await field('bil_bulan').focus();
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await row.locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));
+  const detail=row.locator('[data-output=preview]').locator('..').locator('details');await detail.evaluate(el=>el.open=true);
+  await page.screenshot({path:'storage/app/ui-qa/rental-exact-'+width+'.png',fullPage:true});
+ }
+ await field('kadar').focus();await field('kadar').fill('');await field('bil_bulan').focus();if(await row.locator('[data-output=preview]').textContent()!=='—')throw Error('Rental missing manual rate assumed');
+}
+
 await browser.close();

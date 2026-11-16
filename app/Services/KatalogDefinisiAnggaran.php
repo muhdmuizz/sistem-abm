@@ -58,6 +58,15 @@ class KatalogDefinisiAnggaran
             return $mapped?$meter:null;
         }
 
+        $rental=new DefinisiSewaanUmum($bid->kitaran->tahun);
+        if($rental->supports($os)){
+            $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
+            if($code===null)return null;
+            $mapped=PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists();
+            return $mapped?$rental:null;
+        }
+
         $food = app(DefinisiAnggaran::class);
         if ($food->supports($os)) { return $food; }
 
