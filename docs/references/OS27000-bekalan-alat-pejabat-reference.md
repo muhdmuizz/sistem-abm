@@ -79,3 +79,8 @@ BIL. UNIT is the entered quantity and KADAR is the required automatic reference 
 6. The workflow **adds new items**, not edits to existing approved reference records, does not bypass Kod Aktiviti permissions, and does not create a second financial transaction layer.
 
 **Change-control:** Documentation approval only. The Laravel application, PostgreSQL database, original 194 selectable reference CSV items and financial exporter remain unchanged by this commit.
+
+
+## Batch 044 implementation checkpoint — 17 November 2026
+
+OS27000 Bekalan Alat Pejabat baseline spreadsheet merged in [PR #97](https://github.com/muhdmuizz/sistem-abm/pull/97) at `721fe9216b9b0d0f84c806f9188599bed7c9c274`: four categories/194 unchanged approved items, exact quantity × read-only rate, five existing activity mappings and no inactive direct-entry programme/Unit/Kategori3 inputs. Verified `b096af2cac1885fef4e3252905549f3ec363862b`: 555 tests / 6,183 assertions plus build/exact-money/Chromium. No new migration/seed; local sync/financial/device acceptance pending. Cadangan Item Baharu is deferred until remaining OS editors and consolidated UI refinement finish. Programme inheritance/official financial integration remain pending; AD-008 stays Draft and Steps 02/03 in progress. OS26000 purpose removal was retracted and never merged; it remains unchanged. Evidence and limits: [Batch 044](../development/batch-044-office-supplies-spreadsheet.md).
