@@ -56,7 +56,7 @@ The master catalogue, legacy Kod Aktiviti mapping, Architecture Decisions, Larav
 
 ## Owner-approved OS26000 Anggaran specification — 14 November 2026
 
-**Scope:** Approved specification for the shared OS26000 category hierarchy, its distinct existing Kod Aktiviti identities, both Pukal/Bukan Pukal applicability paths, 2028 planning fuel rates, dynamic measurement units and Bukan Pukal new-item proposal governance. This section supersedes earlier *pending* statements about these subjects, but preserves the historical 2027-only source provenance above. **Documentation only:** no application, database, catalogue CSV or reference record was modified.
+**Scope:** Approved specification for the shared OS26000 category hierarchy, its distinct existing Kod Aktiviti mappings, both Pukal/Bukan Pukal applicability paths, 2028 planning fuel rates, dynamic measurement units and Bukan Pukal new-item proposal governance. This section supersedes earlier *pending* statements about these subjects, but preserves the historical 2027-only source provenance above. **Documentation only:** no application, database, catalogue CSV or reference record was modified.
 
 ### Identity and category hierarchy
 
@@ -159,3 +159,13 @@ The 30 canonical headers and positions are defined by [AD-008](../architecture/A
 OS26000 baseline source spreadsheets merged in [PR #93](https://github.com/muhdmuizz/sistem-abm/pull/93) at `cafacd3a86debdd30a0f67fec0e2c9558d21a909`: all 42 approved items, separate Pukal/Bukan Pukal permissions, derived units/rates and exact draft previews. Verified at `0680c16ec8b92ffccd7839f5abbee2bee6d70274`: 544 tests / 5,705 assertions plus build/exact-money/Chromium. No migration or seed added; local sync and prior migration/import remain pending. New-item proposal governance and official financial workflow remain deferred; AD-008 remains Draft and Steps 02/03 in progress. Full evidence and limits: [Batch 041](../development/batch-041-os26000-spreadsheets.md).
 
 [Machine-readable unit mapping](OS26000-bahan-mentah-unit.csv) transcribes the approved unit table exactly; original cost/source CSVs are unchanged. Fuel assumptions apply only to explicitly approved 2027/2028 planning contexts; other-year fuel previews are withheld.
+
+
+## Owner-approved single-card correction — 17 November 2026
+
+Supersedes Batch 041's separate OS identities/permissions: OS26000 uses one retained catalogue card and Anggaran, with Pukal/Bukan Pukal selected per Kategori1 row. Preserve all nine distinct Kod Aktiviti mappings and original wording; no code merger or fabricated Pendidikan Awal Pukal mapping. Available paths follow the exact current activity mappings; one retained OS permission controls access. Frequency/months apply only to Pukal and must not survive a switch to Bukan Pukal. Approved formulas, 42 reference paths, units and rates are unchanged. Targeted obsolete development-card cleanup is authorised; canonical and unrelated drafts remain. Implementation/evidence: [Batch 042](../development/batch-042-unified-os26000-spreadsheet.md).
+
+
+## Batch 042 implementation checkpoint — 17 November 2026
+
+OS26000 single-card correction merged in [PR #95](https://github.com/muhdmuizz/sistem-abm/pull/95) at `ae59695121bf72c1adc061ada09f1693187c513a`. One retained identity supports Pukal/Bukan Pukal per row, preserving nine distinct activity codes and all 42 approved references/units/rates. Supersedes Batch 041's separate identities. Catalogue 30/28 eligible/two excluded; mappings 105/103 eligible. Tested `4113f1985ecd26153ae39e50e39a55a263d933d9`: 548 tests / 5,719 assertions plus build/exact-money/Chromium. Targeted obsolete development-card migration and normal reference import required; local acceptance pending. Proposal governance and official financial integration remain deferred; AD-008 stays Draft, Steps 02/03 in progress. Evidence and limits: [Batch 042](../development/batch-042-unified-os26000-spreadsheet.md).
