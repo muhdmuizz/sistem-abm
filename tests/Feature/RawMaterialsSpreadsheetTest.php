@@ -177,7 +177,9 @@ class RawMaterialsSpreadsheetTest extends TestCase
     public function test_permissions_stale_phase_workplace_and_source_revision_guards(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$bulk=$this->bulkEstimate($bid);$url=$this->gridUrl($bid,$estimate);$data=$this->payload($bid,$estimate,[$this->row($place)]);$this->postJson($url,$data)->assertOk();$this->postJson($url,$data)->assertConflict();
-        TetapanAksesPtj::where('rujukan_os_id',$this->unconfigured->id)->update(['dibenarkan'=>false]);$this->postJson($this->gridUrl($bid,$bulk),$this->payload($bid,$bulk,[$this->bulkRow($place)]))->assertForbidden();$this->assertSame(0,$bulk->butiran()->count());
+        TetapanAksesPtj::where('rujukan_os_id',$this->unconfigured->id)->update(['dibenarkan'=>false]);$this->postJson($this->gridUrl($bid,$bulk),$this->payload($bid,$bulk,[$this->bulkRow($place)]))->assertNotFound();
+        try{app(\App\Services\EditorAnggaran::class)->save($bulk->id,$this->payload($bid,$bulk,[$this->bulkRow($place)]));$this->fail('Revoked Pukal permission must fail.');}catch(\Symfony\Component\HttpKernel\Exception\HttpException $e){$this->assertSame(403,$e->getStatusCode());}
+        $this->assertSame(0,$bulk->butiran()->count());
         $outside=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($outside)]))->assertForbidden();
         $source=$estimate->butiran()->sole();$r=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan+1]);$this->postJson($url,$this->payload($bid,$estimate,[$r]))->assertConflict();
         $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
