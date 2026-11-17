@@ -70,6 +70,11 @@ See the committed clarifications in **AD-002, AD-004, AD-005, and AD-011**:
 
 [Batch 020](../development/batch-020-program-aktiviti-foundation.md) imports the exact [Reference 06](REF-06-teras-strategik-strategi-prakarsa.md) source into database-backed objective tables via the reference-only RpmReferenceSeeder, using [rpm-objectives.json](rpm-objectives.json): 7 Teras Strategik, 25 Strategi and 44 Prakarsa. Local numbering remains scoped to its parent; no new official identifier or user/financial record is generated. CI 43579320487 verifies exact Markdown wording, idempotent IDs and parent relationships. Local migration/import user-confirmed. Initial objective validation stays strict. Batch 021 adds the initial programme form; requested Batch 021 local interface checks user-confirmed. Optionality administration remains deferred.
 
-## Current OS catalogue reconciliation — Batch 040 (17 November 2026)
+## Historical OS catalogue reconciliation — Batch 040 (17 November 2026)
 
 The initial Batch 004 inventory above is historical. Following Batch 031 utilities and Batch 040 OS22000 consolidation, the current catalogue has **31 identities: 29 eligible and two excluded**. All **105 source mappings (103 eligible)** remain; seven OS22000 mappings now refer to one retained identity, preserving every existing Kod Aktiviti and original source label. No organisational roster/rate change. [PR #91](https://github.com/muhdmuizz/sistem-abm/pull/91) merged at `a45ec936cb67d565e72446729830fd12f96047f2`; [Batch 040](../development/batch-040-unified-os22000-spreadsheet.md) records migration, import, verification and pending local acceptance.
+
+
+## Batch 042 implementation checkpoint — 17 November 2026
+
+OS26000 single-card correction merged in [PR #95](https://github.com/muhdmuizz/sistem-abm/pull/95) at `ae59695121bf72c1adc061ada09f1693187c513a`. One retained identity supports Pukal/Bukan Pukal per row, preserving nine distinct activity codes and all 42 approved references/units/rates. Supersedes Batch 041's separate identities. Catalogue 30/28 eligible/two excluded; mappings 105/103 eligible. Tested `4113f1985ecd26153ae39e50e39a55a263d933d9`: 548 tests / 5,719 assertions plus build/exact-money/Chromium. Targeted obsolete development-card migration and normal reference import required; local acceptance pending. Proposal governance and official financial integration remain deferred; AD-008 stays Draft, Steps 02/03 in progress. Evidence and limits: [Batch 042](../development/batch-042-unified-os26000-spreadsheet.md).

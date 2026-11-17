@@ -1,6 +1,6 @@
 # Batch 042 — One OS26000 card and spreadsheet
 
-**Status:** Verified; merge pending; owner approved 17 November 2026 after reporting the two OS26000 cards.
+**Status:** Merged in [PR #95](https://github.com/muhdmuizz/sistem-abm/pull/95) at `ae59695121bf72c1adc061ada09f1693187c513a`; owner approved 17 November 2026 after reporting the two OS26000 cards.
 **Baseline:** `129a8c63b03d56a9e40d99eb696134fe28057182` (Batch 041 application PR #93, documentation PR #94). Batch 041 local sync/financial acceptance remains unconfirmed; earlier unconfirmed migrations/imports remain pending.
 
 ## Authorised correction
@@ -25,4 +25,4 @@ Visually reviewed **14 OS26000 captures plus one existing OS22000 capture**: one
 
 Initial head `8c2934a14c62889ac7d33833709d81f2535390ce`, CI 44069145444/job 133990552756: 547 passed / one failed (5,706 assertions). New one-card test opened bids.index (activity list) rather than bids.show (OS cards), so its title assertion failed before mixed-row checks. Corrected the test route and added an explicit single-OS26000-card assertion; no application code changed for this correction. Build/browser were skipped in that failed run.
 
-Only documentation changes follow the tested application head. Merge and local sync/migration/reference import remain pending; no reset/fresh. Keep Server running separately from Updates.
+Only documentation changes follow the tested application head. Local sync/migration/reference import remain pending; no reset/fresh. Keep Server running separately from Updates.
