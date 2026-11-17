@@ -11,6 +11,14 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        foreach([false,true] as $bulk){
+            $raw=new DefinisiBahanMentah($bid->kitaran->tahun,$bulk);
+            if(!$raw->supports($os))continue;
+            $codes=$bulk?['Pengurusan Pentadbiran Negeri'=>'010809','Pendidikan Rendah'=>'030222','Pendidikan Menengah'=>'030304','Pengurusan Asrama'=>'030316']:['Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313'];
+            $code=$codes[$bid->aktivitiKewangan->nama]??null;if($code===null)return null;
+            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$raw:null;
+        }
+
         $goods=new DefinisiPengangkutan;
         if($goods->supports($os)){
             $codes=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>['010801'],'Pendidikan Rendah'=>['030220'],'Pendidikan Awal'=>['030102'],'Pendidikan Menengah'=>['030301','030302'],'Pengurusan Asrama'=>['030313','030314'],default=>[]};

@@ -549,3 +549,18 @@ Tested `457cc94cd01d40280edea8fac2a77936d0d01d13`; [CI 44038128200](https://gith
 Local sync/migration/import/financial/device acceptance remains pending; earlier unconfirmed statuses unchanged. Use Updates separately from Server; no routine server restart. Official outputs/totals/completeness/submission, programme inheritance and export remain deferred. AD-008 stays Draft; Steps 02/03 in progress. Complete remaining OS editors before consolidated UI refinement.
 
 See [Batch 040](batch-040-unified-os22000-spreadsheet.md) for exact cleanup scope and verification/local limits.
+
+
+## Batch 041 checkpoint — verification before merge
+
+OS26000 baseline source spreadsheets cover the approved 42 paths (3 Pukal / 39 Bukan Pukal), separate permissions and exact unit mapping. Pukal uses quantity × rate × frequency × months; Bukan Pukal uses quantity × rate. Units/rates are read-only. Five fuel planning assumptions apply only to approved 2027/2028 contexts; other-year fuel previews are withheld. New-item proposal governance is deferred.
+
+Tested application head `0680c16ec8b92ffccd7839f5abbee2bee6d70274`; [CI run 44046082599](https://github.com/muhdmuizz/sistem-abm/actions/runs/44046082599), job 133911984263 succeeded: **544 tests / 5,705 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`; production build, exact-money checks and full Chromium suite passed. Artifact 14311643820 contains 482 PNGs, including 36 OS26000 captures.
+
+Reviewed 19 OS26000 captures plus one existing OS22000 capture: desktop/mobile empty, populated, partial, read-only, validation and expanded exact-value states, both horizontal endpoints across the reviewed set. Confirmed accounting amounts, contextual quantity labels, derived units/rates and withheld incomplete previews. Long mobile titles/help text remain consolidated-refinement candidates. Some validation/exact captures include the shared focused skip-link overlay; broader focus behaviour is not certified. Remaining captures/middle columns, dedicated loading/pending-save states, physical devices, screen readers, real Google login, local Windows operation and owner financial acceptance were not verified.
+
+Initial head `0db6ed6e9efacd62d1f6965dfeb442d9babd77c5`, run 44045824953/job 133911127526: 543 passed / one failed, 5,700 assertions. Only failure expected 403 where the inaccessible route correctly returns 404. Test-only correction asserts route concealment and independently verifies backend service 403; final run above passes. No application-code change after the tested head is planned.
+
+Local sync and prior Batch 038 additive migration / Batch 040 targeted migration/reference import remain unconfirmed. Batch 041 introduces no migration or seed. Financial outputs, completeness/submission and proposal governance remain deferred.
+
+See [Batch 041](batch-041-os26000-spreadsheets.md).
