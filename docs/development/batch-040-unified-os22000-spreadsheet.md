@@ -1,6 +1,6 @@
 # Batch 040 — Unified OS22000 spreadsheet
 
-**Status:** Implementation and cloud verification complete; merge/local acceptance pending. Owner approved 17 November 2026.
+**Status:** Merged; local sync/migration/reference import/financial/device acceptance pending. Owner approved 17 November 2026.
 **Baseline:** `141cc687c45a5fd3d3e8077ed1d8f491fbb174b2`. Batch 039 merged/verified at `874f7bf923fb9179231c38bae524e46b71f141b5` (528 tests / 5,330 assertions). Its local sync/financial/device acceptance and Batch 038 migration remain unconfirmed. Owner requested separate Server and Updates terminals; keep the existing local server running for routine updates.
 
 ## Authority and bounded implementation
@@ -29,6 +29,6 @@ Artifact **14309055300** contains **446 PNGs / 20 OS22000 captures**. Reviewed 1
 
 ## Delivery / local follow-up
 
-Merge pending. Run ordinary migration for the targeted obsolete OS22000 reconciliation, then idempotent OsReferenceSeeder import. This changes only the documented catalogue/mapping identity and obsolete development graph; no broad reset/fresh or financial seed. Prior Batch 038 migration/local acceptance remains unconfirmed. Run updates in the dedicated Updates terminal; leave Server running, clear caches and Ctrl+F5.
+[PR #91](https://github.com/muhdmuizz/sistem-abm/pull/91) merged into `dev` at `a45ec936cb67d565e72446729830fd12f96047f2`; pre-merge changes after the tested head were documentation only. Run ordinary migration for the targeted obsolete OS22000 reconciliation, then idempotent OsReferenceSeeder import. This changes only the documented catalogue/mapping identity and obsolete development graph; no broad reset/fresh or financial seed. Prior Batch 038 migration/local acceptance remains unconfirmed. Run updates in the dedicated Updates terminal; leave Server running, clear caches and Ctrl+F5.
 
 Official financial outputs/totals/completeness/submission, programme inheritance and export stay outside this batch. Source rates, activity codes and canonical export headers are unchanged. No special C mapping, grade 11 row or absent location is invented. AD-008 remains Draft and Steps 02/03 remain in progress; finish remaining OS editors before consolidated UI refinement.
