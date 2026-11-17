@@ -1,6 +1,6 @@
 # Batch 044 — OS27000 Bekalan Alat Pejabat baseline spreadsheet
 
-**Status:** Verified; merge pending; owner approved 17 November 2026.
+**Status:** Merged in [PR #97](https://github.com/muhdmuizz/sistem-abm/pull/97) at `721fe9216b9b0d0f84c806f9188599bed7c9c274`; owner approved 17 November 2026.
 **Baseline:** `19ae4e2e6add5f0fa609adeadde393d094fecc92` (Batch 042 application PR #95 / docs #96; 548 tests / 5,719 assertions). Previous local sync/migration/import/financial/device acceptance remains unconfirmed.
 
 ## Scope and authoritative decisions
@@ -25,4 +25,4 @@ Chromium verifies four editor states at 1440/390 widths and both horizontal endp
 
 Visually reviewed **12 office captures and one existing OS26000 capture**: populated desktop left/right and mobile right; empty desktop/mobile left; partial desktop/mobile right; read-only desktop/mobile right; validation desktop/mobile; expanded exact amount mobile. Confirmed comfortable empty/error padding, title-case headers, read-only reference rates, withheld incomplete amounts and tabular accounting figures. Existing OS26000 retains purpose as retracted removal requires. Wide grids still require horizontal scrolling; long helper text remains a consolidated-refinement candidate. Remaining captures/middle columns, dedicated loading/pending-save states, broader focus/skip-link behaviour, physical devices, screen readers, real local Windows/Google operation and owner financial acceptance were not independently verified. No filtered-empty state applies. No UI-complete or production certification is claimed.
 
-Only documentation changes follow the tested head. Merge and local sync/financial/device acceptance pending. This batch adds no migration/seed; earlier pending migration/import remains unconfirmed.
+Only documentation changes follow the tested head. Local sync/financial/device acceptance pending. This batch adds no migration/seed; earlier pending migration/import remains unconfirmed.
