@@ -1,6 +1,6 @@
 # Batch 041 — OS26000 baseline source spreadsheets
 
-**Status:** Verified; merge pending. Owner approved 17 November 2026.
+**Status:** Merged in [PR #93](https://github.com/muhdmuizz/sistem-abm/pull/93) at `cafacd3a86debdd30a0f67fec0e2c9558d21a909`. Owner approved 17 November 2026.
 **Baseline:** `c3605055b3224c9daad83ddd0e052bac12f501e2`. Batch 040 merged/verified at `a45ec936cb67d565e72446729830fd12f96047f2`, 537 tests / 5,435 assertions. “Good, next” acknowledges progress; supplied local migration/import and financial/device checks remain unconfirmed. Server/Updates terminals remain separate; no routine restart.
 
 ## Approved scope
@@ -21,6 +21,6 @@ Tested application head `0680c16ec8b92ffccd7839f5abbee2bee6d70274`; [CI run 4404
 
 Reviewed 19 OS26000 captures plus one existing OS22000 capture: desktop/mobile empty, populated, partial, read-only, validation and expanded exact-value states, both horizontal endpoints across the reviewed set. Confirmed accounting amounts, contextual quantity labels, derived units/rates and withheld incomplete previews. Long mobile titles/help text remain consolidated-refinement candidates. Some validation/exact captures include the shared focused skip-link overlay; broader focus behaviour is not certified. Remaining captures/middle columns, dedicated loading/pending-save states, physical devices, screen readers, real Google login, local Windows operation and owner financial acceptance were not verified.
 
-Initial head `0db6ed6e9efacd62d1f6965dfeb442d9babd77c5`, run 44045824953/job 133911127526: 543 passed / one failed, 5,700 assertions. Only failure expected 403 where the inaccessible route correctly returns 404. Test-only correction asserts route concealment and independently verifies backend service 403; final run above passes. No application-code change after the tested head is planned.
+Initial head `0db6ed6e9efacd62d1f6965dfeb442d9babd77c5`, run 44045824953/job 133911127526: 543 passed / one failed, 5,700 assertions. Only failure expected 403 where the inaccessible route correctly returns 404. Test-only correction asserts route concealment and independently verifies backend service 403; final run above passes. Only documentation changed after the tested application head.
 
 Local sync and prior Batch 038 additive migration / Batch 040 targeted migration/reference import remain unconfirmed. Batch 041 introduces no migration or seed. Financial outputs, completeness/submission and proposal governance remain deferred.

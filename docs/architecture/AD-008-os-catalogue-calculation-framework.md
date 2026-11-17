@@ -454,3 +454,8 @@ Targeted migration removes only the obsolete OS22000 identity's development grap
 Tested `457cc94cd01d40280edea8fac2a77936d0d01d13`; [CI 44038128200](https://github.com/muhdmuizz/sistem-abm/actions/runs/44038128200), job 133885875932: **537 tests / 5,435 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/exact-money/Chromium passed. Thirteen OS22000 and one existing-editor capture reviewed from 446 PNGs (20 OS22000); Batch 040 records resolved fixture/count failures and review limits.
 
 Local sync/migration/import/financial/device acceptance remains pending; earlier unconfirmed statuses unchanged. Use Updates separately from Server; no routine server restart. Official outputs/totals/completeness/submission, programme inheritance and export remain deferred. AD-008 stays Draft; Steps 02/03 in progress. Complete remaining OS editors before consolidated UI refinement.
+
+
+## Batch 041 implementation checkpoint — 17 November 2026
+
+OS26000 baseline source spreadsheets merged in [PR #93](https://github.com/muhdmuizz/sistem-abm/pull/93) at `cafacd3a86debdd30a0f67fec0e2c9558d21a909`: all 42 approved items, separate Pukal/Bukan Pukal permissions, derived units/rates and exact draft previews. Verified at `0680c16ec8b92ffccd7839f5abbee2bee6d70274`: 544 tests / 5,705 assertions plus build/exact-money/Chromium. No migration or seed added; local sync and prior migration/import remain pending. New-item proposal governance and official financial workflow remain deferred; AD-008 remains Draft and Steps 02/03 in progress. Full evidence and limits: [Batch 041](../development/batch-041-os26000-spreadsheets.md).

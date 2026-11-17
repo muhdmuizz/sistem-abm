@@ -152,3 +152,10 @@ The 30 canonical headers and positions are defined by [AD-008](../architecture/A
 6. This facility **creates proposals for new items only**, never silently edits existing approved catalogue records, alters Pukal items, bypasses Kod Aktiviti permissions or creates an independent financial transaction layer.
 
 **Implementation boundary:** These are approved future application/database behaviours. They are not a claim that the current Laravel or PostgreSQL system already enforces them. Reference CSVs and the 42 original records are unchanged by this documentation commit.
+
+
+## Batch 041 implementation checkpoint — 17 November 2026
+
+OS26000 baseline source spreadsheets merged in [PR #93](https://github.com/muhdmuizz/sistem-abm/pull/93) at `cafacd3a86debdd30a0f67fec0e2c9558d21a909`: all 42 approved items, separate Pukal/Bukan Pukal permissions, derived units/rates and exact draft previews. Verified at `0680c16ec8b92ffccd7839f5abbee2bee6d70274`: 544 tests / 5,705 assertions plus build/exact-money/Chromium. No migration or seed added; local sync and prior migration/import remain pending. New-item proposal governance and official financial workflow remain deferred; AD-008 remains Draft and Steps 02/03 in progress. Full evidence and limits: [Batch 041](../development/batch-041-os26000-spreadsheets.md).
+
+[Machine-readable unit mapping](OS26000-bahan-mentah-unit.csv) transcribes the approved unit table exactly; original cost/source CSVs are unchanged. Fuel assumptions apply only to explicitly approved 2027/2028 planning contexts; other-year fuel previews are withheld.
