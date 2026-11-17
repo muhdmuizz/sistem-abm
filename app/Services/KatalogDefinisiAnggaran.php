@@ -11,12 +11,19 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
-        foreach([false,true] as $bulk){
-            $raw=new DefinisiBahanMentah($bid->kitaran->tahun,$bulk);
-            if(!$raw->supports($os))continue;
-            $codes=$bulk?['Pengurusan Pentadbiran Negeri'=>'010809','Pendidikan Rendah'=>'030222','Pendidikan Menengah'=>'030304','Pengurusan Asrama'=>'030316']:['Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313'];
-            $code=$codes[$bid->aktivitiKewangan->nama]??null;if($code===null)return null;
-            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$raw:null;
+        $raw=new DefinisiBahanMentah($bid->kitaran->tahun);
+        if($raw->supports($os)){
+            $codes=match($bid->aktivitiKewangan->nama){
+                'Pengurusan Pentadbiran Negeri'=>['Bukan Pukal'=>'010801','Pukal'=>'010809'],
+                'Pendidikan Rendah'=>['Bukan Pukal'=>'030219','Pukal'=>'030222'],
+                'Pendidikan Awal'=>['Bukan Pukal'=>'030101'],
+                'Pendidikan Menengah'=>['Bukan Pukal'=>'030301','Pukal'=>'030304'],
+                'Pengurusan Asrama'=>['Bukan Pukal'=>'030313','Pukal'=>'030316'],default=>[],
+            };
+            $allowed=[];
+            foreach($codes as $path=>$code)if(PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists())$allowed[]=$path;
+            return $allowed?new DefinisiBahanMentah($bid->kitaran->tahun,$allowed):null;
         }
 
         $goods=new DefinisiPengangkutan;
