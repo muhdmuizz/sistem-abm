@@ -571,3 +571,8 @@ Tested `4113f1985ecd26153ae39e50e39a55a263d933d9`; [CI 44070143813](https://gith
 Local sync/migration/import/financial/device acceptance pending; earlier unconfirmed local statuses unchanged. Keep Server separate from Updates; no routine restart. Proposal governance remains the next agreed slice; official outputs/totals/completeness/submission, programme inheritance and export remain deferred. AD-008 remains Draft; Steps 02/03 in progress. Consolidated editor UI refinement follows remaining OS editors.
 
 See [Batch 042](batch-042-unified-os26000-spreadsheet.md) for full evidence and limitations.
+
+
+## Batch 044 — OS27000 office supplies started
+
+Owner approved baseline Bekalan Alat Pejabat editor from the existing four categories/194 items, automatic Kadar and Bil. Unit × Kadar. No direct purpose/dates/Unit/Kategori3. OS26000 purpose removal was retracted before merge (Batch 043 withdrawn; dev unchanged). Sequencing now: remaining OS editors → consolidated UI refinement → shared Cadangan Item Baharu. Verification/merge/local acceptance pending; previous pending migrations/import remain unconfirmed. [Batch 044](batch-044-office-supplies-spreadsheet.md).

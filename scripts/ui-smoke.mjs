@@ -1205,4 +1205,32 @@ for(const width of [1440,390]){
  if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('OS26000 mixed rows absent');
  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/raw-mixed-'+width+'-'+side+'.png',fullPage:true});}
 }
+
+for(const fixture of ['office-empty','office-populated','office-partial','office-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Office supplies overflow '+fixture);
+  for(const k of ['tujuan','tarikh_mula','tarikh_tamat','kategori3','unit','kekerapan','bil_bulan','kadar'])if(await page.locator('[data-field='+k+']').count())throw Error('Office inactive/derived input '+k);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/office-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='280.00'||await field('kategori1').locator('option').count()!==5)throw Error('Office category/reference formula');
+ await field('kategori1').selectOption('Alat Tulis Pejabat');if(await field('kategori2').inputValue()!==''||await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Office dependent reset');
+ await field('kategori2').selectOption('Klip Kertas Segitiga Saiz 31MM');if(await row().locator('[data-output=kadar]').textContent()!=='1.20')throw Error('Office approved clip duplicate rate');
+ await field('bil_unit').fill('3600.102875');if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4320.12345'||await row().locator('[data-output=preview]').textContent()!=='4,320.12')throw Error('Office exact quantity/reference amount');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);await page.screenshot({path:'storage/app/ui-qa/office-exact-'+width+'.png',fullPage:true});}
+ await field('kategori2').selectOption('Tali Pengikat Rafia Saiz 100 Meter');if(await row().locator('[data-output=kadar]').textContent()!=='36.00')throw Error('Office approved rafia duplicate rate');
+ await field('kategori2').selectOption('Klip Kertas Segitiga Saiz 31MM');
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak bilangan unit.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak bilangan'));
+ if(payload.rekod[0].bil_unit!=='3600.102875'||Object.keys(payload.rekod[0]).some(k=>['kadar','unit','tujuan','tarikh_mula','tarikh_tamat','kategori3','kekerapan','bil_bulan','preview'].includes(k)))throw Error('Office source payload separation');
+ if(await field('bil_unit').getAttribute('aria-invalid')!=='true')throw Error('Office validation field error');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('bil_unit').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/office-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));if(await field('bil_unit').inputValue()!=='3600.102875')throw Error('Office stale response loses exact quantity');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('1');if(await field('bil_unit').inputValue()!=='3600.102875')throw Error('Office copy shares quantity');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+
 await browser.close();
