@@ -206,7 +206,8 @@ $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rek
     {
         [$bid,$estimate,$place]=$this->gridContext();$this->bulkEstimate($bid);$url=$this->gridUrl($bid,$estimate);
         $this->migration()->up();
-        $response=$this->get($this->workspaceIndex())->assertOk()->assertSee(\App\Services\DefinisiBahanMentah::GENERAL)->assertDontSee('Bahan Mentah Pukal');$this->workspaceCapture('raw-one-card',$response);
+        $response=$this->get(route('bids.show',$bid->id))->assertOk()->assertSee(\App\Services\DefinisiBahanMentah::GENERAL)->assertDontSee('Bahan Mentah Pukal');
+        $this->assertCount(1,$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='26000'));$this->workspaceCapture('raw-one-card',$response);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->bulkRow($place)]))->assertOk();
         $response=$this->get($url)->assertOk();$this->assertSame(['30','4320'],$response->viewData('records')->pluck('preview')->all());$this->gridCapture('raw-mixed',$response);
         $source=$estimate->butiran()->orderBy('id')->get()->last();$row=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);
