@@ -1111,4 +1111,44 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
  const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('Pertukaran copy shares financial values');
  await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();if(await page.locator('[data-grid-body] tr').count()!==3)throw Error('Pertukaran remove copy');
 }
+for(const fixture of ['pengangkutan-empty','pengangkutan-populated','pengangkutan-partial','pengangkutan-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('OS22000 page overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/pengangkutan-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='350.00'||await field('kadar').getAttribute('readonly')===null)throw Error('OS22000 fixed lookup');
+ await field('kategori1').selectOption('Pengangkutan Barang');
+ for(const key of ['nama','jawatan','gred','kategori2','kategori3','lokasi'])if(await field(key).count())throw Error('OS22000 inactive goods field '+key);
+ if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('OS22000 invented blank amount');
+ await field('kadar').focus();await field('kadar').fill('4320.12345');await field('tujuan').focus();
+ if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('OS22000 missing purpose preview');
+ await field('tujuan').fill('Pengangkutan Bahan Pejabat');
+ if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4320.12345'||await row().locator('[data-output=preview]').textContent()!=='4,320.12')throw Error('OS22000 exact manual amount');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);
+  await page.screenshot({path:'storage/app/ui-qa/pengangkutan-exact-'+width+'.png',fullPage:true});
+ }
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak kadar pengangkutan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kadar pengangkutan'));
+ if(payload.rekod[0].kadar!=='4320.12345'||payload.rekod[0].nama!==null||payload.rekod[0].lokasi!==null||payload.rekod[0].kategori2!==null||'jarak' in payload.rekod[0]||'preview' in payload.rekod[0])throw Error('OS22000 inactive payload leakage');
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await field('kadar').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/pengangkutan-validation-'+width+'.png',fullPage:true});
+ }
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));await field('kadar').focus();if(await field('kadar').inputValue()!=='4320.12345')throw Error('OS22000 stale error loses source');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await field('kategori1').selectOption('Pertukaran/ Penempatan');if(await field('tujuan').count())throw Error('OS22000 goods purpose resurrected');
+ const metadata=JSON.parse(await page.locator('[data-anggaran-grid]').getAttribute('data-columns'));const jobs=metadata.find(c=>c.key==='gred').valuesByParent;const job=Object.keys(jobs).find(j=>jobs[j].includes('DG9'));
+ await field('jawatan').selectOption(job);await field('gred').selectOption('DG9');await field('nama').fill('Pegawai Baharu');await field('kategori2').selectOption('Keluarga');await field('kategori3').selectOption('Elaun Berpindah');await field('lokasi').selectOption('Sabah/ Sarawak/ WP Labuan');
+ if(await row().locator('[data-output=preview]').textContent()!=='1,444.00')throw Error('OS22000 dependent fixed amount');
+ await field('gred').selectOption('DG11');if(await field('kadar').count()||await row().locator('[data-output=preview]').textContent()!=='—')throw Error('OS22000 fabricated grade 11 rate');
+ await field('gred').selectOption('DG9');await field('kategori3').selectOption('Tambang Pengangkutan Barang');
+ if(await field('lokasi').locator('option').count()!==2)throw Error('OS22000 fabricated Sabah freight reference');
+ await field('lokasi').selectOption('Semenanjung');await field('kadar').focus();await field('kadar').fill('125.123');await field('nama').focus();if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='125.123')throw Error('OS22000 blank matched reference mode');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('OS22000 copied source shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
 await browser.close();
