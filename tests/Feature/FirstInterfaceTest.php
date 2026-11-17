@@ -175,7 +175,7 @@ class FirstInterfaceTest extends TestCase
         $ptj = $this->get('/pentadbiran/rujukan/ptj')->assertOk()->assertSee('69 rekod')->assertSee('Halaman 1 daripada 3');
         $this->get('/pentadbiran/rujukan/aktiviti')->assertOk()->assertSee('Pengurusan Pentadbiran Negeri');
         $this->get('/pentadbiran/rujukan/tempat-bertugas')->assertOk()->assertSee('579 rekod');
-        $os = $this->get('/pentadbiran/rujukan/os')->assertOk()->assertSee('32 rekod');
+        $os = $this->get('/pentadbiran/rujukan/os')->assertOk()->assertSee('31 rekod');
         $this->get('/pentadbiran/rujukan/os?page=2')->assertOk()->assertSee('Dikecualikan');
         if (getenv('ABM_UI_CAPTURE') === '1') {
             foreach (['home' => $home, 'ptj' => $ptj, 'os' => $os] as $name => $response) {

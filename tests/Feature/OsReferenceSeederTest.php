@@ -151,7 +151,7 @@ class OsReferenceSeederTest extends TestCase
             'singkatan_sumber' => 'Custom', 'butiran_asal' => 'Custom source', 'status_sumber' => 'Custom',
         ]);
         $this->seed(OsReferenceSeeder::class);
-        $this->assertDatabaseCount('rujukan_os', 33);
+        $this->assertDatabaseCount('rujukan_os', 32);
         $this->assertDatabaseCount('pemetaan_os', 106);
         $this->assertSame($referenceIds, RujukanOs::whereKeyNot($custom->id)->orderBy('id')->pluck('id')->all());
         $this->assertSame($mappingIds, PemetaanOs::whereKeyNot($mapping->id)->orderBy('id')->pluck('id')->all());

@@ -136,10 +136,11 @@ class PengangkutanSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$r=$this->row($place);$this->assertSame('350',$d->preview($d->source($d->validate([$r])[0])));
         $r['kategori2']='Keluarga';$r['lokasi']='Sabah/ Sarawak/ WP Labuan';$this->assertSame('1100',$d->preview($d->source($d->validate([$r])[0])));
         $r['kategori3']='Elaun Berpindah';$this->assertSame('1444',$d->preview($d->source($d->validate([$r])[0])));
-        foreach(['DG11','VU7'] as $grade){$jobs=app(\App\Services\RujukanJawatan::class)->grades();$r['jawatan']=array_key_first(array_filter($jobs,fn($grades)=>in_array($grade,$grades,true)));$r['gred']=$grade;
+        foreach(['VU7'] as $grade){$jobs=app(\App\Services\RujukanJawatan::class)->grades();$r['jawatan']=array_key_first(array_filter($jobs,fn($grades)=>in_array($grade,$grades,true)));$r['gred']=$grade;
             $this->assertFalse($d->rowReference($r)['matched']);$this->assertNull($d->preview($d->source($d->validate([$r])[0])));
             $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[array_replace($r,['kadar'=>'999'])]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.kadar');
         }
+        $this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place,['gred'=>'DG11'])]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.gred');
         $r=$this->row($place,['kategori3'=>'Tambang Pengangkutan Barang','lokasi'=>'Sabah/ Sarawak/ WP Labuan','kadar'=>'100']);$this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$r]))->assertUnprocessable()->assertJsonValidationErrors('rekod.0.lokasi');
     }
 

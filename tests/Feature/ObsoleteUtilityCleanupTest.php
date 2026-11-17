@@ -38,7 +38,7 @@ class ObsoleteUtilityCleanupTest extends TestCase
         $this->assertDatabaseCount('butiran_anggaran',1);$this->assertDatabaseCount('hasil_pengiraan',1);$this->assertSame($keep->id,ButiranAnggaran::sole()->anggaran_id);
         $this->assertSame(2,$bid->fresh()->semakan);$this->assertSame(1,$keep->fresh()->semakan);
         $this->assertDatabaseMissing('tetapan_akses_ptj',['rujukan_os_id'=>$old->id]);
-        $this->seed(OsReferenceSeeder::class);$this->assertDatabaseCount('rujukan_os',32);$this->assertDatabaseCount('pemetaan_os',105);
+        $this->seed(OsReferenceSeeder::class);$this->assertDatabaseCount('rujukan_os',31);$this->assertDatabaseCount('pemetaan_os',105);
         $this->assertSame($currentId,RujukanOs::where('kod_objek','23000')->sole()->id);$this->assertSame(8,$current->pemetaan()->count());
     }
 
@@ -50,6 +50,6 @@ class ObsoleteUtilityCleanupTest extends TestCase
         $permission=DB::table('tetapan_akses_ptj')->insertGetId(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$mapping->aktiviti_kewangan_id,'rujukan_os_id'=>$current->id,'dibenarkan'=>false,'created_at'=>now(),'updated_at'=>now()]);
         $migration=require database_path('migrations/2026_11_15_010000_remove_obsolete_utility_development_data.php');$migration->up();
         $this->assertSame($current->id,$mapping->fresh()->rujukan_os_id);$this->assertFalse((bool)DB::table('tetapan_akses_ptj')->where('id',$permission)->value('dibenarkan'));
-        $this->assertDatabaseCount('rujukan_os',32);$this->assertDatabaseCount('pemetaan_os',105);
+        $this->assertDatabaseCount('rujukan_os',31);$this->assertDatabaseCount('pemetaan_os',105);
     }
 }
