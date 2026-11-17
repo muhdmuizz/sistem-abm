@@ -26,11 +26,11 @@ class OsReferenceSeederTest extends TestCase
     public function test_imports_the_committed_catalogue_and_mappings_without_financial_records(): void
     {
         $this->importReferences();
-        $this->assertDatabaseCount('rujukan_os', 32);
+        $this->assertDatabaseCount('rujukan_os', 31);
         $this->assertDatabaseCount('pemetaan_os', 105);
         $this->assertDatabaseCount('kod_aktivitis', 38);
         $this->assertDatabaseCount('aktiviti_kewangans', 5);
-        $this->assertSame(30, RujukanOs::untukPelaksanaan()->count());
+        $this->assertSame(29, RujukanOs::untukPelaksanaan()->count());
         $this->assertSame(103, PemetaanOs::untukPelaksanaan()->count());
 
         foreach (PemetaanOs::with(['kodAktiviti', 'aktivitiKewangan', 'rujukanOs'])->get() as $mapping) {
@@ -53,6 +53,17 @@ class OsReferenceSeederTest extends TestCase
             'Perjalanan Sara Hidup (Sukan)', 'Perjalanan Sara Hidup (Kokurikulum)',
         ], $mappings->map(fn ($mapping) => $mapping->rujukanOs->butiran_perbelanjaan)->all());
         $this->assertSame('010803', $code->kod_aktiviti);
+    }
+
+    public function test_os22000_is_one_identity_with_all_seven_existing_code_mappings(): void
+    {
+        $this->importReferences();$os=RujukanOs::where('kod_objek','22000')->sole();
+        $this->assertSame(\App\Services\DefinisiPengangkutan::LABEL,$os->butiran_perbelanjaan);
+        $mappings=$os->pemetaan()->with('kodAktiviti')->orderBy('id')->get();$this->assertCount(7,$mappings);
+        $this->assertEqualsCanonicalizing(['010801','030220','030102','030301','030302','030313','030314'],$mappings->map(fn($m)=>$m->kodAktiviti->kod_aktiviti)->all());
+        $this->assertSame(2,$mappings->where('butiran_asal','Pengangkutan Barang-barang')->count());
+        $ids=$mappings->pluck('id')->all();$this->seed(OsReferenceSeeder::class);$this->seed(OsReferenceSeeder::class);
+        $this->assertSame($ids,$os->pemetaan()->orderBy('id')->pluck('id')->all());$this->assertSame(1,RujukanOs::where('kod_objek','22000')->count());
     }
 
     public function test_exclusions_remain_reference_only(): void
@@ -140,7 +151,7 @@ class OsReferenceSeederTest extends TestCase
             'singkatan_sumber' => 'Custom', 'butiran_asal' => 'Custom source', 'status_sumber' => 'Custom',
         ]);
         $this->seed(OsReferenceSeeder::class);
-        $this->assertDatabaseCount('rujukan_os', 33);
+        $this->assertDatabaseCount('rujukan_os', 32);
         $this->assertDatabaseCount('pemetaan_os', 106);
         $this->assertSame($referenceIds, RujukanOs::whereKeyNot($custom->id)->orderBy('id')->pluck('id')->all());
         $this->assertSame($mappingIds, PemetaanOs::whereKeyNot($mapping->id)->orderBy('id')->pluck('id')->all());
