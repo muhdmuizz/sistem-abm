@@ -558,3 +558,8 @@ See [Batch 040](batch-040-unified-os22000-spreadsheet.md) for exact cleanup scop
 Tested `0680c16ec8b92ffccd7839f5abbee2bee6d70274`; [CI 44046082599](https://github.com/muhdmuizz/sistem-abm/actions/runs/44046082599), job 133911984263: **544 tests / 5,705 assertions**, PHP 8.4.27/PostgreSQL 18.7 isolated testing DB; build/exact-money/Chromium passed. Nineteen OS26000 and one existing-editor capture reviewed from 482 PNGs (36 OS26000). See [Batch 041](batch-041-os26000-spreadsheets.md) for the resolved test expectation and review limits.
 
 No new migration/seed/reset, rate/source-CSV or permission-policy change. Local sync and earlier Batch 038/040 migration/import remain pending. New-item proposal governance (shared with future OS27000 supplies), official totals/outputs/completeness/submission, programme inheritance and export remain deferred. AD-008 stays Draft; Steps 02/03 in progress. Keep Server running separately from Updates; complete remaining OS editors before consolidated UI refinement.
+
+
+## Batch 042 — OS26000 consolidation started
+
+Owner approved one OS26000 card with Pukal/Bukan Pukal selected within the spreadsheet, correcting Batch 041's two identities. Preserve nine distinct codes and row-specific formulas; Pendidikan Awal remains Bukan Pukal only. Targeted obsolete development graph cleanup and ordinary reference import required; no broad reset. Verification/merge/local acceptance pending. See [Batch 042](batch-042-unified-os26000-spreadsheet.md).

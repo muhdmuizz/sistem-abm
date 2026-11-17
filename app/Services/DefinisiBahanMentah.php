@@ -9,15 +9,14 @@ use Illuminate\Validation\Rule;
 use RuntimeException;
 use stdClass;
 
-/** Shared approved references; distinct OS identities and permissions. */
+/** One OS26000 identity; allowed Kategori1 paths follow existing activity mappings. */
 class DefinisiBahanMentah extends DefinisiAnggaran
 {
     public const VERSION='os26000.v1';
     public const GENERAL='Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan';
     private const FIELDS=['tujuan','kategori1','kategori2','kategori3','bil_unit','kekerapan','bil_bulan'];
-    public function __construct(private int $year,private bool $bulk) {}
-    public function branch(): string {return $this->bulk?'Pukal':'Bukan Pukal';}
-    public function supports(RujukanOs $os): bool {return $os->kod_objek==='26000'&&!$os->dikecualikan&&$os->butiran_perbelanjaan===($this->bulk?'Bahan Mentah Pukal':self::GENERAL);}
+    public function __construct(private int $year,private array $branches = ['Bukan Pukal','Pukal']) {}
+    public function supports(RujukanOs $os): bool {return $os->kod_objek==='26000'&&!$os->dikecualikan&&$os->butiran_perbelanjaan===self::GENERAL;}
     public function childSelector(): string {return 'kategori2';}
     public function inputHelp(): string {return 'Unit dan Kadar diisi daripada rujukan. Label kuantiti mengikut unit bekalan. Kekerapan dan Bilangan Bulan hanya untuk Pukal. Kadar bahan api ialah andaian perancangan bagi kitaran yang diluluskan, bukan harga pam semasa.';}
     public function columns(): array
@@ -57,8 +56,8 @@ class DefinisiBahanMentah extends DefinisiAnggaran
                 if(count($r)!==6||!isset($counts[$r[0]])||!isset($units[$key])||isset($seen[$key])||$r[4]!=='AUTO_REFERENCE'||!preg_match('/^\d+\.\d{2}$/D',$r[3]))throw new RuntimeException('Rekod OS26000 tidak sah.');
                 $seen[$key]=true;$counts[$r[0]]++;$fuel=str_starts_with($r[5],'Anggaran tanpa subsidi 2027');$fuelCount+=(int)$fuel;
                 if($fuel&&$r[3]!== (str_contains($r[5],'RON95')?'4.00':'5.00'))throw new RuntimeException('Andaian bahan api tidak sepadan.');
-                if($r[0]!==$this->branch())continue;$approved=!$fuel||in_array($this->year,[2027,2028],true);
-                $refs[$r[0]][$r[1]][$r[2]]=['unit'=>$units[$key],'quantity_label'=>'Bil. '.$units[$key],'kadar'=>$approved?$r[3]:null,'basis'=>$fuel?($approved?'Kadar perancangan tanpa subsidi '.$this->year:'Kadar bahan api belum ditetapkan bagi kitaran ini.'):$r[5],'fuel'=>$fuel,'factors'=>$this->bulk?['bil_unit','kadar','kekerapan','bil_bulan']:['bil_unit','kadar']];
+                if(!in_array($r[0],$this->branches,true))continue;$approved=!$fuel||in_array($this->year,[2027,2028],true);
+                $refs[$r[0]][$r[1]][$r[2]]=['unit'=>$units[$key],'quantity_label'=>'Bil. '.$units[$key],'kadar'=>$approved?$r[3]:null,'basis'=>$fuel?($approved?'Kadar perancangan tanpa subsidi '.$this->year:'Kadar bahan api belum ditetapkan bagi kitaran ini.'):$r[5],'fuel'=>$fuel,'factors'=>$r[0]==='Pukal'?['bil_unit','kadar','kekerapan','bil_bulan']:['bil_unit','kadar']];
             }
             if($counts!==['Pukal'=>3,'Bukan Pukal'=>39]||count($seen)!==count($units)||$fuelCount!==5)throw new RuntimeException('Rujukan OS26000 tidak lengkap.');return $refs;
         } finally {fclose($h);}
@@ -69,7 +68,7 @@ class DefinisiBahanMentah extends DefinisiAnggaran
         $v=Validator::make(['rekod'=>$rows],[
             'rekod'=>'present|array','rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,'.implode(',',self::FIELDS),
             'rekod.*.butiran_id'=>'sometimes|required|integer|min:1|distinct','rekod.*.semakan_butiran'=>'sometimes|required|integer|min:0','rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
-            'rekod.*.tujuan'=>'nullable|string|max:1000','rekod.*.kategori1'=>['nullable','string',Rule::in([$this->branch()])],'rekod.*.kategori2'=>'nullable|string|max:255','rekod.*.kategori3'=>'nullable|string|max:255',
+            'rekod.*.tujuan'=>'nullable|string|max:1000','rekod.*.kategori1'=>['nullable','string',Rule::in(array_keys($refs))],'rekod.*.kategori2'=>'nullable|string|max:255','rekod.*.kategori3'=>'nullable|string|max:255',
             'rekod.*.bil_unit'=>$decimal,'rekod.*.kekerapan'=>$decimal,'rekod.*.bil_bulan'=>$decimal,
         ]);
         $v->after(function($v)use($rows,$refs){foreach($rows as $i=>$r){if(!is_array($r))continue;$branch=$refs;$missing=false;

@@ -1163,7 +1163,7 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
 {
  const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
  if(await row().locator('[data-output=preview]').textContent()!=='4,320.00'||await row().locator('[data-output=unit]').textContent()!=='Liter'||await field('bil_unit').getAttribute('aria-label').then(t=>!t.startsWith('Bil. Liter')))throw Error('Pukal reference/unit/formula');
- if(await field('kategori1').locator('option').count()!==2||await field('kadar').count())throw Error('Pukal reference boundary');
+ if(await field('kategori1').locator('option').count()!==3||await field('kadar').count())throw Error('Unified Pukal reference boundary');
  await field('bil_unit').fill('1.23456789');if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='177.77777616')throw Error('Pukal exact four-factor amount');
  await field('bil_bulan').fill('');if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Pukal missing months assumed');
  await field('bil_bulan').fill('12');await field('kategori2').selectOption('Diesel');if(await field('kategori3').inputValue()!=='')throw Error('Pukal dependent choice not cleared');await field('kategori3').selectOption('Bas');if(await row().locator('[data-output=kadar]').textContent()!=='5.00')throw Error('Pukal planning diesel rate');
@@ -1182,5 +1182,27 @@ await page.goto('http://127.0.0.1:4173/raw-populated.html');
  for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('bil_unit').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/raw-validation-'+width+'.png',fullPage:true});}
  await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));if(await field('bil_unit').inputValue()!=='288.00823')throw Error('Raw stale response loses exact quantity');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('1');if(await field('bil_unit').inputValue()!=='288.00823')throw Error('Raw copy shares quantity');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+// Both paths live in the same editor; switching clears dependent categories and inactive multipliers.
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/raw-bulk-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ await field('kategori1').selectOption('Bukan Pukal');
+ if(await field('kategori2').inputValue()!==''||await field('kategori3').inputValue()!==''||await field('kekerapan').count()||await field('bil_bulan').count())throw Error('OS26000 path switch leaks dependent values');
+ await field('kategori2').selectOption('Alat Ganti Elektrik');await field('kategori3').selectOption('Lampu Kalimantang (LED)');
+ if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='450')throw Error('OS26000 switch retains Pukal factors');
+ await field('kategori1').selectOption('Pukal');await field('kategori2').selectOption('Petrol (RON95)');await field('kategori3').selectOption('Kereta');
+ if(await field('kekerapan').inputValue()!==''||await field('bil_bulan').inputValue()!==''||await row().locator('[data-output=preview]').textContent()!=='—')throw Error('OS26000 inactive multipliers resurrected');
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:409,contentType:'application/json',body:'{}'});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));
+ if(payload.rekod[0].kekerapan!==null||payload.rekod[0].bil_bulan!==null)throw Error('OS26000 path switch payload contains stale multipliers');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+}
+for(const width of [1440,390]){
+ await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/raw-one-card.html');
+ if((await page.locator('body').textContent()).includes('Bahan Mentah Pukal'))throw Error('Obsolete OS26000 card visible');
+ await page.screenshot({path:'storage/app/ui-qa/raw-one-card-'+width+'.png',fullPage:true});
+ await page.goto('http://127.0.0.1:4173/raw-mixed.html');
+ if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('OS26000 mixed rows absent');
+ for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/raw-mixed-'+width+'-'+side+'.png',fullPage:true});}
 }
 await browser.close();

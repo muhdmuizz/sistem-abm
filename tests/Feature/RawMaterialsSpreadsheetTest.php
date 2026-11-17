@@ -122,9 +122,9 @@ class RawMaterialsSpreadsheetTest extends TestCase
     private function row($place,array $extra=[]): array {return array_replace(['tempat_bertugas_id'=>$place->id,'tujuan'=>'Bekalan Bengkel','kategori1'=>'Bukan Pukal','kategori2'=>'Alat Ganti Elektrik','kategori3'=>'Lampu Kalimantang (LED)','bil_unit'=>'2','kekerapan'=>null,'bil_bulan'=>null],$extra);}
     private function bulkRow($place,array $extra=[]): array {return $this->row($place,array_replace(['tujuan'=>'Van Hiace TTB 1234','kategori1'=>'Pukal','kategori2'=>'Petrol (RON95)','kategori3'=>'Kereta','bil_unit'=>'30','kekerapan'=>'3','bil_bulan'=>'12'],$extra));}
     private function bulkEstimate(Bidaan $bid): Anggaran {
-        $mapping=$this->unconfigured->pemetaan()->sole();$code=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>'010809']);$mapping->update(['kod_aktiviti_id'=>$code->id]);
-        TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$this->unconfigured->id,'dibenarkan'=>true]);
-        return Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$bid->ptj_id,'rujukan_os_id'=>$this->unconfigured->id,'diaktifkan'=>true,'semakan'=>1]);
+        $code=\App\Models\KodAktiviti::firstOrCreate(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>'010809']);
+        PemetaanOs::firstOrCreate(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$this->os->id,'kod_aktiviti_id'=>$code->id],['singkatan_sumber'=>'PPN','butiran_asal'=>'Bahan Mentah Pukal','status_sumber'=>'Aktif']);
+        return $bid->anggaran()->where('rujukan_os_id',$this->os->id)->sole();
     }
     private function gridCapture(string $name,$response): void
     {
@@ -133,7 +133,7 @@ class RawMaterialsSpreadsheetTest extends TestCase
     }
     public function test_all_42_reference_paths_units_and_original_non_fuel_rates_are_preserved(): void
     {
-        $all=[];foreach([false,true] as $bulk){$d=new \App\Services\DefinisiBahanMentah(2028,$bulk);$count=0;foreach($d->references() as $a=>$sub)foreach($sub as $b=>$items)foreach($items as $c=>$ref){$all[implode('|',[$a,$b,$c])]=$ref;$count++;$this->assertSame('Bil. '.$ref['unit'],$ref['quantity_label']);$this->assertNotNull($ref['kadar']);}$this->assertSame($bulk?3:39,$count);}
+        $all=[];foreach([false,true] as $bulk){$d=new \App\Services\DefinisiBahanMentah(2028,[$bulk?'Pukal':'Bukan Pukal']);$count=0;foreach($d->references() as $a=>$sub)foreach($sub as $b=>$items)foreach($items as $c=>$ref){$all[implode('|',[$a,$b,$c])]=$ref;$count++;$this->assertSame('Bil. '.$ref['unit'],$ref['quantity_label']);$this->assertNotNull($ref['kadar']);}$this->assertSame($bulk?3:39,$count);}
         $this->assertCount(42,$all);$this->assertCount(5,array_filter($all,fn($r)=>$r['fuel']));
         $text=file_get_contents(base_path('docs/references/OS26000-bahan-mentah-reference.md'));$section=explode('**UNIT** is automatically',explode('### Approved UNIT reference mapping',$text)[1])[0];$unitCount=0;
         foreach(explode("\n",$section) as $line){$cells=array_map('trim',explode('|',trim($line,'| ')));if(count($cells)===4&&in_array($cells[0],['Pukal','Bukan Pukal'],true)){$this->assertSame($cells[3],$all[implode('|',array_slice($cells,0,3))]['unit']);$unitCount++;}}
@@ -145,11 +145,11 @@ class RawMaterialsSpreadsheetTest extends TestCase
     public function test_exact_formulas_and_explicit_fuel_planning_year_boundaries(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();
-        foreach([2027,2028] as $year){$d=new \App\Services\DefinisiBahanMentah($year,true);$this->assertSame('4320',$d->preview($d->source($d->validate([$this->bulkRow($place)])[0])));$this->assertSame('5400',$d->preview($d->source($this->bulkRow($place,['kategori2'=>'Diesel','kategori3'=>'Van']))));}
-        $d=new \App\Services\DefinisiBahanMentah(2028,false);$this->assertSame('30',$d->preview($d->source($this->row($place))));
+        foreach([2027,2028] as $year){$d=new \App\Services\DefinisiBahanMentah($year,['Pukal']);$this->assertSame('4320',$d->preview($d->source($d->validate([$this->bulkRow($place)])[0])));$this->assertSame('5400',$d->preview($d->source($this->bulkRow($place,['kategori2'=>'Diesel','kategori3'=>'Van']))));}
+        $d=new \App\Services\DefinisiBahanMentah(2028,['Bukan Pukal']);$this->assertSame('30',$d->preview($d->source($this->row($place))));
         $r=$this->row($place,['kategori2'=>'Alat Ganti Kenderaan','kategori3'=>'Tyre Wax','bil_unit'=>'288.00823']);$this->assertSame('4320.12345',$d->preview($d->source($r)));
-        $d=new \App\Services\DefinisiBahanMentah(2029,true);$this->assertNull($d->references()['Pukal']['Petrol (RON95)']['Kereta']['kadar']);$this->assertNull($d->preview($d->source($this->bulkRow($place))));
-        $d=new \App\Services\DefinisiBahanMentah(2029,false);$this->assertSame('30',$d->preview($d->source($this->row($place))));$this->assertNull($d->references()['Bukan Pukal']['Alat Ganti Kenderaan']['Diesel (Bukan Pukal)']['kadar']);
+        $d=new \App\Services\DefinisiBahanMentah(2029,['Pukal']);$this->assertNull($d->references()['Pukal']['Petrol (RON95)']['Kereta']['kadar']);$this->assertNull($d->preview($d->source($this->bulkRow($place))));
+        $d=new \App\Services\DefinisiBahanMentah(2029,['Bukan Pukal']);$this->assertSame('30',$d->preview($d->source($this->row($place))));$this->assertNull($d->references()['Bukan Pukal']['Alat Ganti Kenderaan']['Diesel (Bukan Pukal)']['kadar']);
     }
 
     public function test_http_both_editors_save_reopen_noop_edit_and_partial_fixtures(): void
@@ -158,45 +158,88 @@ class RawMaterialsSpreadsheetTest extends TestCase
         foreach([[$estimate,false,'raw'],[$bulk,true,'raw-bulk']] as [$e,$isBulk,$name]){
             $url=$this->gridUrl($bid,$e);$this->gridCapture($name.'-empty',$this->get($url)->assertOk());$r=$isBulk?$this->bulkRow($place):$this->row($place);
             $this->postJson($url,$this->payload($bid,$e,[$r]))->assertOk();$source=$e->butiran()->sole();$response=$this->get($url)->assertOk();$this->assertSame($isBulk?'4320':'30',$response->viewData('records')[0]['preview']);$this->gridCapture($name.'-populated',$response);
-            $saved=(new \App\Services\DefinisiBahanMentah(2028,$isBulk))->project($source->data_sumber)+['tempat_bertugas_id'=>$place->id,'butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$audit=RekodAudit::count();$this->postJson($url,$this->payload($bid,$e,[$saved]))->assertOk();$this->assertSame($audit,RekodAudit::count());
+            $saved=(new \App\Services\DefinisiBahanMentah(2028))->project($source->data_sumber)+['tempat_bertugas_id'=>$place->id,'butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan];$audit=RekodAudit::count();$this->postJson($url,$this->payload($bid,$e,[$saved]))->assertOk();$this->assertSame($audit,RekodAudit::count());
             $saved['bil_unit']='2.12345';$this->postJson($url,$this->payload($bid,$e,[$saved]))->assertOk();$this->assertSame('2.12345',$source->fresh()->data_sumber->bil_unit);
             $partial=$isBulk?$this->bulkRow($place,['bil_bulan'=>null]):$this->row($place,['kategori3'=>null,'bil_unit'=>null]);$this->postJson($url,$this->payload($bid,$e,[$partial]))->assertOk();$response=$this->get($url)->assertOk();$this->assertNull($response->viewData('records')->last()['preview']);$this->gridCapture($name.'-partial',$response);
+            $this->assertSame(2,$e->butiran()->count());$this->assertDatabaseCount('hasil_pengiraan',0);
+            $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);
+            $response=$this->get($url)->assertOk();$this->assertFalse($response->viewData('editable'));$this->gridCapture($name.'-readonly',$response);
+            $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PenyediaBidaan);$this->workspaceRole(Peranan::PenyediaAnggaran);
+            $deletions=$e->butiran()->get()->map(fn($s)=>['butiran_id'=>$s->id,'semakan_butiran'=>$s->semakan])->all();
+            $this->postJson($url,$this->payload($bid,$e,[],$deletions))->assertOk();
         }
-        $this->assertDatabaseCount('butiran_anggaran',4);$this->assertDatabaseCount('hasil_pengiraan',0);
-        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PemantauBidaan);
-        foreach([[$estimate,'raw'],[$bulk,'raw-bulk']] as [$e,$name]){$response=$this->get($this->gridUrl($bid,$e))->assertOk();$this->assertFalse($response->viewData('editable'));$this->gridCapture($name.'-readonly',$response);}
+        $this->assertDatabaseCount('anggaran',1);
     }
 
     public function test_invalid_cross_branch_derived_inactive_and_money_injections_are_atomic(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$bulk=$this->bulkEstimate($bid);$url=$this->gridUrl($bid,$estimate);
         foreach([['kategori1'=>'Pukal'],['kategori2'=>'Diesel','kategori3'=>'Van'],['kategori3'=>'Unknown'],['kekerapan'=>'3'],['bil_bulan'=>'12'],['kadar'=>'999'],['unit'=>'Liter'],['basis'=>'Other'],['preview'=>'100'],['tarikh_mula'=>'2028-01-01'],['nama'=>'Officer'],['kategori1'=>[]],['kategori2'=>[]],['kategori3'=>[]],['bil_unit'=>'1,000'],['bil_unit'=>'1e2'],['bil_unit'=>[]]] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,$extra)]))->assertUnprocessable();
-        $this->postJson($this->gridUrl($bid,$bulk),$this->payload($bid,$bulk,[$this->row($place)]))->assertUnprocessable();$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
+$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
     }
 
     public function test_permissions_stale_phase_workplace_and_source_revision_guards(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$bulk=$this->bulkEstimate($bid);$url=$this->gridUrl($bid,$estimate);$data=$this->payload($bid,$estimate,[$this->row($place)]);$this->postJson($url,$data)->assertOk();$this->postJson($url,$data)->assertConflict();
-        TetapanAksesPtj::where('rujukan_os_id',$this->unconfigured->id)->update(['dibenarkan'=>false]);$this->postJson($this->gridUrl($bid,$bulk),$this->payload($bid,$bulk,[$this->bulkRow($place)]))->assertNotFound();
+        TetapanAksesPtj::where('rujukan_os_id',$this->os->id)->update(['dibenarkan'=>false]);$this->postJson($this->gridUrl($bid,$bulk),$this->payload($bid,$bulk,[$this->bulkRow($place)]))->assertNotFound();
         try{app(\App\Services\EditorAnggaran::class)->save($bulk->id,$this->payload($bid,$bulk,[$this->bulkRow($place)]));$this->fail('Revoked Pukal permission must fail.');}catch(\Symfony\Component\HttpKernel\Exception\HttpException $e){$this->assertSame(403,$e->getStatusCode());}
-        $this->assertSame(0,$bulk->butiran()->count());
+        $this->assertSame(1,$bulk->butiran()->count());
+        TetapanAksesPtj::where('rujukan_os_id',$this->os->id)->update(['dibenarkan'=>true]);
         $outside=\App\Models\TempatBertugas::create(['ptj_id'=>$this->other->id,'nama'=>'Sektor Perancangan','jenis'=>'sektor']);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($outside)]))->assertForbidden();
         $source=$estimate->butiran()->sole();$r=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan+1]);$this->postJson($url,$this->payload($bid,$estimate,[$r]))->assertConflict();
         $this->phase->forceFill(['dibuka'=>false])->save();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertForbidden();
     }
 
-    public function test_all_nine_existing_activity_mappings_keep_identities_and_parentage_separate(): void
+    public function test_all_nine_mappings_share_one_identity_and_limit_reference_paths(): void
     {
-        $catalogue=app(\App\Services\KatalogDefinisiAnggaran::class);$maps=[false=>['Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313'],true=>['Pengurusan Pentadbiran Negeri'=>'010809','Pendidikan Rendah'=>'030222','Pendidikan Menengah'=>'030304','Pengurusan Asrama'=>'030316']];
-        foreach($maps as $bulk=>$activities)foreach($activities as $name=>$code){$a=AktivitiKewangan::firstOrCreate(['nama'=>$name],['singkatan'=>$name]);$bid=Bidaan::where('kitaran_id',$this->cycle->id)->where('ptj_id',$this->owner->id)->where('aktiviti_kewangan_id',$a->id)->first()??Bidaan::forceCreate(['kitaran_id'=>$this->cycle->id,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$a->id]);$k=\App\Models\KodAktiviti::firstOrCreate(['kod_aktiviti'=>$code],['aktiviti_kewangan_id'=>$a->id]);$os=$bulk?$this->unconfigured:$this->os;
-            PemetaanOs::where('aktiviti_kewangan_id',$a->id)->where('rujukan_os_id',$os->id)->delete();PemetaanOs::create(['aktiviti_kewangan_id'=>$a->id,'rujukan_os_id'=>$os->id,'kod_aktiviti_id'=>$k->id,'singkatan_sumber'=>$name,'butiran_asal'=>$os->butiran_perbelanjaan,'status_sumber'=>'Aktif']);$d=$catalogue->untuk($os,$bid);$this->assertInstanceOf(\App\Services\DefinisiBahanMentah::class,$d);$this->assertSame($bulk?'Pukal':'Bukan Pukal',$d->branch());$this->assertSame([$d->branch()],array_keys($d->references()));
+        $catalogue=app(\App\Services\KatalogDefinisiAnggaran::class);
+        $maps=['Pengurusan Pentadbiran Negeri'=>['Bukan Pukal'=>'010801','Pukal'=>'010809'],'Pendidikan Rendah'=>['Bukan Pukal'=>'030219','Pukal'=>'030222'],'Pendidikan Awal'=>['Bukan Pukal'=>'030101'],'Pendidikan Menengah'=>['Bukan Pukal'=>'030301','Pukal'=>'030304'],'Pengurusan Asrama'=>['Bukan Pukal'=>'030313','Pukal'=>'030316']];
+        foreach($maps as $name=>$paths){$a=AktivitiKewangan::firstOrCreate(['nama'=>$name],['singkatan'=>$name]);$bid=Bidaan::forceCreate(['kitaran_id'=>$this->cycle->id,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$a->id]);
+            PemetaanOs::where('aktiviti_kewangan_id',$a->id)->where('rujukan_os_id',$this->os->id)->delete();
+            foreach($paths as $path=>$code){$k=\App\Models\KodAktiviti::firstOrCreate(['kod_aktiviti'=>$code],['aktiviti_kewangan_id'=>$a->id]);PemetaanOs::create(['aktiviti_kewangan_id'=>$a->id,'rujukan_os_id'=>$this->os->id,'kod_aktiviti_id'=>$k->id,'singkatan_sumber'=>$name,'butiran_asal'=>$path,'status_sumber'=>'Aktif']);}
+            $d=$catalogue->untuk($this->os,$bid);$this->assertEqualsCanonicalizing(array_keys($paths),array_keys($d->references()));$this->assertNull($catalogue->untuk($this->unconfigured,$bid));
+            if(isset($paths['Pukal'])){PemetaanOs::where('aktiviti_kewangan_id',$a->id)->where('rujukan_os_id',$this->os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$paths['Pukal']))->delete();$this->assertSame(['Bukan Pukal'],array_keys($catalogue->untuk($this->os,$bid)->references()));}
         }
-        $awal=AktivitiKewangan::where('nama','Pendidikan Awal')->sole();$bid=Bidaan::where('aktiviti_kewangan_id',$awal->id)->sole();$this->assertNull($catalogue->untuk($this->unconfigured,$bid));
+    }
+
+    public function test_one_card_and_mixed_rows_save_reopen_and_switch_paths_without_multiplier_leakage(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$this->bulkEstimate($bid);$url=$this->gridUrl($bid,$estimate);
+        $this->migration()->up();
+        $response=$this->get($this->workspaceIndex())->assertOk()->assertSee(\App\Services\DefinisiBahanMentah::GENERAL)->assertDontSee('Bahan Mentah Pukal');$this->workspaceCapture('raw-one-card',$response);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->bulkRow($place)]))->assertOk();
+        $response=$this->get($url)->assertOk();$this->assertSame(['30','4320'],$response->viewData('records')->pluck('preview')->all());$this->gridCapture('raw-mixed',$response);
+        $source=$estimate->butiran()->orderBy('id')->get()->last();$row=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);
+        $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertNull($source->fresh()->data_sumber->kekerapan);$this->assertNull($source->fresh()->data_sumber->bil_bulan);
+        // Removing the Pukal code immediately rejects a forged Pukal row, including backend validation.
+        PemetaanOs::where('rujukan_os_id',$this->os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti','010809'))->delete();
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->bulkRow($place)]))->assertUnprocessable()->assertJsonValidationErrors('rekod.1.kategori1');
+        $this->assertSame(2,$estimate->butiran()->count());$this->assertDatabaseCount('hasil_pengiraan',0);
     }
 
     public function test_copy_and_audited_delete_keep_source_values_independent(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertOk();$source=$estimate->butiran()->sole();$copy=app(\App\Services\DrafButiranAnggaran::class)->salin($estimate->id,$source->id,['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,'semakan_butiran'=>$source->semakan]);$this->assertNotSame($source->id,$copy->id);$this->assertEquals($source->data_sumber,$copy->data_sumber);
         $this->postJson($url,$this->payload($bid,$estimate,[],[['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]]))->assertOk();$this->assertNull($source->fresh());$this->assertNotNull($copy->fresh());$this->assertSame('source.draft_deleted',RekodAudit::orderByDesc('id')->first()->tindakan);
+    }
+    private function migration() {return require database_path('migrations/2026_11_17_020000_unify_os26000_catalogue.php');}
+
+    public function test_targeted_catalogue_cleanup_retains_current_sources_mapping_ids_and_permissions(): void
+    {
+        [$bid,$estimate,$place]=$this->gridContext();$this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertOk();$source=$estimate->butiran()->sole();
+        $old=$this->unconfigured;$code=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>'010899']);
+        $mapping=PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti_id'=>$code->id,'rujukan_os_id'=>$old->id,'singkatan_sumber'=>'PPN','butiran_asal'=>'Bahan Mentah Pukal','status_sumber'=>'Aktif']);
+        $oldEstimate=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$this->owner->id,'rujukan_os_id'=>$old->id,'diaktifkan'=>true,'semakan'=>1]);$obsolete=\App\Models\ButiranAnggaran::forceCreate(['anggaran_id'=>$oldEstimate->id,'ptj_id'=>$this->owner->id,'tempat_bertugas_id'=>$place->id,'data_sumber'=>(object)['fixture'=>'obsolete development draft']]);
+        TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$old->id,'dibenarkan'=>true]);$revision=$bid->fresh()->semakan;
+        $this->migration()->up();$this->migration()->up();
+        $this->assertNull($old->fresh());$this->assertNull($oldEstimate->fresh());$this->assertNull($obsolete->fresh());$this->assertNotNull($source->fresh());$this->assertSame($this->os->id,$mapping->fresh()->rujukan_os_id);$this->assertSame('Bahan Mentah Pukal',$mapping->fresh()->butiran_asal);$this->assertSame($revision+1,$bid->fresh()->semakan);
+        $this->assertSame(1,TetapanAksesPtj::where('rujukan_os_id',$this->os->id)->count());$this->assertSame(1,Anggaran::where('bidaan_id',$bid->id)->count());$this->assertSame(1,RujukanOs::where('kod_objek','26000')->count());
+    }
+
+    public function test_catalogue_cleanup_aborts_atomically_for_non_draft_bids(): void
+    {
+        [$bid,$estimate]=$this->gridContext();$old=$this->unconfigured;$oldEstimate=Anggaran::forceCreate(['bidaan_id'=>$bid->id,'ptj_id'=>$this->owner->id,'rujukan_os_id'=>$old->id,'diaktifkan'=>true]);$bid->forceFill(['status'=>StatusBidaan::Muktamad])->save();
+        try{$this->migration()->up();$this->fail('Non-draft reconciliation must stop.');}catch(\RuntimeException $e){$this->assertStringContainsString('bukan draf',$e->getMessage());}
+        $this->assertNotNull($old->fresh());$this->assertNotNull($oldEstimate->fresh());$this->assertNotNull($estimate->fresh());
     }
 }
