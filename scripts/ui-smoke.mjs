@@ -1152,4 +1152,35 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
  await field('lokasi').selectOption('Semenanjung');await field('kadar').focus();await field('kadar').fill('125.123');await field('nama').focus();if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='125.123')throw Error('OS22000 blank matched reference mode');
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('OS22000 copied source shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
 }
+for(const fixture of ['raw-empty','raw-populated','raw-partial','raw-readonly','raw-bulk-empty','raw-bulk-populated','raw-bulk-partial','raw-bulk-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Raw material overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/raw-bulk-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='4,320.00'||await row().locator('[data-output=unit]').textContent()!=='Liter'||await field('bil_unit').getAttribute('aria-label').then(t=>!t.startsWith('Bil. Liter')))throw Error('Pukal reference/unit/formula');
+ if(await field('kategori1').locator('option').count()!==2||await field('kadar').count())throw Error('Pukal reference boundary');
+ await field('bil_unit').fill('1.23456789');if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='177.77777616')throw Error('Pukal exact four-factor amount');
+ await field('bil_bulan').fill('');if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Pukal missing months assumed');
+ await field('bil_bulan').fill('12');await field('kategori2').selectOption('Diesel');if(await field('kategori3').inputValue()!=='')throw Error('Pukal dependent choice not cleared');await field('kategori3').selectOption('Bas');if(await row().locator('[data-output=kadar]').textContent()!=='5.00')throw Error('Pukal planning diesel rate');
+}
+await page.goto('http://127.0.0.1:4173/raw-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='30.00'||await field('kekerapan').count()||await field('bil_bulan').count()||await field('kadar').count())throw Error('Bukan Pukal two-factor boundary');
+ await field('kategori2').selectOption('Alat Ganti Kenderaan');await field('kategori3').selectOption('Tyre Wax');await field('bil_unit').fill('288.00823');
+ if(await row().locator('[data-output=unit]').textContent()!=='Botol'||!(await field('bil_unit').getAttribute('aria-label')).startsWith('Bil. Botol')||await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4320.12345')throw Error('Bukan Pukal contextual quantity/exact amount');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);await page.screenshot({path:'storage/app/ui-qa/raw-exact-'+width+'.png',fullPage:true});}
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.bil_unit':['Semak kuantiti bekalan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kuantiti'));
+ if(payload.rekod[0].bil_unit!=='288.00823'||payload.rekod[0].kekerapan!==null||payload.rekod[0].bil_bulan!==null||'kadar' in payload.rekod[0]||'unit' in payload.rekod[0]||'preview' in payload.rekod[0])throw Error('Raw source payload separation');
+ if(await field('bil_unit').getAttribute('aria-invalid')!=='true')throw Error('Raw quantity cell error missing');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('bil_unit').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/raw-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));if(await field('bil_unit').inputValue()!=='288.00823')throw Error('Raw stale response loses exact quantity');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('1');if(await field('bil_unit').inputValue()!=='288.00823')throw Error('Raw copy shares quantity');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
 await browser.close();

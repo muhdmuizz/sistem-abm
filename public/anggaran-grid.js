@@ -53,7 +53,7 @@
    }
    if(column.formula?.operation==='inclusiveCalendar')value=inclusiveCalendar(...column.formula.inputs.map(key=>row[key]));
    if(column.formula?.operation==='multiply'){
-    const keys=[...column.formula.inputs];if(column.formula.factorWhenReference&&ref?.[column.formula.factorWhenReference])keys.push(column.formula.factor);const inputs=keys.map(key=>plain(values[key]));
+    const keys=[...(ref?.[column.formula.inputsReference]||column.formula.inputs)];if(column.formula.factorWhenReference&&ref?.[column.formula.factorWhenReference])keys.push(column.formula.factor);const inputs=keys.map(key=>plain(values[key]));
     value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresMatched||ref?.matched)&&(!column.formula.requiresPurpose||!ref?.requires_purpose||plain(row.tujuan).trim()!=='')&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k])!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
    if(!active(row,column))value='Tidak berkenaan';
