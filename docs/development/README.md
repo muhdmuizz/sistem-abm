@@ -560,6 +560,18 @@ Tested `0680c16ec8b92ffccd7839f5abbee2bee6d70274`; [CI 44046082599](https://gith
 No new migration/seed/reset, rate/source-CSV or permission-policy change. Local sync and earlier Batch 038/040 migration/import remain pending. New-item proposal governance (shared with future OS27000 supplies), official totals/outputs/completeness/submission, programme inheritance and export remain deferred. AD-008 stays Draft; Steps 02/03 in progress. Keep Server running separately from Updates; complete remaining OS editors before consolidated UI refinement.
 
 
-## Batch 042 — OS26000 consolidation started
+## Batch 042 — verified before merge
 
-Owner approved one OS26000 card with Pukal/Bukan Pukal selected within the spreadsheet, correcting Batch 041's two identities. Preserve nine distinct codes and row-specific formulas; Pendidikan Awal remains Bukan Pukal only. Targeted obsolete development graph cleanup and ordinary reference import required; no broad reset. Verification/merge/local acceptance pending. See [Batch 042](batch-042-unified-os26000-spreadsheet.md).
+One OS26000 card now supports per-row Pukal/Bukan Pukal with all nine exact mappings; original references/units/rates unchanged. Targeted obsolete-card development cleanup; catalogue 30/28 eligible/two excluded, mappings 105/103 eligible. Proposal governance remains deferred.
+
+Tested head `4113f1985ecd26153ae39e50e39a55a263d933d9`; [CI 44070143813](https://github.com/muhdmuizz/sistem-abm/actions/runs/44070143813), job 133993980538: **548 tests / 5,719 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`; production build, exact-money and full Chromium suite passed. Artifact 14322591685 contains 488 PNGs / 42 OS26000 captures.
+
+HTTP/PostgreSQL checks cover one catalogue card, mixed rows in one estimate, save/reopen/path changes, exact formulas, 42 unchanged references/units, nine mapping contexts and missing-code path rejection, derived/inactive injections with rollback, live role/PTJ/Fasa/revision guards, independent copy/audited deletion, targeted idempotent cleanup preserving canonical sources/mapping IDs/permissions and atomic abort for non-draft bids. Repeat seed preserves nine mappings/provenance and one identity. Browser checks additionally prove category cascade resets, inactive multiplier clearing without resurrection, exact payloads and validation/stale recovery. Browser save calls use intercepted routes; real persistence is covered separately by HTTP/PostgreSQL.
+
+Visually reviewed **14 OS26000 captures plus one existing OS22000 capture**: one-card desktop/mobile; mixed desktop/mobile left/right; empty desktop/mobile; partial desktop/mobile right; read-only desktop/mobile right; validation mobile and expanded exact amount desktop. One card, mixed formulas, inactive cells, comfortable empty/error padding, title-case headers and accounting amounts are readable. Long mobile titles/help density remain consolidated-refinement candidates. The validation capture includes the existing focused skip-link overlay covering part of the title; broader focus behaviour is not certified. Remaining captures/middle columns, dedicated loading/pending-save states, physical devices, screen readers, local Windows/Google operation and owner financial acceptance remain unverified. No filtered-empty state applies. This is not UI-complete or production certification.
+
+Initial head `8c2934a14c62889ac7d33833709d81f2535390ce`, CI 44069145444/job 133990552756: 547 passed / one failed (5,706 assertions). New one-card test opened bids.index (activity list) rather than bids.show (OS cards), so its title assertion failed before mixed-row checks. Corrected the test route and added an explicit single-OS26000-card assertion; no application code changed for this correction. Build/browser were skipped in that failed run.
+
+Only documentation changes follow the tested application head. Merge and local sync/migration/reference import remain pending; no reset/fresh. Keep Server running separately from Updates.
+
+See [Batch 042](batch-042-unified-os26000-spreadsheet.md).
