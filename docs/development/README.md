@@ -571,3 +571,20 @@ Tested `4113f1985ecd26153ae39e50e39a55a263d933d9`; [CI 44070143813](https://gith
 Local sync/migration/import/financial/device acceptance pending; earlier unconfirmed local statuses unchanged. Keep Server separate from Updates; no routine restart. Proposal governance remains the next agreed slice; official outputs/totals/completeness/submission, programme inheritance and export remain deferred. AD-008 remains Draft; Steps 02/03 in progress. Consolidated editor UI refinement follows remaining OS editors.
 
 See [Batch 042](batch-042-unified-os26000-spreadsheet.md) for full evidence and limitations.
+
+
+## Batch 044 — verified before merge
+
+Office supplies source editor implements four categories/194 unchanged references, read-only Kadar and exact quantity × rate, five existing mappings and inactive direct-entry programme fields/Unit/Kategori3. Owner sequence: remaining OS editors → consolidated UI refinement → shared proposals. OS26000 purpose removal retracted; Batch 043 withdrawn and dev unchanged.
+
+Tested head `b096af2cac1885fef4e3252905549f3ec363862b`; [CI 44077277421](https://github.com/muhdmuizz/sistem-abm/actions/runs/44077277421), job 134018439201 succeeded: **555 tests / 6,183 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`. Production build, exact-money presentation and full Chromium suite passed. Node syntax check also passed locally. Artifact 14326430153 contains 508 PNGs / 20 office-supply captures.
+
+Seven new HTTP/PostgreSQL tests compare all 194 selectable items against all 196 normalised source rows, verify only the two approved higher-price duplicates, all four categories, exact and partial previews, no-op/save/reopen/edit, derived/inactive/malformed/cross-category injections with atomic rollback, current bid/source revision, central OS permission, cross-PTJ workplace and phase guards, five exact mappings, other-OS27000 separation, read-only rendering and independent audited copy/delete. No generated financial outputs are written.
+
+Chromium verifies four editor states at 1440/390 widths and both horizontal endpoints; absence of direct purpose/dates/Unit/Kategori3/multipliers/manual rate inputs; dependent resets, both approved duplicate prices, exact quantity/result versus accounting presentation, source payload separation, field errors, retained stale edits and copy/remove independence. Browser save routes are intercepted; actual persistence is separately covered through HTTP/PostgreSQL.
+
+Visually reviewed **12 office captures and one existing OS26000 capture**: populated desktop left/right and mobile right; empty desktop/mobile left; partial desktop/mobile right; read-only desktop/mobile right; validation desktop/mobile; expanded exact amount mobile. Confirmed comfortable empty/error padding, title-case headers, read-only reference rates, withheld incomplete amounts and tabular accounting figures. Existing OS26000 retains purpose as retracted removal requires. Wide grids still require horizontal scrolling; long helper text remains a consolidated-refinement candidate. Remaining captures/middle columns, dedicated loading/pending-save states, broader focus/skip-link behaviour, physical devices, screen readers, real local Windows/Google operation and owner financial acceptance were not independently verified. No filtered-empty state applies. No UI-complete or production certification is claimed.
+
+Only documentation changes follow the tested head. Merge and local sync/financial/device acceptance pending. This batch adds no migration/seed; earlier pending migration/import remains unconfirmed.
+
+See [Batch 044](batch-044-office-supplies-spreadsheet.md).
