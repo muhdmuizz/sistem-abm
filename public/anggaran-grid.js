@@ -103,7 +103,7 @@
     }
     input.addEventListener(column.type==='select'?'change':'input',()=>{
      if(!input.isConnected||input.readOnly)return;row[name]=column.money?(money.normalise(input.value)??input.value):input.value;if(row.notices){delete row.notices[name];cell.querySelector('.grid-cell-notice')?.remove();}
-     if(column.type==='select'&&childSelector){
+     if(column.type==='select'&&(childSelector||column.refreshOnSelect)){
       if(name===selector&&columns.some(c=>c.key===childSelector&&c.dependsOn===selector))row[childSelector]=null;
       for(const c of inputColumns)if(c.resetOn?.includes(name))row[c.key]=null;
       if(name===selector||name===childSelector)inputColumns.filter(c=>c.mixed).forEach(c=>row[c.key]=null);

@@ -1233,4 +1233,37 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('1');if(await field('bil_unit').inputValue()!=='3600.102875')throw Error('Office copy shares quantity');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
 }
 
+
+for(const fixture of ['medical-empty','medical-populated','medical-partial','medical-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Medical grid overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/medical-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ if(await row().locator('[data-output=preview]').textContent()!=='4,320.00'||await row().locator('[data-output=tempoh]').textContent()!=='0 tahun, 3 bulan, 0 hari'||await field('kategori1').locator('option').count()!==10)throw Error('Medical category/formula/calendar baseline');
+ for(const k of ['tujuan','kategori2','kategori3','unit','tarikh_mula_kontrak','tarikh_tamat_kontrak'])if(await row().locator('[data-field='+k+']').count())throw Error('Medical inactive field '+k);
+ if(await field('tarikh_mula').getAttribute('min')!=='2028-01-01'||await field('tarikh_tamat').getAttribute('max')!=='2028-12-31')throw Error('Medical Kitaran date limits');
+ for(const [start,end,text] of [['2028-02-29','2028-02-29','0 tahun, 0 bulan, 1 hari'],['2028-01-31','2028-02-29','0 tahun, 1 bulan, 1 hari'],['2028-01-01','2028-12-31','1 tahun, 0 bulan, 0 hari']]){
+  await field('tarikh_mula').fill(start);await field('tarikh_tamat').fill(end);if(await row().locator('[data-output=tempoh]').textContent()!==text||await field('bil_bulan').inputValue()!=='12'||await row().locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Medical calendar/chargeable-month independence');
+ }
+ await field('bil_bulan').fill('');if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Medical missing factor assumed');await field('bil_bulan').fill('12');
+ await field('kategori1').selectOption('Pembekalan Ubat');if(await field('tarikh_mula').count()||await field('tarikh_tamat').count()||await row().locator('[data-output=tempoh]').textContent()!=='Tidak berkenaan'||await row().locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Medical conditional contract not cleared');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=tempoh]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/medical-noncontract-'+width+'.png',fullPage:true});}
+ await field('kategori1').selectOption('Rawatan Penyakit Buah Pinggang');if(await field('tarikh_mula').inputValue()!==''||await field('tarikh_tamat').inputValue()!=='')throw Error('Medical inactive dates resurrected');
+ const original=await field('jawatan').inputValue();const other=await field('jawatan').locator('option').evaluateAll((opts,current)=>opts.map(o=>o.value).find(v=>v&&v!==current),original);await field('jawatan').selectOption(other);if(await field('gred').inputValue()!=='')throw Error('Medical grade not reset with Jawatan');await field('jawatan').selectOption(original);await field('gred').selectOption('DG9');
+ await field('kadar').focus();await field('kadar').fill('120.12345');await field('nama').focus();if(await field('kadar').inputValue()!=='120.12'||await row().locator('[data-output=preview]').textContent()!=='4,324.44'||await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4324.4442')throw Error('Medical precise manual rate/accounting amount');await field('kadar').focus();if(await field('kadar').inputValue()!=='120.12345')throw Error('Medical money precision lost');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);await page.screenshot({path:'storage/app/ui-qa/medical-exact-'+width+'.png',fullPage:true});}
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak kadar perubatan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kadar'));
+ if(payload.rekod[0].kadar!=='120.12345'||payload.rekod[0].bil_bulan!=='12'||payload.rekod[0].tarikh_mula!==null||payload.rekod[0].tarikh_tamat!==null||'tempoh' in payload.rekod[0]||'preview' in payload.rekod[0])throw Error('Medical source payload precision/inactive leakage');
+ if(await field('kadar').getAttribute('aria-invalid')!=='true')throw Error('Medical rate validation missing');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('kadar').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/medical-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));await field('kadar').focus();if(await field('kadar').inputValue()!=='120.12345')throw Error('Medical stale response loses exact rate');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('9');if(await field('bil_unit').inputValue()!=='1')throw Error('Medical copied quantity shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+
 await browser.close();

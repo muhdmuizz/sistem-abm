@@ -1,6 +1,6 @@
 # Sistem ABM — Development Progress Register
 
-**Updated:** 17 November 2026 (Asia/Kuala_Lumpur).  
+**Updated:** 18 November 2026 (Asia/Kuala_Lumpur).  
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
 **Latest verified application-code checkpoint:** `721fe9216b9b0d0f84c806f9188599bed7c9c274` (Batch 044, PR #97; tested head `b096af2cac1885fef4e3252905549f3ec363862b`; local sync pending). Documentation close-out does not change application code.
 **Current application verification:** 555 tests passed, 6183 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
@@ -584,3 +584,20 @@ OS26000 purpose removal was explicitly retracted before merge; Batch 043 is with
 Local sync/financial/device acceptance pending; earlier unconfirmed migrations/import remain pending. Keep Server running separately from Updates.
 
 See [Batch 044](batch-044-office-supplies-spreadsheet.md) for full evidence and limitations.
+
+
+## Batch 045 — verified before merge (18 November 2026)
+
+Approved medical source editor implements all nine categories with exact quantity × manual rate × frequency × manual months, shared personnel selectors and kidney-only inclusive calendar contract duration, independent of manual months. Separate PPN/010804 identity; existing Kitaran-year date limits, no purpose/extra categories/unit. No migration/seed or reference CSV changes.
+
+Tested head `e203d8fe8fab2092608823ce62c6ff70ef4acbe2`; [CI 44219944569](https://github.com/muhdmuizz/sistem-abm/actions/runs/44219944569), job 134519037935 succeeded: **562 tests / 6,297 assertions**, PHP 8.4.27 / PostgreSQL 18.7 in isolated `sistem_abm_testing`. Production build, exact-money presentation and full Chromium suite passed. Local Node syntax checks passed for both changed scripts. Artifact 14389772953 contains 530 PNGs / 22 medical captures.
+
+Seven new HTTP/PostgreSQL tests cover the exact nine unchanged category/manual-rate references, approved four-factor formula for every category, precise decimals and missing/zero factors, shared inclusive leap-day/month-end/full-year duration with independent manual months/amount, partial/no-op/save/reopen/edit/read-only source handling, invalid grade/category/date/type/derived/inactive injection rollback, Kitaran-year and reversed-date rejection, live bid/source revision/central permission/phase/PTJ-workplace guards, exact PPN/010804 mapping/separate Faedah identity, independent copy, category switching and audited delete. No generated financial outputs are written.
+
+Chromium covers empty/populated/partial/read-only at 1440/390 widths and horizontal endpoints; current-year date limits, leap/calendar duration parity, independent manual factors, scoped category/Jawatan cascades, clearing inactive dates without resurrection, manual money focus/blur precision, exact source payloads, validation/stale-save retained edits and copy/remove independence. Full existing-editor browser regression passed after the scoped shared-grid metadata change. Client save routes are intercepted; actual persistence is separately tested through HTTP/PostgreSQL.
+
+Visually reviewed **14 medical and two existing-editor captures**: populated desktop left/right and mobile right; empty desktop/mobile left; partial desktop/mobile right; read-only desktop/mobile right; non-contract desktop/mobile; validation desktop/mobile; expanded exact amount mobile; plus existing office-supply and meter populated desktop-right. Confirmed title-case headers, comfortable empty/error padding, manual rates, independent months, calendar display, inactive contract cells, withheld partial values and tabular/accounting amounts. Long helper text and grid density remain consolidated-refinement candidates; horizontal scrolling is expected. Validation captures include the existing focused skip-link overlay over part of the shell, so broader focus behaviour is not certified. Remaining captures/middle columns, dedicated loading/pending-save states, physical devices, screen readers, real local Windows/Google operation and owner financial acceptance remain unverified. No filtered-empty state applies. No UI-complete or production certification is claimed.
+
+Only documentation changes follow the tested head. Merge and local sync/financial/device acceptance pending. No new migration/seed; earlier unconfirmed migration/import remains pending.
+
+See [Batch 045](batch-045-medical-spreadsheet.md).
