@@ -129,7 +129,7 @@ class TouchNgoSpreadsheetTest extends TestCase
     {
         [$bid,$estimate]=$this->gridContext();$response=$this->get($this->gridUrl($bid,$estimate))->assertOk();
         $columns=collect($response->viewData('columns'))->keyBy('key');
-        $this->assertSame(['tempat_bertugas_id','tujuan','bil_unit','kadar','bil_bulan','preview'],$columns->keys()->all());
+        $this->assertSame(['tempat_bertugas_id','tujuan','kadar','bil_unit','bil_bulan','preview'],$columns->keys()->all());
         $this->assertSame('Tujuan',$columns['tujuan']['label']);$this->assertTrue($columns['kadar']['money']);
         $this->assertSame([],$response->viewData('references'));$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         $this->gridCapture('touchngo-empty',$response);

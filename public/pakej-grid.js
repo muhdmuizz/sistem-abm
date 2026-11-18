@@ -3,8 +3,7 @@
  const container=form.querySelector('[data-activities]'),error=form.querySelector('[data-pakej-error]'),status=form.querySelector('[data-pakej-status]');
  const groups=JSON.parse(form.dataset.records),places=JSON.parse(form.dataset.places),references=JSON.parse(form.dataset.references),editable=form.dataset.editable==='yes',money=globalThis.AbmMoney;
  const shared=['tempat_bertugas_id','tujuan','tarikh_mula','tarikh_tamat'],allColumns=JSON.parse(form.dataset.columns),selector=form.dataset.referenceSelector,childSelector=form.dataset.referenceChildSelector,kindLabel=form.dataset.groupLabel,totalLabel=form.dataset.totalLabel;
- let componentColumns=allColumns.filter(c=>!shared.includes(c.key)&&c.key!=='tempoh');
- if(!childSelector){const order=['kategori1','bil_unit','unit','kadar','bil_hari','preview'];componentColumns.sort((a,b)=>order.indexOf(a.key)-order.indexOf(b.key));}
+ const componentColumns=allColumns.filter(c=>!shared.includes(c.key)&&c.key!=='tempoh');
  const inputColumns=componentColumns.filter(c=>c.type!=='output'),fields=inputColumns.map(c=>c.key);
  const reference=c=>{const group=references[c[selector]],ref=childSelector?group?.[c[childSelector]]:group;if(!ref?.ratesByGrade)return ref;const grades=inputColumns.find(col=>col.key==='gred')?.valuesByParent?.[c.jawatan]||[];return {...ref,...(grades.includes(c.gred)?ref.ratesByGrade[c.gred]:{})};};
  const active=(c,col)=>!col.activeWhenReference||!!reference(c)?.[col.activeWhenReference],fixed=(c,col)=>col.mixed&&reference(c)?.mode==='FIXED_REFERENCE';
@@ -33,7 +32,7 @@
    const canEdit=editable&&g.editable;
    if(!g.compatible){const p=document.createElement('p');p.className='notice';p.textContent='Rekod memerlukan penyesuaian sebelum dipinda.';content.append(p);summary(g,section);container.append(section);continue;}
    const sharedBox=document.createElement('div');sharedBox.className='pakej-shared';
-   for(const [key,label,type] of [['tujuan','Nama Program/ Aktiviti','text'],['tempat_bertugas_id','Tempat Bertugas','select'],['tarikh_mula','Tarikh Mula','date'],['tarikh_tamat','Tarikh Tamat','date']]){
+   for(const [key,label,type] of [['tempat_bertugas_id','Tempat Bertugas','select'],['tujuan','Nama Program/ Aktiviti','text'],['tarikh_mula','Tarikh Mula','date'],['tarikh_tamat','Tarikh Tamat','date']]){
     const wrap=document.createElement('label');wrap.textContent=label;let input;
     if(canEdit){input=document.createElement(type==='select'?'select':'input');input.dataset.shared=key;input.setAttribute('aria-label',label+' '+identity(g));
      if(type==='select'){const choices=[{id:'',nama:'Pilih Tempat Bertugas'},...places];choices.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.nama;input.append(o);});}

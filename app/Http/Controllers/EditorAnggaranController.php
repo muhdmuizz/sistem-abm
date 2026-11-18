@@ -63,7 +63,7 @@ class EditorAnggaranController extends Controller
                 'compatible'=>$valid,...$meta];
         })->values();
         return view(($definition instanceof \App\Services\DefinisiPakejBerkumpulan || $definition instanceof \App\Services\DefinisiUmumBerkumpulan) ? 'abm.estimates.pakej' : 'abm.estimates.editor',['photocopier'=>$photocopier,'dependentMeter'=>$meter,'pairActive'=>$pairActive,'pairVisible'=>$pairVisible,'groupLabel'=>$definition instanceof \App\Services\DefinisiUmumBerkumpulan ? 'Umum' : 'Pakej','bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->columns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->columns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)

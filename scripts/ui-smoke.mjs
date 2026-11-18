@@ -435,7 +435,11 @@ for(const name of ['sbk-empty','sbk-populated','sbk-menengah','sbk-partial','sbk
   await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
   if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('SBK mobile table containment failed');
-  if(name==='sbk-readonly'&&!(await page.locator('[data-grid-body] tr').first().locator('td').nth(4).evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
+  if(name==='sbk-readonly'){
+    const rateIndex=await page.getByRole('columnheader',{name:'Kadar Bulanan (RM)',exact:true}).evaluate(el=>el.cellIndex);
+    const rateCell=page.locator('[data-grid-body] tr').first().locator('td').nth(rateIndex);
+    if(!(await rateCell.evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
+  }
   if(name==='sbk-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('SBK read-only save exposed');
   if(name==='sbk-legacy'&&(await page.content()).includes('SECRET_LEGACY'))throw Error('SBK legacy payload exposed');
   await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
@@ -708,7 +712,7 @@ await first.locator('[data-field=kadar]').fill('2,000.125');await first.locator(
 if(await first.locator('[data-output=preview]').textContent()!=='72,004.50')throw Error('Touch n Go exact monthly preview');
 await first.locator('[data-field=kadar]').focus();if(await first.locator('[data-field=kadar]').inputValue()!=='2000.125')throw Error('Touch n Go exact edit');
 await first.locator('[data-field=tujuan]').focus();
-await first.locator('[data-field=tujuan]').evaluate(el=>{const transfer=new DataTransfer();transfer.setData('text/plain','Bas JPNT\t3\t200\t12');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));});
+await first.locator('[data-field=tujuan]').evaluate(el=>{const transfer=new DataTransfer();transfer.setData('text/plain','Bas JPNT\t200\t3\t12');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));});
 if(await first.locator('[data-output=preview]').textContent()!=='7,200.00')throw Error('Touch n Go paste');
 await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Touch n Go duplicate');
@@ -863,7 +867,7 @@ if(!await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej pe
 for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/pakej-grouped-saving-'+width+'.png',fullPage:true});}
 await release();await page.waitForFunction(()=>!document.querySelector('[data-pakej-grid]').hasAttribute('data-submitting'));if(await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej controls not restored after save failure');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 await first.locator('[data-field=kategori1]').evaluate(el=>el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:new DataTransfer()})));
-await first.locator('[data-field=kategori1]').evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','Penginapan\t2\t180\t2\nMakan Minum\t20\t35\t3');el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));});
+await first.locator('[data-field=kategori1]').evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','Penginapan\t180\t2\t2\nMakan Minum\t35\t20\t3');el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));});
 if(await group.locator('tbody tr').nth(0).locator('[data-component-amount]').textContent()!=='720.00'||await group.locator('tbody tr').nth(1).locator('[data-component-amount]').textContent()!=='2,100.00')throw Error('Pakej component paste');
 }
 for(const fixture of ['umum-empty','umum-populated','umum-partial','umum-readonly','umum-grouped-empty','umum-grouped-populated','umum-grouped-partial','umum-grouped-readonly']){
