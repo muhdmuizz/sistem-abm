@@ -195,6 +195,9 @@ class OvertimeSpreadsheetTest extends TestCase
         $d=app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$bid);$key='Program #'.$p->id.' — '.$p->nama;$this->assertArrayHasKey($key,$d->references());$url=$this->gridUrl($bid,$estimate);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($otherPlace,['tujuan'=>$key])]))->assertUnprocessable();
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['tujuan'=>$key])]))->assertOk();
+        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::Superadmin);
+        $adminDefinition=app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$bid);$this->assertArrayHasKey($key,$adminDefinition->references());
+        $this->operator->penugasanPeranan()->delete();$this->workspaceRole(Peranan::PenyediaBidaan);$this->workspaceRole(Peranan::PenyediaAnggaran);
         $p->delete();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['tujuan'=>$key])]))->assertUnprocessable();
         $otherCycle=Kitaran::create(['tahun'=>2029]);$otherBid=Bidaan::forceCreate(['kitaran_id'=>$otherCycle->id,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$this->activity->id]);$d=app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$otherBid);$this->assertArrayNotHasKey($key,$d->references());
     }

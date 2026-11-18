@@ -19,3 +19,6 @@ Pending CI isolated PostgreSQL suite, production build, exact-money/Chromium and
 ### Initial CI attempt
 
 Initial head `3adaf040c9be62587a8786399a063e9ddc6aaaf0`, CI44268299591/job134678213355: 5 failed, 573 passed / 6,712 assertions. Three failures from using legacy uppercase Brick Math rounding constant; locked brick/math 1.0.0 uses `RoundingMode::HalfUp`, verified against its exact locked upstream source. Two test fixture failures: mapped activities lacked central activity permission; a second bid reused the unique cycle/PTJ/activity tuple. Corrected enum in application/tests and corrected fixtures, preserving production guards and formula. Build/browser skipped in this failed run.
+
+
+Static follow-up while corrected CI ran: scoped OS14000 programme lookup explicitly retains Superadmin's existing all-workplace context, rather than requiring a separate preparation assignment through the ordinary programme query. Added a regression assertion; financial write guards unchanged. Supersedes the intermediate application head for final verification.
