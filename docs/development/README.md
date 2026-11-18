@@ -600,3 +600,8 @@ See [Batch 045](batch-045-medical-spreadsheet.md) for full evidence and limits.
 ## Batch 046 — Faedah spreadsheet started (18 November 2026)
 
 Owner approved one named recipient/benefit per row, Kadar × 1 for existing rate modes, with percentage KGT unavailable pending remaining rules. Implement all 13 types and three existing mappings, preserving sources, legacy C gap and fixed/manual/KGT boundaries. No new migration/seed. Verification/merge/local acceptance pending; earlier local sync/migrations/import unconfirmed. [Batch 046](batch-046-benefits-spreadsheet.md).
+
+
+### Batch 046 — verification completed; merge pending
+
+OS15000 Faedah uses approved Kadar × 1 per named recipient/benefit; fixed grade/HPA/exact job-grade KGT and manual refund/territory modes. Percentage KGT remains unavailable. Tested `6bc52911cf169bd09a5da6ac1aad7fa321b7ea89`, run 44224595873/job 134534547451: 570 tests / 6,665 assertions, PHP 8.4.27/PostgreSQL 18.7 isolated database, build/exact-money/Chromium passed. Initial helper visibility collision corrected before tests ran; see batch record. Artifact 14393180199: 552 PNGs/22 benefits; five individual captures reviewed, remaining captures not individually reviewed. No new migration/seed; local acceptance pending.

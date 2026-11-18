@@ -1,6 +1,6 @@
 # Batch 046 — OS15000 Faedah-faedah Kewangan Yang Lain
 
-**Status:** In progress; owner approved Kadar × 1 on 18 November 2026.
+**Status:** Verified; merge pending. Owner approved Kadar × 1 on 18 November 2026.
 **Baseline:** `85bf3296366078319cd7bea9a55623c4f2c771b9` (Batch 045 application PR #99 / docs #100; 562 tests / 6,297 assertions). Prior local sync/migration/import/financial/device acceptance remains unconfirmed; “Good, proceed” acknowledges progress, not detailed local acceptance.
 
 ## Approved scope
@@ -17,4 +17,10 @@ No migration/seed/reset, reference/rate/CSV/catalogue/mapping-policy change, off
 
 ## Verification
 
-Pending dedicated reference/formula/percentage-boundary HTTP/PostgreSQL tests, full isolated suite/build/exact-money/Chromium and relevant desktop/mobile states. Record exact tested head/run/runtime/counts and review limits before merge. Merge/local acceptance pending.
+Tested application head `6bc52911cf169bd09a5da6ac1aad7fa321b7ea89`: [run 44224595873](https://github.com/muhdmuizz/sistem-abm/actions/runs/44224595873), job 134534547451 passed **570 tests / 6,665 assertions**, production build, exact-money presentation and full Chromium checks on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`. Both changed JavaScript files passed Node syntax checks. Eight new feature tests cover references, all benefit modes and 131 KGT personnel pairs, unavailable percentage boundary, exact money, save/reopen, partial drafts, source-only persistence, copy/delete, atomic validation and access/revision guards.
+
+Initial head `5a13a33f05823318d6a2559ad202aec6743d2ba3`, CI 44224220274/job 134533297287 stopped before tests executed: private test helper travel() collided with Laravel TestCase's public time-travel method (exit 255). Renamed the helper to territoryRow; application code unchanged. No successful test count/build/browser evidence from that run.
+
+Artifact 14393180199 contains 552 PNGs, including 22 benefit captures. Visually inspected five individual captures: benefits-populated-1440-right, benefits-populated-390-right, benefits-unavailable-1440, benefits-validation-390 and benefits-readonly-1440-right. Grouped two-decimal amounts, fixed/manual modes, unavailable percentage explanation, withheld preview, validation and read-only display are legible. Mobile uses horizontal table scrolling and long instructional text; the focused skip link overlays the mobile header during validation. Unavailable rate uses shared “Tidak berkenaan” text alongside its specific pending-basis explanation. These remain presentation limits for the planned consolidated UI refinement. Other artifact images were not individually visually inspected; browser assertions cover their states.
+
+No new migration/seed. Local sync and financial/device acceptance remain pending. Documentation-only commits after the tested head do not extend the application test evidence.
