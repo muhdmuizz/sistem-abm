@@ -25,4 +25,5 @@
 @endif
 </form>
 <div class="pagination"><span>Halaman {{ $sources->currentPage() }} daripada {{ $sources->lastPage() }} · {{ $sources->total() }} aktiviti dalam skop anda</span><div>@if($sources->previousPageUrl())<a href="{{ $sources->previousPageUrl() }}">Sebelumnya</a>@endif @if($sources->nextPageUrl())<a href="{{ $sources->nextPageUrl() }}">Seterusnya</a>@endif</div></div>
+@include('abm.estimates.catatan', ['grouped' => true])
 @endsection

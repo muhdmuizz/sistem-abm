@@ -3,3 +3,24 @@
 .anggaran-grid .grid-numeric,.anggaran-grid input[inputmode=decimal]{text-align:right;font-variant-numeric:tabular-nums}
 
 .money-exact{font-size:11px;margin-top:6px;color:var(--muted);text-align:right}.money-exact summary{cursor:pointer}.money-exact span{display:block;overflow-wrap:anywhere;padding:4px 0}.anggaran-grid input[readonly]{background:#f4f7fa;color:var(--ink)}
+
+.grid-notes {
+    margin-block-start: var(--space-6);
+    padding: var(--space-4);
+    border-block-start: 1px solid currentColor;
+    max-inline-size: 76ch;
+}
+.grid-notes h2 {
+    font-size: 1rem;
+    margin: 0 0 var(--space-2);
+}
+.grid-notes ul {
+    margin: 0 0 var(--space-3);
+    padding-inline-start: 1.25em;
+}
+.grid-notes li + li {
+    margin-block-start: var(--space-2);
+}
+.grid-notes p {
+    margin: 0;
+}
