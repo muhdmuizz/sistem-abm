@@ -640,3 +640,8 @@ This checkpoint updates documentation only. Source-editor implementation, remain
 ## Batch 047 started — 18 November 2026
 
 Decision [PR #103](https://github.com/muhdmuizz/sistem-abm/pull/103) merged at `177917021ab60596f97ae6832d0858b56f9515d3`: monthly Kekerapan × manual months, final-only half-up rounding and one officer-entry/output row. Implement OS14000 source editor only; no official outputs/export. See [Batch 047](batch-047-overtime-spreadsheet.md). Verification/merge/local acceptance pending; prior local status unchanged.
+
+
+## Batch 047 verified; merge pending — 18 November 2026
+
+Tested `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468: 578 tests/7,020 assertions, PHP8.4.27/PostgreSQL18.7 isolated database, build/exact-money/Chromium passed. Artifact14410989701:572 PNGs/20 overtime; reviewed11 overtime+one medical capture. Initial failed enum/fixture attempt, intermediate successful head and presentation limits recorded in Batch047. No new migration/seed; prior local acceptance/migration/import status unchanged.
