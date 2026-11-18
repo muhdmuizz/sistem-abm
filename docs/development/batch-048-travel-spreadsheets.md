@@ -19,3 +19,8 @@ Pending dedicated HTTP/PostgreSQL reference/formula/guard tests, full isolated s
 ### Initial verification attempt
 
 Initial head `064c859ffdba57673d9d39a997c3edcee81b353e`, CI44335510778/job134910985837 stopped before tests ran (exit255): private component() test helper conflicted with inherited Laravel TestCase component method. Renamed helper to claimRow; application unchanged. No test count/build/browser/artifact evidence from this failed attempt.
+
+
+### Browser interaction follow-up
+
+Head `0ac07bc3691129900af38b6d19716ff08cbbaaa1`, CI44335911969/job134912451795: 586 tests/7,479 assertions, production build and exact-money checks passed; Chromium reached its last travel copy/remove step, then checkbox click did not change state after editing a copied precise fare. Test now explicitly blurs the money input before checking the checkbox (letting its existing blur formatting/exact-detail layout finish), and asserts row removal. No forced checkbox/DOM-state mutation, no application change. Potential row geometry change when leaving a precision disclosure remains a consolidated UI investigation; this failed browser run is not full verification. Local replay unavailable: packaged browser absent and system Chromium refused socket creation; final replay remains in CI.
