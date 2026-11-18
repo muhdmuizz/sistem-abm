@@ -51,6 +51,15 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
     Route::post('/pentadbiran/aktiviti-kewangan/{kind}/{key}/aktiviti/{activity}', [AksesPeruntukanController::class, 'save'])
         ->whereIn('kind', ['kategori', 'ptj'])->whereNumber('activity')->where('key', '[A-Za-z0-9-]+')
         ->middleware('throttle:30,1')->name('permissions.save');
+    Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}/cadangan-item', [\App\Http\Controllers\EditorAnggaranController::class, 'cadangan'])
+        ->whereNumber(['bid', 'estimate'])->name('estimates.item-proposals');
+    Route::post('/bida-peruntukan/{bid}/anggaran/{estimate}/cadangan-item', [\App\Http\Controllers\EditorAnggaranController::class, 'simpanCadangan'])
+        ->whereNumber(['bid', 'estimate'])->middleware('throttle:30,1')->name('estimates.item-proposals.store');
+    Route::get('/pentadbiran/cadangan-item', [\App\Http\Controllers\SemakanCadanganItemController::class, 'index'])
+        ->name('item-proposals.index');
+    Route::post('/pentadbiran/cadangan-item/{proposal}', [\App\Http\Controllers\SemakanCadanganItemController::class, 'decide'])
+        ->whereNumber('proposal')->middleware('throttle:30,1')->name('item-proposals.decide');
+
     Route::get('/pentadbiran/pengguna', [PenggunaController::class, 'index'])->name('users.index');
     Route::get('/pentadbiran/pengguna/tambah', [PenggunaController::class, 'form'])->name('users.create');
     Route::post('/pentadbiran/pengguna', [PenggunaController::class, 'save'])->middleware('throttle:30,1')->name('users.store');

@@ -15,7 +15,7 @@ class DefinisiBahanMentah extends DefinisiAnggaran
     public const VERSION='os26000.v1';
     public const GENERAL='Bekalan Bahan Mentah dan Bahan-bahan Untuk Penyelenggaraan dan Pembaikan';
     private const FIELDS=['tujuan','kategori1','kategori2','kategori3','bil_unit','kekerapan','bil_bulan'];
-    public function __construct(private int $year,private array $branches = ['Bukan Pukal','Pukal']) {}
+    public function __construct(private int $year,private array $branches = ['Bukan Pukal','Pukal'],private ?int $ptj = null) {}
     public function supports(RujukanOs $os): bool {return $os->kod_objek==='26000'&&!$os->dikecualikan&&$os->butiran_perbelanjaan===self::GENERAL;}
     public function childSelector(): string {return 'kategori2';}
     public function inputHelp(): string {return 'Unit dan Kadar diisi daripada rujukan. Label kuantiti mengikut unit bekalan. Kekerapan dan Bilangan Bulan hanya untuk Pukal. Kadar bahan api ialah andaian perancangan bagi kitaran yang diluluskan, bukan harga pam semasa.';}
@@ -59,10 +59,14 @@ class DefinisiBahanMentah extends DefinisiAnggaran
                 if(!in_array($r[0],$this->branches,true))continue;$approved=!$fuel||in_array($this->year,[2027,2028],true);
                 $refs[$r[0]][$r[1]][$r[2]]=['unit'=>$units[$key],'quantity_label'=>'Bil. '.$units[$key],'kadar'=>$approved?$r[3]:null,'basis'=>$fuel?($approved?'Kadar perancangan tanpa subsidi '.$this->year:'Kadar bahan api belum ditetapkan bagi kitaran ini.'):$r[5],'fuel'=>$fuel,'factors'=>$r[0]==='Pukal'?['bil_unit','kadar','kekerapan','bil_bulan']:['bil_unit','kadar']];
             }
-            if($counts!==['Pukal'=>3,'Bukan Pukal'=>39]||count($seen)!==count($units)||$fuelCount!==5)throw new RuntimeException('Rujukan OS26000 tidak lengkap.');return $refs;
+            if($counts!==['Pukal'=>3,'Bukan Pukal'=>39]||count($seen)!==count($units)||$fuelCount!==5)throw new RuntimeException('Rujukan OS26000 tidak lengkap.');
+            if (isset($refs['Bukan Pukal'])) {
+                $refs['Bukan Pukal'] = app(RujukanCadanganItem::class)->tambah($refs['Bukan Pukal'], '26000', $this->ptj);
+            }
+            return $refs;
         } finally {fclose($h);}
     }
-    public function validate(array $rows): array
+    public function validate(array $rows, bool $historical = false): array
     {
         $refs=$this->references();$decimal=['nullable','string','max:128','regex:/^-?\d+(?:\.\d+)?$/D'];
         $v=Validator::make(['rekod'=>$rows],[
@@ -71,8 +75,8 @@ class DefinisiBahanMentah extends DefinisiAnggaran
             'rekod.*.tujuan'=>'nullable|string|max:1000','rekod.*.kategori1'=>['nullable','string',Rule::in(array_keys($refs))],'rekod.*.kategori2'=>'nullable|string|max:255','rekod.*.kategori3'=>'nullable|string|max:255',
             'rekod.*.bil_unit'=>$decimal,'rekod.*.kekerapan'=>$decimal,'rekod.*.bil_bulan'=>$decimal,
         ]);
-        $v->after(function($v)use($rows,$refs){foreach($rows as $i=>$r){if(!is_array($r))continue;$branch=$refs;$missing=false;
-            foreach(['kategori1','kategori2','kategori3'] as $key){$value=$r[$key]??null;if($value===null||$value===''){$missing=true;continue;}if(!is_string($value)){$missing=true;continue;}if($missing||!array_key_exists($value,$branch)){$v->errors()->add("rekod.$i.$key",'Pilihan tidak sepadan dengan rujukan OS26000 yang dibenarkan.');$missing=true;continue;}$branch=$branch[$value];}
+        $v->after(function($v)use($rows,$refs,$historical){foreach($rows as $i=>$r){if(!is_array($r))continue;$branch=$refs;$missing=false;
+            foreach(['kategori1','kategori2','kategori3'] as $key){$value=$r[$key]??null;if($value===null||$value===''){$missing=true;continue;}if(!is_string($value)){$missing=true;continue;}if($missing||!array_key_exists($value,$branch)){$v->errors()->add("rekod.$i.$key",'Pilihan tidak sepadan dengan rujukan OS26000 yang dibenarkan.');$missing=true;continue;}$branch=$branch[$value];if (!$historical && ($branch['rejected'] ?? false)) $v->errors()->add("rekod.$i.$key", 'Gantikan item yang ditolak.');}
             foreach(['kekerapan','bil_bulan'] as $key)if(($r['kategori1']??null)!=='Pukal'&&($r[$key]??null)!==null&&$r[$key]!=='')$v->errors()->add("rekod.$i.$key",'Medan hanya terpakai bagi Pukal.');
         }});return $v->validate()['rekod'];
     }
@@ -80,7 +84,7 @@ class DefinisiBahanMentah extends DefinisiAnggaran
     public function readable(mixed $s): bool
     {
         $keys=['definition',...self::FIELDS];if(!$s instanceof stdClass||($s->definition??null)!==self::VERSION||array_diff($keys,array_keys(get_object_vars($s)))||array_diff(array_keys(get_object_vars($s)),$keys))return false;
-        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r]);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
+        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r], true);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
     }
     public function preview(stdClass $s): ?string
     {

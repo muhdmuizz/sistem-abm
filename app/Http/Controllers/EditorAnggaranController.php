@@ -63,7 +63,32 @@ class EditorAnggaranController extends Controller
                 'compatible'=>$valid,...$meta];
         })->values();
         return view(($definition instanceof \App\Services\DefinisiPakejBerkumpulan || $definition instanceof \App\Services\DefinisiUmumBerkumpulan) ? 'abm.estimates.pakej' : 'abm.estimates.editor',['photocopier'=>$photocopier,'dependentMeter'=>$meter,'pairActive'=>$pairActive,'pairVisible'=>$pairVisible,'groupLabel'=>$definition instanceof \App\Services\DefinisiUmumBerkumpulan ? 'Umum' : 'Pakej','bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+            'canPropose'=>$access['editable'] && app(\App\Services\UrusCadanganItem::class)->categories($definition) !== [], 'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+    }
+
+    public function cadangan(Request $request, int $bid, int $estimate, EditorAnggaran $editor, \App\Services\UrusCadanganItem $items)
+    {
+        [$record, $entry, $os, $definition] = $this->context($request, $bid, $estimate);
+        $access = $editor->access($request->user(), $record, $entry);
+        abort_unless($access['editable'], 403);
+        $categories = array_keys($items->categories($definition));
+        abort_if($categories === [], 404);
+
+        return view('abm.estimates.cadangan', [
+            'bid' => $record, 'estimate' => $entry, 'os' => $os, 'categories' => $categories,
+            'needsReason' => $access['needsReason'],
+            'proposals' => \App\Models\CadanganItemAnggaran::where('anggaran_id', $estimate)
+                ->where('pemohon_id', $request->user()->id)->latest('id')->paginate(15),
+        ]);
+    }
+
+    public function simpanCadangan(Request $request, int $bid, int $estimate, \App\Services\UrusCadanganItem $items)
+    {
+        $this->context($request, $bid, $estimate);
+        $items->create($bid, $estimate, $request->only(['kategori', 'nama', 'unit', 'kadar', 'justifikasi', 'reason']));
+
+        return redirect()->route('estimates.editor', [$bid, $estimate])
+            ->with('status', 'Cadangan dihantar. Item sementara boleh dipilih dalam draf.');
     }
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)

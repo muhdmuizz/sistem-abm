@@ -46,7 +46,7 @@ class KatalogDefinisiAnggaran
                 ->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti','010804')->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$medical:null;
         }
 
-        $office=new DefinisiAlatPejabat;
+        $office=new DefinisiAlatPejabat($bid->ptj_id);
         if($office->supports($os)){
             $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Awal'=>'030101','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
             if($code===null)return null;
@@ -66,7 +66,7 @@ class KatalogDefinisiAnggaran
             $allowed=[];
             foreach($codes as $path=>$code)if(PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
                 ->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists())$allowed[]=$path;
-            return $allowed?new DefinisiBahanMentah($bid->kitaran->tahun,$allowed):null;
+            return $allowed?new DefinisiBahanMentah($bid->kitaran->tahun,$allowed,$bid->ptj_id):null;
         }
 
         $goods=new DefinisiPengangkutan;

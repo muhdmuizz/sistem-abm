@@ -7,6 +7,7 @@
  const columns=JSON.parse(form.dataset.columns),inputColumns=columns.filter(c=>c.type!=='output'),fieldNames=inputColumns.map(c=>c.key);
  const selector=form.dataset.referenceSelector,childSelector=form.dataset.referenceChildSelector,money=globalThis.AbmMoney;
  const reference=row=>{const group=references[row[selector]];let ref=childSelector?group?.[plain(row[childSelector])]:group;for(const c of columns.filter(c=>c.referenceLeaf))ref=ref?.[plain(row[c.key])];if(!ref?.ratesByGrade&&!ref?.ratesByJob)return ref;const grades=columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[];return {...ref,...(grades.includes(row.gred)?(ref.ratesByJob?.[row.jawatan]?.[row.gred]||ref.ratesByGrade?.[row.gred]||{}):{})};};
+ const choiceReference=(row,column)=>column.dependsOn?(column.referenceParents||[column.dependsOn]).reduce((ref,key)=>ref?.[plain(row[key])],references)?.[plain(row[column.key])]:null;
  const active=(row,column)=>(!column.activeWhen||(Array.isArray(column.activeWhen.values)?column.activeWhen.values.includes(row[column.activeWhen.field]):row[column.activeWhen.field]===column.activeWhen.value))&&(!column.inactiveWhen||row[column.inactiveWhen.field]!==column.inactiveWhen.value)&&(!column.activeWhenReference||!!reference(row)?.[column.activeWhenReference]);
  const fixed=(row,column)=>column.mixed&&reference(row)?.mode==='FIXED_REFERENCE';
  const exactHelp=(cell,value)=>{cell.querySelector('.money-exact')?.remove();if(!money.precise(plain(value)))return;const detail=document.createElement('details');detail.className='money-exact';const summary=document.createElement('summary');summary.textContent='Nilai tepat';const text=document.createElement('span');text.textContent=value;detail.append(summary,text);cell.append(detail);};
@@ -67,6 +68,7 @@
    if(!active(row,column))value='Tidak berkenaan';
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
+   if(ref?.provisional&&column.money&&['kadar','preview'].includes(column.key)&&value!==null&&value!==undefined&&value!=='—')el.textContent+=' (Sementara)';
    if(column.reference==='kadar'&&childSelector&&!column.mixed){el.parentElement.querySelector('.rate-missing')?.remove();if(!columnReference&&row[selector]&&row[childSelector]){const note=document.createElement('p');note.className='small rate-missing';note.textContent='Tiada kadar rujukan bagi gabungan ini.';el.parentElement.append(note);}}
   }
  }
@@ -91,7 +93,7 @@
     const name=column.key;
     const cell=cells[columns.indexOf(column)+2];
     if(!active(row,column)){cell.textContent='Tidak berkenaan';return;}
-    if(!editable||!row.editable||row.readonly_fields?.includes(name)){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
+    if(!editable||!row.editable||row.readonly_fields?.includes(name)){const value=fixed(row,column)?reference(row).kadar:row[name];cell.textContent=name==='tempat_bertugas_id'?row.tempat_bertugas:column.money?money.format(value):column.type==='date'&&/^\d{4}-\d{2}-\d{2}$/.test(plain(value))?plain(value).split('-').reverse().join('/'):choiceReference(row,column)?.label??plain(value);if(column.money)exactHelp(cell,value);notice(cell,row,name);return;}
     const input=document.createElement(column.type==='select'?'select':'input');input.dataset.field=name;input.id='grid-'+row.key+'-'+name;
     input.setAttribute('aria-label',column.label+' '+(row.butiran_id?'Butiran #'+row.butiran_id:'baris baharu '+row.key));
     if(column.type==='decimal'||column.type==='text'||column.type==='date'){
@@ -103,7 +105,7 @@
     }
     else{
      option(input,'','Pilih '+column.label);
-     if(column.dependsOn){const branch=(column.referenceParents||[column.dependsOn]).reduce((ref,key)=>ref?.[plain(row[key])],references);const choices=column.valuesByParent?(column.valuesByParent[row[column.dependsOn]]||[]):Object.keys(branch||{}).filter(v=>v!=='');choices.forEach(v=>option(input,v,v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(branch||{},'')){input.options[0].textContent='Tidak berkenaan';}}
+     if(column.dependsOn){const branch=(column.referenceParents||[column.dependsOn]).reduce((ref,key)=>ref?.[plain(row[key])],references);const choices=column.valuesByParent?(column.valuesByParent[row[column.dependsOn]]||[]):Object.keys(branch||{}).filter(v=>v!=='');choices.filter(v=>!branch?.[v]?.rejected||v===plain(row[name])).forEach(v=>option(input,v,branch?.[v]?.label??v));input.disabled=!choices.length;if(row[column.dependsOn]&&Object.hasOwn(branch||{},'')){input.options[0].textContent='Tidak berkenaan';}}
      else if(column.options==='values')column.values.forEach(v=>option(input,v,v));
      else if(column.options==='references')Object.keys(references).forEach(v=>option(input,v,v));else places.forEach(p=>option(input,p.id,p.nama));
      if(!column.strictValues&&plain(row[name])&&!Array.from(input.options).some(o=>o.value===plain(row[name])))option(input,row[name],plain(row[name]));
