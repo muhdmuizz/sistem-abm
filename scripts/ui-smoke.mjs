@@ -1341,4 +1341,41 @@ for(const fixture of ['overtime-empty','overtime-populated','overtime-partial','
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=jam]').fill('7');if(await field('jam').inputValue()!=='3')throw Error('Overtime copy source shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
 }
 
+
+for(const fixture of ['travel-empty','travel-populated','travel-partial','travel-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Travel document overflow');
+ }
+}
+{
+ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/travel-populated.html');
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']'),out=k=>row().locator('[data-output='+k+']');
+ const combined='Elaun Perjalanan, Bayaran Tambang Bas dan Teksi',vehicle='Elaun Perjalanan Kenderaan',taxi='Bas/ Teksi',all='Semenanjung/ Sabah/ Sarawak/ WP Labuan';
+ if(await out('preview').textContent()!=='3,240.00'||!await field('kadar').evaluate(el=>el.readOnly))throw Error('Travel meal amount/rate');
+ if(await field('kategori2').count()||await field('jarak').count())throw Error('Travel inactive meal fields');
+ await field('lokasi').selectOption('Sabah/ Sarawak/ WP Labuan');if(await out('preview').textContent()!=='4,680.00')throw Error('Travel regional food rate');await field('lokasi').selectOption('Semenanjung');
+ await field('gred').selectOption('J13');if(await out('preview').textContent()!=='4,320.00')throw Error('Travel grade rate');await field('gred').selectOption('J9');
+ await field('tarikh_mula').fill('2028-01-01');await field('tarikh_tamat').fill('2028-12-31');if(await out('preview').textContent()!=='3,240.00'||await out('tempoh').textContent()!=='366'||await field('bil_hari').inputValue()!=='3'||await field('bil_bulan').inputValue()!=='12')throw Error('Travel dates alter charge factors');
+ await field('kategori1').selectOption('Penginapan');await field('lokasi').selectOption('Semenanjung');await field('bil_hari').fill('2');if(await out('preview').textContent()!=='10,560.00')throw Error('Travel nights amount');
+ await field('kategori1').selectOption(combined);await field('kategori2').selectOption(vehicle);await field('lokasi').selectOption(all);await field('jarak').fill('150');if(await out('preview').textContent()!=='3,600.00'||await field('bil_hari').count())throw Error('Travel mileage conditional formula');
+ await field('kategori2').selectOption(taxi);await field('lokasi').selectOption(all);if(await field('jarak').count()||await field('kadar').inputValue()!==''||await field('kadar').evaluate(el=>el.readOnly))throw Error('Travel taxi manual mode/reset');
+ await field('kadar').focus();await field('kadar').fill('180.12345');await field('nama').focus();if(await out('preview').getAttribute('data-exact')!=='4322.9628'||await out('preview').textContent()!=='4,322.96'||await field('kadar').inputValue()!=='180.12')throw Error('Travel fare precision');
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='180.12345')throw Error('Travel fare focus precision');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await out('preview').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await out('preview').locator('..').locator('details').evaluate(el=>el.open=true);await page.screenshot({path:'storage/app/ui-qa/travel-exact-'+width+'.png',fullPage:true});}
+ await field('kategori1').selectOption('Makanan dan Minuman');await field('lokasi').selectOption('Semenanjung');await field('jawatan').selectOption('PENGARAH PENDIDIKAN NEGERI');await field('gred').selectOption('VU7');
+ if(await field('kadar').count()||await out('preview').textContent()!=='—')throw Error('Travel fabricated C/VU7 rate');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await out('preview').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/travel-unmatched-'+width+'.png',fullPage:true});}
+ await field('jawatan').selectOption('JURUTERA');await field('gred').selectOption('J9');await field('kategori1').selectOption('Bayaran Tambang Kereta Api');await field('lokasi').selectOption(all);await field('kadar').focus();await field('kadar').fill('4320.12345');
+ if(await field('kategori2').count()||await field('bil_hari').count()||await field('jarak').count()||await out('preview').getAttribute('data-exact')!=='103682.9628')throw Error('Travel rail formula/fields');
+ await field('nama').fill('   ');if(await out('preview').textContent()!=='—')throw Error('Travel blank officer preview');await field('nama').fill('AHMAD UJIAN');
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak tambang perjalanan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak tambang'));
+ if(payload.rekod[0].kadar!=='4320.12345'||payload.rekod[0].kategori2!==null||payload.rekod[0].jarak!==null||payload.rekod[0].bil_hari!==null||['kategori3','preview','tempoh','bil_unit','jam'].some(k=>k in payload.rekod[0]))throw Error('Travel inactive/derived payload leakage');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('kadar').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/travel-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));await field('kadar').focus();if(await field('kadar').inputValue()!=='4320.12345')throw Error('Travel stale response loses fare');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('Travel copy shares fare');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+
 await browser.close();
