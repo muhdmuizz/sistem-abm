@@ -1,7 +1,7 @@
 # OS14000 — Bayaran Lebih Masa: consolidated reference checkpoint
 
 **Recorded:** 12 November 2026.  
-**Status:** References, hourly-rate formula, annual-amount formula and rounding approved; discussion resumed on 18 November 2026. Detailed output mapping and remaining input rules are not finalised; application implementation has not started. Earlier sections preserve historical checkpoints; the dated approval below supersedes their formula/rounding/pause status.
+**Status:** References, hourly-rate formula, annual-amount formula and rounding approved; discussion resumed on 18 November 2026. Single-row output is now approved by the later dated decision below; remaining input rules/integration are not finalised and application implementation has not started. Earlier sections preserve historical checkpoints; the dated approval below supersedes their formula/rounding/pause status.
 
 ## 1. Shared personnel reference (not OS-specific ownership)
 
@@ -61,3 +61,10 @@ The owner instructed resumption of OS14000 discussion, confirmed the overall for
 - Example approved in discussion: 3 hours/day × 2 days/occurrence × 12 occurrences = 72 annual hours for the officer.
 
 These later approvals supersede only the earlier unresolved overall-formula/rounding statements and historical discussion pause. They do not decide eligibility, time-fraction limits, granular output expansion/count or allocation of rounding across generated output rows. In particular, rounding an annual source amount does not approve summing separately rounded daily amounts. Resolve the output mapping and reconciliation before implementation; do not infer dates for repeated occurrences. Existing stable source IDs, shared personnel reference and programme/purpose choices remain unchanged. No application, source CSV or database change is made by this decision record. AD-008 remains Draft.
+
+
+## Owner-approved single-row output — 18 November 2026
+
+After clarification, the owner confirmed keeping **one entry and one export/output row per saved officer-level Butiran Anggaran**, retaining Jam sehari, Bilangan Hari and Kekerapan as multipliers. Do not expand days × occurrences into daily rows. Example: Ahmad, 3 hours/day, 2 days and frequency 12 remains one row representing 72 annual hours. No individual daily entries or fabricated occurrence dates are required. Each separate saved Butiran retains its own stable identity even when the same officer is named more than once; no deduplication by officer.
+
+Apply the approved unrounded hourly-rate calculation and round the final row amount once to two decimals, half-up. This resolves the prior output-expansion/count and associated daily-rounding question for this model; no daily allocation/reconciliation is needed. Preserve existing canonical field identities and programme/purpose references. Remaining detailed field validation, programme inheritance and official calculation/export integration are not implemented or newly approved by this documentation checkpoint. AD-008 remains Draft.

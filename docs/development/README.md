@@ -615,3 +615,10 @@ OS15000 Faedah spreadsheet merged in [PR #101](https://github.com/muhdmuizz/sist
 ## OS14000 decision checkpoint — 18 November 2026
 
 Owner resumed OS14000 discussion and approved hourly Kadar × Jam sehari × Bilangan Hari × Kekerapan, independently entered chargeable days, unrounded hourly-rate calculation and half-up rounding of each final amount to two decimals. See consolidated OS14000 reference. Granular expansion/reconciliation and remaining field rules are unresolved; no editor implementation or new tests in this documentation checkpoint. Baseline `6ddeb013b90e19289edd3ba9845194499f3d31d5`; Batch 046 application merge/test/local status unchanged (local sync/acceptance remains unconfirmed). No migration/seed/source CSV change. Documentation PR/merge pending; no new numbered application batch started.
+
+
+## Owner-approved single-row output — 18 November 2026
+
+After clarification, the owner confirmed keeping **one entry and one export/output row per saved officer-level Butiran Anggaran**, retaining Jam sehari, Bilangan Hari and Kekerapan as multipliers. Do not expand days × occurrences into daily rows. Example: Ahmad, 3 hours/day, 2 days and frequency 12 remains one row representing 72 annual hours. No individual daily entries or fabricated occurrence dates are required. Each separate saved Butiran retains its own stable identity even when the same officer is named more than once; no deduplication by officer.
+
+Apply the approved unrounded hourly-rate calculation and round the final row amount once to two decimals, half-up. This resolves the prior output-expansion/count and associated daily-rounding question for this model; no daily allocation/reconciliation is needed. Preserve existing canonical field identities and programme/purpose references. Remaining detailed field validation, programme inheritance and official calculation/export integration are not implemented or newly approved by this documentation checkpoint. AD-008 remains Draft.
