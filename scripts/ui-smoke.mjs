@@ -435,7 +435,11 @@ for(const name of ['sbk-empty','sbk-populated','sbk-menengah','sbk-partial','sbk
   await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+name+'.html');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error(name+' outer overflow');
   if(width===390&&!(await page.locator('.anggaran-grid-scroll').evaluate(el=>el.scrollWidth>el.clientWidth)))throw Error('SBK mobile table containment failed');
-  if(name==='sbk-readonly'&&!(await page.locator('[data-grid-body] tr').first().locator('td').nth(4).evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
+  if(name==='sbk-readonly'){
+    const rateIndex=await page.getByRole('columnheader',{name:'Kadar Bulanan (RM)',exact:true}).evaluate(el=>el.cellIndex);
+    const rateCell=page.locator('[data-grid-body] tr').first().locator('td').nth(rateIndex);
+    if(!(await rateCell.evaluate(el=>getComputedStyle(el).textAlign==='right')))throw Error('Read-only monthly rate alignment');
+  }
   if(name==='sbk-readonly'&&await page.getByRole('button',{name:'Simpan Draf',exact:true}).count())throw Error('SBK read-only save exposed');
   if(name==='sbk-legacy'&&(await page.content()).includes('SECRET_LEGACY'))throw Error('SBK legacy payload exposed');
   await page.screenshot({path:'storage/app/ui-qa/'+name+'-'+width+'.png',fullPage:true});
