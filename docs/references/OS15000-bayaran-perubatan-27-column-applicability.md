@@ -55,7 +55,7 @@ The exact nine options and their original order remain defined in `OS15000-bayar
 3. Program/ Aktiviti alternative-entry inheritance, including columns 26–27.
 4. Operational implementation, validation, database changes, and testing.
 
-**Documentation checkpoint only.** A complete column-applicability matrix is not approval of financial formulas or production readiness.
+**Historical applicability checkpoint.** The subsequent 18 November approval below resolves formula and duration; implementation and production readiness require separate evidence.
 
 
 ## Owner approval — 18 November 2026
