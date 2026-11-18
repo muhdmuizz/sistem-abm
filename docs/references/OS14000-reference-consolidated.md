@@ -68,3 +68,16 @@ These later approvals supersede only the earlier unresolved overall-formula/roun
 After clarification, the owner confirmed keeping **one entry and one export/output row per saved officer-level Butiran Anggaran**, retaining Jam sehari, Bilangan Hari and Kekerapan as multipliers. Do not expand days × occurrences into daily rows. Example: Ahmad, 3 hours/day, 2 days and frequency 12 remains one row representing 72 annual hours. No individual daily entries or fabricated occurrence dates are required. Each separate saved Butiran retains its own stable identity even when the same officer is named more than once; no deduplication by officer.
 
 Apply the approved unrounded hourly-rate calculation and round the final row amount once to two decimals, half-up. This resolves the prior output-expansion/count and associated daily-rounding question for this model; no daily allocation/reconciliation is needed. Preserve existing canonical field identities and programme/purpose references. Remaining detailed field validation, programme inheritance and official calculation/export integration are not implemented or newly approved by this documentation checkpoint. AD-008 remains Draft.
+
+
+## Superseding owner approval — monthly frequency and months (18 November 2026)
+
+The owner explicitly approved reconciling the active Bilangan Bulan field with the annual amount by defining **Kekerapan as occurrences per month**:
+
+**Anggaran Setahun = (Gaji Median × 12 ÷ 2504) × Jam sehari × Bilangan Hari setiap kejadian × Kekerapan sebulan × Bilangan Bulan.**
+
+This supersedes the earlier four-factor amount formula and annual-frequency interpretation recorded above; those earlier approvals are historical only. Bilangan Bulan is an independent manual calculation input, not informational and not derived from dates. The repeated-work pattern has the same entered hours/day and days/occurrence for each entered monthly occurrence. Example: 3 hours/day × 2 days/occurrence × 1 occurrence/month × 12 months = **72 annual hours**, multiplied by the unrounded hourly rate.
+
+Retain one saved officer-level Butiran per input row and one attributable output/export row containing the factors; do not expand into daily rows or deduplicate separate entries naming the same officer. Keep exact arithmetic through the hourly-rate division/multiplication and round the final row amount once to **two decimals, half-up**. Display-only grouped/tabular two-decimal money must not become the calculation basis. Dates remain independent of chargeable days and months, subject to existing Kitaran-year limits. Preserve approved personnel and programme/purpose references. No new eligibility, caps or rounding rules.
+
+This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.
