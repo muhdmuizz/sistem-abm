@@ -14,6 +14,36 @@ class DefinisiAnggaran
 {
     public const VERSION = 'os25000.v1';
 
+    private const DISPLAY_ORDER = [
+        // Context
+        'tempat_bertugas_id', 'tujuan',
+        // Categories
+        'kategori1', 'kategori2', 'kategori3', 'komponen',
+        // Person and rate determinants
+        'nama', 'jawatan', 'gred', 'payment_grade', 'lokasi', 'padanan',
+        // Relevant dates
+        'tarikh_mula', 'tarikh_tamat', 'tempoh',
+        'tarikh_mula_kontrak', 'tarikh_tamat_kontrak', 'tempoh_kontrak',
+        // Rate and rate basis
+        'kadar', 'basis',
+        // Calculation factors, including the unit that describes Bil. Unit
+        'bil_unit', 'unit', 'jarak', 'jam', 'bil_hari', 'kekerapan', 'bil_bulan',
+        // Annual amount
+        'preview',
+    ];
+
+    public function displayColumns(): array
+    {
+        $columns = $this->columns();
+        $rank = array_flip(self::DISPLAY_ORDER);
+        $beforeAmount = $rank['preview'] - 0.5;
+
+        usort($columns, static fn (array $left, array $right): int =>
+            ($rank[$left['key']] ?? $beforeAmount) <=> ($rank[$right['key']] ?? $beforeAmount));
+
+        return $columns;
+    }
+
     public function supports(RujukanOs $os): bool
     {
         return $os->kod_objek === '25000' && $os->butiran_perbelanjaan === 'Bahan-bahan Makanan dan Minuman' && ! $os->dikecualikan;

@@ -708,7 +708,7 @@ await first.locator('[data-field=kadar]').fill('2,000.125');await first.locator(
 if(await first.locator('[data-output=preview]').textContent()!=='72,004.50')throw Error('Touch n Go exact monthly preview');
 await first.locator('[data-field=kadar]').focus();if(await first.locator('[data-field=kadar]').inputValue()!=='2000.125')throw Error('Touch n Go exact edit');
 await first.locator('[data-field=tujuan]').focus();
-await first.locator('[data-field=tujuan]').evaluate(el=>{const transfer=new DataTransfer();transfer.setData('text/plain','Bas JPNT\t3\t200\t12');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));});
+await first.locator('[data-field=tujuan]').evaluate(el=>{const transfer=new DataTransfer();transfer.setData('text/plain','Bas JPNT\t200\t3\t12');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:transfer,bubbles:true,cancelable:true}));});
 if(await first.locator('[data-output=preview]').textContent()!=='7,200.00')throw Error('Touch n Go paste');
 await first.locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();
 if(await page.locator('[data-grid-body] tr').count()!==2)throw Error('Touch n Go duplicate');
@@ -863,7 +863,7 @@ if(!await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej pe
 for(const width of [1440,390]){await page.setViewportSize({width,height:900});await page.screenshot({path:'storage/app/ui-qa/pakej-grouped-saving-'+width+'.png',fullPage:true});}
 await release();await page.waitForFunction(()=>!document.querySelector('[data-pakej-grid]').hasAttribute('data-submitting'));if(await first.locator('[data-field=kadar]').isDisabled())throw Error('Pakej controls not restored after save failure');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
 await first.locator('[data-field=kategori1]').evaluate(el=>el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:new DataTransfer()})));
-await first.locator('[data-field=kategori1]').evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','Penginapan\t2\t180\t2\nMakan Minum\t20\t35\t3');el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));});
+await first.locator('[data-field=kategori1]').evaluate(el=>{const data=new DataTransfer();data.setData('text/plain','Penginapan\t180\t2\t2\nMakan Minum\t35\t20\t3');el.dispatchEvent(new ClipboardEvent('paste',{bubbles:true,cancelable:true,clipboardData:data}));});
 if(await group.locator('tbody tr').nth(0).locator('[data-component-amount]').textContent()!=='720.00'||await group.locator('tbody tr').nth(1).locator('[data-component-amount]').textContent()!=='2,100.00')throw Error('Pakej component paste');
 }
 for(const fixture of ['umum-empty','umum-populated','umum-partial','umum-readonly','umum-grouped-empty','umum-grouped-populated','umum-grouped-partial','umum-grouped-readonly']){
