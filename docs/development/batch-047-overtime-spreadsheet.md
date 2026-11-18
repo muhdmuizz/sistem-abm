@@ -1,6 +1,6 @@
 # Batch 047 — OS14000 Bayaran Lebih Masa spreadsheet
 
-**Status:** Application verified; merge and local acceptance pending.
+**Status:** Application merged; local synchronisation/financial/device acceptance pending.
 **Baseline:** `177917021ab60596f97ae6832d0858b56f9515d3`, decision PR #103 merged on 18 November 2026. Application baseline remains Batch 046 PR #101 / 570 tests, 6,665 assertions; earlier pending local synchronisation/migrations/import/financial/device acceptance unchanged.
 
 ## Approved scope
@@ -33,3 +33,10 @@ Intermediate head `1c9eec1c72ec4df35b343e35d59e485b347979ce`, CI44269123200/job1
 Artifact14410989701 contains **572 PNGs /20 overtime captures**. Individually reviewed **11 overtime captures**: populated desktop left/right and mobile left/right; empty desktop/mobile left; partial desktop right; read-only desktop/mobile right; validation mobile; large exact amount mobile. Also inspected existing medical populated desktop-right (**12 captures total**). Amount grouping/two decimals, fixed rate, independent factors, partial amount withholding, error cell/summary, read-only rows and button spacing are readable. Mobile requires horizontal table scrolling; long helper text/dense table remain for consolidated refinement. Focused skip link overlays part of the mobile header during validation, as in the shared editor. Other captures, pending/loading states, actual registered-programme selection layout, physical devices/screen readers and local financial acceptance were not individually inspected. No filtered-empty state applies. No UI-complete or production-readiness claim.
 
 Merge pending. Local sync/financial/device acceptance and earlier migration/import statuses unchanged; no new migration/seed. Later documentation-only commits do not extend the tested application evidence.
+
+
+## Batch 047 merged checkpoint — 18 November 2026
+
+[PR #104](https://github.com/muhdmuizz/sistem-abm/pull/104) merged at `01c48e99ced8db7c41374ccadb3dc56ca2a97fda`. OS14000 source spreadsheet uses the approved salary-derived hourly rate and monthly hours/day × days/occurrence × frequency/month × manual months. Exact numerator before division, final two-decimal half-up amount, independent Kitaran-year dates, four existing mappings, scoped programme/two fixed-purpose choices and dependent full-SSPA personnel. One saved entry per officer record; no daily expansion or generated financial outputs. Official outputs/totals/completeness/submission/export, context classifications and full programme inheritance/association remain pending.
+
+Verified `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468: **578 tests /7,020 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB; build/exact-money/Chromium passed. Artifact14410989701:572 PNGs/20 overtime; 11 overtime and one medical capture individually reviewed. Batch047 records exact failures, intermediate success and presentation/manual limits. No migration/seed/source CSV change. Local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates; remaining editors → consolidated UI refinement → shared proposals.

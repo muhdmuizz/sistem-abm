@@ -1,7 +1,7 @@
 # OS14000 — Bayaran Lebih Masa: consolidated reference checkpoint
 
 **Recorded:** 12 November 2026.  
-**Status:** References, hourly-rate formula, annual-amount formula and rounding approved; discussion resumed on 18 November 2026. Single-row output is now approved by the later dated decision below; remaining input rules/integration are not finalised and application implementation has not started. Earlier sections preserve historical checkpoints; the dated approval below supersedes their formula/rounding/pause status.
+**Status:** References, hourly-rate formula, annual-amount formula and rounding approved; discussion resumed on 18 November 2026. Single-row output is now approved by the later dated decision below; Batch047 implements/verifies the source editor; official integration and remaining context/inheritance work are pending. Earlier sections preserve historical checkpoints; the dated approval below supersedes their formula/rounding/pause status.
 
 ## 1. Shared personnel reference (not OS-specific ownership)
 
@@ -83,6 +83,13 @@ Retain one saved officer-level Butiran per input row and one attributable output
 This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.
 
 
-## Batch 047 implementation in progress
+## Batch 047 source-editor implementation (superseded by merged checkpoint below)
 
 Source editor implements the latest monthly formula, final-only half-up rounding and one source per officer entry. Four original mappings, salary source, purposes and independent date/factors retained. No daily outputs are generated. Programme choice is scoped reference selection; full inheritance/association, shared context classifications and official financial/export integration remain pending. Verification/merge/local acceptance pending; see Batch 047 development record. This does not finalise AD-008.
+
+
+## Batch 047 merged checkpoint — 18 November 2026
+
+[PR #104](https://github.com/muhdmuizz/sistem-abm/pull/104) merged at `01c48e99ced8db7c41374ccadb3dc56ca2a97fda`. OS14000 source spreadsheet uses the approved salary-derived hourly rate and monthly hours/day × days/occurrence × frequency/month × manual months. Exact numerator before division, final two-decimal half-up amount, independent Kitaran-year dates, four existing mappings, scoped programme/two fixed-purpose choices and dependent full-SSPA personnel. One saved entry per officer record; no daily expansion or generated financial outputs. Official outputs/totals/completeness/submission/export, context classifications and full programme inheritance/association remain pending.
+
+Verified `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468: **578 tests /7,020 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB; build/exact-money/Chromium passed. Artifact14410989701:572 PNGs/20 overtime; 11 overtime and one medical capture individually reviewed. Batch047 records exact failures, intermediate success and presentation/manual limits. No migration/seed/source CSV change. Local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates; remaining editors → consolidated UI refinement → shared proposals.
