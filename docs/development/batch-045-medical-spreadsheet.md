@@ -1,6 +1,6 @@
 # Batch 045 — OS15000 Bayaran Perubatan spreadsheet
 
-**Status:** Verified; merge pending; owner explicitly approved both calculation/duration rules on 18 November 2026.
+**Status:** Merged in [PR #99](https://github.com/muhdmuizz/sistem-abm/pull/99) at `21fe6d34cdbbd7e95d491979530398b258c6df34`; owner explicitly approved both calculation/duration rules on 18 November 2026.
 **Baseline:** `656eb69999f127f94487f9998565a7787224ce09` (Batch 044 application PR #97 / docs #98; 555 tests / 6,183 assertions). Previous local sync/migrations/import/financial/device acceptance remain unconfirmed; starting the server is not a claimed local sync or direct Windows verification.
 
 ## Approved scope
@@ -23,4 +23,4 @@ Chromium covers empty/populated/partial/read-only at 1440/390 widths and horizon
 
 Visually reviewed **14 medical and two existing-editor captures**: populated desktop left/right and mobile right; empty desktop/mobile left; partial desktop/mobile right; read-only desktop/mobile right; non-contract desktop/mobile; validation desktop/mobile; expanded exact amount mobile; plus existing office-supply and meter populated desktop-right. Confirmed title-case headers, comfortable empty/error padding, manual rates, independent months, calendar display, inactive contract cells, withheld partial values and tabular/accounting amounts. Long helper text and grid density remain consolidated-refinement candidates; horizontal scrolling is expected. Validation captures include the existing focused skip-link overlay over part of the shell, so broader focus behaviour is not certified. Remaining captures/middle columns, dedicated loading/pending-save states, physical devices, screen readers, real local Windows/Google operation and owner financial acceptance remain unverified. No filtered-empty state applies. No UI-complete or production certification is claimed.
 
-Only documentation changes follow the tested head. Merge and local sync/financial/device acceptance pending. No new migration/seed; earlier unconfirmed migration/import remains pending.
+Only documentation changes follow the tested head. Local sync/financial/device acceptance pending. No new migration/seed; earlier unconfirmed migration/import remains pending.

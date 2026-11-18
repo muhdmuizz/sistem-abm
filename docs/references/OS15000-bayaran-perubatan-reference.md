@@ -43,3 +43,8 @@ This completes collection of the **Bayaran Perubatan** reference currently suppl
 ## Subsequent owner approval — 18 November 2026
 
 All nine categories use **Bil. Unit × manual Kadar × Kekerapan × manually entered Bilangan Bulan**. Kidney-treatment contract duration uses the existing inclusive years/months/days convention and never determines months or amount. Existing Kitaran-year date limits and inactive dates for the other eight categories remain. No category/rate CSV changes. See [approved calculation/duration checkpoint](OS15000-bayaran-perubatan-27-column-applicability.md) and [Batch 045](../development/batch-045-medical-spreadsheet.md).
+
+
+## Batch 045 implementation checkpoint — 18 November 2026
+
+Bayaran Perubatan source editor merged in [PR #99](https://github.com/muhdmuizz/sistem-abm/pull/99) at `21fe6d34cdbbd7e95d491979530398b258c6df34`: nine categories, exact quantity × manual rate × frequency × manual months, shared personnel selectors, and kidney-only Kitaran-year contract dates/inclusive calendar years/months/days. Dates never determine months or amount; PPN/010804 and separate Faedah identity retained. Verified `e203d8fe8fab2092608823ce62c6ff70ef4acbe2`: 562 tests / 6,297 assertions plus build/exact-money/full Chromium. No migration/seed or reference/rate CSV changes; local sync/financial/device acceptance pending. Programme inheritance and official financial outputs/totals/completeness/submission remain separate; AD-008 stays Draft and Steps 02/03 in progress. Evidence and limits: [Batch 045](../development/batch-045-medical-spreadsheet.md).
