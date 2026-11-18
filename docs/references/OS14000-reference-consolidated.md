@@ -1,7 +1,7 @@
 # OS14000 — Bayaran Lebih Masa: consolidated reference checkpoint
 
 **Recorded:** 12 November 2026.  
-**Status:** Confirmed references and financial *Kadar formula* preserved. **Detailed #P7OS design remains paused**; this is **not** a completed OS14000 specification or authority to restart development.
+**Status:** References, hourly-rate formula, annual-amount formula and rounding approved; discussion resumed on 18 November 2026. Detailed output mapping and remaining input rules are not finalised; application implementation has not started. Earlier sections preserve historical checkpoints; the dated approval below supersedes their formula/rounding/pause status.
 
 ## 1. Shared personnel reference (not OS-specific ownership)
 
@@ -47,3 +47,17 @@ See [AD-008 — OS Catalogue & Calculation Framework](../architecture/AD-008-os-
 - **Machine-readable reference:** shared Reference 07 salary CSV. A dedicated OS14000 salary CSV would be unnecessary duplication.
 - This consolidation makes **no changes** to source CSV values, master OS catalogue, PostgreSQL, Laravel, AD-008 or any other Architecture Decision.
 - Further #P7OS work must resume only when separately instructed, preserving the confirmed Kadar formula and previous decisions.
+
+
+## Owner-approved amount and rounding — 18 November 2026
+
+The owner instructed resumption of OS14000 discussion, confirmed the overall formula and independent chargeable-day input, then explicitly approved the proposed rounding approach:
+
+- **Kadar sejam = Gaji Median × 12 ÷ 2504**, from the exact selected shared Jawatan/full SSPA Gred reference.
+- **Anggaran Setahun = Kadar sejam × Jam sehari × Bilangan Hari × Kekerapan**.
+- Bilangan Hari is entered independently; activity dates do not automatically determine chargeable days.
+- Keep the hourly rate unrounded through multiplication. Round each final calculated amount to **two decimal places using half-up rounding**. Use exact arithmetic; premature truncation or rounding of a repeating division is not permitted.
+- Monetary display remains right-aligned/tabular, grouped with two displayed decimals (for example `4,320.00`); the displayed hourly rate must not replace the unrounded calculation basis.
+- Example approved in discussion: 3 hours/day × 2 days/occurrence × 12 occurrences = 72 annual hours for the officer.
+
+These later approvals supersede only the earlier unresolved overall-formula/rounding statements and historical discussion pause. They do not decide eligibility, time-fraction limits, granular output expansion/count or allocation of rounding across generated output rows. In particular, rounding an annual source amount does not approve summing separately rounded daily amounts. Resolve the output mapping and reconciliation before implementation; do not infer dates for repeated occurrences. Existing stable source IDs, shared personnel reference and programme/purpose choices remain unchanged. No application, source CSV or database change is made by this decision record. AD-008 remains Draft.
