@@ -1,7 +1,7 @@
 # OS15000 — Bayaran Perubatan: Approved 27-Column Applicability Checkpoint
 
 **Recorded:** 14 November 2026  
-**Status:** Completed direct-entry **column applicability**; financial formula validation and Program/ Aktiviti inheritance remain pending.  
+**Status:** Completed direct-entry **column applicability**; financial formula and duration now owner-approved (18 November 2026); implementation verification and Program/ Aktiviti inheritance remain pending.  
 **Scope:** A separate Anggaran (OS): Kod Objek `15000`, Butiran Perbelanjaan **Bayaran Perubatan**, Aktiviti Kewangan **Pengurusan Pentadbiran Negeri (PPN)**, Kod Aktiviti `010804`. Do not conflate with **OS15000 — Faedah-faedah Kewangan Yang Lain**.
 
 ## Approved sources and constraints
@@ -18,7 +18,7 @@ Retain the existing [Bayaran Perubatan reference](OS15000-bayaran-perubatan-refe
 | 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Inactive | — |
 | 05 | TARIKH MULA | Conditional | **Tarikh Mula Kontrak** only for KATEGORI1 = Rawatan Penyakit Buah Pinggang |
 | 06 | TARIKH TAMAT | Conditional | **Tarikh Tamat Kontrak** only for KATEGORI1 = Rawatan Penyakit Buah Pinggang |
-| 07 | TEMPOH | Conditional | Calculated from relevant contract dates only for Rawatan Penyakit Buah Pinggang; precise duration unit / counting convention remains unspecified |
+| 07 | TEMPOH | Conditional | Calculated from relevant contract dates only for Rawatan Penyakit Buah Pinggang; inclusive calendar years, months and days, using the existing photocopier-contract convention; independent of manual Bilangan Bulan |
 | 08 | NAMA | Active | Manual name |
 | 09 | JAWATAN | Active | Existing shared reference drop-down |
 | 10 | GRED | Active | Existing shared reference drop-down; full SSPA grade |
@@ -27,15 +27,15 @@ Retain the existing [Bayaran Perubatan reference](OS15000-bayaran-perubatan-refe
 | 13 | KATEGORI3 | Inactive | No subordinate reference values supplied |
 | 14 | UNIT | Inactive | — |
 | 15 | GRED PENCERAMAH/ FASILITATOR | Inactive | — |
-| 16 | BIL. UNIT | Active | OS-specific quantity; precise financial interpretation not yet verified |
+| 16 | BIL. UNIT | Active | Manually entered quantity factor in Bil. Unit × Kadar × Kekerapan × Bilangan Bulan |
 | 17 | LOKASI URUSAN RASMI | Inactive | — |
 | 18 | KADAR | Active | **Manual user-entered** for all nine KATEGORI1 options; no default/fixed rate |
 | 19 | JARAK | Inactive | — |
-| 20 | KEKERAPAN | Active | OS-specific frequency; precise multiplier not yet verified |
+| 20 | KEKERAPAN | Active | Manually entered frequency factor in the approved four-factor formula |
 | 21 | JAM | Inactive | — |
 | 22 | BILANGAN HARI | Inactive | — |
-| 23 | BILANGAN BULAN | Active | OS-specific number of months; precise multiplier not yet verified |
-| 24 | ANGGARAN JUMLAH SETAHUN | Active | Calculated, exact formula not yet approved |
+| 23 | BILANGAN BULAN | Active | Manually entered number of months; independent of contract dates/duration |
+| 24 | ANGGARAN JUMLAH SETAHUN | Active | Calculated: Bil. Unit × Kadar × Kekerapan × Bilangan Bulan for all nine categories |
 | 25 | KATEGORI SUMBER PERUNTUKAN | Active | Auto from Bidaan's Aktiviti Kewangan using approved mapping |
 | 26 | KATEGORI PROGRAM | Deferred | Program/ Aktiviti alternative doorway, not configured in direct-entry exercise |
 | 27 | KATEGORI PESERTA | Deferred | Program/ Aktiviti alternative doorway, not configured in direct-entry exercise |
@@ -50,9 +50,21 @@ The exact nine options and their original order remain defined in `OS15000-bayar
 
 ## Outstanding / explicit boundaries
 
-1. Full calculation for column 24, including whether/how BIL. UNIT (16), KEKERAPAN (20) and BILANGAN BULAN (23) combine; no blanket multiplication is approved.
-2. Exact TEMPOH calculation convention, and whether a duration affects the financial result.
+1. Formula and duration gaps resolved by the explicit owner approval below; no further multiplier or rounding policy is implied.
+2. Financial output/completeness/submission integration remains separate from draft source editing.
 3. Program/ Aktiviti alternative-entry inheritance, including columns 26–27.
 4. Operational implementation, validation, database changes, and testing.
 
 **Documentation checkpoint only.** A complete column-applicability matrix is not approval of financial formulas or production readiness.
+
+
+## Owner approval — 18 November 2026
+
+Owner answered **YES to both** proposed rules:
+
+1. **Anggaran Setahun = Bil. Unit × Kadar × Kekerapan × Bilangan Bulan**, for **all nine medical categories**. All four factors are entered independently; no default/extra multiplier or new quantity unit is inferred.
+2. **Rawatan Penyakit Buah Pinggang** contract duration displays **years, months and days**, using the existing **inclusive photocopier-contract calendar convention** (complete clamped years, then months, then remaining days). **Bilangan Bulan stays manually entered** and is never populated or changed by dates/duration. Duration does not change the financial result.
+
+The existing rule restricting Anggaran dates to the Kitaran year remains; no cross-year medical contract or additional overall-contract columns are introduced. Other eight categories have no contract dates/duration; clear dates when switching away and reject inactive injected dates. Purpose remains Inactive. Partial source drafts may be saved; a missing financial factor withholds the draft amount, without treating absent values as zero. No extra description, eligibility, rate cap, quantity convention or rounding rule is added. Keep exact decimals and accounting presentation. The historical 27-column matrix above maps to the current 30-column contract under AD-008; shared headers/order remain unchanged.
+
+Implementation/evidence: [Batch 045](../development/batch-045-medical-spreadsheet.md). Programme inheritance and official output/totals/completeness/submission remain deferred.

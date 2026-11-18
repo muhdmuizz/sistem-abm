@@ -30,7 +30,7 @@
 
 - **Kadar is entered by the user** for every Jenis Bayaran Perubatan category.
 - No predetermined rate or rate lookup is provided for these categories.
-- The user supplied no further eligibility, limit, formula, quantity or other calculation requirements for Bayaran Perubatan; none should be inferred here.
+- Historical source collection supplied no further calculation requirements. The later [applicability and 18 November formula/duration approval](OS15000-bayaran-perubatan-27-column-applicability.md) supersedes the earlier formula gap. No additional eligibility, cap, quantity-unit or rounding policy is inferred.
 - This record captures a user-approved reference and input rule. It does **not** independently add an extra free-text description requirement for these nine categories. The earlier OS15000 rule requiring a description and Kadar for **Kemudahan without a prescribed Kadar** is documented separately in `OS15000-jawatan-gred-and-unspecified-kadar-rules.md`; do not silently conflate the two reference components.
 
 ## Status and boundaries
@@ -38,3 +38,8 @@
 This completes collection of the **Bayaran Perubatan** reference currently supplied. The other OS15000 reference component (**Faedah-faedah Kewangan Yang Lain**) is separately committed.
 
 **Documentation only:** No changes to Architecture Decisions, Laravel application, database, financial calculations or deployed features are implied by this document.
+
+
+## Subsequent owner approval — 18 November 2026
+
+All nine categories use **Bil. Unit × manual Kadar × Kekerapan × manually entered Bilangan Bulan**. Kidney-treatment contract duration uses the existing inclusive years/months/days convention and never determines months or amount. Existing Kitaran-year date limits and inactive dates for the other eight categories remain. No category/rate CSV changes. See [approved calculation/duration checkpoint](OS15000-bayaran-perubatan-27-column-applicability.md) and [Batch 045](../development/batch-045-medical-spreadsheet.md).

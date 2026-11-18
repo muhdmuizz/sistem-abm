@@ -1,6 +1,6 @@
 # Sistem ABM — Development Progress Register
 
-**Updated:** 17 November 2026 (Asia/Kuala_Lumpur).  
+**Updated:** 18 November 2026 (Asia/Kuala_Lumpur).  
 **Repository / development branch:** `muhdmuizz/sistem-abm` / `dev`.  
 **Latest verified application-code checkpoint:** `721fe9216b9b0d0f84c806f9188599bed7c9c274` (Batch 044, PR #97; tested head `b096af2cac1885fef4e3252905549f3ec363862b`; local sync pending). Documentation close-out does not change application code.
 **Current application verification:** 555 tests passed, 6183 assertions on PHP 8.4.27 / PostgreSQL 18.7, isolated `sistem_abm_testing`.  
@@ -584,3 +584,8 @@ OS26000 purpose removal was explicitly retracted before merge; Batch 043 is with
 Local sync/financial/device acceptance pending; earlier unconfirmed migrations/import remain pending. Keep Server running separately from Updates.
 
 See [Batch 044](batch-044-office-supplies-spreadsheet.md) for full evidence and limitations.
+
+
+## Batch 045 — Bayaran Perubatan started (18 November 2026)
+
+Owner answered yes to both: four-factor amount for all nine categories; kidney-treatment inclusive calendar years/months/days with manually entered independent months. Implement separate PPN/010804 medical source editor, shared personnel selectors and conditional Kitaran-year contract dates. No new migration/seed, rate/CSV changes or official output. Verification/merge/local acceptance pending; prior local migration/import unconfirmed. [Batch 045](batch-045-medical-spreadsheet.md).
