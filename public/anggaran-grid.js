@@ -21,6 +21,12 @@
   if(scale){raw=raw.padStart(scale+1,'0');raw=raw.slice(0,-scale)+'.'+raw.slice(-scale);raw=raw.replace(/0+$/,'').replace(/\.$/,'');}
   return (negative&&raw!=='0'?'-':'')+raw;
  }
+ function overtime(value,inputs){
+  let product=value;for(const input of inputs)product=decimalMultiply(product,plain(input));if(product==='—'||!value)return '—';
+  const negative=product.startsWith('-'),digits=product.replace('-','').replace('.',''),scale=product.split('.')[1]?.length||0;
+  const n=BigInt(digits)*100n,d=2504n*10n**BigInt(scale);let cents=n/d;if((n%d)*2n>=d)cents++;
+  const raw=cents.toString().padStart(3,'0');return (negative&&cents!==0n?'-':'')+raw.slice(0,-2)+'.'+raw.slice(-2);
+ }
  function inclusiveCalendar(start,end){
   const date=value=>{const m=plain(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m||+m[1]<1)return null;const d=new Date(0);d.setUTCHours(0,0,0,0);d.setUTCFullYear(+m[1],+m[2]-1,+m[3]);return d.getUTCFullYear()===+m[1]&&d.getUTCMonth()===+m[2]-1&&d.getUTCDate()===+m[3]?d:null;};
   const a=date(start),b=date(end);if(!a||!b||b<a)return '—';
@@ -56,6 +62,8 @@
     const keys=[...(ref?.[column.formula.inputsReference]||column.formula.inputs)];if(column.formula.factorWhenReference&&ref?.[column.formula.factorWhenReference])keys.push(column.formula.factor);const inputs=keys.map(key=>plain(values[key]));
     value=(!column.formula.requiresReference||ref)&&(!column.formula.requiresMatched||ref?.matched)&&(!column.formula.requiresPurpose||!ref?.requires_purpose||plain(row.tujuan).trim()!=='')&&(!column.formula.requiresPersonnel||!ref?.personnel||(['nama','jawatan','gred'].every(k=>plain(row[k]).trim()!=='')&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)))&&inputs.every(v=>v!=='')?inputs.reduce((a,b)=>a==='—'?'—':decimalMultiply(a,b),'1'):'—';
    }
+   if(column.formula?.operation==='overtimeRate')value=ref?.median?overtime(ref.median,['12']):'—';
+   if(column.formula?.operation==='overtimeAmount')value=ref?.median&&plain(row.nama).trim()!==''&&(columns.find(c=>c.key==='gred')?.valuesByParent?.[row.jawatan]||[]).includes(row.gred)&&column.formula.inputs.every(k=>plain(row[k])!=='')?overtime(ref.median,['12',...column.formula.inputs.map(k=>row[k])]):'—';
    if(!active(row,column))value='Tidak berkenaan';
    values[column.key]=value??'';
    const el=tr.querySelector('[data-output="'+column.key+'"]');el.dataset.exact=plain(value);el.textContent=column.money?money.format(value):value??'—';if(column.money)exactHelp(el.parentElement,value);
@@ -145,7 +153,7 @@
   const data=tsv(text),start=fieldNames.indexOf(input.dataset.field),visible=rows.filter(r=>!r.deleted),first=visible.findIndex(r=>r.key===Number(input.closest('tr').dataset.key));
   if(data.some(line=>line.length+start>fieldNames.length)){error.hidden=false;error.textContent='Tampal hanya lajur input: '+inputColumns.map(c=>c.label).join(', ')+'.';event.preventDefault();return;}
   event.preventDefault();
-  if(data.some(line=>line.some((value,j)=>{const c=inputColumns[start+j];return c.strictValues&&value!==''&&!c.values.includes(value);}))) {error.hidden=false;error.textContent='Pilih Jawatan yang terpakai daripada senarai.';return;}
+  if(data.some(line=>line.some((value,j)=>{const c=inputColumns[start+j];return c.strictValues&&value!==''&&!(c.values||Object.keys(references)).includes(value);}))) {error.hidden=false;error.textContent='Pilih Jawatan yang terpakai daripada senarai.';return;}
   data.forEach((line,i)=>{const row=visible[first+i]||add();if(!row.editable)return;line.forEach((value,j)=>{const name=fieldNames[start+j];if(row.notices)delete row.notices[name];if(name==='tempat_bertugas_id'){row[name]=(places.find(p=>String(p.id)===value||p.nama===value)?.id)??value;}else row[name]=columns.find(c=>c.key===name)?.money?(money.normalise(value)??value):value;});inputColumns.filter(c=>fixed(row,c)||!active(row,c)).forEach(c=>row[c.key]=null);});
   render();dirty();
  });

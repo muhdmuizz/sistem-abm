@@ -635,3 +635,13 @@ This supersedes the earlier four-factor amount formula and annual-frequency inte
 Retain one saved officer-level Butiran per input row and one attributable output/export row containing the factors; do not expand into daily rows or deduplicate separate entries naming the same officer. Keep exact arithmetic through the hourly-rate division/multiplication and round the final row amount once to **two decimals, half-up**. Display-only grouped/tabular two-decimal money must not become the calculation basis. Dates remain independent of chargeable days and months, subject to existing Kitaran-year limits. Preserve approved personnel and programme/purpose references. No new eligibility, caps or rounding rules.
 
 This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.
+
+
+## Batch 047 started — 18 November 2026
+
+Decision [PR #103](https://github.com/muhdmuizz/sistem-abm/pull/103) merged at `177917021ab60596f97ae6832d0858b56f9515d3`: monthly Kekerapan × manual months, final-only half-up rounding and one officer-entry/output row. Implement OS14000 source editor only; no official outputs/export. See [Batch 047](batch-047-overtime-spreadsheet.md). Verification/merge/local acceptance pending; prior local status unchanged.
+
+
+## Batch 047 verified; merge pending — 18 November 2026
+
+Tested `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468: 578 tests/7,020 assertions, PHP8.4.27/PostgreSQL18.7 isolated database, build/exact-money/Chromium passed. Artifact14410989701:572 PNGs/20 overtime; reviewed11 overtime+one medical capture. Initial failed enum/fixture attempt, intermediate successful head and presentation limits recorded in Batch047. No new migration/seed; prior local acceptance/migration/import status unchanged.
