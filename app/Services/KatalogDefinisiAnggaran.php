@@ -11,6 +11,13 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        $travel=new DefinisiPerjalanan($bid->kitaran->tahun);
+        if($travel->supports($os)){
+            if($bid->aktivitiKewangan->nama!=='Pengurusan Pentadbiran Negeri')return null;
+            $code=$os->butiran_perbelanjaan==='Perjalanan Sara Hidup (Umum)'?'010801':'010803';
+            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$travel:null;
+        }
+
         $overtime=new DefinisiLebihMasa($bid->kitaran->tahun);
         if($overtime->supports($os)){
             $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};

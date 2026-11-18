@@ -561,3 +561,8 @@ Still unresolved: mapping the approved component selector to canonical Kategori2
 ## Owner-approved component mapping and duration —18November2026
 
 Owner explicitly approved both remaining proposals: Kategori2 is conditional, with **Elaun Perjalanan Kenderaan** or **Bas/ Teksi** only under existing Kategori1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**; Kategori2 is unused/blank for the other five categories. **Kategori3 is Inactive**. Preserve all six Kategori1 labels. Tempoh is inclusive calendar days (end minus start plus one), informational and independent of manually entered claimable days, accommodation nights and months. Dates remain subject to existing Kitaran-year constraints. Bilangan Hari is contextual: claimable days for meals, nights for accommodation; no extra day/night multiplier on mileage/fares. The latest dated approvals supersede earlier unresolved category/duration/formula status only; no new rates, C mapping, entitlement/caps or financial rounding policy. Official integration/programme inheritance and implementation verification remain pending.
+
+
+## Batch048 source-editor implementation in progress
+
+Implement latest approved travel formulas and Kategori2/duration decisions across three existing variants; all83 source rows/mappings retained. No C mapping or absent grade/rate fabricated. Verification/merge/local acceptance pending. Official financial/programme inheritance integration remains deferred; AD008 stays Draft. See Batch048 development record. Historical unresolved statements above are superseded only by the explicit dated owner approvals.

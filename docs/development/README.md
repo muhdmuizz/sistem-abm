@@ -683,3 +683,13 @@ Still unresolved: mapping the approved component selector to canonical Kategori2
 ## Owner-approved component mapping and duration —18November2026
 
 Owner explicitly approved both remaining proposals: Kategori2 is conditional, with **Elaun Perjalanan Kenderaan** or **Bas/ Teksi** only under existing Kategori1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**; Kategori2 is unused/blank for the other five categories. **Kategori3 is Inactive**. Preserve all six Kategori1 labels. Tempoh is inclusive calendar days (end minus start plus one), informational and independent of manually entered claimable days, accommodation nights and months. Dates remain subject to existing Kitaran-year constraints. Bilangan Hari is contextual: claimable days for meals, nights for accommodation; no extra day/night multiplier on mileage/fares. The latest dated approvals supersede earlier unresolved category/duration/formula status only; no new rates, C mapping, entitlement/caps or financial rounding policy. Official integration/programme inheritance and implementation verification remain pending.
+
+
+## Batch048 started —18November2026
+
+Decision PR106 merged at `9f85069a144429d34d0f2ea06bdc7922f8f00f59`. Implement three separate OS21000 travel source spreadsheets using approved component rows/monthly formulas, conditional Kategori2 and inclusive duration independent of manual days/nights/months. Verification/merge/local acceptance pending; see Batch048. Prior local status unchanged; no new migration/seed.
+
+
+## Batch048 verified; merge pending —18November2026
+
+Tested `9eebfba5da255e5908fa3368221e91d74d62d0e7`, CI44338401373/job134921288935:586 tests/7,484 assertions, PHP8.4.27/PostgreSQL18.7 isolated testing DB; build/exact-money/full Chromium passed. Final artifact14442019034:594 PNGs/22 travel;11 travel+one Pertukaran capture reviewed. Earlier failures/intermediate success/hint correction and visual/manual limits are in Batch048. No new migration/seed/CSV change; local acceptance and earlier migration/import statuses unchanged.
