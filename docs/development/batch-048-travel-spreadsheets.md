@@ -1,6 +1,6 @@
 # Batch048 — OS21000 travel spreadsheets
 
-**Status:** Application verified; merge/local acceptance pending.
+**Status:** Application merged; local synchronisation/financial/device acceptance pending.
 **Baseline:** `9f85069a144429d34d0f2ea06bdc7922f8f00f59` (approved decision PR106 merged). Prior application checkpoint Batch047 PR104,578tests/7,020assertions; prior local sync/migrations/import/financial/device acceptance unconfirmed.
 
 ## Approved scope
@@ -40,3 +40,10 @@ Final artifact14442019034 contains **594 PNGs /22 travel captures**. Individuall
 Limits: horizontal/vertical table scrolling, tall rows/long helper text and focused skip-link overlap remain consolidated UI work. Current endpoint captures do not visually certify all middle category controls or lower rows (including the final incomplete row in the partial fixture); dedicated HTTP/browser assertions cover their data/behaviour, not visual completeness. Other captures, pending/loading, physical devices/screen readers and local financial acceptance are uninspected. Potential geometry change when a precise fare loses its disclosure on blur remains shared UI investigation; final copy/remove check explicitly finishes blur then uses normal checkbox/action and verifies removal. No filtered-empty state applies; no UI-complete/production-ready claim.
 
 Merge pending; later documentation-only commits do not extend the tested application head. No new migration/seed; prior local sync/migration/import/financial/device statuses remain unconfirmed.
+
+
+## Batch048 merged checkpoint —18November2026
+
+[PR107](https://github.com/muhdmuizz/sistem-abm/pull/107) merged at `77219f10ccedf872c13e3ec4b087469d0de498b0`. Separate Umum/Sukan/Kokurikulum source editors share83 unchanged rate rows and exact PPN010801/010803/010803 mappings. One named officer/component per source; approved monthly formulas, conditional vehicle/Bas-Teksi Kategori2, inactive Kategori3, manually entered day/night/distance/month factors and independent inclusive Kitaran-year duration. No special C or absent shared-grade mapping guessed. Exact manual fares retained; no new financial rounding policy. Pertukaran remains separate/unchanged.
+
+Verified `9eebfba5da255e5908fa3368221e91d74d62d0e7`, CI44338401373/job134921288935: **586 tests /7,484 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB, build/exact-money/full Chromium passed. Artifact14442019034:594 PNGs/22 travel;11 travel+one Pertukaran capture individually reviewed. Batch048 records failed/intermediate runs, hint correction and visual/manual limits. No migration/seed/CSV/catalogue change; local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. Official totals/outputs/completeness/submission/export, programme inheritance/context integration and unresolved special-grade policies remain pending. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates. Consolidated spreadsheet UI refinement follows baseline OS editors, then shared proposals.
