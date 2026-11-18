@@ -523,3 +523,8 @@ This supersedes the earlier four-factor amount formula and annual-frequency inte
 Retain one saved officer-level Butiran per input row and one attributable output/export row containing the factors; do not expand into daily rows or deduplicate separate entries naming the same officer. Keep exact arithmetic through the hourly-rate division/multiplication and round the final row amount once to **two decimals, half-up**. Display-only grouped/tabular two-decimal money must not become the calculation basis. Dates remain independent of chargeable days and months, subject to existing Kitaran-year limits. Preserve approved personnel and programme/purpose references. No new eligibility, caps or rounding rules.
 
 This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.
+
+
+## Batch 047 source-editor implementation in progress
+
+OS14000 follows latest owner-approved monthly-frequency × manual-months formula, exact salary numerator/final division, two-decimal half-up final amount and one saved entry per officer record. No daily expansion. Source editor verification/merge pending; official outputs/totals/completeness/submission/export and programme inheritance remain pending. Shared context classifications remain integration work. AD-008 stays Draft; Steps02/03 remain in progress. See Batch 047 development record.

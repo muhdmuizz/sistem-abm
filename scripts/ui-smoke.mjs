@@ -1305,4 +1305,40 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('Benefits copy shares manual rate');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
 }
 
+
+for(const fixture of ['overtime-empty','overtime-populated','overtime-partial','overtime-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');
+  for(const side of ['left','right']){
+   await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);
+   await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});
+  }
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Overtime document overflow');
+ }
+}
+{
+ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/overtime-populated.html');
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']'),out=k=>row().locator('[data-output='+k+']');
+ if(await out('preview').textContent()!=='2,304.92'||await out('kadar').textContent()!=='32.01')throw Error('Overtime initial rate/amount');
+ if(await field('kadar').count())throw Error('Overtime derived rate editable');
+ await field('jam').fill('0.1565');await field('bil_hari').fill('0.5');await field('kekerapan').fill('1');await field('bil_bulan').fill('1');
+ if(await out('preview').getAttribute('data-exact')!=='2.51')throw Error('Overtime positive half-up tie');
+ await field('jam').fill('-0.1565');if(await out('preview').getAttribute('data-exact')!=='-2.51')throw Error('Overtime negative half-up tie');
+ await field('jam').fill('3');await field('bil_hari').fill('2');await field('bil_bulan').fill('12');
+ await field('tarikh_mula').fill('2028-01-01');await field('tarikh_tamat').fill('2028-12-31');if(await out('preview').getAttribute('data-exact')!=='2304.92'||await out('tempoh').textContent()!=='366')throw Error('Overtime date factors coupled');
+ await field('bil_bulan').fill('');if(await out('preview').textContent()!=='—')throw Error('Overtime partial preview');await field('bil_bulan').fill('12');
+ await field('nama').fill('   ');if(await out('preview').textContent()!=='—')throw Error('Overtime blank name preview');await field('nama').fill('AHMAD UJIAN');
+ await field('jam').fill('9007199254740993.12345');
+ const exact=await out('preview').getAttribute('data-exact');if(!exact||exact==='—'||exact.includes('e'))throw Error('Overtime large exact amount');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await out('preview').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/overtime-exact-'+width+'.png',fullPage:true});}
+ await field('jam').fill('3');await field('jawatan').selectOption('JURUTERA');await field('gred').selectOption('J10');if(await out('preview').getAttribute('data-exact')==='2304.92')throw Error('Overtime grade rate stale');await field('gred').selectOption('J9');
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.jam':['Semak jam lebih masa.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak jam'));
+ if(['kadar','preview','tempoh','kategori1','bil_unit'].some(k=>k in payload.rekod[0])||payload.rekod[0].bil_bulan!=='12')throw Error('Overtime derived payload leakage');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('jam').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/overtime-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=jam]').fill('7');if(await field('jam').inputValue()!=='3')throw Error('Overtime copy source shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+
 await browser.close();

@@ -11,6 +11,16 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        $overtime=new DefinisiLebihMasa($bid->kitaran->tahun);
+        if($overtime->supports($os)){
+            $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Rendah'=>'030219','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
+            if($code===null)return null;
+            if(!PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists())return null;
+            $programmes=[];
+            foreach(app(RuangProgramAktiviti::class)->query(auth()->user(),$bid)->orderBy('id')->get(['id','nama','tempat_bertugas_id']) as $p)if(trim($p->nama??'')!=='')$programmes['Program #'.$p->id.' — '.$p->nama]=['place'=>$p->tempat_bertugas_id];
+            return new DefinisiLebihMasa($bid->kitaran->tahun,$programmes);
+        }
+
         $benefit=new DefinisiFaedah;
         if($benefit->supports($os)){
             $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
