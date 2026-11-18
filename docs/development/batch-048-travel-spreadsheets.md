@@ -1,6 +1,6 @@
 # Batch048 — OS21000 travel spreadsheets
 
-**Status:** In progress; verification/merge/local acceptance pending.
+**Status:** Application verified; merge/local acceptance pending.
 **Baseline:** `9f85069a144429d34d0f2ea06bdc7922f8f00f59` (approved decision PR106 merged). Prior application checkpoint Batch047 PR104,578tests/7,020assertions; prior local sync/migrations/import/financial/device acceptance unconfirmed.
 
 ## Approved scope
@@ -27,3 +27,16 @@ Head `0ac07bc3691129900af38b6d19716ff08cbbaaa1`, CI44335911969/job134912451795: 
 
 
 Visual review of intermediate artifact14441542768 found day/night quantity hints displayed below inactive mileage/fare cells. Corrected metadata to provide the hint only for meals/accommodation and added regression assertions. No shared grid/CSS or financial rule change. Supersedes the intermediate browser-test-only head for final full verification.
+
+
+## Final verification —18November2026
+
+Application head `9eebfba5da255e5908fa3368221e91d74d62d0e7`: [CI44338401373](https://github.com/muhdmuizz/sistem-abm/actions/runs/44338401373), job134921288935 passed **586 tests /7,484 assertions**, production build, exact-money checks and full Chromium. PHP8.4.27/PostgreSQL18.7, isolated `sistem_abm_testing`; test duration284.06s. Eight new HTTP/PostgreSQL tests preserve all83 rows/C/blanks, check available numerical/shared-grade matches without fabricating11/15 or VU7→C, seven claim-component formulas and conditional metadata, exact manual fare/grouped paste, dates/factors independence, distinct officer/component source IDs, save/reopen/edit/no-op/partial/read-only, atomic invalid/derived/inactive-field rejection, three exact variant mappings/separate Pertukaran, copy/delete and live revision/role/PTJ/workplace/central/Fasa guards. Official output table remains untouched. Node smoke syntax passed locally; local PHP/browser/Windows verification unavailable as documented above.
+
+Earlier attempts remain explicit: initial helper-name fatal before tests; then586/7,479+build/exact-money with last copy-checkbox browser failure. Intermediate `30c9f6507954e581136fe7fd9727642be75dad7e`, CI44338079754/job134920141230 completed successfully after explicit input blur; superseded by the final metadata hint correction and its regression assertions. Only final head is current application verification.
+
+Final artifact14442019034 contains **594 PNGs /22 travel captures**. Individually reviewed **11 travel captures**: populated desktop left/right/mobile right; empty desktop/mobile left; partial desktop right; read-only mobile right; unmatched desktop/mobile; validation mobile; expanded exact amount mobile. Also inspected existing Pertukaran populated desktop-right (**12 captures total**). Earlier artifact14441542768 had one populated desktop-right capture reviewed, exposing the corrected inactive quantity hints; it is separate historical evidence. Final reviewed states show grouped/tabular two-decimal amounts and exact disclosure, fixed/manual rates, missing-match explanation/withheld amount, correct inactive hints, error summary/cell and readable controls. No shared JS/CSS changes.
+
+Limits: horizontal/vertical table scrolling, tall rows/long helper text and focused skip-link overlap remain consolidated UI work. Current endpoint captures do not visually certify all middle category controls or lower rows (including the final incomplete row in the partial fixture); dedicated HTTP/browser assertions cover their data/behaviour, not visual completeness. Other captures, pending/loading, physical devices/screen readers and local financial acceptance are uninspected. Potential geometry change when a precise fare loses its disclosure on blur remains shared UI investigation; final copy/remove check explicitly finishes blur then uses normal checkbox/action and verifies removal. No filtered-empty state applies; no UI-complete/production-ready claim.
+
+Merge pending; later documentation-only commits do not extend the tested application head. No new migration/seed; prior local sync/migration/import/financial/device statuses remain unconfirmed.
