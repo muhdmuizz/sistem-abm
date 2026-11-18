@@ -48,3 +48,24 @@ The confirmed OS21000 variant labels are now represented in the master `anggaran
 - **Kokurikulum:** user explicitly confirmed Kod Aktiviti `010803`, the **same as Sukan**. The master catalogue labels it as an eligible reference, and `kod-aktiviti-anggaran-os-mapping.csv` adds a **user-confirmed** PPN mapping row. Its `Butiran Perbelanjaan (Original)` is deliberately blank, because this distinct Kokurikulum row was confirmed in conversation rather than present in the supplied 103-row legacy mapping.
 
 The catalogue contains **32 entries rather than 31**, reflecting the separately approved Kokurikulum label. The mapping CSV now contains **104 rows**: **103 consolidated legacy-source mappings plus one explicitly user-confirmed Kokurikulum mapping**. The two OS labels (Sukan and Kokurikulum) share Kod Aktiviti `010803`, but remain distinguishable OS labels, and both use the same revised 83-row reference. No additional activity code was invented. No rate calculations, application/database changes, or AD changes have been made.
+
+
+## Owner-approved row structure and formulas — 18 November 2026
+
+Owner approved the proposed structure/formulas for all three separate travel variants (Umum, Sukan, Kokurikulum): **one named officer and one claim component per source row**. An officer claiming meals, accommodation and vehicle mileage has three separate rows, each with a stable independent Butiran identity. Do not derive individual claim quantities from programme headcounts or silently merge rows by officer.
+
+| Component | Annual amount | Rate mode / quantity meaning |
+| --- | --- | --- |
+| Makanan dan Minuman | Reference rate × Claimable Days × Trips per Month × Months | Existing grade/location reference rate; manually entered claimable days per trip |
+| Penginapan | Reference rate × Nights × Trips per Month × Months | Existing grade/location reference rate; manually entered nights per trip |
+| Elaun Perjalanan Kenderaan | Reference rate × Distance per Trip × Trips per Month × Months | Existing supplied reference rate, distance applies only to vehicle mileage |
+| Bas/ Teksi | Manually entered fare per trip × Trips per Month × Months | Manual fare, no distance factor |
+| Bayaran Tambang Kereta Api | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+| Bayaran Tambang Kapal/ Bot | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+| Bayaran Kapal Terbang | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+
+Kekerapan means trips per month; Bilangan Bulan is the month multiplier. Bas/ Teksi and vehicle mileage remain under unchanged Kategori1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**, distinguished by a component selector; the supplied 1.00 reference is used for mileage, while the separately approved manual fare applies to Bas/ Teksi. No CSV value is overwritten or reclassified as zero. These approvals supersede only prior unresolved row/formula/manual-fare behaviour, not all remaining field applicability.
+
+Preserve the six Kategori1 labels, three distinct Anggaran identities, existing mappings and all83 source rows including blank rates and special C. No C→VU7 or other absent-grade/rate mapping is approved. Two-decimal grouped/tabular money is display formatting, not a new financial rounding policy. OS14000's specific half-up rounding approval is not automatically extended to travel.
+
+Still unresolved: mapping the approved component selector to canonical Kategori2 versus a source-only field, Kategori3 applicability, inclusive date-duration convention and its independence from claimable days/nights, detailed conditional applicability for day/night factors, and any eligibility/caps or missing reference match policy. No application implementation or source CSV change in this checkpoint; full programme inheritance/official integration remains pending. AD008 stays Draft.

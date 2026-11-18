@@ -652,3 +652,29 @@ Tested `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468
 [PR #104](https://github.com/muhdmuizz/sistem-abm/pull/104) merged at `01c48e99ced8db7c41374ccadb3dc56ca2a97fda`. OS14000 source spreadsheet uses the approved salary-derived hourly rate and monthly hours/day × days/occurrence × frequency/month × manual months. Exact numerator before division, final two-decimal half-up amount, independent Kitaran-year dates, four existing mappings, scoped programme/two fixed-purpose choices and dependent full-SSPA personnel. One saved entry per officer record; no daily expansion or generated financial outputs. Official outputs/totals/completeness/submission/export, context classifications and full programme inheritance/association remain pending.
 
 Verified `e699bda84f7e44c27bc364e36440eea21764c73d`, CI44269481026/job134682192468: **578 tests /7,020 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB; build/exact-money/Chromium passed. Artifact14410989701:572 PNGs/20 overtime; 11 overtime and one medical capture individually reviewed. Batch047 records exact failures, intermediate success and presentation/manual limits. No migration/seed/source CSV change. Local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates; remaining editors → consolidated UI refinement → shared proposals.
+
+
+## OS21000 travel decision checkpoint —18November2026
+
+Owner approved one officer/component per row and monthly claim formulas/manual fare modes. Record in travel applicability reference and AD008. Documentation only; editor implementation pending remaining category/duration decisions. Baseline `fdc0a0faa48ff5442999f74d470f53bbca2b54dc`; Batch047 merge/578tests/7,020assertions and local-sync/financial/device status unchanged (unconfirmed). No new numbered implementation batch, migration/seed or source CSV change. Decision documentation PR/merge pending.
+
+
+## Owner-approved row structure and formulas — 18 November 2026
+
+Owner approved the proposed structure/formulas for all three separate travel variants (Umum, Sukan, Kokurikulum): **one named officer and one claim component per source row**. An officer claiming meals, accommodation and vehicle mileage has three separate rows, each with a stable independent Butiran identity. Do not derive individual claim quantities from programme headcounts or silently merge rows by officer.
+
+| Component | Annual amount | Rate mode / quantity meaning |
+| --- | --- | --- |
+| Makanan dan Minuman | Reference rate × Claimable Days × Trips per Month × Months | Existing grade/location reference rate; manually entered claimable days per trip |
+| Penginapan | Reference rate × Nights × Trips per Month × Months | Existing grade/location reference rate; manually entered nights per trip |
+| Elaun Perjalanan Kenderaan | Reference rate × Distance per Trip × Trips per Month × Months | Existing supplied reference rate, distance applies only to vehicle mileage |
+| Bas/ Teksi | Manually entered fare per trip × Trips per Month × Months | Manual fare, no distance factor |
+| Bayaran Tambang Kereta Api | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+| Bayaran Tambang Kapal/ Bot | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+| Bayaran Kapal Terbang | Manually entered fare per trip × Trips per Month × Months | Manual fare, approved handling of source blank rate |
+
+Kekerapan means trips per month; Bilangan Bulan is the month multiplier. Bas/ Teksi and vehicle mileage remain under unchanged Kategori1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**, distinguished by a component selector; the supplied 1.00 reference is used for mileage, while the separately approved manual fare applies to Bas/ Teksi. No CSV value is overwritten or reclassified as zero. These approvals supersede only prior unresolved row/formula/manual-fare behaviour, not all remaining field applicability.
+
+Preserve the six Kategori1 labels, three distinct Anggaran identities, existing mappings and all83 source rows including blank rates and special C. No C→VU7 or other absent-grade/rate mapping is approved. Two-decimal grouped/tabular money is display formatting, not a new financial rounding policy. OS14000's specific half-up rounding approval is not automatically extended to travel.
+
+Still unresolved: mapping the approved component selector to canonical Kategori2 versus a source-only field, Kategori3 applicability, inclusive date-duration convention and its independence from claimable days/nights, detailed conditional applicability for day/night factors, and any eligibility/caps or missing reference match policy. No application implementation or source CSV change in this checkpoint; full programme inheritance/official integration remains pending. AD008 stays Draft.
