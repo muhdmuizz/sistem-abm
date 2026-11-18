@@ -14,3 +14,8 @@ Reuse source-only shared editor metadata (no shared JS/CSS changes), conditional
 ## Verification
 
 Pending dedicated HTTP/PostgreSQL reference/formula/guard tests, full isolated suite/build/exact-money/Chromium and applicable desktop/mobile visual review. Local PHP/Windows unavailable. Changed smoke script passes Node syntax check; no application execution claim from static review.
+
+
+### Initial verification attempt
+
+Initial head `064c859ffdba57673d9d39a997c3edcee81b353e`, CI44335510778/job134910985837 stopped before tests ran (exit255): private component() test helper conflicted with inherited Laravel TestCase component method. Renamed helper to claimRow; application unchanged. No test count/build/browser/artifact evidence from this failed attempt.

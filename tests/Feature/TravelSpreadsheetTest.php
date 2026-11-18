@@ -123,7 +123,7 @@ class TravelSpreadsheetTest extends TestCase
     {
         return array_replace(['tempat_bertugas_id'=>$place->id,'tujuan'=>'Urusan rasmi','nama'=>'AHMAD UJIAN','jawatan'=>'JURUTERA','gred'=>'J9','tarikh_mula'=>'2028-02-01','tarikh_tamat'=>'2028-02-29','kategori1'=>\App\Services\DefinisiPerjalanan::MEALS,'kategori2'=>null,'lokasi'=>'Semenanjung','kadar'=>null,'jarak'=>null,'bil_hari'=>'3','kekerapan'=>'2','bil_bulan'=>'12'],$extra);
     }
-    private function component($place,string $category,?string $component=null,array $extra=[]): array
+    private function claimRow($place,string $category,?string $component=null,array $extra=[]): array
     {
         $r=['kategori1'=>$category,'kategori2'=>$component,'lokasi'=>'Semenanjung/ Sabah/ Sarawak/ WP Labuan','bil_hari'=>null,'kadar'=>'180.12345','jarak'=>null];
         if($category===\App\Services\DefinisiPerjalanan::HOTEL)$r=array_replace($r,['lokasi'=>'Semenanjung','bil_hari'=>'2','kadar'=>null]);
@@ -141,7 +141,7 @@ class TravelSpreadsheetTest extends TestCase
         $jobs=app(\App\Services\RujukanJawatan::class)->grades();$mapped=0;
         foreach($rows as $r){if($r[0]==='C')continue;$chosen=null;foreach($jobs as $job=>$grades)foreach($grades as $grade){if($r[0]===''||($grade!=='VU7'&&preg_match('/^[A-Z]+([1-9]|1[0-5])$/D',$grade,$m)&&$m[1]===$r[0])){$chosen=[$job,$grade];break 2;}}
             if(!$chosen){$this->assertContains($r[0],['11','15']);continue;}
-            $x=$this->component($place,$r[1],$r[1]===$d::COMBINED?$d::VEHICLE:null,['jawatan'=>$chosen[0],'gred'=>$chosen[1],'lokasi'=>$r[2],'kadar'=>$r[3]===''?'10':null,'bil_hari'=>in_array($r[1],[$d::MEALS,$d::HOTEL],true)?'2':null]);$ref=$d->rowReference($x);$this->assertTrue($ref['matched']);$this->assertSame($r[3]===''?null:$r[3],$ref['kadar']);$this->assertTrue($d->readable($d->source($d->validate([$x])[0])));$mapped++;
+            $x=$this->claimRow($place,$r[1],$r[1]===$d::COMBINED?$d::VEHICLE:null,['jawatan'=>$chosen[0],'gred'=>$chosen[1],'lokasi'=>$r[2],'kadar'=>$r[3]===''?'10':null,'bil_hari'=>in_array($r[1],[$d::MEALS,$d::HOTEL],true)?'2':null]);$ref=$d->rowReference($x);$this->assertTrue($ref['matched']);$this->assertSame($r[3]===''?null:$r[3],$ref['kadar']);$this->assertTrue($d->readable($d->source($d->validate([$x])[0])));$mapped++;
         }$this->assertGreaterThan(60,$mapped);
         $s=$d->source($this->row($place,['jawatan'=>'PENGARAH PENDIDIKAN NEGERI','gred'=>'VU7']));$this->assertNull($d->preview($s));$this->assertFalse($d->rowReference(get_object_vars($s))['matched']);
         foreach($jobs as $job=>$grades)foreach($grades as $grade){$x=$this->row($place,['jawatan'=>$job,'gred'=>$grade]);$ref=$d->rowReference($x);$this->assertSame($grade!=='VU7',$ref['matched']);}
@@ -149,12 +149,12 @@ class TravelSpreadsheetTest extends TestCase
     public function test_seven_component_formulas_and_exact_manual_fare_precision(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$d=new \App\Services\DefinisiPerjalanan(2028);
-        $cases=[[$this->row($place),'3240'],[$this->component($place,$d::HOTEL),'10560'],[$this->component($place,$d::COMBINED,$d::VEHICLE),'3600']];
-        foreach([$d::TAXI,'Bayaran Tambang Kereta Api','Bayaran Tambang Kapal/ Bot','Bayaran Kapal Terbang'] as $c)$cases[]=[$this->component($place,$c===$d::TAXI?$d::COMBINED:$c,$c===$d::TAXI?$c:null),'4322.9628'];
+        $cases=[[$this->row($place),'3240'],[$this->claimRow($place,$d::HOTEL),'10560'],[$this->claimRow($place,$d::COMBINED,$d::VEHICLE),'3600']];
+        foreach([$d::TAXI,'Bayaran Tambang Kereta Api','Bayaran Tambang Kapal/ Bot','Bayaran Kapal Terbang'] as $c)$cases[]=[$this->claimRow($place,$c===$d::TAXI?$d::COMBINED:$c,$c===$d::TAXI?$c:null),'4322.9628'];
         foreach($cases as [$x,$amount]){$s=$d->source($d->validate([$x])[0]);$this->assertSame($amount,$d->preview($s));$this->assertTrue($d->readable($s));}
         $this->assertSame('4680',$d->preview($d->source($this->row($place,['lokasi'=>'Sabah/ Sarawak/ WP Labuan']))));
-        $this->assertSame('12000',$d->preview($d->source($this->component($place,$d::HOTEL,null,['lokasi'=>'Sabah/ Sarawak/ WP Labuan']))));
-        $x=$this->component($place,'Bayaran Kapal Terbang',null,['kadar'=>'4,320.12345']);$s=$d->source($d->validate([$x])[0]);$this->assertSame('4320.12345',$s->kadar);$this->assertSame('103682.9628',$d->preview($s));
+        $this->assertSame('12000',$d->preview($d->source($this->claimRow($place,$d::HOTEL,null,['lokasi'=>'Sabah/ Sarawak/ WP Labuan']))));
+        $x=$this->claimRow($place,'Bayaran Kapal Terbang',null,['kadar'=>'4,320.12345']);$s=$d->source($d->validate([$x])[0]);$this->assertSame('4320.12345',$s->kadar);$this->assertSame('103682.9628',$d->preview($s));
         foreach(['nama','jawatan','gred','kategori1','lokasi','bil_hari','kekerapan','bil_bulan'] as $k)$this->assertNull($d->preview($d->source($this->row($place,[$k=>null]))));
         $this->assertNull($d->preview($d->source($this->row($place,['nama'=>'   ']))));$this->assertSame('0',$d->preview($d->source($this->row($place,['bil_hari'=>'0']))));
     }
@@ -168,8 +168,8 @@ class TravelSpreadsheetTest extends TestCase
     public function test_save_reopen_edit_noop_partial_readonly_and_separate_components(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$d=new \App\Services\DefinisiPerjalanan(2028);$this->gridCapture('travel-empty',$this->get($url)->assertOk());
-        $rows=[$this->row($place),$this->component($place,$d::HOTEL),$this->component($place,$d::COMBINED,$d::VEHICLE),$this->component($place,$d::COMBINED,$d::TAXI)];
-        foreach(['Bayaran Tambang Kereta Api','Bayaran Tambang Kapal/ Bot','Bayaran Kapal Terbang'] as $c)$rows[]=$this->component($place,$c);
+        $rows=[$this->row($place),$this->claimRow($place,$d::HOTEL),$this->claimRow($place,$d::COMBINED,$d::VEHICLE),$this->claimRow($place,$d::COMBINED,$d::TAXI)];
+        foreach(['Bayaran Tambang Kereta Api','Bayaran Tambang Kapal/ Bot','Bayaran Kapal Terbang'] as $c)$rows[]=$this->claimRow($place,$c);
         $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$this->assertSame(7,$estimate->butiran()->count());$response=$this->get($url)->assertOk();$this->assertSame(['3240','10560','3600','4322.9628','4322.9628','4322.9628','4322.9628'],$response->viewData('records')->pluck('preview')->all());$this->gridCapture('travel-populated',$response);
         $source=$estimate->butiran()->orderBy('id')->first();$saved=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);$audit=RekodAudit::count();$this->postJson($url,$this->payload($bid,$estimate,[$saved]))->assertOk();$this->assertSame($audit,RekodAudit::count());$this->assertNull($source->fresh()->data_sumber->kadar);
         $saved['bil_hari']='2.5';$this->postJson($url,$this->payload($bid,$estimate,[$saved]))->assertOk();$this->assertSame('2.5',$source->fresh()->data_sumber->bil_hari);
@@ -180,8 +180,8 @@ class TravelSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$d=new \App\Services\DefinisiPerjalanan(2028);
         foreach([['kategori1'=>'X'],['kategori1'=>[]],['kategori2'=>[]],['kategori2'=>$d::TAXI],['lokasi'=>'Sabah'],['lokasi'=>[]],['gred'=>'DG9'],['gred'=>[]],['jawatan'=>[]],['bil_hari'=>[]],['bil_hari'=>'1,000'],['kekerapan'=>'1e2'],['bil_bulan'=>[]],['tarikh_mula'=>'2027-12-31'],['tarikh_tamat'=>'2029-01-01'],['tarikh_mula'=>'2028-02-30'],['tarikh_mula'=>[]],['tarikh_tamat'=>'2028-01-01'],['kadar'=>'99'],['jarak'=>'1'],['kategori3'=>null],['unit'=>'X'],['bil_unit'=>'1'],['jam'=>'1'],['tempoh'=>'1'],['preview'=>'100']] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,$extra)]))->assertUnprocessable();
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->component($place,$d::COMBINED,$d::TAXI,['jarak'=>'12'])]))->assertUnprocessable();
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->component($place,$d::COMBINED,$d::VEHICLE,['bil_hari'=>'2'])]))->assertUnprocessable();
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->claimRow($place,$d::COMBINED,$d::TAXI,['jarak'=>'12'])]))->assertUnprocessable();
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->claimRow($place,$d::COMBINED,$d::VEHICLE,['bil_hari'=>'2'])]))->assertUnprocessable();
         $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
     }
     public function test_live_permission_phase_scope_source_and_bid_revision_guards(): void
@@ -203,7 +203,7 @@ class TravelSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place)]))->assertOk();$source=$estimate->butiran()->sole();
         $copy=app(\App\Services\DrafButiranAnggaran::class)->salin($estimate->id,$source->id,['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,'semakan_butiran'=>$source->semakan]);$this->assertNotSame($source->id,$copy->id);
-        $this->postJson($url,$this->payload($bid,$estimate,[$this->component($place,\App\Services\DefinisiPerjalanan::COMBINED,\App\Services\DefinisiPerjalanan::TAXI,['butiran_id'=>$copy->id,'semakan_butiran'=>$copy->semakan])]))->assertOk();$this->assertSame('3',$source->fresh()->data_sumber->bil_hari);$this->assertNull($copy->fresh()->data_sumber->bil_hari);
+        $this->postJson($url,$this->payload($bid,$estimate,[$this->claimRow($place,\App\Services\DefinisiPerjalanan::COMBINED,\App\Services\DefinisiPerjalanan::TAXI,['butiran_id'=>$copy->id,'semakan_butiran'=>$copy->semakan])]))->assertOk();$this->assertSame('3',$source->fresh()->data_sumber->bil_hari);$this->assertNull($copy->fresh()->data_sumber->bil_hari);
         $this->postJson($url,$this->payload($bid,$estimate,[],[['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]]))->assertOk();$this->assertNull($source->fresh());$this->assertNotNull($copy->fresh());
     }
 }
