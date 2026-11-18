@@ -1,7 +1,7 @@
 # OS15000 — Bayaran Perubatan: Approved 27-Column Applicability Checkpoint
 
 **Recorded:** 14 November 2026  
-**Status:** Completed direct-entry **column applicability**; financial formula and duration now owner-approved (18 November 2026); implementation verification and Program/ Aktiviti inheritance remain pending.  
+**Status:** Completed direct-entry **column applicability**; financial formula and duration now owner-approved (18 November 2026); Batch 045 source editing verified; Program/ Aktiviti inheritance and official financial integration remain pending.  
 **Scope:** A separate Anggaran (OS): Kod Objek `15000`, Butiran Perbelanjaan **Bayaran Perubatan**, Aktiviti Kewangan **Pengurusan Pentadbiran Negeri (PPN)**, Kod Aktiviti `010804`. Do not conflate with **OS15000 — Faedah-faedah Kewangan Yang Lain**.
 
 ## Approved sources and constraints
@@ -68,3 +68,8 @@ Owner answered **YES to both** proposed rules:
 The existing rule restricting Anggaran dates to the Kitaran year remains; no cross-year medical contract or additional overall-contract columns are introduced. Other eight categories have no contract dates/duration; clear dates when switching away and reject inactive injected dates. Purpose remains Inactive. Partial source drafts may be saved; a missing financial factor withholds the draft amount, without treating absent values as zero. No extra description, eligibility, rate cap, quantity convention or rounding rule is added. Keep exact decimals and accounting presentation. The historical 27-column matrix above maps to the current 30-column contract under AD-008; shared headers/order remain unchanged.
 
 Implementation/evidence: [Batch 045](../development/batch-045-medical-spreadsheet.md). Programme inheritance and official output/totals/completeness/submission remain deferred.
+
+
+## Batch 045 implementation checkpoint — 18 November 2026
+
+Bayaran Perubatan source editor merged in [PR #99](https://github.com/muhdmuizz/sistem-abm/pull/99) at `21fe6d34cdbbd7e95d491979530398b258c6df34`: nine categories, exact quantity × manual rate × frequency × manual months, shared personnel selectors, and kidney-only Kitaran-year contract dates/inclusive calendar years/months/days. Dates never determine months or amount; PPN/010804 and separate Faedah identity retained. Verified `e203d8fe8fab2092608823ce62c6ff70ef4acbe2`: 562 tests / 6,297 assertions plus build/exact-money/full Chromium. No migration/seed or reference/rate CSV changes; local sync/financial/device acceptance pending. Programme inheritance and official financial outputs/totals/completeness/submission remain separate; AD-008 stays Draft and Steps 02/03 in progress. Evidence and limits: [Batch 045](../development/batch-045-medical-spreadsheet.md).
