@@ -80,3 +80,8 @@ These previously agreed rules continue to apply:
 - BIPs' rate derives from KGT; no independent rate schedule is introduced.
 - No additional HPA qualification levels are inferred.
 - No new operational restrictions, eligibility tests, calculations, database changes, Laravel code changes, or changes to existing Architecture Decisions are authorized by this reference commit.
+
+
+## Owner calculation approval — 18 November 2026
+
+One named recipient and one benefit per row; **Anggaran Setahun = applicable Kadar × 1** for prescribed rates, manual amounts, HPA and fixed-RM KGT BIPs. Existing reference modes/values remain unchanged. Percentage-based KGT (intentional VU7 blank) stays unavailable pending salary basis/rounding; no manual substitute, guessed median-salary basis or legacy C equivalence. See [approved applicability/calculation checkpoint](OS15000-faedah-faedah-kewangan-yang-lain-27-column-applicability.md) and [Batch 046](../development/batch-046-benefits-spreadsheet.md). Programme inheritance and official financial integration remain separate.

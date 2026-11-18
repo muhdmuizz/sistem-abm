@@ -11,6 +11,14 @@ class KatalogDefinisiAnggaran
 {
     public function untuk(RujukanOs $os, Bidaan $bid): ?DefinisiAnggaran
     {
+        $benefit=new DefinisiFaedah;
+        if($benefit->supports($os)){
+            $code=match($bid->aktivitiKewangan->nama){'Pengurusan Pentadbiran Negeri'=>'010801','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313',default=>null};
+            if($code===null)return null;
+            return PemetaanOs::where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id)->where('rujukan_os_id',$os->id)
+                ->whereHas('kodAktiviti',fn($q)=>$q->where('kod_aktiviti',$code)->where('aktiviti_kewangan_id',$bid->aktiviti_kewangan_id))->exists()?$benefit:null;
+        }
+
         $medical=new DefinisiPerubatan($bid->kitaran->tahun);
         if($medical->supports($os)){
             if($bid->aktivitiKewangan->nama!=='Pengurusan Pentadbiran Negeri')return null;

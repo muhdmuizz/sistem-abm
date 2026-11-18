@@ -595,3 +595,8 @@ Tested `e203d8fe8fab2092608823ce62c6ff70ef4acbe2`; [CI 44219944569](https://gith
 No new migration/seed/reset, reference/rate/category CSV, catalogue/mapping or official financial output/export change. Local sync/financial/device acceptance pending; earlier unconfirmed migrations/import remain pending. Keep Server separate from Updates. Programme inheritance, official totals/completeness/submission and proposals remain deferred. Sequence remains remaining OS editors → consolidated UI refinement → shared Cadangan Item Baharu. AD-008 remains Draft; Steps 02/03 in progress.
 
 See [Batch 045](batch-045-medical-spreadsheet.md) for full evidence and limits.
+
+
+## Batch 046 — Faedah spreadsheet started (18 November 2026)
+
+Owner approved one named recipient/benefit per row, Kadar × 1 for existing rate modes, with percentage KGT unavailable pending remaining rules. Implement all 13 types and three existing mappings, preserving sources, legacy C gap and fixed/manual/KGT boundaries. No new migration/seed. Verification/merge/local acceptance pending; earlier local sync/migrations/import unconfirmed. [Batch 046](batch-046-benefits-spreadsheet.md).
