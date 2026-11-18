@@ -151,7 +151,7 @@ class TravelSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$d=new \App\Services\DefinisiPerjalanan(2028);
         $cases=[[$this->row($place),'3240'],[$this->claimRow($place,$d::HOTEL),'10560'],[$this->claimRow($place,$d::COMBINED,$d::VEHICLE),'3600']];
         foreach([$d::TAXI,'Bayaran Tambang Kereta Api','Bayaran Tambang Kapal/ Bot','Bayaran Kapal Terbang'] as $c)$cases[]=[$this->claimRow($place,$c===$d::TAXI?$d::COMBINED:$c,$c===$d::TAXI?$c:null),'4322.9628'];
-        foreach($cases as [$x,$amount]){$s=$d->source($d->validate([$x])[0]);$this->assertSame($amount,$d->preview($s));$this->assertTrue($d->readable($s));}
+        foreach($cases as [$x,$amount]){$ref=$d->rowReference($x);if(!$ref['days'])$this->assertSame('',$ref['quantity_help']);$s=$d->source($d->validate([$x])[0]);$this->assertSame($amount,$d->preview($s));$this->assertTrue($d->readable($s));}
         $this->assertSame('4680',$d->preview($d->source($this->row($place,['lokasi'=>'Sabah/ Sarawak/ WP Labuan']))));
         $this->assertSame('12000',$d->preview($d->source($this->claimRow($place,$d::HOTEL,null,['lokasi'=>'Sabah/ Sarawak/ WP Labuan']))));
         $x=$this->claimRow($place,'Bayaran Kapal Terbang',null,['kadar'=>'4,320.12345']);$s=$d->source($d->validate([$x])[0]);$this->assertSame('4320.12345',$s->kadar);$this->assertSame('103682.9628',$d->preview($s));

@@ -24,3 +24,6 @@ Initial head `064c859ffdba57673d9d39a997c3edcee81b353e`, CI44335510778/job134910
 ### Browser interaction follow-up
 
 Head `0ac07bc3691129900af38b6d19716ff08cbbaaa1`, CI44335911969/job134912451795: 586 tests/7,479 assertions, production build and exact-money checks passed; Chromium reached its last travel copy/remove step, then checkbox click did not change state after editing a copied precise fare. Test now explicitly blurs the money input before checking the checkbox (letting its existing blur formatting/exact-detail layout finish), and asserts row removal. No forced checkbox/DOM-state mutation, no application change. Potential row geometry change when leaving a precision disclosure remains a consolidated UI investigation; this failed browser run is not full verification. Local replay unavailable: packaged browser absent and system Chromium refused socket creation; final replay remains in CI.
+
+
+Visual review of intermediate artifact14441542768 found day/night quantity hints displayed below inactive mileage/fare cells. Corrected metadata to provide the hint only for meals/accommodation and added regression assertions. No shared grid/CSS or financial rule change. Supersedes the intermediate browser-test-only head for final full verification.
