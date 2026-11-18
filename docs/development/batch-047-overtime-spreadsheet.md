@@ -14,3 +14,8 @@ Reuse partial drafts, shared editor, source revisions/CAS, audit, copy/delete an
 ## Verification
 
 Pending CI isolated PostgreSQL suite, production build, exact-money/Chromium and visual review. Local PHP unavailable; Node syntax checks passed for changed scripts. No local Windows access. Keep Server running separately from Updates. AD-008 remains Draft; Steps02/03 in progress. Sequence remains remaining OS editors → consolidated UI refinement → shared proposals.
+
+
+### Initial CI attempt
+
+Initial head `3adaf040c9be62587a8786399a063e9ddc6aaaf0`, CI44268299591/job134678213355: 5 failed, 573 passed / 6,712 assertions. Three failures from using legacy uppercase Brick Math rounding constant; locked brick/math 1.0.0 uses `RoundingMode::HalfUp`, verified against its exact locked upstream source. Two test fixture failures: mapped activities lacked central activity permission; a second bid reused the unique cycle/PTJ/activity tuple. Corrected enum in application/tests and corrected fixtures, preserving production guards and formula. Build/browser skipped in this failed run.

@@ -133,7 +133,7 @@ class OvertimeSpreadsheetTest extends TestCase
         [$bid,$estimate,$place]=$this->gridContext();$d=new \App\Services\DefinisiLebihMasa(2028);$count=0;
         foreach($d->salaries() as $job=>$grades)foreach($grades as $grade=>$rate){
             $r=$this->row($place,['jawatan'=>$job,'gred'=>$grade]);$s=$d->source($d->validate([$r])[0]);
-            $expected=(string)\Brick\Math\BigDecimal::of($rate['median'])->multipliedBy('864')->dividedBy(2504,2,\Brick\Math\RoundingMode::HALF_UP);
+            $expected=(string)\Brick\Math\BigDecimal::of($rate['median'])->multipliedBy('864')->dividedBy(2504,2,\Brick\Math\RoundingMode::HalfUp);
             $this->assertSame($expected,$d->preview($s));$this->assertTrue($d->readable($s));$count++;
         }$this->assertSame(131,$count);
         // 6680 * 12 / 2504 = repeating rate; rounding that first would give 2304.72 instead.
@@ -142,7 +142,7 @@ class OvertimeSpreadsheetTest extends TestCase
         foreach([['0.1565','2.51'],['-0.1565','-2.51'],['0','0.00']] as [$hours,$amount]){
             $s=$d->source($this->row($place,['jam'=>$hours,'bil_hari'=>'0.5','kekerapan'=>'1','bil_bulan'=>'1']));$this->assertSame($amount,$d->preview($s));
         }
-        $s=$d->source($this->row($place,['jam'=>'9007199254740993.12345']));$this->assertSame((string)\Brick\Math\BigDecimal::of('6680')->multipliedBy(12)->multipliedBy('9007199254740993.12345')->multipliedBy(24)->dividedBy(2504,2,\Brick\Math\RoundingMode::HALF_UP),$d->preview($s));
+        $s=$d->source($this->row($place,['jam'=>'9007199254740993.12345']));$this->assertSame((string)\Brick\Math\BigDecimal::of('6680')->multipliedBy(12)->multipliedBy('9007199254740993.12345')->multipliedBy(24)->dividedBy(2504,2,\Brick\Math\RoundingMode::HalfUp),$d->preview($s));
         foreach(['nama','jawatan','gred','tujuan','jam','bil_hari','kekerapan','bil_bulan'] as $key)$this->assertNull($d->preview($d->source($this->row($place,[$key=>null]))));
         $this->assertNull($d->preview($d->source($this->row($place,['nama'=>'   ']))));
     }
@@ -181,7 +181,7 @@ class OvertimeSpreadsheetTest extends TestCase
     {
         [$bid,$estimate]=$this->gridContext();$c=app(\App\Services\KatalogDefinisiAnggaran::class);$this->assertInstanceOf(\App\Services\DefinisiLebihMasa::class,$c->untuk($this->os,$bid));
         foreach(['Pendidikan Rendah'=>'030219','Pendidikan Menengah'=>'030301','Pengurusan Asrama'=>'030313','Pendidikan Awal'=>'030101'] as $name=>$code){
-            $a=AktivitiKewangan::create(['nama'=>$name]);$k=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$a->id,'kod_aktiviti'=>$code]);PemetaanOs::create(['aktiviti_kewangan_id'=>$a->id,'rujukan_os_id'=>$this->os->id,'kod_aktiviti_id'=>$k->id,'singkatan_sumber'=>'X','butiran_asal'=>'Bayaran Lebih Masa','status_sumber'=>'Aktif']);
+            $a=AktivitiKewangan::create(['nama'=>$name]);TetapanAksesPtj::create(['kategori_ptj'=>'JPNT','aktiviti_kewangan_id'=>$a->id,'rujukan_os_id'=>null,'dibenarkan'=>true]);$k=\App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$a->id,'kod_aktiviti'=>$code]);PemetaanOs::create(['aktiviti_kewangan_id'=>$a->id,'rujukan_os_id'=>$this->os->id,'kod_aktiviti_id'=>$k->id,'singkatan_sumber'=>'X','butiran_asal'=>'Bayaran Lebih Masa','status_sumber'=>'Aktif']);
             $b=Bidaan::forceCreate(['kitaran_id'=>$this->cycle->id,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$a->id]);
             if($name==='Pendidikan Awal')$this->assertNull($c->untuk($this->os,$b));else{$this->operator->penugasanPeranan()->create(['peranan'=>Peranan::PenyediaAnggaran,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$a->id]);$this->assertInstanceOf(\App\Services\DefinisiLebihMasa::class,$c->untuk($this->os,$b));}
         }
@@ -196,7 +196,7 @@ class OvertimeSpreadsheetTest extends TestCase
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($otherPlace,['tujuan'=>$key])]))->assertUnprocessable();
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['tujuan'=>$key])]))->assertOk();
         $p->delete();$this->postJson($url,$this->payload($bid,$estimate,[$this->row($place,['tujuan'=>$key])]))->assertUnprocessable();
-        $otherBid=$this->workspaceBid();$d=app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$otherBid);$this->assertArrayNotHasKey($key,$d->references());
+        $otherCycle=Kitaran::create(['tahun'=>2029]);$otherBid=Bidaan::forceCreate(['kitaran_id'=>$otherCycle->id,'ptj_id'=>$this->owner->id,'aktiviti_kewangan_id'=>$this->activity->id]);$d=app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($this->os,$otherBid);$this->assertArrayNotHasKey($key,$d->references());
     }
     public function test_copy_and_audited_delete_preserve_independent_sources(): void
     {

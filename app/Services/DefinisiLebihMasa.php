@@ -80,7 +80,7 @@ class DefinisiLebihMasa extends DefinisiAnggaran
     private function median(stdClass $s): ?string {return $this->salaries()[$s->jawatan??''][$s->gred??'']['median']??null;}
     public function project(stdClass $s): array
     {
-        $m=$this->median($s);return parent::project($s)+['kadar'=>$m===null?null:(string)BigDecimal::of($m)->multipliedBy(12)->dividedBy(2504,2,RoundingMode::HALF_UP),'tempoh'=>$this->duration($s->tarikh_mula,$s->tarikh_tamat)];
+        $m=$this->median($s);return parent::project($s)+['kadar'=>$m===null?null:(string)BigDecimal::of($m)->multipliedBy(12)->dividedBy(2504,2,RoundingMode::HalfUp),'tempoh'=>$this->duration($s->tarikh_mula,$s->tarikh_tamat)];
     }
     public function duration(?string $a,?string $b): ?string
     {
@@ -91,6 +91,6 @@ class DefinisiLebihMasa extends DefinisiAnggaran
         $median=$this->median($s);if($median===null||trim($s->nama??'')===''||!isset($this->references()[$s->tujuan??'']))return null;
         $n=BigDecimal::of($median)->multipliedBy(12);foreach(['jam','bil_hari','kekerapan','bil_bulan'] as $k){if(($s->$k??null)===null||$s->$k==='')return null;$n=$n->multipliedBy($s->$k);}
         // Multiply numerator exactly before the sole division/rounding; repeating hourly fractions are never truncated.
-        return (string)$n->dividedBy(2504,2,RoundingMode::HALF_UP);
+        return (string)$n->dividedBy(2504,2,RoundingMode::HalfUp);
     }
 }
