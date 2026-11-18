@@ -137,9 +137,13 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->postJson($url, $input)->assertUnprocessable();
 
         $proposal = \App\Models\CadanganItemAnggaran::sole();
+        $this->post($url, array_replace($input, ['nama' => 'Toner Ditolak']))->assertRedirect();
+        $rejected = \App\Models\CadanganItemAnggaran::where('nama', 'Toner Ditolak')->sole();
+        $rejectedKey = 'cadangan:'.$rejected->id;
         $key = 'cadangan:'.$proposal->id;
         $row = $this->row($place, ['kategori2' => $key]);
-        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [$row]))->assertOk();
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [$row,
+            $this->row($place, ['kategori2' => $rejectedKey])]))->assertOk();
         $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
             $rows->first()['preview'] === '30');
 
@@ -159,6 +163,18 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->postJson($decide, $decision)->assertConflict();
         $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
             $rows->first()['preview'] === '34.5');
+        $this->post(route('item-proposals.decide', $rejected->id), ['status' => 'ditolak',
+            'catatan' => 'Gunakan item sedia ada.'])->assertRedirect(route('item-proposals.index'));
+        $this->actingAs($this->operator)->withSession(['abm_access_revision' => $this->operator->fresh()->access_revision,
+            'abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [
+            $this->row($place, ['kategori2' => $rejectedKey]),
+        ]))->assertUnprocessable();
+        $source = $estimate->butiran()->orderByDesc('id')->firstOrFail();
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [], [
+            ['butiran_id' => $source->id, 'semakan_butiran' => $source->semakan],
+        ]))->assertOk();
+        $this->assertDatabaseCount('butiran_anggaran', 1);
         $this->assertDatabaseHas('rekod_audit', ['tindakan' => 'item.reviewed', 'pelaku_id' => $reviewer->id]);
         $this->assertDatabaseCount('hasil_pengiraan', 0);
         $this->assertSame(StatusBidaan::DalamPenyediaan, $bid->fresh()->status);
