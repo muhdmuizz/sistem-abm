@@ -1,6 +1,6 @@
 # Batch 046 — OS15000 Faedah-faedah Kewangan Yang Lain
 
-**Status:** Verified; merge pending. Owner approved Kadar × 1 on 18 November 2026.
+**Status:** Application merged; local synchronisation/acceptance pending. Owner approved Kadar × 1 on 18 November 2026.
 **Baseline:** `85bf3296366078319cd7bea9a55623c4f2c771b9` (Batch 045 application PR #99 / docs #100; 562 tests / 6,297 assertions). Prior local sync/migration/import/financial/device acceptance remains unconfirmed; “Good, proceed” acknowledges progress, not detailed local acceptance.
 
 ## Approved scope
@@ -24,3 +24,8 @@ Initial head `5a13a33f05823318d6a2559ad202aec6743d2ba3`, CI 44224220274/job 1345
 Artifact 14393180199 contains 552 PNGs, including 22 benefit captures. Visually inspected five individual captures: benefits-populated-1440-right, benefits-populated-390-right, benefits-unavailable-1440, benefits-validation-390 and benefits-readonly-1440-right. Grouped two-decimal amounts, fixed/manual modes, unavailable percentage explanation, withheld preview, validation and read-only display are legible. Mobile uses horizontal table scrolling and long instructional text; the focused skip link overlays the mobile header during validation. Unavailable rate uses shared “Tidak berkenaan” text alongside its specific pending-basis explanation. These remain presentation limits for the planned consolidated UI refinement. Other artifact images were not individually visually inspected; browser assertions cover their states.
 
 No new migration/seed. Local sync and financial/device acceptance remain pending. Documentation-only commits after the tested head do not extend the application test evidence.
+
+
+## Batch 046 implementation checkpoint — 18 November 2026
+
+OS15000 Faedah spreadsheet merged in [PR #101](https://github.com/muhdmuizz/sistem-abm/pull/101) at `0a09e8fab62ee6962d395b5175d2a67bf6d40f5a`: one named recipient/benefit, exact Kadar × 1, prescribed grade rates, manual Yuran/territory rates, HPA and exact job-grade fixed KGT. Percentage KGT remains unavailable pending salary basis/rounding. Tested `6bc52911cf169bd09a5da6ac1aad7fa321b7ea89`, run 44224595873/job 134534547451: 570 tests / 6,665 assertions plus build/exact-money/Chromium on PHP 8.4.27/PostgreSQL 18.7 isolated database. Five captures individually reviewed; remaining captures and local financial/device acceptance unverified. No new migration/seed or CSV changes; local sync pending. AD-008 stays Draft, Steps 02/03 in progress; official financial integration and programme inheritance remain pending. See Batch 046 development record for failed initial test-helper attempt and presentation limits.
