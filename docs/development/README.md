@@ -610,3 +610,28 @@ OS15000 Faedah uses approved Kadar × 1 per named recipient/benefit; fixed grade
 ## Batch 046 implementation checkpoint — 18 November 2026
 
 OS15000 Faedah spreadsheet merged in [PR #101](https://github.com/muhdmuizz/sistem-abm/pull/101) at `0a09e8fab62ee6962d395b5175d2a67bf6d40f5a`: one named recipient/benefit, exact Kadar × 1, prescribed grade rates, manual Yuran/territory rates, HPA and exact job-grade fixed KGT. Percentage KGT remains unavailable pending salary basis/rounding. Tested `6bc52911cf169bd09a5da6ac1aad7fa321b7ea89`, run 44224595873/job 134534547451: 570 tests / 6,665 assertions plus build/exact-money/Chromium on PHP 8.4.27/PostgreSQL 18.7 isolated database. Five captures individually reviewed; remaining captures and local financial/device acceptance unverified. No new migration/seed or CSV changes; local sync pending. AD-008 stays Draft, Steps 02/03 in progress; official financial integration and programme inheritance remain pending. See Batch 046 development record for failed initial test-helper attempt and presentation limits.
+
+
+## OS14000 decision checkpoint — 18 November 2026
+
+Owner resumed OS14000 discussion and approved hourly Kadar × Jam sehari × Bilangan Hari × Kekerapan, independently entered chargeable days, unrounded hourly-rate calculation and half-up rounding of each final amount to two decimals. See consolidated OS14000 reference. Granular expansion/reconciliation and remaining field rules are unresolved; no editor implementation or new tests in this documentation checkpoint. Baseline `6ddeb013b90e19289edd3ba9845194499f3d31d5`; Batch 046 application merge/test/local status unchanged (local sync/acceptance remains unconfirmed). No migration/seed/source CSV change. Documentation PR/merge pending; no new numbered application batch started.
+
+
+## Owner-approved single-row output — 18 November 2026
+
+After clarification, the owner confirmed keeping **one entry and one export/output row per saved officer-level Butiran Anggaran**, retaining Jam sehari, Bilangan Hari and Kekerapan as multipliers. Do not expand days × occurrences into daily rows. Example: Ahmad, 3 hours/day, 2 days and frequency 12 remains one row representing 72 annual hours. No individual daily entries or fabricated occurrence dates are required. Each separate saved Butiran retains its own stable identity even when the same officer is named more than once; no deduplication by officer.
+
+Apply the approved unrounded hourly-rate calculation and round the final row amount once to two decimals, half-up. This resolves the prior output-expansion/count and associated daily-rounding question for this model; no daily allocation/reconciliation is needed. Preserve existing canonical field identities and programme/purpose references. Remaining detailed field validation, programme inheritance and official calculation/export integration are not implemented or newly approved by this documentation checkpoint. AD-008 remains Draft.
+
+
+## Superseding owner approval — monthly frequency and months (18 November 2026)
+
+The owner explicitly approved reconciling the active Bilangan Bulan field with the annual amount by defining **Kekerapan as occurrences per month**:
+
+**Anggaran Setahun = (Gaji Median × 12 ÷ 2504) × Jam sehari × Bilangan Hari setiap kejadian × Kekerapan sebulan × Bilangan Bulan.**
+
+This supersedes the earlier four-factor amount formula and annual-frequency interpretation recorded above; those earlier approvals are historical only. Bilangan Bulan is an independent manual calculation input, not informational and not derived from dates. The repeated-work pattern has the same entered hours/day and days/occurrence for each entered monthly occurrence. Example: 3 hours/day × 2 days/occurrence × 1 occurrence/month × 12 months = **72 annual hours**, multiplied by the unrounded hourly rate.
+
+Retain one saved officer-level Butiran per input row and one attributable output/export row containing the factors; do not expand into daily rows or deduplicate separate entries naming the same officer. Keep exact arithmetic through the hourly-rate division/multiplication and round the final row amount once to **two decimals, half-up**. Display-only grouped/tabular two-decimal money must not become the calculation basis. Dates remain independent of chargeable days and months, subject to existing Kitaran-year limits. Preserve approved personnel and programme/purpose references. No new eligibility, caps or rounding rules.
+
+This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.

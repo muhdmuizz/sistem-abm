@@ -17,7 +17,7 @@ At the time of drafting, GitHub `main` contains architecture documentation only;
 
 | OS scope | Approved work to preserve | Remaining implementation boundary |
 | --- | --- | --- |
-| OS14000 | [Consolidated references and Kadar formula](../references/OS14000-reference-consolidated.md); historical 19/8 applicability | Detailed work remains paused; overall amount, output expansion and precision/rounding are not finalised |
+| OS14000 | [Consolidated references and Kadar formula](../references/OS14000-reference-consolidated.md); historical 19/8 applicability | Discussion resumed 18 November: annual amount, half-up final rounding and one output row per saved officer entry approved; remaining field rules and official integration unresolved |
 | OS15000 Faedah | [All 13 Kemudahan applicability and Kadar modes](../references/OS15000-faedah-faedah-kewangan-yang-lain-27-column-applicability.md) | Owner approved one recipient/benefit per row and Kadar × 1 on 18 November; source-editor verification pending. Percentage KGT stays unavailable pending basis/rounding; programme inheritance/official integration separate |
 | OS15000 Perubatan | [Column applicability and nine manual-rate categories](../references/OS15000-bayaran-perubatan-27-column-applicability.md) | Owner approved all-nine-category quantity × manual rate × frequency × manual months and kidney-treatment inclusive years/months/days on 18 November; Batch 045 implements/verifies the source editor; programme inheritance and official integration remain separate |
 | OS21000 travel variants | [Direct-entry applicability and shared reference](../references/OS21000-perjalanan-sara-hidup-27-column-applicability.md) | Explicit unresolved subcategory applicability, blank-rate handling and calculations |
@@ -235,7 +235,7 @@ The displayed supplementary wording of header 4 is `(DIEJA PENUH, TANPA SINGKATA
 - **Step 04:** Partially analysed. Owner **confirmed** `JAWATAN → GRED` as dependent selection: select JAWATAN first and display only applicable GRED options. Rate reference and remaining field rules require verification.
 - **Steps 05–07:** Overall OS14000 calculation/output specification is incomplete. The later [consolidated reference](../references/OS14000-reference-consolidated.md) confirms KADAR = Gaji Median × 12 / 2504; preserve it. Precision/rounding and overall amount/expansion mapping remain unresolved.
 
-**OS14000 detailed #P7OS work remains paused under its consolidated reference. Resume only when separately instructed, preserving approved decisions and the universal spreadsheet-like presentation.**
+**Historical pause superseded on 18 November 2026:** owner resumed OS14000 discussion and approved the amount and rounding below. Output mapping and remaining field rules are unresolved; preserve the universal spreadsheet-like presentation.
 
 ## Approved 30-column Perbelanjaan revision — 14 November 2026
 
@@ -489,3 +489,37 @@ One named recipient and one benefit per row; **applicable Kadar × 1** for presc
 ## Batch 046 implementation checkpoint — 18 November 2026
 
 OS15000 Faedah spreadsheet merged in [PR #101](https://github.com/muhdmuizz/sistem-abm/pull/101) at `0a09e8fab62ee6962d395b5175d2a67bf6d40f5a`: one named recipient/benefit, exact Kadar × 1, prescribed grade rates, manual Yuran/territory rates, HPA and exact job-grade fixed KGT. Percentage KGT remains unavailable pending salary basis/rounding. Tested `6bc52911cf169bd09a5da6ac1aad7fa321b7ea89`, run 44224595873/job 134534547451: 570 tests / 6,665 assertions plus build/exact-money/Chromium on PHP 8.4.27/PostgreSQL 18.7 isolated database. Five captures individually reviewed; remaining captures and local financial/device acceptance unverified. No new migration/seed or CSV changes; local sync pending. AD-008 stays Draft, Steps 02/03 in progress; official financial integration and programme inheritance remain pending. See Batch 046 development record for failed initial test-helper attempt and presentation limits.
+
+
+## Owner-approved amount and rounding — 18 November 2026
+
+The owner instructed resumption of OS14000 discussion, confirmed the overall formula and independent chargeable-day input, then explicitly approved the proposed rounding approach:
+
+- **Kadar sejam = Gaji Median × 12 ÷ 2504**, from the exact selected shared Jawatan/full SSPA Gred reference.
+- **Anggaran Setahun = Kadar sejam × Jam sehari × Bilangan Hari × Kekerapan**.
+- Bilangan Hari is entered independently; activity dates do not automatically determine chargeable days.
+- Keep the hourly rate unrounded through multiplication. Round each final calculated amount to **two decimal places using half-up rounding**. Use exact arithmetic; premature truncation or rounding of a repeating division is not permitted.
+- Monetary display remains right-aligned/tabular, grouped with two displayed decimals (for example `4,320.00`); the displayed hourly rate must not replace the unrounded calculation basis.
+- Example approved in discussion: 3 hours/day × 2 days/occurrence × 12 occurrences = 72 annual hours for the officer.
+
+These later approvals supersede only the earlier unresolved overall-formula/rounding statements and historical discussion pause. They do not decide eligibility, time-fraction limits, granular output expansion/count or allocation of rounding across generated output rows. In particular, rounding an annual source amount does not approve summing separately rounded daily amounts. Resolve the output mapping and reconciliation before implementation; do not infer dates for repeated occurrences. Existing stable source IDs, shared personnel reference and programme/purpose choices remain unchanged. No application, source CSV or database change is made by this decision record. AD-008 remains Draft.
+
+
+## Owner-approved single-row output — 18 November 2026
+
+After clarification, the owner confirmed keeping **one entry and one export/output row per saved officer-level Butiran Anggaran**, retaining Jam sehari, Bilangan Hari and Kekerapan as multipliers. Do not expand days × occurrences into daily rows. Example: Ahmad, 3 hours/day, 2 days and frequency 12 remains one row representing 72 annual hours. No individual daily entries or fabricated occurrence dates are required. Each separate saved Butiran retains its own stable identity even when the same officer is named more than once; no deduplication by officer.
+
+Apply the approved unrounded hourly-rate calculation and round the final row amount once to two decimals, half-up. This resolves the prior output-expansion/count and associated daily-rounding question for this model; no daily allocation/reconciliation is needed. Preserve existing canonical field identities and programme/purpose references. Remaining detailed field validation, programme inheritance and official calculation/export integration are not implemented or newly approved by this documentation checkpoint. AD-008 remains Draft.
+
+
+## Superseding owner approval — monthly frequency and months (18 November 2026)
+
+The owner explicitly approved reconciling the active Bilangan Bulan field with the annual amount by defining **Kekerapan as occurrences per month**:
+
+**Anggaran Setahun = (Gaji Median × 12 ÷ 2504) × Jam sehari × Bilangan Hari setiap kejadian × Kekerapan sebulan × Bilangan Bulan.**
+
+This supersedes the earlier four-factor amount formula and annual-frequency interpretation recorded above; those earlier approvals are historical only. Bilangan Bulan is an independent manual calculation input, not informational and not derived from dates. The repeated-work pattern has the same entered hours/day and days/occurrence for each entered monthly occurrence. Example: 3 hours/day × 2 days/occurrence × 1 occurrence/month × 12 months = **72 annual hours**, multiplied by the unrounded hourly rate.
+
+Retain one saved officer-level Butiran per input row and one attributable output/export row containing the factors; do not expand into daily rows or deduplicate separate entries naming the same officer. Keep exact arithmetic through the hourly-rate division/multiplication and round the final row amount once to **two decimals, half-up**. Display-only grouped/tabular two-decimal money must not become the calculation basis. Dates remain independent of chargeable days and months, subject to existing Kitaran-year limits. Preserve approved personnel and programme/purpose references. No new eligibility, caps or rounding rules.
+
+This checkpoint updates documentation only. Source-editor implementation, remaining field rules, programme inheritance and official calculation/export integration remain pending; AD-008 remains Draft.
