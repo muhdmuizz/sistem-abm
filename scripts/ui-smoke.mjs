@@ -1266,4 +1266,43 @@ await page.setViewportSize({width:1440,height:900});await page.goto('http://127.
  await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=bil_unit]').fill('9');if(await field('bil_unit').inputValue()!=='1')throw Error('Medical copied quantity shared');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
 }
 
+
+for(const fixture of ['benefits-empty','benefits-populated','benefits-partial','benefits-readonly']){
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900});await page.goto('http://127.0.0.1:4173/'+fixture+'.html');await page.locator('[data-anggaran-grid]').waitFor();
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Benefits overflow '+fixture);
+  for(const side of ['left','right']){await page.locator('.anggaran-grid-scroll').evaluate((el,side)=>el.scrollLeft=side==='left'?0:el.scrollWidth,side);await page.screenshot({path:'storage/app/ui-qa/'+fixture+'-'+width+'-'+side+'.png',fullPage:true});}
+ }
+}
+await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/benefits-populated.html');
+{
+ const row=()=>page.locator('[data-grid-body] tr').first(),field=k=>row().locator('[data-field='+k+']');
+ const originalJob=await field('jawatan').inputValue();
+ if(await row().locator('[data-output=preview]').textContent()!=='500.00'||!(await field('kadar').evaluate(e=>e.readOnly))||await field('kategori1').locator('option').count()!==14)throw Error('Benefits prescribed rate boundary');
+ for(const k of ['bil_unit','kekerapan','bil_bulan','unit','tarikh_mula','tarikh_tamat'])if(await field(k).count())throw Error('Benefits invented factor '+k);
+ await field('kategori1').selectOption('Bayaran Pakaian Istiadat');if(await row().locator('[data-output=preview]').textContent()!=='3,500.00')throw Error('Benefits reference grade amount');
+ await field('kategori1').selectOption('Hadiah Pengiktirafan Akademik (HPA)');if(await field('kategori2').count()!==1||await field('kategori3').count())throw Error('HPA conditional selectors');
+ await field('kategori2').selectOption('Ijazah Sarjana (Master)');if(await row().locator('[data-output=preview]').textContent()!=='1,000.00'||!(await field('kadar').evaluate(e=>e.readOnly)))throw Error('HPA fixed rate');
+ await field('kategori1').selectOption('Tambang Ziarah Wilayah');await field('kategori2').selectOption('Wilayah Asal');await field('kategori3').selectOption('Sabah');await field('kadar').focus();await field('kadar').fill('125.123456');await field('nama').focus();if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='125.123456')throw Error('Travel rate times one');
+ await field('kategori3').selectOption('Sarawak');if(await field('kadar').inputValue()!==''||await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Travel changed territory retains manual rate');
+ await field('kategori1').selectOption('Bayaran Insentif Berasaskan Prestasi (BIPs)');if(await row().locator('[data-output=preview]').textContent()!=='225.00'||!(await field('kadar').evaluate(e=>e.readOnly)))throw Error('BIPs exact job grade fixed KGT');
+ await field('jawatan').selectOption('PENGARAH PENDIDIKAN NEGERI');await field('gred').selectOption('VU7');if(await field('kadar').count()||await row().locator('[data-output=preview]').textContent()!=='—'||!(await row().locator('[data-output=basis]').textContent()).includes('KGT peratus belum tersedia'))throw Error('BIPs percentage KGT not withheld');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=basis]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/benefits-unavailable-'+width+'.png',fullPage:true});}
+ await field('kategori1').selectOption('Bantuan Baju Kot');if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Legacy C implicitly mapped to VU7');
+ await field('jawatan').selectOption(originalJob);await field('gred').selectOption('DG9');await field('kategori1').selectOption('Bayaran Balik Yuran');
+ if(await field('kategori2').count()||await field('kategori3').count()||await field('tujuan').count()!==1)throw Error('Refund conditional purpose');
+ await field('kadar').focus();await field('kadar').fill('4320.12345');await field('nama').focus();if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Refund description not required');
+ await field('tujuan').fill('Yuran profesional');if(await row().locator('[data-output=preview]').getAttribute('data-exact')!=='4320.12345'||await row().locator('[data-output=preview]').textContent()!=='4,320.12')throw Error('Refund exact manual amount');
+ await field('nama').fill('   ');if(await row().locator('[data-output=preview]').textContent()!=='—')throw Error('Benefits unnamed recipient amount');await field('nama').fill('AHMAD UJIAN');
+ await field('kadar').focus();if(await field('kadar').inputValue()!=='4320.12345')throw Error('Benefits precise money lost');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await row().locator('[data-output=preview]').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await row().locator('[data-output=preview]').locator('..').locator('details').evaluate(el=>el.open=true);await page.screenshot({path:'storage/app/ui-qa/benefits-exact-'+width+'.png',fullPage:true});}
+ let payload;await page.route('**/bida-peruntukan/**/anggaran/**/jadual',async route=>{payload=route.request().postDataJSON();await route.fulfill({status:422,contentType:'application/json',body:JSON.stringify({errors:{'rekod.0.kadar':['Semak kadar kemudahan.']}})});});
+ await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('Semak kadar'));
+ if(payload.rekod[0].kadar!=='4320.12345'||payload.rekod[0].tujuan!=='Yuran profesional'||payload.rekod[0].kategori2!==null||payload.rekod[0].kategori3!==null||Object.keys(payload.rekod[0]).some(k=>['bil_unit','kekerapan','bil_bulan','preview','basis'].includes(k)))throw Error('Benefits source payload leakage');
+ if(await field('kadar').getAttribute('aria-invalid')!=='true')throw Error('Benefits nested rate validation missing');
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});await field('kadar').evaluate(el=>el.scrollIntoView({block:'nearest',inline:'center'}));await page.screenshot({path:'storage/app/ui-qa/benefits-validation-'+width+'.png',fullPage:true});}
+ await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');await page.route('**/bida-peruntukan/**/anggaran/**/jadual',route=>route.fulfill({status:409,contentType:'application/json',body:'{}'}));await page.getByRole('button',{name:'Simpan Draf',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[data-grid-error]').textContent.includes('telah berubah'));await field('kadar').focus();if(await field('kadar').inputValue()!=='4320.12345')throw Error('Benefits stale response loses exact money');await page.unroute('**/bida-peruntukan/**/anggaran/**/jadual');
+ await row().locator('[data-row-select]').check();await page.locator('[data-grid-copy]').click();const copy=page.locator('[data-grid-body] tr').last();await copy.locator('[data-field=kadar]').focus();await copy.locator('[data-field=kadar]').fill('99');if(await field('kadar').inputValue()==='99')throw Error('Benefits copy shares manual rate');await copy.locator('[data-row-select]').check();await page.locator('[data-grid-remove]').click();
+}
+
 await browser.close();

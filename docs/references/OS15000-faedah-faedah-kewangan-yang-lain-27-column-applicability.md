@@ -1,7 +1,7 @@
 # OS15000 — Faedah-faedah Kewangan Yang Lain: Approved 27-Column Applicability Checkpoint
 
 **Recorded:** 14 November 2026  
-**Status:** Approved *direct-entry column-applicability and input-behaviour decisions* for all 13 Jenis Kemudahan. **Not** an implementation or approval of all financial calculations.  
+**Status:** Approved *direct-entry column-applicability and input-behaviour decisions* for all 13 Jenis Kemudahan. **Kadar × 1 approved 18 November 2026**; percentage-based KGT remains unavailable pending its remaining rules. Implementation verification is separate.  
 **Scope:** The Anggaran (OS) identified by Kod Objek `15000` + Butiran Perbelanjaan **Faedah-faedah Kewangan Yang Lain**. The separate **OS15000 — Bayaran Perubatan** is explicitly excluded.
 
 ## 1. Evidence, authority and non-goals
@@ -91,7 +91,7 @@ This compact rule set specifies all 27 statuses for all 13 Kemudahan without req
 - **08 NAMA:** named officer/recipient for the individual Butiran Anggaran.
 - **09 JAWATAN / 10 GRED:** controlled personnel reference and full SSPA grade; do not invent equivalence for special legacy grade `C`.
 - **18 KADAR:** ACTIVE for all, but its population mode depends on the Kemudahan listed above; **do not show all Kadar as manual**.
-- **24 ANGGARAN JUMLAH SETAHUN:** computed, not directly overwritten; no unapproved multiplication rule is introduced here.
+- **24 ANGGARAN JUMLAH SETAHUN:** computed as Kadar × 1 per named recipient/benefit (owner approval, 18 November 2026), not directly overwritten.
 - **Bayaran Balik Yuran:** Column 04 is explicitly **Tujuan Yuran**, the required descriptive input. Preserve the separately confirmed mandatory free-text description and manual Kadar rule.
 - **BIPs:** KGT percentage cases and precise calculation/rounding, where relevant, remain unresolved; do not invent them.
 
@@ -101,9 +101,18 @@ This compact rule set specifies all 27 statuses for all 13 Kemudahan without req
 
 **Not completed / not authorised by this checkpoint:**
 
-1. Full financial calculation formula for column 24, including applicable multipliers, precision and rounding, and any special KGT percentage treatment.
+1. The overall amount rule is now approved below. Percentage-based KGT salary basis/rounding remain unresolved and unavailable; no additional multiplier or rounding policy is inferred.
 2. Program/ Aktiviti alternative-entry inheritance mapping for these columns, including deferred 26–27.
 3. OS15000 — **Bayaran Perubatan** (separate Anggaran with the same Kod Objek).
 4. Laravel implementation, database changes, import/export code, and production readiness.
 
 **This is a decisions-only archival checkpoint.** Do not interpret `27/27` applicability coverage as validation of calculations or implementation completeness.
+
+
+## Owner-approved calculation — 18 November 2026
+
+Owner explicitly approved: **one row = one named recipient and one benefit; Anggaran Setahun = Kadar × 1**. This covers the existing prescribed grade rates, valid manually entered amounts, HPA and fixed-RM KGT for BIPs. Quantity, frequency, months, dates and Unit remain Inactive; do not invent multipliers. Kadar source/mode remains category-specific. Bayaran Balik Yuran requires Tujuan Yuran plus manual Kadar; Tambang Ziarah Wilayah retains its two approved territory paths and manual rate; HPA remains qualification-based and fixed. BIPs uses the **exact Jawatan + full SSPA Gred** fixed-RM KGT, not an independent table or a guessed salary basis.
+
+**Percentage-based KGT remains unavailable** pending the applicable salary basis/rounding rules. The intentional blank fixed-KGT cell for Pengarah Pendidikan Negeri/VU7, documented in Reference 07 as a percentage case, is not zero and permits no manual substitute. Legacy grade C remains unmapped, with no inferred VU7/numeric equivalence. Missing reference grade matches do not authorise manual overrides. Preserve all 125 grade/rate rows, 17 category paths, 131 personnel rows and current rates.
+
+Partial source drafts may be retained, but withhold the draft amount until the named recipient, valid shared Jawatan/Gred and applicable rate/path are available; refunds additionally need Tujuan Yuran. Pending KGT remains without an amount. This is not official output/completeness/submission implementation. Programme inheritance and all unrelated OS remain unchanged. Historical 27-column positions map to current 30-column positions under AD-008. [Batch 046](../development/batch-046-benefits-spreadsheet.md) records implementation and verification.
