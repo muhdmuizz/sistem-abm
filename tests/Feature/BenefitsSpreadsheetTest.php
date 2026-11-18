@@ -125,7 +125,7 @@ class BenefitsSpreadsheetTest extends TestCase
         return array_replace(['tempat_bertugas_id'=>$place->id,'kategori1'=>'Bantuan Baju Kot','kategori2'=>null,'kategori3'=>null,'nama'=>'AHMAD UJIAN','jawatan'=>$job,'gred'=>'DG9','tujuan'=>null,'kadar'=>null],$extra);
     }
     private function fees($place,array $extra=[]): array {return $this->row($place,array_replace(['kategori1'=>\App\Services\DefinisiFaedah::FEES,'tujuan'=>'Yuran profesional','kadar'=>'4320.12345'],$extra));}
-    private function travel($place,array $extra=[]): array {return $this->row($place,array_replace(['kategori1'=>\App\Services\DefinisiFaedah::TRAVEL,'kategori2'=>'Wilayah Asal','kategori3'=>'Sabah','kadar'=>'4320.12345'],$extra));}
+    private function territoryRow($place,array $extra=[]): array {return $this->row($place,array_replace(['kategori1'=>\App\Services\DefinisiFaedah::TRAVEL,'kategori2'=>'Wilayah Asal','kategori3'=>'Sabah','kadar'=>'4320.12345'],$extra));}
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
@@ -146,11 +146,11 @@ class BenefitsSpreadsheetTest extends TestCase
         $jobs=app(\App\Services\RujukanJawatan::class)->grades();$job=array_key_first(array_filter($jobs,fn($g)=>in_array('W1',$g,true)));
         $this->assertSame('30',$d->preview($d->source($d->validate([$this->row($place,['kategori1'=>'Bayaran Pembaharuan Lesen Memandu','jawatan'=>$job,'gred'=>'W1'])])[0])));
         $this->assertFalse($d->rowReference($this->row($place,['kategori1'=>'Bayaran Pembaharuan Lesen Memandu']))['matched']);
-        $this->assertSame('4320.12345',$d->preview($d->source($d->validate([$this->fees($place)])[0])));$this->assertSame('4320.12345',$d->preview($d->source($d->validate([$this->travel($place)])[0])));
+        $this->assertSame('4320.12345',$d->preview($d->source($d->validate([$this->fees($place)])[0])));$this->assertSame('4320.12345',$d->preview($d->source($d->validate([$this->territoryRow($place)])[0])));
         foreach(['Ijazah Kedoktoran (PhD)'=>'1250','Ijazah Sarjana (Master)'=>'1000','Ijazah Sarjana Muda'=>'750','Diploma/ Setaraf'=>'500'] as $qualification=>$amount)$this->assertSame($amount,$d->preview($d->source($d->validate([$this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::HPA,'kategori2'=>$qualification])])[0])));
         $this->assertSame('225',$d->preview($d->source($this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::BIPS]))));
         foreach(['nama'=>'   ','jawatan'=>null,'gred'=>null] as $key=>$value)$this->assertNull($d->preview($d->source($this->fees($place,[$key=>$value]))));
-        $this->assertNull($d->preview($d->source($this->fees($place,['tujuan'=>null]))));$this->assertNull($d->preview($d->source($this->fees($place,['kadar'=>null]))));$this->assertNull($d->preview($d->source($this->travel($place,['kategori3'=>null]))));
+        $this->assertNull($d->preview($d->source($this->fees($place,['tujuan'=>null]))));$this->assertNull($d->preview($d->source($this->fees($place,['kadar'=>null]))));$this->assertNull($d->preview($d->source($this->territoryRow($place,['kategori3'=>null]))));
         foreach(['bil_unit','kekerapan','bil_bulan','unit','tarikh_mula','tarikh_tamat'] as $key)$this->assertNotContains($key,array_column($d->columns(),'key'));
     }
 
@@ -168,7 +168,7 @@ class BenefitsSpreadsheetTest extends TestCase
     public function test_http_mixed_modes_save_reopen_noop_edit_partial_and_readonly_fixtures(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);$this->gridCapture('benefits-empty',$this->get($url)->assertOk());
-        $rows=[$this->row($place),$this->fees($place),$this->travel($place),$this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::HPA,'kategori2'=>'Ijazah Kedoktoran (PhD)']),$this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::BIPS])];
+        $rows=[$this->row($place),$this->fees($place),$this->territoryRow($place),$this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::HPA,'kategori2'=>'Ijazah Kedoktoran (PhD)']),$this->row($place,['kategori1'=>\App\Services\DefinisiFaedah::BIPS])];
         $this->postJson($url,$this->payload($bid,$estimate,$rows))->assertOk();$response=$this->get($url)->assertOk();$this->assertSame(['500','4320.12345','4320.12345','1250','225'],$response->viewData('records')->pluck('preview')->all());$this->gridCapture('benefits-populated',$response);
         $sources=$estimate->butiran()->orderBy('id')->get();$fixed=$sources[0];$this->assertNull($fixed->data_sumber->kadar);$this->assertSame('4320.12345',$sources[1]->data_sumber->kadar);
         $saved=(new \App\Services\DefinisiFaedah)->project($sources[1]->data_sumber)+['tempat_bertugas_id'=>$place->id,'butiran_id'=>$sources[1]->id,'semakan_butiran'=>$sources[1]->semakan];$audit=RekodAudit::count();$this->postJson($url,$this->payload($bid,$estimate,[$saved]))->assertOk();$this->assertSame($audit,RekodAudit::count());
@@ -181,7 +181,7 @@ class BenefitsSpreadsheetTest extends TestCase
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
         foreach([['kategori1'=>'Other'],['kategori1'=>[]],['kategori2'=>'Wilayah Asal'],['kategori3'=>'Sabah'],['kategori2'=>[]],['kategori3'=>[]],['tujuan'=>'Not applicable'],['kadar'=>'1'],['gred'=>'C'],['gred'=>[]],['jawatan'=>[]],['bil_unit'=>'2'],['kekerapan'=>'2'],['bil_bulan'=>'12'],['unit'=>'Unit'],['tarikh_mula'=>'2028-01-01'],['preview'=>'500']] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->fees($place),$this->row($place,$extra)]))->assertUnprocessable();
-        foreach([['kategori2'=>'Other'],['kategori3'=>'Other'],['tujuan'=>'Not applicable']] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->travel($place,$extra)]))->assertUnprocessable();
+        foreach([['kategori2'=>'Other'],['kategori3'=>'Other'],['tujuan'=>'Not applicable']] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->territoryRow($place,$extra)]))->assertUnprocessable();
         foreach([['kadar'=>[]],['kadar'=>'1e2']] as $extra)$this->postJson($url,$this->payload($bid,$estimate,[$this->fees($place,$extra)]))->assertUnprocessable();
         $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
     }
