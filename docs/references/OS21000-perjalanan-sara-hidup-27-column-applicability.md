@@ -1,6 +1,6 @@
 # OS21000 — Perjalanan Sara Hidup: 27-column direct-entry applicability checkpoint
 
-**Recorded:** 14 November 2026. **Status:** Approved shared column-applicability decisions, not finished financial calculation specifications or implementation.
+**Recorded:** 14 November 2026. **Status:** Latest dated owner approvals implemented/verified in Batch048 source editors; official financial/programme integration and special-grade policy remain pending. Table reconciled18November2026 by canonical field identity; numerical positions retain the historical27-column frame.
 
 ## Scope and preserved references
 
@@ -22,29 +22,29 @@ These are Anggaran labels, **not** KATEGORI1 values. All three use the approved 
 | 04 | NAMA PROGRAM/ AKTIVITI/ TUJUAN | Active | OS-specific direct-entry value; meaning not further defined |
 | 05 | TARIKH MULA | Active | OS-specific start date |
 | 06 | TARIKH TAMAT | Active | OS-specific end date |
-| 07 | TEMPOH | Active | Calculated where date inputs apply; exact counting convention not yet decided |
+| 07 | TEMPOH | Active | Inclusive calendar days; informational, independent of manual claim quantities |
 | 08 | NAMA | Active | Manual |
 | 09 | JAWATAN | Active | Existing shared reference drop-down |
 | 10 | GRED | Active | Existing full SSPA Gred reference drop-down |
 | 11 | KATEGORI1 | Active | Existing six Kategori Tuntutan choices |
-| 12 | KATEGORI2 | Reference unresolved | No subordinate values approved; do not invent or mark approved inactive |
-| 13 | KATEGORI3 | Reference unresolved | No subordinate values approved; do not invent or mark approved inactive |
+| 12 | KATEGORI2 | Conditional | Elaun Perjalanan Kenderaan or Bas/ Teksi under the existing combined category only; blank elsewhere |
+| 13 | KATEGORI3 | Inactive | — |
 | 14 | UNIT | Inactive | — |
 | 15 | GRED PENCERAMAH/ FASILITATOR | Inactive | — |
 | 16 | BIL. UNIT | Inactive | — |
 | 17 | LOKASI URUSAN RASMI | Active | Existing approved shared reference; location-dependent rate data retained |
-| 18 | KADAR | Active | OS-specific rate source / unresolved blank-rate behaviour |
+| 18 | KADAR | Active | Fixed supplied meal/hotel/mileage rates; approved manual fares; withhold unmatched grade rates |
 | 19 | JARAK | Conditional | Manual distance, **only for Elaun Perjalanan Kenderaan** within KATEGORI1 **Elaun Perjalanan, Bayaran Tambang Bas dan Teksi**; not for the Bas/Teksi component; do not create a new KATEGORI1 |
-| 20 | KEKERAPAN | Active | OS-specific; precise financial use not yet verified |
+| 20 | KEKERAPAN | Active | Trips per month |
 | 21 | JAM | Inactive | — |
-| 22 | BILANGAN HARI | Active | OS-specific; precise financial use not yet verified |
-| 23 | BILANGAN BULAN | Active | OS-specific; precise financial use not yet verified |
-| 24 | ANGGARAN JUMLAH SETAHUN | Active | Calculated, exact formula not yet approved |
+| 22 | BILANGAN HARI | Conditional | Manual claimable days per trip for meals; manual nights per trip for accommodation; inactive elsewhere |
+| 23 | BILANGAN BULAN | Active | Independently entered month multiplier |
+| 24 | ANGGARAN JUMLAH SETAHUN | Active | Approved component formula × trips/month × manual months; source preview verified, official integration pending |
 | 25 | KATEGORI SUMBER PERUNTUKAN | Active | Auto from Bidaan Aktiviti Kewangan, approved mapping |
 | 26 | KATEGORI PROGRAM | Deferred | Program/ Aktiviti alternative entry |
 | 27 | KATEGORI PESERTA | Deferred | Program/ Aktiviti alternative entry |
 
-**Counts:** 18 active, 1 conditional, 4 inactive, 2 reference unresolved, 2 deferred = 27. No other statuses may be silently inferred from absent subordinate references.
+**Reconciled counts (historical27-column positions):**17 active,3 conditional,5 inactive,2 deferred=27. The three inserted current contract fields are inactive for travel, making current30-column counts17 active,3 conditional,8 inactive,2 deferred. Earlier18/1/4/2-unresolved/2 counts are historical, superseded by explicit18November approvals.
 
 ## Approved KATEGORI1 labels (unchanged)
 
@@ -57,7 +57,7 @@ These are Anggaran labels, **not** KATEGORI1 values. All three use the approved 
 
 **Clarification explicitly approved:** `JARAK` applies only to **Elaun Perjalanan Kenderaan**, a component falling under existing KATEGORI1 `Elaun Perjalanan, Bayaran Tambang Bas dan Teksi`. This does **not** rename or split that category.
 
-## Deliberately outstanding
+## Historical outstanding list — superseded only by dated approvals below
 
 - Reconciliation of KATEGORI2/3 applicability or any conditional subcomponent representation; no new reference values authorized.
 - Handling of missing/blank Kadar reference rows.
@@ -96,3 +96,10 @@ Owner explicitly approved both remaining proposals: Kategori2 is conditional, wi
 ## Batch048 source-editor implementation in progress
 
 Implement latest approved travel formulas and Kategori2/duration decisions across three existing variants; all83 source rows/mappings retained. No C mapping or absent grade/rate fabricated. Verification/merge/local acceptance pending. Official financial/programme inheritance integration remains deferred; AD008 stays Draft. See Batch048 development record. Historical unresolved statements above are superseded only by the explicit dated owner approvals.
+
+
+## Batch048 merged checkpoint —18November2026
+
+[PR107](https://github.com/muhdmuizz/sistem-abm/pull/107) merged at `77219f10ccedf872c13e3ec4b087469d0de498b0`. Separate Umum/Sukan/Kokurikulum source editors share83 unchanged rate rows and exact PPN010801/010803/010803 mappings. One named officer/component per source; approved monthly formulas, conditional vehicle/Bas-Teksi Kategori2, inactive Kategori3, manually entered day/night/distance/month factors and independent inclusive Kitaran-year duration. No special C or absent shared-grade mapping guessed. Exact manual fares retained; no new financial rounding policy. Pertukaran remains separate/unchanged.
+
+Verified `9eebfba5da255e5908fa3368221e91d74d62d0e7`, CI44338401373/job134921288935: **586 tests /7,484 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB, build/exact-money/full Chromium passed. Artifact14442019034:594 PNGs/22 travel;11 travel+one Pertukaran capture individually reviewed. Batch048 records failed/intermediate runs, hint correction and visual/manual limits. No migration/seed/CSV/catalogue change; local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. Official totals/outputs/completeness/submission/export, programme inheritance/context integration and unresolved special-grade policies remain pending. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates. Consolidated spreadsheet UI refinement follows baseline OS editors, then shared proposals.

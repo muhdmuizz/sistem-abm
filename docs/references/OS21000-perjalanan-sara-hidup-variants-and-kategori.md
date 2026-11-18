@@ -47,7 +47,7 @@ The confirmed OS21000 variant labels are now represented in the master `anggaran
 - **Sukan:** the existing `Perjalanan Sara Hidup (Sukan)` entry and PPN Kod Aktiviti `010803` remain unchanged.
 - **Kokurikulum:** user explicitly confirmed Kod Aktiviti `010803`, the **same as Sukan**. The master catalogue labels it as an eligible reference, and `kod-aktiviti-anggaran-os-mapping.csv` adds a **user-confirmed** PPN mapping row. Its `Butiran Perbelanjaan (Original)` is deliberately blank, because this distinct Kokurikulum row was confirmed in conversation rather than present in the supplied 103-row legacy mapping.
 
-The catalogue contains **32 entries rather than 31**, reflecting the separately approved Kokurikulum label. The mapping CSV now contains **104 rows**: **103 consolidated legacy-source mappings plus one explicitly user-confirmed Kokurikulum mapping**. The two OS labels (Sukan and Kokurikulum) share Kod Aktiviti `010803`, but remain distinguishable OS labels, and both use the same revised 83-row reference. No additional activity code was invented. No rate calculations, application/database changes, or AD changes have been made.
+At the historical12November checkpoint, the catalogue contained **32 entries rather than31**, reflecting the separately approved Kokurikulum label. At that historical checkpoint, the mapping CSV contained **104 rows**: **103 consolidated legacy-source mappings plus one explicitly user-confirmed Kokurikulum mapping**. The two OS labels (Sukan and Kokurikulum) share Kod Aktiviti `010803`, but remain distinguishable OS labels, and both use the same revised 83-row reference. No additional activity code was invented. No rate calculations, application/database changes, or AD changes have been made.
 
 
 ## Owner-approved row structure and formulas — 18 November 2026
@@ -79,3 +79,10 @@ Owner explicitly approved both remaining proposals: Kategori2 is conditional, wi
 ## Batch048 source-editor implementation in progress
 
 Implement latest approved travel formulas and Kategori2/duration decisions across three existing variants; all83 source rows/mappings retained. No C mapping or absent grade/rate fabricated. Verification/merge/local acceptance pending. Official financial/programme inheritance integration remains deferred; AD008 stays Draft. See Batch048 development record. Historical unresolved statements above are superseded only by the explicit dated owner approvals.
+
+
+## Batch048 merged checkpoint —18November2026
+
+[PR107](https://github.com/muhdmuizz/sistem-abm/pull/107) merged at `77219f10ccedf872c13e3ec4b087469d0de498b0`. Separate Umum/Sukan/Kokurikulum source editors share83 unchanged rate rows and exact PPN010801/010803/010803 mappings. One named officer/component per source; approved monthly formulas, conditional vehicle/Bas-Teksi Kategori2, inactive Kategori3, manually entered day/night/distance/month factors and independent inclusive Kitaran-year duration. No special C or absent shared-grade mapping guessed. Exact manual fares retained; no new financial rounding policy. Pertukaran remains separate/unchanged.
+
+Verified `9eebfba5da255e5908fa3368221e91d74d62d0e7`, CI44338401373/job134921288935: **586 tests /7,484 assertions**, PHP8.4.27/PostgreSQL18.7 isolated testing DB, build/exact-money/full Chromium passed. Artifact14442019034:594 PNGs/22 travel;11 travel+one Pertukaran capture individually reviewed. Batch048 records failed/intermediate runs, hint correction and visual/manual limits. No migration/seed/CSV/catalogue change; local sync/financial/device acceptance and prior pending migration/import remain unconfirmed. Official totals/outputs/completeness/submission/export, programme inheritance/context integration and unresolved special-grade policies remain pending. AD008 stays Draft; Steps02/03 in progress. Keep Server running separately from Updates. Consolidated spreadsheet UI refinement follows baseline OS editors, then shared proposals.
