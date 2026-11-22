@@ -181,7 +181,11 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->assertDatabaseCount('butiran_anggaran', 1);
         $this->get($this->gridUrl($bid, $estimate))->assertOk()
             ->assertViewHas('completeness', fn ($summary) => $summary['status'] === 'Lengkap'
-                && $summary['total'] === '34.5' && $summary['incomplete'] === 0);
+                && $summary['total'] === '34.5' && $summary['incomplete'] === 0)
+            ->assertSee('RM 34.50');
+        $this->assertSame('RM 1,955.00', strip_tags(trim(\Illuminate\Support\Facades\Blade::render(
+            '<x-abm-money amount="1955" />'
+        ))));
         $this->assertDatabaseHas('rekod_audit', ['tindakan' => 'item.reviewed', 'pelaku_id' => $reviewer->id]);
         $this->assertDatabaseCount('hasil_pengiraan', 0);
         $this->assertSame(StatusBidaan::DalamPenyediaan, $bid->fresh()->status);
