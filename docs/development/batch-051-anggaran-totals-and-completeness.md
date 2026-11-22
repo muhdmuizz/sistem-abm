@@ -18,3 +18,7 @@ The editor summary is scoped to the user's permitted workplaces and evaluates al
 ## Batch 051 CI evidence
 
 Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 45011396691](https://github.com/muhdmuizz/sistem-abm/actions/runs/45011396691/job/137174293875): 587 tests / 7,520 assertions, PHP 8.4.28 / PostgreSQL 18.7 against isolated `sistem_abm_testing`, Vite build and Chromium layout/screenshot checks passed. The first run at `bea5402` failed because the installed Brick Math version lacked the decimal formatting method; final head uses the existing exact string formatting. Manual visual review and local acceptance remain pending. The retained-row summary is a read-time calculation scoped to permitted workplaces; it does not represent a whole-Bidaan readiness decision. [PR #115](https://github.com/muhdmuizz/sistem-abm/pull/115) is open; no migration.
+
+## Local editor check and presentation follow-ups
+
+The user confirmed OS27000 displayed Belum Lengkap with a missing quantity and RM 675 in complete rows, then Lengkap and RM 955 after filling the quantity. The screenshots preceded the money formatting follow-up. The shared money display now formats ringgit with comma grouping and two decimals. Editor display labels and paste guidance use the existing descriptive category names; bare Kategori1 displays as Kategori for OS23000 Perhubungan dan Utiliti and OS42000 Utiliti SBK. Source field keys and the export contract are unchanged. Local checks of the presentation follow-ups remain pending.
