@@ -41,7 +41,12 @@ class DefinisiAnggaran
         usort($columns, static fn (array $left, array $right): int =>
             ($rank[$left['key']] ?? $beforeAmount) <=> ($rank[$right['key']] ?? $beforeAmount));
 
-        return $columns;
+        return array_map(static function (array $column): array {
+            $label = preg_replace('/^Kategori\s*[123](?:\s+—\s+|$)/u', '', $column['label']);
+            $column['label'] = $label === '' ? 'Kategori' : $label;
+
+            return $column;
+        }, $columns);
     }
 
     public function supports(RujukanOs $os): bool

@@ -145,7 +145,9 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [$row,
             $this->row($place, ['kategori2' => $rejectedKey])]))->assertOk();
         $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
-            $rows->first()['preview'] === '30');
+            $rows->first()['preview'] === '30')
+            ->assertViewHas('completeness', fn ($summary) => $summary['status'] === 'Belum Lengkap'
+                && $summary['total'] === '0' && $summary['incomplete'] === 2);
 
         $decide = route('item-proposals.decide', $proposal->id);
         $decision = ['status' => 'diluluskan', 'kadar' => '17.25', 'catatan' => 'Kadar disahkan.'];
@@ -162,7 +164,9 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->post($decide, $decision)->assertRedirect(route('item-proposals.index'));
         $this->postJson($decide, $decision)->assertConflict();
         $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
-            $rows->first()['preview'] === '34.5');
+            $rows->first()['preview'] === '34.5')
+            ->assertViewHas('completeness', fn ($summary) => $summary['status'] === 'Belum Lengkap'
+                && $summary['total'] === '34.5' && $summary['incomplete'] === 1);
         $this->post(route('item-proposals.decide', $rejected->id), ['status' => 'ditolak',
             'catatan' => 'Gunakan item sedia ada.'])->assertRedirect(route('item-proposals.index'));
         $this->actingAs($this->operator)->withSession(['abm_access_revision' => $this->operator->fresh()->access_revision,
@@ -175,6 +179,18 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
             ['butiran_id' => $source->id, 'semakan_butiran' => $source->semakan],
         ]))->assertOk();
         $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->get($this->gridUrl($bid, $estimate))->assertOk()
+            ->assertViewHas('completeness', fn ($summary) => $summary['status'] === 'Lengkap'
+                && $summary['total'] === '34.5' && $summary['incomplete'] === 0)
+            ->assertSee('RM 34.50')
+            ->assertViewHas('columns', fn ($columns) => array_intersect_key(
+                array_column($columns, 'label', 'key'), array_flip(['kategori1', 'kategori2'])
+            ) === ['kategori1' => 'Kategori', 'kategori2' => 'Bekalan'])
+            ->assertDontSee('Kategori1')
+            ->assertDontSee('Kategori2');
+        $this->assertSame('RM 1,955.00', strip_tags(trim(\Illuminate\Support\Facades\Blade::render(
+            '<x-abm-money amount="1955" />'
+        ))));
         $this->assertDatabaseHas('rekod_audit', ['tindakan' => 'item.reviewed', 'pelaku_id' => $reviewer->id]);
         $this->assertDatabaseCount('hasil_pengiraan', 0);
         $this->assertSame(StatusBidaan::DalamPenyediaan, $bid->fresh()->status);

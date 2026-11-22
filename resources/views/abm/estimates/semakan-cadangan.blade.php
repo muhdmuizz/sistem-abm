@@ -12,7 +12,7 @@
         <p>{{ \App\Models\CadanganItemAnggaran::STATUS[$item->status] }} · OS{{ $item->kod_os }} · {{ $item->kategori }}</p>
         <dl>
             <dt>Pemohon</dt><dd>{{ $item->pemohon->name }} · {{ $item->ptj->nama }}</dd>
-            <dt>Kadar Cadangan</dt><dd>RM{{ $item->kadar_cadangan }} / {{ $item->unit }}</dd>
+            <dt>Kadar Cadangan</dt><dd><x-abm-money :amount="$item->kadar_cadangan" /> / {{ $item->unit }}</dd>
             <dt>Justifikasi</dt><dd>{{ $item->justifikasi }}</dd>
         </dl>
         @if($item->status === 'menunggu')
@@ -26,7 +26,7 @@
                 <button class="button danger" type="submit" name="status" value="ditolak">Tolak</button>
             </form>
         @else
-            @if($item->kadar_diluluskan !== null)<p>Kadar Diluluskan RM{{ $item->kadar_diluluskan }}</p>@endif
+            @if($item->kadar_diluluskan !== null)<p>Kadar Diluluskan <x-abm-money :amount="$item->kadar_diluluskan" /></p>@endif
             <p>{{ $item->catatan_keputusan }}</p>
         @endif
     </article>

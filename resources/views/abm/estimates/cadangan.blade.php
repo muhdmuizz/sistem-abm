@@ -36,7 +36,7 @@
             <article>
                 <h3>{{ $item->nama }}</h3>
                 <p>{{ \App\Models\CadanganItemAnggaran::STATUS[$item->status] }} · {{ $item->kategori }}</p>
-                @if($item->kadar_diluluskan !== null)<p>Kadar Diluluskan RM{{ $item->kadar_diluluskan }}</p>@endif
+                @if($item->kadar_diluluskan !== null)<p>Kadar Diluluskan <x-abm-money :amount="$item->kadar_diluluskan" /></p>@endif
                 @if($item->catatan_keputusan)<p>{{ $item->catatan_keputusan }}</p>@endif
             </article>
         @endforeach

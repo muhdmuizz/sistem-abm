@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Bidaan;
 use App\Services\KatalogDefinisiAnggaran;
 use App\Services\EditorAnggaran;
+use App\Services\DefinisiAlatPejabat;
+use App\Services\DefinisiBahanMentah;
+use App\Services\KelengkapanAnggaran;
 use App\Services\RuangAnggaran;
 use App\Services\RuangBidaPeruntukan;
 use Illuminate\Database\QueryException;
@@ -30,8 +33,18 @@ class EditorAnggaranController extends Controller
     {
         [$record,$entry,$os,$definition]=$this->context($request,$bid,$estimate);
         $request->validate(['page'=>'nullable|integer|min:1']);
-        $sources=$scope->sources($request->user(),$record,$entry)->addSelect(['semakan','data_sumber'])
-            ->orderBy('id')->paginate(25)->withQueryString();
+        $query = $scope->sources($request->user(), $record, $entry)->addSelect(['semakan', 'data_sumber'])->orderBy('id');
+        $sources = (clone $query)->paginate(25)->withQueryString();
+        $references = $definition->references();
+        $completeness = null;
+        if ($definition instanceof DefinisiAlatPejabat || ($definition instanceof DefinisiBahanMentah && isset($references['Bukan Pukal']))) {
+            $completeness = app(KelengkapanAnggaran::class)->ringkasan(
+                $definition,
+                $query->without('tempatBertugas')->cursor(),
+                $references,
+                $sources->pluck('id')->all(),
+            );
+        }
         $access=$editor->access($request->user(),$record,$entry);
         $links=app(\App\Services\PautanFotostat::class);
         $photocopier=$links->rental($os);$meter=$links->meter($os);$pairVisible=true;$pairActive=true;
@@ -63,7 +76,7 @@ class EditorAnggaranController extends Controller
                 'compatible'=>$valid,...$meta];
         })->values();
         return view(($definition instanceof \App\Services\DefinisiPakejBerkumpulan || $definition instanceof \App\Services\DefinisiUmumBerkumpulan) ? 'abm.estimates.pakej' : 'abm.estimates.editor',['photocopier'=>$photocopier,'dependentMeter'=>$meter,'pairActive'=>$pairActive,'pairVisible'=>$pairVisible,'groupLabel'=>$definition instanceof \App\Services\DefinisiUmumBerkumpulan ? 'Umum' : 'Pakej','bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'canPropose'=>$access['editable'] && app(\App\Services\UrusCadanganItem::class)->categories($definition) !== [], 'records'=>$visible,'references'=>$definition->references(),'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+            'canPropose'=>$access['editable'] && app(\App\Services\UrusCadanganItem::class)->categories($definition) !== [], 'records'=>$visible,'references'=>$references,'completeness'=>$completeness,'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function cadangan(Request $request, int $bid, int $estimate, EditorAnggaran $editor, \App\Services\UrusCadanganItem $items)

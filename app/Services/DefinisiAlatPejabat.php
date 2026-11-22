@@ -46,9 +46,9 @@ class DefinisiAlatPejabat extends DefinisiAnggaran
             return app(RujukanCadanganItem::class)->tambah($refs, '27000', $this->ptj);
         } finally {fclose($h);}
     }
-    public function validate(array $rows, bool $historical = false): array
+    public function validate(array $rows, bool $historical = false, ?array $references = null): array
     {
-        $refs=$this->references();
+        $refs=$references ?? $this->references();
         $v=Validator::make(['rekod'=>$rows],[
             'rekod'=>'present|array','rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,'.implode(',',self::FIELDS),
             'rekod.*.butiran_id'=>'sometimes|required|integer|min:1|distinct','rekod.*.semakan_butiran'=>'sometimes|required|integer|min:0','rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
@@ -63,14 +63,14 @@ class DefinisiAlatPejabat extends DefinisiAnggaran
         }});return $v->validate()['rekod'];
     }
     public function source(array $row): stdClass {$s=['definition'=>self::VERSION];foreach(self::FIELDS as $key)$s[$key]=$row[$key]??null;return (object)$s;}
-    public function readable(mixed $s): bool
+    public function readable(mixed $s, ?array $references = null): bool
     {
         $keys=['definition',...self::FIELDS];if(!$s instanceof stdClass||($s->definition??null)!==self::VERSION||array_diff($keys,array_keys(get_object_vars($s)))||array_diff(array_keys(get_object_vars($s)),$keys))return false;
-        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r], true);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
+        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r], true, $references);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
     }
-    public function preview(stdClass $s): ?string
+    public function preview(stdClass $s, ?array $references = null): ?string
     {
-        $ref=$this->references()[$s->kategori1??''][$s->kategori2??'']??null;
+        $ref=($references ?? $this->references())[$s->kategori1??''][$s->kategori2??'']??null;
         if(!$ref||$ref['kadar']===null||($s->bil_unit??null)===null||$s->bil_unit==='')return null;
         $value=(string)BigDecimal::of($s->bil_unit)->multipliedBy($ref['kadar']);return str_contains($value,'.')?rtrim(rtrim($value,'0'),'.'):$value;
     }

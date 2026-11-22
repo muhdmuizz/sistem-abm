@@ -712,3 +712,11 @@ Neither PR introduced a migration or seed. Local synchronisation and desktop/mob
 ## Batch 050 merge and verification
 
 [PR #111](https://github.com/muhdmuizz/sistem-abm/pull/111) merged into `dev` at `3ee2b3d628c0b91eef4ec7b9207c1625b9b1e94a`. Tested PR head `e3f1323e1beaad04c786c1bbcaa6964266bb1f38` passed **587 tests / 7,512 assertions** on PHP 8.4.28 / PostgreSQL 18.7 against isolated `sistem_abm_testing`, plus the build and Chromium layout/screenshot checks ([CI job](https://github.com/muhdmuizz/sistem-abm/actions/runs/44994826476/job/137160018564)). The local attempt stopped at PHP's memory limit. The user confirmed local sync and the additive migration on 22 November 2026. The user subsequently confirmed that the Cadangan Item Baharu form opened locally. Local submission, approval and rejection were not verified.
+
+## Batch 051 started — 22 November 2026
+
+Owner approved the first integration slice for OS26000 Bukan Pukal and OS27000 Bekalan Alat Pejabat. See [Batch 051](batch-051-anggaran-totals-and-completeness.md). Verification, merge and local acceptance pending.
+
+## Batch 051 CI evidence
+
+Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 45011396691](https://github.com/muhdmuizz/sistem-abm/actions/runs/45011396691/job/137174293875): 587 tests / 7,520 assertions, PHP 8.4.28 / PostgreSQL 18.7 against isolated `sistem_abm_testing`, Vite build and Chromium layout/screenshot checks passed. The first run at `bea5402` failed because the installed Brick Math version lacked the decimal formatting method; final head uses the existing exact string formatting. Manual visual review and local acceptance remain pending. The retained-row summary is a read-time calculation scoped to permitted workplaces; it does not represent a whole-Bidaan readiness decision. [PR #115](https://github.com/muhdmuizz/sistem-abm/pull/115) is open; no migration.
