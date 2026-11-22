@@ -32,13 +32,15 @@ class KelengkapanAnggaran
             $total = $total->plus($amount);
         }
 
+        $amount = (string) $total;
+
         return [
             'status' => match (true) {
                 $count === 0 => 'Belum Mula',
                 $incomplete > 0 => 'Belum Lengkap',
                 default => 'Lengkap',
             },
-            'total' => (string) $total->stripTrailingZeros(),
+            'total' => str_contains($amount, '.') ? rtrim(rtrim($amount, '0'), '.') : $amount,
             'incomplete' => $incomplete,
             'issues' => $issues,
         ];
