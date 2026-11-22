@@ -66,9 +66,9 @@ class DefinisiBahanMentah extends DefinisiAnggaran
             return $refs;
         } finally {fclose($h);}
     }
-    public function validate(array $rows, bool $historical = false): array
+    public function validate(array $rows, bool $historical = false, ?array $references = null): array
     {
-        $refs=$this->references();$decimal=['nullable','string','max:128','regex:/^-?\d+(?:\.\d+)?$/D'];
+        $refs=$references ?? $this->references();$decimal=['nullable','string','max:128','regex:/^-?\d+(?:\.\d+)?$/D'];
         $v=Validator::make(['rekod'=>$rows],[
             'rekod'=>'present|array','rekod.*'=>'required|array:butiran_id,semakan_butiran,tempat_bertugas_id,'.implode(',',self::FIELDS),
             'rekod.*.butiran_id'=>'sometimes|required|integer|min:1|distinct','rekod.*.semakan_butiran'=>'sometimes|required|integer|min:0','rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
@@ -81,14 +81,14 @@ class DefinisiBahanMentah extends DefinisiAnggaran
         }});return $v->validate()['rekod'];
     }
     public function source(array $row): stdClass {$s=['definition'=>self::VERSION];foreach(self::FIELDS as $key)$s[$key]=$row[$key]??null;return (object)$s;}
-    public function readable(mixed $s): bool
+    public function readable(mixed $s, ?array $references = null): bool
     {
         $keys=['definition',...self::FIELDS];if(!$s instanceof stdClass||($s->definition??null)!==self::VERSION||array_diff($keys,array_keys(get_object_vars($s)))||array_diff(array_keys(get_object_vars($s)),$keys))return false;
-        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r], true);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
+        $r=get_object_vars($s);unset($r['definition']);$r['tempat_bertugas_id']=1;try{$this->validate([$r], true, $references);}catch(\Illuminate\Validation\ValidationException){return false;}return true;
     }
-    public function preview(stdClass $s): ?string
+    public function preview(stdClass $s, ?array $references = null): ?string
     {
-        $ref=$this->references()[$s->kategori1??''][$s->kategori2??''][$s->kategori3??'']??null;if(!$ref||$ref['kadar']===null)return null;
+        $ref=($references ?? $this->references())[$s->kategori1??''][$s->kategori2??''][$s->kategori3??'']??null;if(!$ref||$ref['kadar']===null)return null;
         $values=['bil_unit'=>$s->bil_unit??null,'kadar'=>$ref['kadar'],'kekerapan'=>$s->kekerapan??null,'bil_bulan'=>$s->bil_bulan??null];$total=BigDecimal::of('1');
         foreach($ref['factors'] as $key){if($values[$key]===null||$values[$key]==='')return null;$total=$total->multipliedBy($values[$key]);}
         $value=(string)$total;return str_contains($value,'.')?rtrim(rtrim($value,'0'),'.'):$value;
