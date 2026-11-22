@@ -1,6 +1,6 @@
 # Batch 051 — Anggaran totals and completeness
 
-Status: owner-approved, implementation in progress. Baseline: `b332bf37579f795e06ee88d583156bbf8ff74d81`. Batch 050 application merge: `3ee2b3d628c0b91eef4ec7b9207c1625b9b1e94a`. Verification and merge pending.
+Status: owner-approved, implemented and CI-verified; merge pending. Baseline: `b332bf37579f795e06ee88d583156bbf8ff74d81`. Batch 050 application merge: `3ee2b3d628c0b91eef4ec7b9207c1625b9b1e94a`. Merge pending.
 
 ## Authority and proposed scope
 
@@ -14,3 +14,7 @@ Follow [AD-003](../architecture/AD-003-bidaan-activation-and-submission.md), [AD
 Formal Hantar Bidaan, immutable submission snapshots, Excel export, full programme inheritance and rollout to other OS remain separate implementation work. Open policy details remain governed by the approved references.
 
 The editor summary is scoped to the user's permitted workplaces and evaluates all saved rows in that scope before pagination. OS26000 Pukal does not contribute to this slice; retained Pukal rows prevent a complete status in a mixed Anggaran. No persisted official outputs, schema changes or submission changes.
+
+## Batch 051 CI evidence
+
+Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 45011396691](https://github.com/muhdmuizz/sistem-abm/actions/runs/45011396691/job/137174293875): 587 tests / 7,520 assertions, PHP 8.4.28 / PostgreSQL 18.7 against isolated `sistem_abm_testing`, Vite build and Chromium layout/screenshot checks passed. The first run at `bea5402` failed because the installed Brick Math version lacked the decimal formatting method; final head uses the existing exact string formatting. Manual visual review and local acceptance remain pending. The retained-row summary is a read-time calculation scoped to permitted workplaces; it does not represent a whole-Bidaan readiness decision. [PR #115](https://github.com/muhdmuizz/sistem-abm/pull/115) is open; no migration.
