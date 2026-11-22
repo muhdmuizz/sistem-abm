@@ -9,7 +9,7 @@
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
 @if($completeness ?? null)
 <section class="notice" aria-label="Ringkasan butiran tersimpan">
-    <p><strong>{{ $completeness['status'] }}</strong> · Jumlah butiran lengkap dalam skop anda RM {{ $completeness['total'] }}</p>
+    <p><strong>{{ $completeness['status'] }}</strong> · Jumlah butiran lengkap dalam skop anda <x-abm-money :amount="$completeness['total']" /></p>
     @if($completeness['incomplete'] > 0)
         <p>{{ $completeness['incomplete'] }} butiran dalam skop anda memerlukan semakan.</p>
         @if($completeness['issues'])
