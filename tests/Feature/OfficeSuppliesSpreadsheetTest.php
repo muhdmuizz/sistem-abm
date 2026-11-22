@@ -182,7 +182,12 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->get($this->gridUrl($bid, $estimate))->assertOk()
             ->assertViewHas('completeness', fn ($summary) => $summary['status'] === 'Lengkap'
                 && $summary['total'] === '34.5' && $summary['incomplete'] === 0)
-            ->assertSee('RM 34.50');
+            ->assertSee('RM 34.50')
+            ->assertViewHas('columns', fn ($columns) => array_intersect_key(
+                array_column($columns, 'label', 'key'), array_flip(['kategori1', 'kategori2'])
+            ) === ['kategori1' => 'Kategori', 'kategori2' => 'Bekalan'])
+            ->assertDontSee('Kategori1')
+            ->assertDontSee('Kategori2');
         $this->assertSame('RM 1,955.00', strip_tags(trim(\Illuminate\Support\Facades\Blade::render(
             '<x-abm-money amount="1955" />'
         ))));
