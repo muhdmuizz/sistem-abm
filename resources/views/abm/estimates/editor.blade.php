@@ -7,7 +7,23 @@
 <script src="{{ asset('anggaran-grid.js') }}" defer></script>
 <div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ route('estimates.show',[$bid->id,$estimate->id]) }}">Kembali ke Anggaran</a></div>
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
+@if($completeness ?? null)
+<section class="notice" aria-label="Ringkasan butiran tersimpan">
+    <p><strong>{{ $completeness['status'] }}</strong> · Jumlah butiran lengkap dalam skop anda RM {{ $completeness['total'] }}</p>
+    @if($completeness['incomplete'] > 0)
+        <p>{{ $completeness['incomplete'] }} butiran dalam skop anda memerlukan semakan.</p>
+        @if($completeness['issues'])
+            <ul>
+                @foreach($completeness['issues'] as $id => $issue)
+                    <li>Butiran #{{ $id }} · {{ $issue }}</li>
+                @endforeach
+            </ul>
+        @endif
+    @endif
+</section>
+@else
 <p class="notice">Simpan Draf untuk menyimpan butiran. Jumlah setiap baris ialah pratonton berdasarkan rujukan semasa; jumlah rasmi dan kelengkapan Anggaran belum diaktifkan.</p>
+@endif
 @if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tertakluk pada peranan, kebenaran OS, status Bidaan dan Fasa semasa.</p>@endif
 @if($photocopier ?? false)
 <p class="notice">Butiran sewaan ini dipautkan kepada Bacaan Meter. Butiran bersama dikemas kini melalui sewaan; nilai kewangan meter diisi berasingan.</p>
