@@ -1,6 +1,6 @@
 # Batch 051 — Anggaran totals and completeness
 
-Status: owner-approved, implemented and CI-verified; merge pending. Baseline: `b332bf37579f795e06ee88d583156bbf8ff74d81`. Batch 050 application merge: `3ee2b3d628c0b91eef4ec7b9207c1625b9b1e94a`. Merge pending.
+Status: owner-approved, implemented, CI-verified and merged. Baseline: `b332bf37579f795e06ee88d583156bbf8ff74d81`. Batch 050 application merge: `3ee2b3d628c0b91eef4ec7b9207c1625b9b1e94a`. Local dev sync pending.
 
 ## Authority and proposed scope
 
@@ -22,3 +22,7 @@ Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 4501
 ## Local editor check and presentation follow-ups
 
 The user confirmed OS27000 displayed Belum Lengkap with a missing quantity and RM 675 in complete rows, then Lengkap and RM 955 after filling the quantity. The screenshots preceded the money formatting follow-up. The shared money display now formats ringgit with comma grouping and two decimals. Editor display labels and paste guidance use the existing descriptive category names; bare Kategori1 displays as Kategori for OS23000 Perhubungan dan Utiliti and OS42000 Utiliti SBK. Source field keys and the export contract are unchanged. Local checks of the presentation follow-ups remain pending.
+
+## Batch 051 merged checkpoint
+
+[PR #115](https://github.com/muhdmuizz/sistem-abm/pull/115) merged into `dev` at `6ee13ec72c5e7c54c060466b4407c9c06a1b3d41`. Final PR head `3dc55fbd0d4926b4d389b1ac7ea955eef335f3ed` passed [CI 45014622764](https://github.com/muhdmuizz/sistem-abm/actions/runs/45014622764). The user confirmed the OS27000 saved summary and that the local presentation follow-up worked on the PR checkout. Local fast-forward of `dev` to the merge is pending. No migration is required. Whole-Bidaan readiness and broader OS coverage remain pending.
