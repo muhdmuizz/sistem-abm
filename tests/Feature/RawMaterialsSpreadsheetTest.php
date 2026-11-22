@@ -210,6 +210,11 @@ $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rek
         $this->assertCount(1,$response->viewData('cards')->filter(fn($card)=>$card['os']->kod_objek==='26000'));$this->workspaceCapture('raw-one-card',$response);
         $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->bulkRow($place)]))->assertOk();
         $response=$this->get($url)->assertOk();$this->assertSame(['30','4320'],$response->viewData('records')->pluck('preview')->all());$this->gridCapture('raw-mixed',$response);
+        $summary = $response->viewData('completeness');
+        $this->assertSame('Belum Lengkap', $summary['status']);
+        $this->assertSame('30', $summary['total']);
+        $this->assertSame(1, $summary['incomplete']);
+        $this->assertContains('Semakan ini belum meliputi butiran Pukal.', $summary['issues']);
         $source=$estimate->butiran()->orderBy('id')->get()->last();$row=$this->row($place,['butiran_id'=>$source->id,'semakan_butiran'=>$source->semakan]);
         $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertNull($source->fresh()->data_sumber->kekerapan);$this->assertNull($source->fresh()->data_sumber->bil_bulan);
         // Removing the Pukal code immediately rejects a forged Pukal row, including backend validation.
