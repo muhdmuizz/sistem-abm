@@ -125,6 +125,61 @@ class OfficeSuppliesSpreadsheetTest extends TestCase
         $this->workspaceCapture($name,$response);
         if(getenv('ABM_UI_CAPTURE')==='1')foreach(['abm-money.js','anggaran-grid.css','anggaran-grid.js'] as $asset)copy(public_path($asset),storage_path('app/ui-qa/'.$asset));
     }
+    public function test_proposal_is_private_until_superadmin_approval_and_reprices_the_saved_draft(): void
+    {
+        [$bid, $estimate, $place] = $this->gridContext();
+        $url = route('estimates.item-proposals.store', [$bid->id, $estimate->id]);
+        $input = ['kategori' => 'Dakwat/ Toner Mesin Pencetak', 'nama' => 'Toner Cadangan',
+            'kadar' => '15.00', 'justifikasi' => 'Bekalan tambahan diperlukan.'];
+        $this->get($url)->assertOk()->assertSee('Cadangan Item Baharu');
+        $this->postJson($url, array_replace($input, ['nama' => ' canon   (black) ']))->assertUnprocessable();
+        $this->post($url, $input)->assertRedirect($this->gridUrl($bid, $estimate));
+        $this->postJson($url, $input)->assertUnprocessable();
+
+        $proposal = \App\Models\CadanganItemAnggaran::sole();
+        $this->post($url, array_replace($input, ['nama' => 'Toner Ditolak']))->assertRedirect();
+        $rejected = \App\Models\CadanganItemAnggaran::where('nama', 'Toner Ditolak')->sole();
+        $rejectedKey = 'cadangan:'.$rejected->id;
+        $key = 'cadangan:'.$proposal->id;
+        $row = $this->row($place, ['kategori2' => $key]);
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [$row,
+            $this->row($place, ['kategori2' => $rejectedKey])]))->assertOk();
+        $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
+            $rows->first()['preview'] === '30');
+
+        $decide = route('item-proposals.decide', $proposal->id);
+        $decision = ['status' => 'diluluskan', 'kadar' => '17.25', 'catatan' => 'Kadar disahkan.'];
+        $this->postJson($decide, $decision)->assertForbidden();
+
+        $reviewer = User::factory()->create();
+        $reviewer->forceFill(['is_active' => true, 'ptj_id' => $this->owner->id,
+            'google_subject' => 'proposal-reviewer'])->save();
+        $reviewer->penugasanPeranan()->create(['peranan' => Peranan::Superadmin]);
+        $this->actingAs($reviewer)->withSession(['abm_access_revision' => $reviewer->fresh()->access_revision,
+            'abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
+        $this->get(route('item-proposals.index'))->assertOk()->assertSee('Toner Cadangan');
+        $this->assertArrayNotHasKey($key, (new \App\Services\DefinisiAlatPejabat)->references()[$input['kategori']]);
+        $this->post($decide, $decision)->assertRedirect(route('item-proposals.index'));
+        $this->postJson($decide, $decision)->assertConflict();
+        $this->get($this->gridUrl($bid, $estimate))->assertOk()->assertViewHas('records', fn ($rows) =>
+            $rows->first()['preview'] === '34.5');
+        $this->post(route('item-proposals.decide', $rejected->id), ['status' => 'ditolak',
+            'catatan' => 'Gunakan item sedia ada.'])->assertRedirect(route('item-proposals.index'));
+        $this->actingAs($this->operator)->withSession(['abm_access_revision' => $this->operator->fresh()->access_revision,
+            'abm_authenticated_at' => now()->timestamp, 'abm_last_activity' => now()->timestamp]);
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [
+            $this->row($place, ['kategori2' => $rejectedKey]),
+        ]))->assertUnprocessable();
+        $source = $estimate->butiran()->orderByDesc('id')->firstOrFail();
+        $this->postJson($this->gridUrl($bid, $estimate), $this->payload($bid, $estimate, [], [
+            ['butiran_id' => $source->id, 'semakan_butiran' => $source->semakan],
+        ]))->assertOk();
+        $this->assertDatabaseCount('butiran_anggaran', 1);
+        $this->assertDatabaseHas('rekod_audit', ['tindakan' => 'item.reviewed', 'pelaku_id' => $reviewer->id]);
+        $this->assertDatabaseCount('hasil_pengiraan', 0);
+        $this->assertSame(StatusBidaan::DalamPenyediaan, $bid->fresh()->status);
+    }
+
     public function test_all_194_items_match_original_normalised_names_and_only_the_two_approved_higher_rates(): void
     {
         $d=new \App\Services\DefinisiAlatPejabat;$refs=$d->references();$this->assertCount(4,$refs);

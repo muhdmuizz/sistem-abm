@@ -347,11 +347,13 @@ class CanonicalFinancialStorageTest extends TestCase
     {
         $g = $this->financialGraph();
         $this->financialOutputFixture($this->financialSourceFixture($g), '1');
+        $proposals = require database_path('migrations/2026_11_19_000001_create_cadangan_item_anggaran_table.php');
         $links = require database_path('migrations/2026_11_16_010000_create_pautan_fotostat.php');
         $programmes = require database_path('migrations/2026_11_14_050000_create_program_aktiviti_foundation.php');
         $workflow = require database_path('migrations/2026_11_14_030000_add_bidaan_workflow_state.php');
         $migration = require database_path('migrations/2026_11_14_020000_create_canonical_financial_storage.php');
         // Roll dependent modules back before the parent, preserving restrictive FKs.
+        $proposals->down();
         $links->down();
         $programmes->down();
         $workflow->down();
@@ -363,6 +365,8 @@ class CanonicalFinancialStorageTest extends TestCase
         $workflow->up();
         $programmes->up();
         $links->up();
+        $proposals->up();
+        $this->assertDatabaseCount('cadangan_item_anggaran', 0);
         $this->assertDatabaseCount('pautan_fotostat', 0);
         $this->assertDatabaseCount('program_aktiviti', 0);
         foreach (['bidaan', 'anggaran', 'butiran_anggaran', 'hasil_pengiraan'] as $table) {
