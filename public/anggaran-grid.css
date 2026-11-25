@@ -142,3 +142,10 @@
 .gaji-summary-grid tbody th { position: static; background: transparent; overflow-wrap: anywhere; }
 .gaji-summary-grid tbody td:first-child { text-align: center; }
 .gaji-summary-grid tbody td:last-child { font-weight: 700; background: #edf3f8; }
+
+.gaji-summary-grid tfoot :is(th, td) {
+    position: static;
+    background: #edf3f8;
+    border-block-start: 2px solid var(--line);
+    font-weight: 700;
+}
