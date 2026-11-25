@@ -240,6 +240,15 @@
         @endforeach
         @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
             <td class="gaji-group-start">
+                @if ($allowance === 'ITP @ BIPW')
+                    <select data-housing-allowance aria-label="Jenis dan kawasan imbuhan perumahan">
+                        <option value="">Pilih imbuhan</option>
+                        <option value="ITP">ITP</option>
+                        <option value="Kuala Terengganu">BIPW · Kuala Terengganu</option>
+                        <option value="Dungun">BIPW · Dungun</option>
+                        <option value="Kawasan lain">BIPW · Kawasan lain</option>
+                    </select>
+                @endif
                 <input data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
             </td>
             <td class="grid-numeric" data-annual>—</td>
