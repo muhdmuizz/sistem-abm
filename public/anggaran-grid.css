@@ -193,7 +193,7 @@
 }
 .gaji-housing output { text-align: end; font-variant-numeric: tabular-nums; }
 
-.jik-drag-handle {
+.gaji-drag-handle {
     display: grid;
     place-items: center;
     width: 2rem;
@@ -206,16 +206,16 @@
     touch-action: none;
     font-size: 1.15rem;
 }
-.jik-drag-handle:active { cursor: grabbing; }
-.jik-grid tr[data-jik-drop-target="after"] > td { box-shadow: inset 0 -2px #315e89; }
-.jik-grid tr[data-jik-drop-target="before"] > td { box-shadow: inset 0 2px #315e89; }
+.gaji-drag-handle:active { cursor: grabbing; }
+:is(.jik-grid, .gaji-summary-grid) tr[data-gaji-drop-target="after"] > :is(td, th) { box-shadow: inset 0 -2px #315e89; }
+:is(.jik-grid, .gaji-summary-grid) tr[data-gaji-drop-target="before"] > :is(td, th) { box-shadow: inset 0 2px #315e89; }
 
-.jik-grid tbody tr[data-jik-dragging] { opacity: .28; }
+:is(.jik-grid, .gaji-summary-grid) tbody tr[data-gaji-dragging] { opacity: .28; }
 @media (prefers-reduced-motion: no-preference) {
-    .jik-grid tbody tr { transition: opacity 100ms ease-out; }
+    :is(.jik-grid, .gaji-summary-grid) tbody tr { transition: opacity 100ms ease-out; }
 }
 
-.jik-drag-preview {
+.gaji-drag-preview {
     position: fixed;
     z-index: 100;
     pointer-events: none;
@@ -224,4 +224,6 @@
     box-shadow: 0 6px 18px rgb(0 0 0 / 16%);
     will-change: transform;
 }
-.jik-drag-preview input { width: 100%; }
+.gaji-drag-preview input { width: 100%; }
+
+.gaji-workplace-order { display: flex; align-items: center; gap: var(--space-2); }
