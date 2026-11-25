@@ -142,10 +142,13 @@
         row.querySelector('[data-position]').textContent = position;
         row.querySelector('[data-status]').textContent = vacant ? 'Kosong' : 'Isi';
         if (vacant) {
-            row.style.background = '#fff7df';
+            row.classList.add('gaji-vacant');
             officer.disabled = true;
+            officer.hidden = true;
             tpg.disabled = true;
+            tpg.hidden = true;
             salary.readOnly = true;
+            salary.placeholder = '—';
         }
 
         function recalculate() {
