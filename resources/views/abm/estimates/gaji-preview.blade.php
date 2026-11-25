@@ -70,13 +70,13 @@
                     @endforeach
                     <col style="width: 105px">
                 </colgroup>
-                <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
-                <colgroup><col style="width: 105px"></colgroup>
-                <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
-                <colgroup><col style="width: 130px"></colgroup>
-                <colgroup><col span="8" style="width: 130px"><col style="width: 300px"><col style="width: 155px"></colgroup>
-                <colgroup><col style="width: 130px"></colgroup>
-                <colgroup><col style="width: 130px"><col></colgroup>
+                <colgroup><col class="gaji-amount-column"><col style="width: 85px"><col class="gaji-amount-column"></colgroup>
+                <colgroup><col class="gaji-amount-column"></colgroup>
+                <colgroup><col class="gaji-amount-column"><col style="width: 85px"><col class="gaji-amount-column"></colgroup>
+                <colgroup><col class="gaji-amount-column"></colgroup>
+                <colgroup><col span="8" class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
+                <colgroup><col class="gaji-amount-column"></colgroup>
+                <colgroup><col span="2" class="gaji-amount-column"></colgroup>
                 <thead>
                     <tr>
                         @foreach (['number' => '#', 'position' => 'Jawatan', 'officer' => 'Nama Pegawai', 'grade' => 'Gred'] as $column => $label)
@@ -89,7 +89,7 @@
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS11000 (RM)</th>
                         <th scope="colgroup" colspan="10" class="gaji-group-start">OS12000 — Elaun/ Imbuhan Tetap</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
-                        <th scope="colgroup" colspan="2" class="gaji-group-start">OS13000</th>
+                        <th scope="colgroup" colspan="2" class="gaji-group-start">OS13000 — Sumbangan Berkanun</th>
                     </tr>
                     <tr>
                         @foreach (['Gaji Asal', 'Gaji Baharu'] as $salaryGroup)
