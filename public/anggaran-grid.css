@@ -167,6 +167,14 @@
     background: #fff;
 }
 .gaji-workplace-picker summary { cursor: pointer; font-weight: 600; }
+.gaji-workplace-search {
+    display: block;
+    margin-block-start: var(--space-3);
+}
+.gaji-workplace-search input { display: block; width: min(100%, 24rem); }
+.gaji-workplace-options[hidden],
+.gaji-workplace-options label[hidden] { display: none; }
+
 .gaji-workplace-options {
     max-height: 16rem;
     overflow-y: auto;
