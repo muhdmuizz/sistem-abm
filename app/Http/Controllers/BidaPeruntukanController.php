@@ -108,7 +108,10 @@ class BidaPeruntukanController extends Controller
             $costCentres = TempatBertugas::where('ptj_id', $record->ptj_id)->where('jenis', '!=', 'sektor');
 
             if ($hasPpdScope) {
-                $workplaces['office'] = 'Pejabat PPD';
+                if ($record->aktivitiKewangan->singkatan === 'PPN'
+                    || $record->aktivitiKewangan->nama === 'Pengurusan Pentadbiran Negeri') {
+                    $workplaces['office'] = 'Pejabat PPD';
+                }
             } else {
                 abort_unless($actor->tempat_bertugas_id && $roles->meliputi(
                     $actor->id, $role, $record->ptj_id, $record->aktiviti_kewangan_id, $actor->tempat_bertugas_id,
