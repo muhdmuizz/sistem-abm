@@ -49,10 +49,14 @@
         return AbmMoney.format(digits.slice(0, -2) + '.' + digits.slice(-2));
     }
 
+    const workplace = preview.querySelector('[data-gaji-workplace]');
+    const jikEmpty = preview.querySelector('[data-jik-empty]');
+    const wizardEmpty = preview.querySelector('[data-wizard-empty]');
     const totalCells = [...preview.querySelectorAll('[data-jik-total]')];
     const countFormat = new Intl.NumberFormat('en-MY');
 
     function updateJikTotals() {
+        jikEmpty.hidden = jikRows.rows.length > 0;
         const totals = { establishment: 0, filled: 0, vacant: 0 };
         for (const row of jikRows.rows) {
             const [, establishment, occupancy] = row.querySelectorAll('input');
@@ -139,11 +143,15 @@
             const option = event.target.closest('[role="option"]');
             if (option) choose(option);
         });
+        if (workplace) {
+            for (const count of row.querySelectorAll('input[type="number"]')) count.value = '';
+        }
         jikRows.append(row);
         updateJikTotals();
     }
 
     function updateKetua() {
+        wizardEmpty.hidden = wizardRows.rows.length > 0;
         const selection = ketua.value;
         ketua.replaceChildren(new Option('Pilih pegawai', ''));
         for (const row of wizardRows.rows) {
@@ -340,7 +348,6 @@
         }
     }
 
-    const workplace = preview.querySelector('[data-gaji-workplace]');
     if (workplace) {
         const drafts = new Map();
         let current = workplace.value;
@@ -361,14 +368,14 @@
             ketua.value = '';
             error.hidden = true;
 
-            if (draft) {
-                updateJikTotals();
-                updateKetua();
-                ketua.value = draft.ketua;
-            } else {
-                initialiseWorkplace();
-            }
+            updateJikTotals();
+            updateKetua();
+            if (draft) ketua.value = draft.ketua;
+            wizardRows.closest('.anggaran-grid-scroll').scrollLeft = 0;
         });
+        updateJikTotals();
+        updateKetua();
+    } else {
+        initialiseWorkplace();
     }
-    initialiseWorkplace();
 })();
