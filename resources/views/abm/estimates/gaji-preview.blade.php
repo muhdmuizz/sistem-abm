@@ -96,7 +96,38 @@
                 <tbody data-wizard-rows></tbody>
             </table>
         </div>
-        <p class="notice">Baris Kosong menggunakan Gaji Median × 3 bulan. OS12000 dan OS13000 menunggu penetapan butiran.</p>
+        <p class="small">Baris Kosong menggunakan Gaji Median × 3 bulan.</p>
+
+        <div class="section">
+            <h2>OS12000 — Elaun/ Imbuhan Tetap</h2>
+            <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS12000">
+                <table class="anggaran-grid gaji-wizard-grid gaji-allowance-grid">
+                    <colgroup>
+                        @foreach (['number', 'position', 'officer', 'grade'] as $column)
+                            <col style="width: var(--gaji-{{ $column }}-width)">
+                        @endforeach
+                        @foreach (range(1, 8) as $column)
+                            <col style="width: 130px">
+                        @endforeach
+                        <col>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            @foreach (['number' => '#', 'position' => 'Jawatan', 'officer' => 'Nama Pegawai', 'grade' => 'Gred'] as $column => $label)
+                                <th scope="col" class="gaji-frozen gaji-frozen-{{ $column }}">{{ $label }}</th>
+                            @endforeach
+                            @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
+                                <th scope="col" class="grid-numeric gaji-group-start">{{ $allowance }}/ Bulan</th>
+                                <th scope="col" class="grid-numeric">{{ $allowance }}/ Tahun</th>
+                            @endforeach
+                            <th scope="col" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody data-allowance-rows></tbody>
+                </table>
+            </div>
+            <p class="small">Kadar bulanan dalam RM. Amaun tahunan dikira × 12. Kelayakan bagi jawatan Kosong belum ditetapkan.</p>
+        </div>
     </section>
 
     <datalist id="jik-jawatan-options">
@@ -114,6 +145,19 @@
         <td><input aria-label="Bil. Pengisian" type="number" min="0" value="2" required></td>
         <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
         <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
+    </tr></template>
+    <template data-allowance-template><tr>
+        <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
+        <td class="gaji-frozen gaji-frozen-position" data-position></td>
+        <td class="gaji-frozen gaji-frozen-officer" data-officer></td>
+        <td class="gaji-frozen gaji-frozen-grade" data-grade></td>
+        @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
+            <td class="gaji-group-start">
+                <input aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
+            </td>
+            <td class="grid-numeric" data-annual>—</td>
+        @endforeach
+        <td class="grid-numeric gaji-group-start gaji-total" data-allowance-total>—</td>
     </tr></template>
     <template data-wizard-template><tr>
         <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
