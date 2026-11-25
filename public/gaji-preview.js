@@ -179,6 +179,14 @@
         const annualMultiplier = BigInt(monthsInYear);
         const os13000Monthly = row.querySelector('[data-os13000-monthly]');
         const os13000Annual = row.querySelector('[data-os13000-annual]');
+        const payrollTotal = row.querySelector('[data-payroll-total]');
+        const totals = { salary: null, allowances: null, contributions: null };
+
+        function setTotal(key, amount) {
+            totals[key] = amount;
+            const available = Object.values(totals).filter(value => value !== null);
+            payrollTotal.textContent = available.length ? money(available.reduce((sum, value) => sum + value, 0n)) : '—';
+        }
         const otherItems = row.querySelector('[data-other-items]');
         const otherAdd = row.querySelector('[data-other-add]');
         const otherMonthTotal = row.querySelector('[data-other-month-total]');
@@ -208,6 +216,8 @@
             const first = asal === null ? null : asal * BigInt(originalMonths);
             const second = baharu === null ? null : baharu * BigInt(newMonths);
             if (vacant) salary.value = asal === null ? '' : money(asal);
+            const salaryTotal = first !== null && (vacant || second !== null) ? first + (second ?? 0n) : null;
+            setTotal('salary', salaryTotal);
             const values = {
                 'asal-months': originalMonths,
                 'asal-subtotal': first === null ? null : money(first),
@@ -215,7 +225,7 @@
                 baharu: baharu === null ? null : money(baharu),
                 'baharu-months': vacant ? null : newMonths,
                 'baharu-subtotal': second === null ? null : money(second),
-                total: first !== null && (vacant || second !== null) ? money(first + (second ?? 0n)) : null,
+                total: salaryTotal === null ? null : money(salaryTotal),
             };
             for (const [key, value] of Object.entries(values)) cells[key].textContent = value ?? '—';
         }
@@ -246,9 +256,11 @@
             otherMonthTotal.textContent = otherInvalid || otherMonthly === null ? '—' : money(otherMonthly);
             otherYearTotal.textContent = otherInvalid || otherYearly === null ? '—' : money(otherYearly);
             const fixedInvalid = values.some((value, index) => value.trim() && fixed.annual[index] === null);
-            allowanceTotal.textContent = fixedInvalid || otherInvalid || (fixed.total === null && otherYearly === null)
-                ? '—'
-                : money((fixed.total ?? 0n) + (otherYearly ?? 0n));
+            const annualTotal = fixedInvalid || otherInvalid || (fixed.total === null && otherYearly === null)
+                ? null
+                : (fixed.total ?? 0n) + (otherYearly ?? 0n);
+            allowanceTotal.textContent = annualTotal === null ? '—' : money(annualTotal);
+            setTotal('allowances', annualTotal);
         }
 
         row.addEventListener('input', event => {
@@ -258,7 +270,9 @@
                 const value = os13000Monthly.value.trim();
                 const monthly = parseMoney(value);
                 os13000Monthly.setAttribute('aria-invalid', String(Boolean(value) && monthly === null));
-                os13000Annual.textContent = monthly === null ? '—' : money(monthly * annualMultiplier);
+                const annual = monthly === null ? null : monthly * annualMultiplier;
+                os13000Annual.textContent = annual === null ? '—' : money(annual);
+                setTotal('contributions', annual);
             } else {
                 recalculate();
             }
