@@ -617,12 +617,12 @@
         return true;
     }
 
-    function moveJikRow(row, target) {
-        if (!row || !target || row === target || row.parentNode !== jikRows || target.parentNode !== jikRows) return;
+    function moveTableRow(rows, row, target) {
+        if (!target || row === target || row.parentNode !== rows || target.parentNode !== rows) return false;
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const firstIndex = Math.min(row.sectionRowIndex, target.sectionRowIndex);
         const lastIndex = Math.max(row.sectionRowIndex, target.sectionRowIndex);
-        const movedRows = reduceMotion ? [] : [...jikRows.rows].slice(firstIndex, lastIndex + 1);
+        const movedRows = reduceMotion ? [] : [...rows.rows].slice(firstIndex, lastIndex + 1);
         const before = movedRows.map(item => item.getBoundingClientRect().top);
         for (const item of movedRows) {
             item.getAnimations().forEach(animation => animation.cancel());
@@ -639,6 +639,11 @@
             ], { duration: 150, easing: 'ease-out' });
         });
 
+        return true;
+    }
+
+    function moveJikRow(row, target) {
+        if (!moveTableRow(jikRows, row, target)) return;
         const order = new Map([...jikRows.rows].map((jikRow, index) => [jikRow.dataset.jikId, index]));
         const details = [...wizardRows.rows];
         const selectedOfficer = details.find(detail => detail.dataset.positionId === ketua.value);
@@ -654,93 +659,98 @@
         checkForEdits();
     }
 
-    let drag = null;
-    let dropTarget = null;
+    function enableRowDragging(rows, moveRow) {
+        let drag = null;
+        let dropTarget = null;
 
-    function updateDropTarget(x, y) {
-        const target = document.elementFromPoint(x, y)?.closest('tr');
-        const next = target?.parentNode === jikRows && target !== drag.row ? target : null;
-        if (next === dropTarget) return;
-        dropTarget?.removeAttribute('data-jik-drop-target');
-        dropTarget = next;
-        if (dropTarget) {
-            dropTarget.setAttribute('data-jik-drop-target', drag.row.sectionRowIndex < dropTarget.sectionRowIndex ? 'after' : 'before');
-        }
-    }
-
-    jikRows.addEventListener('pointerdown', event => {
-        const handle = event.target.closest('[data-jik-drag]');
-        if (!handle || !event.isPrimary || event.button !== 0 || drag) return;
-        handle.setPointerCapture(event.pointerId);
-        drag = { row: handle.closest('tr'), pointerId: event.pointerId, x: event.clientX, y: event.clientY, frame: 0 };
-    });
-
-    jikRows.addEventListener('pointermove', event => {
-        if (!drag || event.pointerId !== drag.pointerId) return;
-        const dx = event.clientX - drag.x;
-        const dy = event.clientY - drag.y;
-        if (!drag.preview) {
-            if (Math.hypot(dx, dy) < 4) return;
-            const bounds = drag.row.getBoundingClientRect();
-            const widths = [...drag.row.cells].map(cell => cell.getBoundingClientRect().width);
-            const copy = drag.row.cloneNode(true);
-            copy.querySelector('[role="listbox"]')?.remove();
-            const sourceInputs = drag.row.querySelectorAll('input');
-            copy.querySelectorAll('input').forEach((input, index) => {
-                input.value = sourceInputs[index].value;
-            });
-            const table = document.createElement('table');
-            table.className = 'anggaran-grid jik-drag-preview';
-            table.inert = true;
-            table.setAttribute('aria-hidden', 'true');
-            Object.assign(table.style, { left: bounds.left + 'px', top: bounds.top + 'px', width: bounds.width + 'px' });
-            const columns = document.createElement('colgroup');
-            for (const width of widths) {
-                const column = document.createElement('col');
-                column.style.width = width + 'px';
-                columns.append(column);
+        function updateDropTarget(x, y) {
+            const target = document.elementFromPoint(x, y)?.closest('tr');
+            const next = target?.parentNode === rows && target !== drag.row && target.querySelector('[data-gaji-drag]') ? target : null;
+            if (next === dropTarget) return;
+            dropTarget?.removeAttribute('data-gaji-drop-target');
+            dropTarget = next;
+            if (dropTarget) {
+                dropTarget.setAttribute('data-gaji-drop-target', drag.row.sectionRowIndex < dropTarget.sectionRowIndex ? 'after' : 'before');
             }
-            table.append(columns);
-            table.createTBody().append(copy);
-            document.body.append(table);
-            drag.preview = table;
-            drag.row.setAttribute('data-jik-dragging', '');
         }
-        drag.dx = dx;
-        drag.dy = dy;
-        if (!drag.frame) {
-            drag.frame = requestAnimationFrame(() => {
-                drag.frame = 0;
-                drag.preview.style.transform = 'translate3d(' + drag.dx + 'px, ' + drag.dy + 'px, 0)';
-                updateDropTarget(drag.x + drag.dx, drag.y + drag.dy);
-            });
-        }
-    });
 
-    function finishJikDrag(event) {
-        if (!drag || event.pointerId !== drag.pointerId) return;
-        if (event.type === 'pointerup' && drag.preview) updateDropTarget(event.clientX, event.clientY);
-        const { row, preview: floatingRow, frame } = drag;
-        const target = dropTarget;
-        drag = null;
-        dropTarget = null;
-        cancelAnimationFrame(frame);
-        floatingRow?.remove();
-        row.removeAttribute('data-jik-dragging');
-        target?.removeAttribute('data-jik-drop-target');
-        if (event.type === 'pointerup' && floatingRow) moveJikRow(row, target);
+        rows.addEventListener('pointerdown', event => {
+            const handle = event.target.closest('[data-gaji-drag]');
+            if (!handle || !event.isPrimary || event.button !== 0 || drag) return;
+            handle.setPointerCapture(event.pointerId);
+            drag = { row: handle.closest('tr'), pointerId: event.pointerId, x: event.clientX, y: event.clientY, frame: 0 };
+        });
+
+        rows.addEventListener('pointermove', event => {
+            if (!drag || event.pointerId !== drag.pointerId) return;
+            const dx = event.clientX - drag.x;
+            const dy = event.clientY - drag.y;
+            if (!drag.preview) {
+                if (Math.hypot(dx, dy) < 4) return;
+                const bounds = drag.row.getBoundingClientRect();
+                const widths = [...drag.row.cells].map(cell => cell.getBoundingClientRect().width);
+                const copy = drag.row.cloneNode(true);
+                copy.querySelector('[role="listbox"]')?.remove();
+                const sourceInputs = drag.row.querySelectorAll('input');
+                copy.querySelectorAll('input').forEach((input, index) => {
+                    input.value = sourceInputs[index].value;
+                });
+                const table = document.createElement('table');
+                table.className = 'anggaran-grid gaji-drag-preview';
+                table.inert = true;
+                table.setAttribute('aria-hidden', 'true');
+                Object.assign(table.style, { left: bounds.left + 'px', top: bounds.top + 'px', width: bounds.width + 'px' });
+                const columns = document.createElement('colgroup');
+                for (const width of widths) {
+                    const column = document.createElement('col');
+                    column.style.width = width + 'px';
+                    columns.append(column);
+                }
+                table.append(columns);
+                table.createTBody().append(copy);
+                document.body.append(table);
+                drag.preview = table;
+                drag.row.setAttribute('data-gaji-dragging', '');
+            }
+            drag.dx = dx;
+            drag.dy = dy;
+            if (!drag.frame) {
+                drag.frame = requestAnimationFrame(() => {
+                    drag.frame = 0;
+                    drag.preview.style.transform = 'translate3d(' + drag.dx + 'px, ' + drag.dy + 'px, 0)';
+                    updateDropTarget(drag.x + drag.dx, drag.y + drag.dy);
+                });
+            }
+        });
+
+        function finishJikDrag(event) {
+            if (!drag || event.pointerId !== drag.pointerId) return;
+            if (event.type === 'pointerup' && drag.preview) updateDropTarget(event.clientX, event.clientY);
+            const { row, preview: floatingRow, frame } = drag;
+            const target = dropTarget;
+            drag = null;
+            dropTarget = null;
+            cancelAnimationFrame(frame);
+            floatingRow?.remove();
+            row.removeAttribute('data-gaji-dragging');
+            target?.removeAttribute('data-gaji-drop-target');
+            if (event.type === 'pointerup' && floatingRow) moveRow(row, target);
+        }
+        for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+            rows.addEventListener(type, finishJikDrag);
+        }
+        rows.addEventListener('keydown', event => {
+            const handle = event.target.closest('[data-gaji-drag]');
+            if (!handle || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+            event.preventDefault();
+            const row = handle.closest('tr');
+            const target = event.key === 'ArrowUp' ? row.previousElementSibling : row.nextElementSibling;
+            if (target?.querySelector('[data-gaji-drag]')) moveRow(row, target);
+            handle.focus();
+        });
     }
-    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-        jikRows.addEventListener(type, finishJikDrag);
-    }
-    jikRows.addEventListener('keydown', event => {
-        const handle = event.target.closest('[data-jik-drag]');
-        if (!handle || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
-        event.preventDefault();
-        const row = handle.closest('tr');
-        moveJikRow(row, event.key === 'ArrowUp' ? row.previousElementSibling : row.nextElementSibling);
-        handle.focus();
-    });
+
+    enableRowDragging(jikRows, moveJikRow);
 
     jik.addEventListener('input', updateJikTotals);
     jik.addEventListener('submit', event => {
@@ -766,6 +776,7 @@
         const picker = preview.querySelector('[data-workplace-picker]');
         const pickerToggle = picker.querySelector('summary');
         const candidates = [...available.querySelectorAll('input[type="checkbox"]')];
+        const candidateById = new Map(candidates.map(option => [option.value, option]));
         const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !choice.disabled);
         const generateButton = jik.querySelector('button[type="submit"]');
 
@@ -797,12 +808,17 @@
         }
 
         function renderWorkplaces() {
-            const selected = candidates.filter(option => included.has(option.value));
+            const ids = [...included].filter(id => id !== 'office');
+            if (included.has('office')) ids.unshift('office');
+            const selected = ids.map(id => candidateById.get(id)).filter(Boolean);
             const rows = selected.map((option, index) => {
                 const row = preview.querySelector('[data-summary-workplace-template]').content.firstElementChild.cloneNode(true);
                 row.dataset.payrollSummary = option.value;
                 row.querySelector('[data-summary-number]').textContent = String(index + 1);
                 row.querySelector('[data-summary-name]').textContent = option.dataset.workplaceName;
+                const handle = row.querySelector('[data-gaji-drag]');
+                if (option.value === 'office') handle.remove();
+                else handle.setAttribute('aria-label', 'Susun ' + option.dataset.workplaceName);
                 row.querySelector('[data-exclude-workplace]').setAttribute('aria-label', 'Keluarkan ' + option.dataset.workplaceName);
                 return row;
             });
@@ -820,6 +836,19 @@
             switchWorkplace(workplace.value);
             updateSummary();
         }
+
+        enableRowDragging(summaryRows, (row, target) => {
+            if (!moveTableRow(summaryRows, row, target)) return;
+            included.clear();
+            [...summaryRows.rows].forEach((item, index) => {
+                included.add(item.dataset.payrollSummary);
+                item.querySelector('[data-summary-number]').textContent = String(index + 1);
+            });
+            const options = new Map([...workplace.options].map(option => [option.value, option]));
+            workplace.replaceChildren(...[...included].map(id => options.get(id)));
+            workplace.value = current;
+            checkForEdits();
+        });
 
         available.addEventListener('change', () => { include.disabled = checkedWorkplaces().length === 0; });
         include.addEventListener('click', () => {
