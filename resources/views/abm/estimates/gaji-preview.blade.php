@@ -210,9 +210,9 @@
                 placeholder="Taip nama Jawatan" autocomplete="off" required>
             <ul class="jik-jawatan-suggestions" role="listbox" aria-label="Cadangan Jawatan" hidden></ul>
         </td>
-        <td><input aria-label="Bil. Perjawatan" type="number" min="1" max="100" value="3" required></td>
-        <td><input aria-label="Bil. Pengisian" type="number" min="0" value="2" required></td>
-        <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
+        <td><input aria-label="Bil. Perjawatan" type="number" min="0" max="100" value="0" required></td>
+        <td><input aria-label="Bil. Pengisian" type="number" min="0" value="0" required></td>
+        <td class="grid-numeric"><output aria-label="Bil. Kekosongan">0</output></td>
         <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
     </tr></template>
     <template data-other-allowance-template>
