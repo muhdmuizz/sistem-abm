@@ -50,3 +50,27 @@
 }
 .jik-jawatan-suggestions li:hover,
 .jik-jawatan-suggestions [aria-selected="true"] { background: #e8f0f8; }
+
+.gaji-wizard-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--space-4);
+}
+.gaji-wizard-heading h2 { margin: 0; }
+.gaji-wizard-heading label { width: min(100%, 24rem); margin: 0; }
+.gaji-wizard-heading select { display: block; width: 100%; margin-top: var(--space-2); }
+.gaji-wizard-grid { min-width: 1755px; }
+.gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
+.gaji-wizard-grid :is(th, td) { vertical-align: middle; }
+.gaji-wizard-grid th:nth-child(n) { position: static; width: auto; }
+.gaji-wizard-grid thead th { font-weight: 600; }
+.gaji-wizard-grid tbody th { background: transparent; font-size: inherit; overflow-wrap: anywhere; }
+.gaji-wizard-grid :is(input, select) { width: 100%; }
+.gaji-wizard-grid [hidden] { display: none; }
+.gaji-wizard-grid .gaji-group-start { border-inline-start: 1px solid var(--line); }
+.gaji-wizard-grid .gaji-total { background: #edf3f8; font-weight: 700; }
+.gaji-wizard-grid .gaji-vacant > * { background: #fff7e3; }
+.gaji-position-status { font-weight: 600; }
+.gaji-vacant .gaji-position-status { color: #684d18; }
