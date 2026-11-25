@@ -138,13 +138,14 @@
         const [officer, salary] = row.querySelectorAll('input');
         const [grade, tpg] = row.querySelectorAll('select');
         const cells = Object.fromEntries([...row.querySelectorAll('[data-value]')].map(cell => [cell.dataset.value, cell]));
-        row.dataset.positionId = String(wizardRows.rows.length);
+        row.dataset.positionId = String(wizardRows.rows.length + 1);
+        row.querySelector('[data-row-number]').textContent = row.dataset.positionId;
         row.querySelector('[data-position]').textContent = position;
-        row.querySelector('[data-status]').textContent = vacant ? 'Kosong' : 'Isi';
         if (vacant) {
             row.classList.add('gaji-vacant');
             officer.disabled = true;
             officer.hidden = true;
+            row.querySelector('[data-vacancy]').hidden = false;
             tpg.disabled = true;
             tpg.hidden = true;
             salary.readOnly = true;
@@ -192,7 +193,7 @@
         wizardRows.replaceChildren();
         for (const entry of entries) {
             for (let index = 0; index < entry.total; index++) {
-                addPosition(entry.name + ' ' + (index + 1), index >= entry.filled);
+                addPosition(entry.name, index >= entry.filled);
             }
         }
         updateKetua();
