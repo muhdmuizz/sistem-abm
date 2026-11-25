@@ -35,10 +35,7 @@
     const error = preview.querySelector('[data-jik-error]');
     const addButton = preview.querySelector('[data-jik-add]');
     const positions = new Set([...preview.querySelectorAll('#jik-jawatan-options option')].map(option => option.value));
-    const rates = {
-        A: { median: 320000n, kgt: 15000n },
-        B: { median: 480000n, kgt: 20000n },
-    };
+    const rates = JSON.parse(preview.dataset.salaryRates);
 
     function parseMoney(value) {
         if (!/^\d+(?:\.\d{1,2})?$/.test(value)) return null;
@@ -225,6 +222,10 @@
         const row = preview.querySelector('[data-wizard-template]').content.firstElementChild.cloneNode(true);
         const [officer, salary] = row.querySelectorAll('input');
         const [grade, tpg] = row.querySelectorAll('select');
+        const jobRates = rates[position] ?? {};
+        for (const code of Object.keys(jobRates)) {
+            grade.add(new Option(code, code));
+        }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
@@ -261,12 +262,13 @@
         }
 
         function recalculate() {
-            const rate = rates[grade.value];
+            const rate = jobRates[grade.value];
+            const kgt = parseMoney(rate?.kgt ?? '');
             const months = Number(tpg.value) - 1;
-            const asal = vacant ? rate?.median ?? null : parseMoney(salary.value);
+            const asal = vacant ? parseMoney(rate?.median ?? '') : parseMoney(salary.value);
             const originalMonths = vacant ? monthsInYear : months;
             const newMonths = vacant ? 0 : monthsInYear - months;
-            const baharu = !vacant && asal !== null && rate ? asal + rate.kgt : null;
+            const baharu = !vacant && asal !== null && kgt !== null ? asal + kgt : null;
             const first = asal === null ? null : asal * BigInt(originalMonths);
             const second = baharu === null ? null : baharu * BigInt(newMonths);
             if (vacant) salary.value = asal === null ? '' : money(asal);
@@ -275,7 +277,7 @@
             const values = {
                 'asal-months': originalMonths,
                 'asal-subtotal': first === null ? null : money(first),
-                kgt: !vacant && rate ? money(rate.kgt) : null,
+                kgt: !vacant && kgt !== null ? money(kgt) : null,
                 baharu: baharu === null ? null : money(baharu),
                 'baharu-months': vacant ? null : newMonths,
                 'baharu-subtotal': second === null ? null : money(second),
