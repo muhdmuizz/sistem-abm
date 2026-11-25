@@ -66,7 +66,7 @@
     --gaji-position-width: 280px;
     --gaji-officer-width: 230px;
     --gaji-grade-width: 145px;
-    min-width: 2753px;
+    min-width: 3208px;
 }
 .gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
 .gaji-wizard-grid :is(th, td) { vertical-align: middle; }
@@ -120,3 +120,15 @@
     .jik-totals > div { padding: var(--space-2); }
 }
 
+.gaji-other-cell details { margin-top: var(--space-2); }
+.gaji-other-cell summary { cursor: pointer; }
+.gaji-other-cell [data-other-add] { margin-top: var(--space-2); }
+.gaji-other-item {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+.gaji-other-item label { display: block; margin-bottom: var(--space-2); }
+.gaji-other-item-footer { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.gaji-other-item-footer output { display: inline; padding: 0; }
