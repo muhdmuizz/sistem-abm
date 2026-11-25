@@ -16,7 +16,7 @@
 <div data-gaji-preview data-year="{{ $year }}">
     <div class="grid-toolbar" role="tablist" aria-label="Gaji dan Emolumen">
         <button type="button" class="button primary" id="gaji-jik-tab" role="tab" aria-selected="true" aria-controls="gaji-jik-panel">JIK</button>
-        <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Wizard</button>
+        <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
     </div>
     <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0">
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
