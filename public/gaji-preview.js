@@ -42,6 +42,22 @@
         ['VK5', '2500.00'], ['VK6', '1500.00'], ['VK7', '1000.00'],
     ]);
 
+    const itkItkaRates = new Map();
+    for (const row of preview.querySelectorAll('[aria-label="Jadual kadar elaun REF-08"] tbody tr')) {
+        const [allowance, grade, , , rate] = [...row.cells].map(cell => cell.textContent.trim());
+        if (allowance === 'Imbuhan Tetap Keraian' || allowance === 'Imbuhan Tetap Khidmat Awam') {
+            itkItkaRates.set(grade, rate.replaceAll(',', ''));
+        }
+    }
+
+    function itkItkaGrade(code) {
+        const executiveGrade = /^(?:VU|VK)(\d+)$/.exec(code);
+        if (executiveGrade) return { '5': 'A', '6': 'B', '7': 'C' }[executiveGrade[1]];
+        const level = /^[A-Z]*(\d+)$/.exec(code)?.[1];
+        // Grade 11 ITK requires university lecturer status and qualifying service.
+        return level === '11' ? undefined : level;
+    }
+
     function parseMoney(value) {
         if (!/^\d+(?:\.\d{1,2})?$/.test(value)) return null;
         const [whole, fraction = ''] = value.split('.');
@@ -244,8 +260,10 @@
             grade.add(new Option(code, code));
         }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
-        const [itjuMonthly] = allowances;
+        const [itjuMonthly, itkItkaMonthly] = allowances;
         itjuMonthly.readOnly = true;
+        itkItkaMonthly.readOnly = true;
+        itkItkaMonthly.placeholder = '—';
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
         const monthsInYear = vacant ? 3 : 12;
@@ -312,6 +330,11 @@
             itjuMonthly.title = eligibleForItju
                 ? (itjuMonthly.value ? 'Kadar ITJU mengikut gred.' : 'Kadar ITJU belum tersedia untuk gred ini.')
                 : 'ITJU hanya untuk Gred VU atau VK.';
+
+            itkItkaMonthly.value = itkItkaRates.get(itkItkaGrade(grade.value)) ?? '';
+            itkItkaMonthly.title = itkItkaMonthly.value
+                ? 'Kadar ITK/ ITKA mengikut gred (REF-08).'
+                : 'Tiada kadar ITK/ ITKA yang boleh diisi secara automatik.';
 
             const values = allowances.map(input => input.value);
             const fixed = annualAllowances(values, annualMultiplier);
