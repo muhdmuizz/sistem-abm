@@ -54,6 +54,7 @@
     const workplace = preview.querySelector('[data-gaji-workplace]');
     const workplaceField = preview.querySelector('[data-gaji-workplace-field]');
     const summaryRows = [...preview.querySelectorAll('[data-payroll-summary]')];
+    const summaryTotal = preview.querySelector('[data-payroll-summary-total]');
     const drafts = new Map();
     const rowAmounts = new WeakMap();
     let current = workplace?.value ?? 'default';
@@ -69,7 +70,17 @@
         return [posts, filled, Math.max(0, posts - filled)];
     }
 
+    function writeSummary(row, counts, amounts) {
+        const total = amounts.reduce((sum, amount) => sum + amount, 0n);
+        const values = [...counts.map(count => countFormat.format(count)), ...amounts.map(money), money(total)];
+        row.querySelectorAll('[data-summary-value]').forEach((cell, index) => {
+            cell.textContent = values[index];
+        });
+    }
+
     function updateSummary() {
+        const grandCounts = [0, 0, 0];
+        const grandAmounts = [0n, 0n, 0n];
         for (const summaryRow of summaryRows) {
             const id = summaryRow.dataset.payrollSummary;
             const draft = id === current ? { jik: jikRows.rows, wizard: wizardRows.rows } : drafts.get(id);
@@ -84,12 +95,11 @@
                 amounts[1] += totals.allowances ?? 0n;
                 amounts[2] += totals.contributions ?? 0n;
             }
-            const total = amounts.reduce((sum, value) => sum + value, 0n);
-            const values = [...counts.map(count => countFormat.format(count)), ...amounts.map(money), money(total)];
-            summaryRow.querySelectorAll('[data-summary-value]').forEach((cell, index) => {
-                cell.textContent = values[index];
-            });
+            counts.forEach((count, index) => { grandCounts[index] += count; });
+            amounts.forEach((amount, index) => { grandAmounts[index] += amount; });
+            writeSummary(summaryRow, counts, amounts);
         }
+        writeSummary(summaryTotal, grandCounts, grandAmounts);
     }
 
     function updateJikTotals() {
