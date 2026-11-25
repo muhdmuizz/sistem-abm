@@ -70,7 +70,7 @@
 }
 .gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
 .gaji-wizard-grid :is(th, td) { vertical-align: middle; }
-.gaji-wizard-grid th:nth-child(n) { position: static; width: auto; }
+.gaji-wizard-grid th:nth-child(n) { position: static; top: auto; width: auto; }
 .gaji-wizard-grid thead th { font-weight: 600; }
 .gaji-wizard-grid tbody th { background: #fff; font-size: inherit; }
 .gaji-wizard-grid .gaji-frozen-position { overflow-wrap: anywhere; }
@@ -83,7 +83,7 @@
 .gaji-wizard-grid .gaji-frozen-number { text-align: center; padding-inline: 4px; }
 
 @media (min-width: 1100px) {
-    .gaji-wizard-grid .gaji-frozen { position: sticky; }
+    .gaji-wizard-grid :is(th, td).gaji-frozen { position: sticky; }
     .gaji-wizard-grid tbody .gaji-frozen { z-index: 1; background: #fff; }
     .gaji-wizard-grid thead .gaji-frozen { z-index: 2; }
     .gaji-wizard-grid .gaji-vacant .gaji-frozen { background: #fff7e3; }
