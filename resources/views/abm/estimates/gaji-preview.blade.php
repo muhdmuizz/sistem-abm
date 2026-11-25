@@ -53,6 +53,14 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr data-payroll-summary-total>
+                        <th scope="row" colspan="2">Jumlah</th>
+                        @foreach (['0', '0', '0', '0.00', '0.00', '0.00', '0.00'] as $value)
+                            <td class="grid-numeric" data-summary-value>{{ $value }}</td>
+                        @endforeach
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </section>
