@@ -59,6 +59,13 @@
         }
     }
 
+    const district = preview.dataset.workplaceDistrict.trim();
+    const otherDistricts = ['Besut', 'Hulu Terengganu', 'Kuala Nerus', 'Marang', 'Setiu'];
+    const bipwLocality = ['Kuala Terengganu', 'Dungun'].includes(district) ? district
+        : ['Kemaman', ...otherDistricts].includes(district) ? 'Kawasan lain' : '';
+    const bishLocality = ['Kuala Terengganu', 'Dungun', 'Kemaman'].includes(district) ? district
+        : otherDistricts.includes(district) ? 'Kawasan lain' : '';
+
     function allowanceGrade(code) {
         const executiveGrade = /^(?:VU|VK)(\d+)$/.exec(code);
         if (executiveGrade) return { '5': 'A', '6': 'B', '7': 'C' }[executiveGrade[1]];
@@ -370,6 +377,8 @@
             livingAllowance.add(new Option('Kadar draf terdahulu', 'legacy'));
         }
         livingMonthly.readOnly = true;
+        housingAllowance.title = district ? 'Daerah Tempat Bertugas: ' + district : 'Daerah Tempat Bertugas belum tersedia.';
+        livingAllowance.title = housingAllowance.title;
         housingMonthly.readOnly = true;
         housingMonthly.placeholder = '—';
         itjuMonthly.readOnly = true;
@@ -445,10 +454,12 @@
             const referenceGrade = allowanceGrade(grade.value);
             // Grade 11 ITK requires university lecturer status and qualifying service.
             itkItkaMonthly.value = referenceGrade === '11' ? '' : (itkItkaRates.get(referenceGrade) ?? '');
-            housingMonthly.value = housingRates.get(housingAllowance.value + ':' + referenceGrade) ?? '';
+            const housingLocality = housingAllowance.value === 'BIPW' ? bipwLocality : housingAllowance.value;
+            housingMonthly.value = housingRates.get(housingLocality + ':' + referenceGrade) ?? '';
+            const livingLocality = livingAllowance.value === 'BISH' ? bishLocality : livingAllowance.value;
             livingMonthly.value = livingAllowance.value === 'legacy'
                 ? legacyLivingRate
-                : (livingRates.get(livingAllowance.value + ':' + referenceGrade) ?? '');
+                : (livingRates.get(livingLocality + ':' + referenceGrade) ?? '');
             const livingCents = parseMoney(livingMonthly.value.trim());
             livingRate.textContent = livingCents === null ? '—' : money(livingCents);
             const housingCents = parseMoney(housingMonthly.value);
@@ -551,6 +562,8 @@
         }));
         if (saved) {
             fields.forEach((field, index) => { field.value = saved.fields[index] ?? ''; });
+            if (['Kuala Terengganu', 'Dungun', 'Kawasan lain'].includes(saved.fields[4])) housingAllowance.value = 'BIPW';
+            if (['Kuala Terengganu', 'Dungun', 'Kemaman', 'Kawasan lain'].includes(saved.fields[7])) livingAllowance.value = 'BISH';
             if (saved.fields.length === 7 && legacyLivingRate) livingAllowance.value = 'legacy';
             saved.other.forEach(addOtherItem);
             recalculateContributions();
