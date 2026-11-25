@@ -20,9 +20,7 @@
         <div class="action-field" data-gaji-workplace-field hidden>
             <label for="gaji-workplace">Tempat Bertugas</label>
             <select id="gaji-workplace" data-gaji-workplace>
-                @foreach($workplaces as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
+                <option value="">Tambah Tempat Bertugas di Rumusan</option>
             </select>
         </div>
     @endif
@@ -32,6 +30,19 @@
         <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
     </div>
     <section class="section" id="gaji-summary-panel" role="tabpanel" aria-labelledby="gaji-summary-tab" tabindex="0">
+        @if($workplaces !== [])
+            <div class="gaji-workplace-actions">
+                <label for="gaji-available-workplace">Tempat Bertugas
+                    <select id="gaji-available-workplace" data-available-workplace>
+                        <option value="">Pilih Tempat Bertugas</option>
+                        @foreach($workplaces as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <button type="button" class="button primary" data-include-workplace>Tambah Tempat Bertugas</button>
+            </div>
+        @endif
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
             <table class="anggaran-grid gaji-summary-grid">
                 <colgroup><col style="width: 52px"><col><col span="7" style="width: 125px"></colgroup>
@@ -42,8 +53,8 @@
                         @endforeach
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach ($workplaces ?: ['default' => ($bid->ptj->kategori === 'JPNT' ? 'Pejabat JPNT' : $bid->ptj->nama)] as $id => $name)
+                <tbody data-summary-rows>
+                    @foreach ($workplaces === [] ? ['default' => ($bid->ptj->kategori === 'JPNT' ? 'Pejabat JPNT' : $bid->ptj->nama)] : [] as $id => $name)
                         <tr data-payroll-summary="{{ $id }}">
                             <td>{{ $loop->iteration }}</td>
                             <th scope="row">{{ $name }}</th>
@@ -161,6 +172,20 @@
         <p class="small">Bilangan bulan: 12 untuk Isi dan 3 untuk Kosong. Gaji OS11000 bagi jawatan Kosong menggunakan Gaji Median.</p>
     </section>
 
+    <template data-summary-workplace-template>
+        <tr data-payroll-summary>
+            <td data-summary-number></td>
+            <th scope="row">
+                <div class="gaji-workplace-row">
+                    <span data-summary-name></span>
+                    <button type="button" class="button danger" data-exclude-workplace>Keluarkan</button>
+                </div>
+            </th>
+            @foreach (range(1, 7) as $column)
+                <td class="grid-numeric" data-summary-value></td>
+            @endforeach
+        </tr>
+    </template>
     <datalist id="jik-jawatan-options">
         @foreach ($jawatan as $namaJawatan)
             <option value="{{ $namaJawatan }}"></option>
