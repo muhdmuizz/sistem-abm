@@ -10,6 +10,7 @@
         <h1>Gaji &amp; Emolumen</h1>
         <p class="intro">Pratonton · Pejabat JPNT · Kitaran {{ $year }}</p>
     </div>
+    <a class="button" href="{{ route('bids.index') }}">Kembali ke Bida Peruntukan</a>
 </div>
 <p class="notice">Gunakan data contoh sahaja. Nama, gred dan kadar dalam pratonton ini tidak disimpan.</p>
 
