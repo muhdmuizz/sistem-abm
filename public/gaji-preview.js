@@ -44,6 +44,7 @@
 
     const itkItkaRates = new Map();
     const housingRates = new Map();
+    const livingRates = new Map();
     for (const [allowance, grade, location, , rate] of JSON.parse(preview.dataset.allowanceRates)) {
         if (allowance === 'Imbuhan Tetap Keraian' || allowance === 'Imbuhan Tetap Khidmat Awam') {
             itkItkaRates.set(grade, rate.replaceAll(',', ''));
@@ -51,6 +52,10 @@
             housingRates.set('ITP:' + grade, rate.replaceAll(',', ''));
         } else if (allowance === 'Bayaran Imbuhan Perumahan Wilayah') {
             housingRates.set(location + ':' + grade, rate.replaceAll(',', ''));
+        } else if (allowance === 'Bayaran Imbuhan Sara Hidup') {
+            livingRates.set(location + ':' + grade, rate.replaceAll(',', ''));
+        } else if (allowance === 'Bayaran Imbuhan Wilayah') {
+            livingRates.set('BIW:' + grade, rate.replaceAll(',', ''));
         }
     }
 
@@ -358,6 +363,13 @@
         const [itjuMonthly, itkItkaMonthly, housingMonthly, livingMonthly] = allowances;
         const housingAllowance = row.querySelector('[data-housing-allowance]');
         const housingRate = row.querySelector('[data-housing-rate]');
+        const livingAllowance = row.querySelector('[data-living-allowance]');
+        const livingRate = row.querySelector('[data-living-rate]');
+        const legacyLivingRate = saved?.fields[5] ?? '';
+        if (legacyLivingRate && (saved.fields.length === 7 || saved.fields[7] === 'legacy')) {
+            livingAllowance.add(new Option('Kadar draf terdahulu', 'legacy'));
+        }
+        livingMonthly.readOnly = true;
         housingMonthly.readOnly = true;
         housingMonthly.placeholder = '—';
         itjuMonthly.readOnly = true;
@@ -434,6 +446,11 @@
             // Grade 11 ITK requires university lecturer status and qualifying service.
             itkItkaMonthly.value = referenceGrade === '11' ? '' : (itkItkaRates.get(referenceGrade) ?? '');
             housingMonthly.value = housingRates.get(housingAllowance.value + ':' + referenceGrade) ?? '';
+            livingMonthly.value = livingAllowance.value === 'legacy'
+                ? legacyLivingRate
+                : (livingRates.get(livingAllowance.value + ':' + referenceGrade) ?? '');
+            const livingCents = parseMoney(livingMonthly.value.trim());
+            livingRate.textContent = livingCents === null ? '—' : money(livingCents);
             const housingCents = parseMoney(housingMonthly.value);
             housingRate.textContent = housingCents === null ? '—' : money(housingCents);
             itkItkaMonthly.title = itkItkaMonthly.value
@@ -525,14 +542,16 @@
         grade.addEventListener('change', recalculateAllowances);
         housingAllowance.addEventListener('change', recalculateAllowances);
         officer.addEventListener('input', updateKetua);
-        const fields = [officer, salary, grade, tpg, housingAllowance, livingMonthly, os13000Monthly];
+        livingAllowance.addEventListener('change', recalculateAllowances);
+        const fields = [officer, salary, grade, tpg, housingAllowance, livingMonthly, os13000Monthly, livingAllowance];
         wizardDrafts.set(row, () => ({
             position, vacant,
-            fields: fields.map(field => field === salary && vacant ? '' : field.value),
+            fields: fields.map(field => (field === salary && vacant) || (field === livingMonthly && livingAllowance.value !== 'legacy') ? '' : field.value),
             other: [...otherItems.children].map(item => [...item.querySelectorAll('input')].map(field => field.value)),
         }));
         if (saved) {
             fields.forEach((field, index) => { field.value = saved.fields[index] ?? ''; });
+            if (saved.fields.length === 7 && legacyLivingRate) livingAllowance.value = 'legacy';
             saved.other.forEach(addOtherItem);
             recalculateContributions();
         }
