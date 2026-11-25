@@ -111,10 +111,11 @@
         });
         input.addEventListener('blur', close);
         list.addEventListener('pointerdown', event => {
+            if (event.target.closest('[role="option"]')) event.preventDefault();
+        });
+        list.addEventListener('click', event => {
             const option = event.target.closest('[role="option"]');
-            if (!option) return;
-            event.preventDefault();
-            choose(option);
+            if (option) choose(option);
         });
         jikRows.append(row);
     }
