@@ -210,7 +210,18 @@
 .jik-grid tr[data-jik-drop-target="after"] > td { box-shadow: inset 0 -2px #315e89; }
 .jik-grid tr[data-jik-drop-target="before"] > td { box-shadow: inset 0 2px #315e89; }
 
-.jik-grid tbody tr[data-jik-dragging] { opacity: .65; }
+.jik-grid tbody tr[data-jik-dragging] { opacity: .28; }
 @media (prefers-reduced-motion: no-preference) {
     .jik-grid tbody tr { transition: opacity 100ms ease-out; }
 }
+
+.jik-drag-preview {
+    position: fixed;
+    z-index: 100;
+    pointer-events: none;
+    table-layout: fixed;
+    background: #fff;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 16%);
+    will-change: transform;
+}
+.jik-drag-preview input { width: 100%; }
