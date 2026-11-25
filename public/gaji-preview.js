@@ -117,7 +117,10 @@
         const workplaces = Object.fromEntries([...drafts, ...(current ? [[current, {
             jik: [...jikRows.rows], wizard: [...wizardRows.rows], ketua: ketua.value,
         }]] : [])].map(([id, draft]) => [id, {
-            jik: draft.jik.map(row => [...row.querySelectorAll('input')].map(field => field.value)),
+            jik: draft.jik.map(row => {
+                const values = [...row.querySelectorAll('input')].map(field => field.value);
+                return [...values, row.dataset.jikId];
+            }),
             wizard: draft.wizard.map(row => wizardDrafts.get(row)()),
             ketua: draft.ketua,
         }]));
@@ -126,7 +129,20 @@
 
     function restoreDraft(saved) {
         saved.jik.forEach(addJik);
-        saved.wizard.forEach(row => addPosition(row.position, row.vacant, row));
+        const groups = new Map();
+        for (const row of jikRows.rows) {
+            const [name, count] = row.querySelectorAll('input');
+            const group = groups.get(name.value.trim()) ?? [];
+            group.push({ id: row.dataset.jikId, remaining: count.valueAsNumber });
+            groups.set(name.value.trim(), group);
+        }
+        for (const row of saved.wizard) {
+            const candidates = groups.get(row.position) ?? [];
+            const match = candidates.length === 1 ? candidates[0] : candidates.find(group => group.remaining > 0);
+            if (match) match.remaining--;
+            const jikId = Object.hasOwn(row, 'jikId') ? row.jikId : (match?.id ?? null);
+            addPosition(row.position, row.vacant, row, jikId);
+        }
         updateKetua();
         ketua.value = saved.ketua ?? '';
     }
@@ -266,6 +282,7 @@
         const row = preview.querySelector('[data-jik-template]').content.firstElementChild.cloneNode(true);
         const input = row.querySelector('[role="combobox"]');
         const list = row.querySelector('[role="listbox"]');
+        row.dataset.jikId = values?.[3] || crypto.randomUUID();
         list.id = 'jik-jawatan-suggestions-' + (++nextSuggestionId);
         input.setAttribute('aria-controls', list.id);
         let active = -1;
@@ -360,7 +377,7 @@
         return { annual, total };
     }
 
-    function addPosition(position, vacant, saved = null) {
+    function addPosition(position, vacant, saved = null, jikId = null) {
         const row = preview.querySelector('[data-wizard-template]').content.firstElementChild.cloneNode(true);
         const [officer, salary] = row.querySelectorAll('input');
         const [grade, tpg] = row.querySelectorAll('select');
@@ -406,6 +423,7 @@
         const otherMonthTotal = row.querySelector('[data-other-month-total]');
         const otherYearTotal = row.querySelector('[data-other-year-total]');
         const cells = Object.fromEntries([...row.querySelectorAll('[data-value]')].map(cell => [cell.dataset.value, cell]));
+        row.dataset.jikId = jikId ?? '';
         row.dataset.positionId = String(wizardRows.rows.length + 1);
         row.querySelector('[data-row-number]').textContent = row.dataset.positionId;
         row.querySelector('[data-position]').textContent = position;
@@ -558,7 +576,7 @@
         livingAllowance.addEventListener('change', recalculateAllowances);
         const fields = [officer, salary, grade, tpg, housingAllowance, livingMonthly, os13000Monthly, livingAllowance];
         wizardDrafts.set(row, () => ({
-            position, vacant,
+            position, vacant, jikId,
             fields: fields.map(field => (field === salary && vacant) || (field === livingMonthly && livingAllowance.value !== 'legacy') ? '' : field.value),
             other: [...otherItems.children].map(item => [...item.querySelectorAll('input')].map(field => field.value)),
         }));
@@ -579,7 +597,7 @@
     function generate() {
         const entries = [...jikRows.rows].map(row => {
             const [name, establishment, occupancy] = row.querySelectorAll('input');
-            return { name: name.value.trim(), total: establishment.valueAsNumber, filled: occupancy.valueAsNumber };
+            return { name: name.value.trim(), total: establishment.valueAsNumber, filled: occupancy.valueAsNumber, jikId: row.dataset.jikId };
         });
         if (entries.some(entry => !positions.has(entry.name) || entry.filled > entry.total)) {
             error.textContent = 'Pilih Jawatan daripada senarai dan pastikan Bil. Pengisian tidak melebihi Bil. Perjawatan.';
@@ -591,13 +609,69 @@
         wizardRows.replaceChildren();
         for (const entry of entries) {
             for (let index = 0; index < entry.total; index++) {
-                addPosition(entry.name, index >= entry.filled);
+                addPosition(entry.name, index >= entry.filled, null, entry.jikId);
             }
         }
         updateKetua();
         updateIncompleteRows();
         return true;
     }
+
+    function moveJikRow(row, target) {
+        if (!row || !target || row === target || row.parentNode !== jikRows || target.parentNode !== jikRows) return;
+        if (row.sectionRowIndex < target.sectionRowIndex) target.after(row);
+        else target.before(row);
+
+        const order = new Map([...jikRows.rows].map((jikRow, index) => [jikRow.dataset.jikId, index]));
+        const details = [...wizardRows.rows];
+        const selectedOfficer = details.find(detail => detail.dataset.positionId === ketua.value);
+        details.sort((a, b) => (order.get(a.dataset.jikId) ?? order.size) - (order.get(b.dataset.jikId) ?? order.size));
+        details.forEach((detail, index) => {
+            detail.dataset.positionId = String(index + 1);
+            detail.querySelector('[data-row-number]').textContent = detail.dataset.positionId;
+        });
+        wizardRows.append(...details);
+        updateKetua();
+        ketua.value = selectedOfficer?.dataset.positionId ?? '';
+        updateIncompleteRows();
+        checkForEdits();
+    }
+
+    let dragging = null;
+    let dropTarget = null;
+    jikRows.addEventListener('pointerdown', event => {
+        const handle = event.target.closest('[data-jik-drag]');
+        if (!handle || !event.isPrimary || event.button !== 0) return;
+        handle.setPointerCapture(event.pointerId);
+        dragging = handle.closest('tr');
+    });
+    jikRows.addEventListener('pointermove', event => {
+        if (!dragging || !event.isPrimary) return;
+        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('tr');
+        dropTarget?.removeAttribute('data-jik-drop-target');
+        dropTarget = target?.parentNode === jikRows && target !== dragging ? target : null;
+        if (dropTarget) {
+            dropTarget.setAttribute('data-jik-drop-target', dragging.sectionRowIndex < dropTarget.sectionRowIndex ? 'after' : 'before');
+        }
+    });
+    function finishJikDrag(event) {
+        if (!event.isPrimary || !dragging) return;
+        if (event.type === 'pointerup') moveJikRow(dragging, dropTarget);
+        dropTarget?.removeAttribute('data-jik-drop-target');
+        dropTarget = null;
+        dragging = null;
+    }
+    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+        jikRows.addEventListener(type, finishJikDrag);
+    }
+    jikRows.addEventListener('keydown', event => {
+        const handle = event.target.closest('[data-jik-drag]');
+        if (!handle || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+        event.preventDefault();
+        const row = handle.closest('tr');
+        moveJikRow(row, event.key === 'ArrowUp' ? row.previousElementSibling : row.nextElementSibling);
+        handle.focus();
+    });
 
     jik.addEventListener('input', updateJikTotals);
     jik.addEventListener('submit', event => {
