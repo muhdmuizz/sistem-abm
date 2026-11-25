@@ -156,6 +156,7 @@ class BidaPeruntukanController extends Controller
 
         return view('abm.estimates.gaji-preview', [
             'allowanceRows' => $allowanceRows,
+            'workplaceDistrict' => $record->ptj->kategori === 'JPNT' ? 'Kuala Terengganu' : $record->ptj->daerah,
             'draft' => $draft,
             'draftVersion' => $saved->revision ?? 0,
             'bid' => $record,
