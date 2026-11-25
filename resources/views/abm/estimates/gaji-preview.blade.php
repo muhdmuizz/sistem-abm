@@ -40,26 +40,6 @@
         <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
     </div>
     <section class="section" id="gaji-summary-panel" role="tabpanel" inert aria-labelledby="gaji-summary-tab" tabindex="0">
-        @if($workplaces !== [])
-            <details class="gaji-workplace-picker" data-workplace-picker>
-                <summary>Pilih Tempat Bertugas</summary>
-                <label class="gaji-workplace-search">
-                    Cari Tempat Bertugas
-                    <input type="search" data-workplace-search autocomplete="off">
-                </label>
-                <p class="small" data-workplace-empty role="status" hidden></p>
-                <fieldset class="gaji-workplace-options" data-available-workplace>
-                    <legend class="sr-only">Tempat Bertugas yang tersedia</legend>
-                    @foreach($workplaces as $id => $name)
-                        <label>
-                            <input type="checkbox" value="{{ $id }}" data-workplace-name="{{ $name }}">
-                            <span>{{ $name }}</span>
-                        </label>
-                    @endforeach
-                </fieldset>
-                <button type="button" class="button primary" data-include-workplace disabled>Tambah Tempat Bertugas</button>
-            </details>
-        @endif
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
             <table class="anggaran-grid gaji-summary-grid">
                 <colgroup><col style="width: 52px"><col><col span="7" style="width: 125px"></colgroup>
@@ -81,6 +61,40 @@
                         </tr>
                     @endforeach
                 </tbody>
+                @if($workplaces !== [])
+                    <tbody>
+                        <tr>
+                            <td class="gaji-workplace-picker-cell" colspan="9">
+                                <details class="gaji-workplace-picker" data-workplace-picker>
+                                    <summary>Tambah Tempat Bertugas</summary>
+                                    <div class="gaji-workplace-picker-content">
+                                        <label class="gaji-workplace-search">
+                                            Cari Tempat Bertugas
+                                            <input type="search" data-workplace-search autocomplete="off">
+                                        </label>
+                                        <p class="small" data-workplace-empty role="status" hidden></p>
+                                        <div class="gaji-workplace-choices" data-workplace-choices>
+                                            <label class="gaji-workplace-select-all">
+                                                <input type="checkbox" data-workplace-select-all>
+                                                <span data-workplace-select-all-label>Pilih semua hasil carian</span>
+                                            </label>
+                                            <fieldset class="gaji-workplace-options" data-available-workplace>
+                                                <legend class="sr-only">Tempat Bertugas yang tersedia</legend>
+                                                @foreach($workplaces as $id => $name)
+                                                    <label>
+                                                        <input type="checkbox" value="{{ $id }}" data-workplace-name="{{ $name }}">
+                                                        <span>{{ $name }}</span>
+                                                    </label>
+                                                @endforeach
+                                            </fieldset>
+                                        </div>
+                                        <button type="button" class="button primary" data-include-workplace disabled>Tambah Tempat Bertugas</button>
+                                    </div>
+                                </details>
+                            </td>
+                        </tr>
+                    </tbody>
+                @endif
                 <tfoot>
                     <tr data-payroll-summary-total>
                         <th scope="row" colspan="2">Jumlah</th>
