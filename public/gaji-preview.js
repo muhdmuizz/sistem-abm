@@ -156,10 +156,10 @@
         if (ketua.selectedIndex === -1) ketua.selectedIndex = 0;
     }
 
-    function annualAllowances(monthlyValues) {
+    function annualAllowances(monthlyValues, months) {
         const annual = monthlyValues.map(value => {
             const cents = parseMoney(value.trim());
-            return cents === null ? null : cents * 12n;
+            return cents === null ? null : cents * months;
         });
         const hasInvalid = monthlyValues.some((value, index) => value.trim() && annual[index] === null);
         const total = hasInvalid || annual.every(value => value === null)
@@ -175,7 +175,10 @@
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
-        const otherDetails = row.querySelector('[data-other-allowances]');
+        const monthsInYear = vacant ? 3 : 12;
+        const annualMultiplier = BigInt(monthsInYear);
+        const os13000Monthly = row.querySelector('[data-os13000-monthly]');
+        const os13000Annual = row.querySelector('[data-os13000-annual]');
         const otherItems = row.querySelector('[data-other-items]');
         const otherAdd = row.querySelector('[data-other-add]');
         const otherMonthTotal = row.querySelector('[data-other-month-total]');
@@ -193,20 +196,14 @@
             tpg.hidden = true;
             salary.readOnly = true;
             salary.placeholder = '—';
-            otherDetails.hidden = true;
-            for (const input of allowances) {
-                input.disabled = true;
-                input.hidden = true;
-                input.parentElement.append('—');
-            }
         }
 
         function recalculate() {
             const rate = rates[grade.value];
             const months = Number(tpg.value) - 1;
             const asal = vacant ? rate?.median ?? null : parseMoney(salary.value);
-            const originalMonths = vacant ? 3 : months;
-            const newMonths = vacant ? 0 : 12 - months;
+            const originalMonths = vacant ? monthsInYear : months;
+            const newMonths = vacant ? 0 : monthsInYear - months;
             const baharu = !vacant && asal !== null && rate ? asal + rate.kgt : null;
             const first = asal === null ? null : asal * BigInt(originalMonths);
             const second = baharu === null ? null : baharu * BigInt(newMonths);
@@ -224,7 +221,7 @@
         }
         function recalculateAllowances() {
             const values = allowances.map(input => input.value);
-            const fixed = annualAllowances(values);
+            const fixed = annualAllowances(values, annualMultiplier);
             fixed.annual.forEach((amount, index) => {
                 annualCells[index].textContent = amount === null ? '—' : money(amount);
                 allowances[index].setAttribute('aria-invalid', String(Boolean(values[index].trim()) && amount === null));
@@ -240,12 +237,12 @@
                 const valid = Boolean(name.value.trim()) && amount !== null;
                 name.setAttribute('aria-invalid', String(started && !name.value.trim()));
                 monthly.setAttribute('aria-invalid', String(started && amount === null));
-                item.querySelector('[data-other-item-annual]').textContent = valid ? money(amount * 12n) : '—';
+                item.querySelector('[data-other-item-annual]').textContent = valid ? money(amount * annualMultiplier) : '—';
                 if (valid) otherMonthly = (otherMonthly ?? 0n) + amount;
                 if (started && !valid) otherInvalid = true;
             }
 
-            const otherYearly = otherMonthly === null ? null : otherMonthly * 12n;
+            const otherYearly = otherMonthly === null ? null : otherMonthly * annualMultiplier;
             otherMonthTotal.textContent = otherInvalid || otherMonthly === null ? '—' : money(otherMonthly);
             otherYearTotal.textContent = otherInvalid || otherYearly === null ? '—' : money(otherYearly);
             const fixedInvalid = values.some((value, index) => value.trim() && fixed.annual[index] === null);
@@ -257,6 +254,11 @@
         row.addEventListener('input', event => {
             if (event.target.matches('[data-allowance-monthly], [data-other-name], [data-other-monthly]')) {
                 recalculateAllowances();
+            } else if (event.target === os13000Monthly) {
+                const value = os13000Monthly.value.trim();
+                const monthly = parseMoney(value);
+                os13000Monthly.setAttribute('aria-invalid', String(Boolean(value) && monthly === null));
+                os13000Annual.textContent = monthly === null ? '—' : money(monthly * annualMultiplier);
             } else {
                 recalculate();
             }
