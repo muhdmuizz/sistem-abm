@@ -13,9 +13,9 @@
     </div>
     <a class="button" href="{{ route('bids.show', $bid->id) }}">Kembali ke Aktiviti Kewangan</a>
 </div>
-<p class="notice">Gunakan data contoh sahaja. Nama, gred dan kadar dalam pratonton ini tidak disimpan.</p>
+<p class="notice">Gunakan data contoh sahaja. Nama, gred dan amaun yang dimasukkan dalam pratonton ini tidak disimpan.</p>
 
-<div data-gaji-preview data-year="{{ $year }}">
+<div data-gaji-preview data-year="{{ $year }}" data-salary-rates="{{ json_encode($salaryRates, JSON_THROW_ON_ERROR) }}">
     @if($workplaces !== [])
         <div class="action-field" data-gaji-workplace-field hidden>
             <label for="gaji-workplace">Tempat Bertugas</label>
@@ -189,7 +189,7 @@
         </tr>
     </template>
     <datalist id="jik-jawatan-options">
-        @foreach ($jawatan as $namaJawatan)
+        @foreach (array_keys($salaryRates) as $namaJawatan)
             <option value="{{ $namaJawatan }}"></option>
         @endforeach
     </datalist>
@@ -221,7 +221,7 @@
             <input aria-label="Nama Pegawai" maxlength="100">
             <strong class="gaji-position-status" data-vacancy hidden>Kosong</strong>
         </td>
-        <td class="gaji-frozen gaji-frozen-grade"><select aria-label="Gred contoh"><option value="">Pilih gred</option><option value="A">Gred Contoh A</option><option value="B">Gred Contoh B</option></select></td>
+        <td class="gaji-frozen gaji-frozen-grade"><select aria-label="Gred SSPA"><option value="">Pilih gred</option></select></td>
         <td><select aria-label="Tarikh Pergerakan Gaji"><option value="1">01/01</option><option value="4">01/04</option><option value="7">01/07</option><option value="10">01/10</option></select></td>
         <td class="gaji-group-start"><input aria-label="Gaji Asal (RM)" inputmode="decimal" maxlength="16" placeholder="0.00"></td>
         @foreach (['asal-months', 'asal-subtotal', 'kgt', 'baharu', 'baharu-months', 'baharu-subtotal', 'total'] as $field)
