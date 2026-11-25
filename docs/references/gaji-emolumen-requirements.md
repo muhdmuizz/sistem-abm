@@ -71,6 +71,19 @@ The owner confirmed the following read-only month allocations for a full Kitaran
 
 For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. The exact reference dataset and handling of any missing rate remain to be verified.
 
+## OS12000 — fixed-allowance columns
+
+| Monthly column | Annual column |
+| --- | --- |
+| ITJU/ Bulan | ITJU/ Tahun |
+| ITK @ ITKA/ Bulan | ITK @ ITKA/ Tahun |
+| ITP @ BIPW/ Bulan | ITP @ BIPW/ Tahun |
+| BISH @ BIW/ Bulan | BISH @ BIW/ Tahun |
+
+Each annual amount is its monthly amount × 12. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for filled positions under Terperinci using the same JIK rows as OS11000. Actual rate sourcing and vacant-post eligibility remain open.
+
+**Elaun-elaun Lain, proposed:** add itemised allowance entries per officer from an approved allowance reference list. Show their annual subtotal separately. Confirm OS classification, calculation basis and whether the subtotal contributes to Jumlah OS12000 before implementation.
+
 ## Decisions that follow
 
 - Confirm who prepares each office and school JIK under the applicable access rules.
