@@ -775,9 +775,40 @@
         const include = preview.querySelector('[data-include-workplace]');
         const picker = preview.querySelector('[data-workplace-picker]');
         const pickerToggle = picker.querySelector('summary');
+        const search = picker.querySelector('[data-workplace-search]');
+        const empty = picker.querySelector('[data-workplace-empty]');
         const candidates = [...available.querySelectorAll('input[type="checkbox"]')];
         const candidateById = new Map(candidates.map(option => [option.value, option]));
-        const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !choice.disabled);
+        const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !included.has(choice.value));
+
+        function updateWorkplaceSelection() {
+            const count = checkedWorkplaces().length;
+            include.disabled = count === 0;
+            include.textContent = count ? 'Tambah ' + countFormat.format(count) + ' Tempat Bertugas' : 'Tambah Tempat Bertugas';
+        }
+
+        function filterWorkplaces() {
+            const terms = search.value.trim().toLocaleLowerCase().split(/\s+/);
+            let visible = 0;
+            for (const option of candidates) {
+                const alreadyIncluded = included.has(option.value);
+                option.disabled = alreadyIncluded;
+                if (alreadyIncluded) option.checked = false;
+                const name = option.dataset.workplaceName.toLocaleLowerCase();
+                const matches = !alreadyIncluded && terms.every(term => name.includes(term));
+                option.closest('label').hidden = !matches;
+                if (matches) visible++;
+            }
+
+            available.hidden = visible === 0;
+            empty.hidden = visible > 0;
+            if (visible === 0) {
+                empty.textContent = candidates.every(option => included.has(option.value))
+                    ? 'Semua Tempat Bertugas yang tersedia telah ditambah.'
+                    : 'Tiada Tempat Bertugas sepadan dengan carian.';
+            }
+            updateWorkplaceSelection();
+        }
         const generateButton = jik.querySelector('button[type="submit"]');
 
         function switchWorkplace(next) {
@@ -828,11 +859,7 @@
                 : [new Option('Tambah Tempat Bertugas di Rumusan', '')]));
             workplace.value = included.has(current) ? current : (selected[0]?.value ?? '');
             workplace.disabled = !selected.length;
-            for (const option of candidates) {
-                option.disabled = included.has(option.value);
-                option.checked = false;
-            }
-            include.disabled = true;
+            filterWorkplaces();
             switchWorkplace(workplace.value);
             updateSummary();
         }
@@ -850,12 +877,14 @@
             checkForEdits();
         });
 
-        available.addEventListener('change', () => { include.disabled = checkedWorkplaces().length === 0; });
+        available.addEventListener('change', updateWorkplaceSelection);
+        search.addEventListener('input', filterWorkplaces);
         include.addEventListener('click', () => {
             const checked = checkedWorkplaces();
             if (!checked.length) return;
 
             checked.forEach(choice => included.add(choice.value));
+            search.value = '';
             renderWorkplaces();
             picker.open = false;
             pickerToggle.focus();
