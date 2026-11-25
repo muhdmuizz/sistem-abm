@@ -13,6 +13,7 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 - Penyedia Anggaran prepares **Jawatan, Isi, Kosong (JIK)** once for the combined OS Gaji & Emolumen group covering OS11000, OS12000 and OS13000.
 - For each Jawatan, enter Bil. Perjawatan and Pengisian. Sistem ABM calculates **Kekosongan = Bil. Perjawatan − Pengisian**.
 - Bil. Perjawatan determines the number of wizard rows for that Jawatan. For example, a Jawatan with 5 Perjawatan and 3 Pengisian yields 2 Kekosongan and 5 wizard rows.
+- The wizard generates **Isi** rows equal to Pengisian and **Kosong** rows equal to Kekosongan for each Jawatan. Penyedia Anggaran enters officer names in the Isi rows. Change Pengisian in JIK to revise the Isi/Kosong counts.
 - The wizard cannot add or delete position rows or edit the Jawatan or row count. Add a Jawatan or amend Bil. Perjawatan in JIK to change the row structure. The editable payroll fields within each generated row remain to be specified.
 
 ## Confirmed JIK scope — offices and schools
