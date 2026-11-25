@@ -95,6 +95,34 @@
     const wizardEmpty = preview.querySelector('[data-wizard-empty]');
     const totalCells = [...preview.querySelectorAll('[data-jik-total]')];
     const countFormat = new Intl.NumberFormat('en-MY');
+    const incompletePanel = preview.querySelector('[data-incomplete-rows]');
+    const incompleteCount = preview.querySelector('[data-incomplete-count]');
+    const incompletePicker = preview.querySelector('[data-incomplete-picker]');
+    const rowIssues = new WeakMap();
+
+    function updateIncompleteRows() {
+        const options = [];
+        for (const row of wizardRows.rows) {
+            const missing = rowIssues.get(row);
+            if (!missing) continue;
+            const id = row.dataset.positionId;
+            options.push(new Option('#' + id + ' · ' + missing, id));
+        }
+        incompleteCount.textContent = countFormat.format(options.length) + ' baris belum lengkap.';
+        incompletePanel.hidden = options.length === 0;
+        incompletePicker.replaceChildren(new Option('Pilih baris', ''), ...options);
+    }
+
+    incompletePicker.addEventListener('change', () => {
+        const row = wizardRows.rows[Number(incompletePicker.value) - 1];
+        if (row) {
+            const number = row.querySelector('[data-row-number]');
+            number.tabIndex = -1;
+            number.focus({ preventScroll: true });
+            number.scrollIntoView({ block: 'center', inline: 'nearest' });
+        }
+        incompletePicker.value = '';
+    });
 
     function jikCounts(row) {
         const [, establishment, occupancy] = row.querySelectorAll('input');
@@ -378,6 +406,21 @@
             setTotal('allowances', annualTotal);
         }
 
+        function checkIncompleteRow() {
+            const missing = [];
+            if (!vacant && !officer.value.trim()) missing.push('Nama Pegawai');
+            if (!grade.value) missing.push('Gred');
+            if (!vacant && !tpg.value) missing.push('TPG');
+            if (!vacant && (parseMoney(salary.value) ?? 0n) <= 0n) missing.push('Gaji Asal');
+            for (const input of row.querySelectorAll('[aria-invalid="true"]')) {
+                missing.push(input.getAttribute('aria-label') ?? 'Elaun-elaun Lain');
+            }
+            const issues = [...new Set(missing)].join(', ');
+            const changed = issues !== rowIssues.get(row);
+            rowIssues.set(row, issues);
+            return changed;
+        }
+
         row.addEventListener('input', event => {
             if (event.target.matches('[data-allowance-monthly], [data-other-name], [data-other-monthly]')) {
                 recalculateAllowances();
@@ -391,6 +434,7 @@
             } else {
                 recalculate();
             }
+            if (checkIncompleteRow()) updateIncompleteRows();
         });
         otherAdd.addEventListener('click', () => {
             const item = preview.querySelector('[data-other-allowance-template]').content.firstElementChild.cloneNode(true);
@@ -402,6 +446,7 @@
             if (!remove) return;
             remove.closest('[data-other-item]').remove();
             recalculateAllowances();
+            if (checkIncompleteRow()) updateIncompleteRows();
             otherAdd.focus();
         });
         grade.addEventListener('change', recalculateAllowances);
@@ -410,6 +455,7 @@
         wizardRows.append(row);
         recalculate();
         recalculateAllowances();
+        checkIncompleteRow();
     }
 
     function generate() {
@@ -430,6 +476,7 @@
             }
         }
         updateKetua();
+        updateIncompleteRows();
         return true;
     }
 
@@ -483,6 +530,7 @@
             }
             updateJikTotals();
             updateKetua();
+            updateIncompleteRows();
             addButton.disabled = !current;
             generateButton.disabled = !current;
         }
