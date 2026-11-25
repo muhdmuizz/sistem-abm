@@ -43,6 +43,18 @@
         return BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0'));
     }
 
+    function vu7Increment(salary) {
+        if (salary === null || salary === 0n) return null;
+
+        const maximumSalary = 2204000n;
+        const maximumSalaryIncrement = 43763n;
+        const ordinaryIncrement = (salary * 9n + 50n) / 100n;
+        const gap = maximumSalary - salary;
+
+        if (gap >= ordinaryIncrement) return ordinaryIncrement;
+        return gap > maximumSalaryIncrement ? gap : maximumSalaryIncrement;
+    }
+
     function money(cents) {
         const digits = cents.toString().padStart(3, '0');
         return AbmMoney.format(digits.slice(0, -2) + '.' + digits.slice(-2));
@@ -263,9 +275,9 @@
 
         function recalculate() {
             const rate = jobRates[grade.value];
-            const kgt = parseMoney(rate?.kgt ?? '');
             const months = Number(tpg.value) - 1;
             const asal = vacant ? parseMoney(rate?.median ?? '') : parseMoney(salary.value);
+            const kgt = vacant ? null : grade.value === 'VU7' ? vu7Increment(asal) : parseMoney(rate?.kgt ?? '');
             const originalMonths = vacant ? monthsInYear : months;
             const newMonths = vacant ? 0 : monthsInYear - months;
             const baharu = !vacant && asal !== null && kgt !== null ? asal + kgt : null;
