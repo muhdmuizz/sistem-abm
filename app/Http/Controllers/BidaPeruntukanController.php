@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Peranan;
 use App\Models\Bidaan;
 use App\Models\Kitaran;
 use App\Models\Ptj;
+use App\Models\TempatBertugas;
 use App\Services\PengaktifanKewangan;
 use App\Services\RuangBidaPeruntukan;
+use App\Services\SkopPeranan;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -96,8 +99,32 @@ class BidaPeruntukanController extends Controller
         abort_unless($cards->isNotEmpty(), 404);
         abort_unless($this->payrollActivation($cards)['active'], 409, 'Aktifkan OS Gaji & Emolumen terlebih dahulu.');
 
+        $workplaces = [];
+        if ($record->ptj->kategori === 'PPD') {
+            $actor = $request->user();
+            $roles = app(SkopPeranan::class);
+            $role = Peranan::PenyediaAnggaran;
+            $hasPpdScope = $roles->meliputi($actor->id, $role, $record->ptj_id, $record->aktiviti_kewangan_id);
+            $costCentres = TempatBertugas::where('ptj_id', $record->ptj_id)->where('jenis', '!=', 'sektor');
+
+            if ($hasPpdScope) {
+                $workplaces['office'] = 'Pejabat PPD';
+            } else {
+                abort_unless($actor->tempat_bertugas_id && $roles->meliputi(
+                    $actor->id, $role, $record->ptj_id, $record->aktiviti_kewangan_id, $actor->tempat_bertugas_id,
+                ), 403);
+                $costCentres->whereKey($actor->tempat_bertugas_id);
+            }
+
+            foreach ($costCentres->orderBy('nama')->orderBy('id')->get(['id', 'nama']) as $centre) {
+                $workplaces[$centre->id] = $centre->nama;
+            }
+            abort_if($workplaces === [], 403);
+        }
+
         return view('abm.estimates.gaji-preview', [
             'bid' => $record,
+            'workplaces' => $workplaces,
             'year' => $record->kitaran->tahun,
             'jawatan' => $jawatan->names(),
         ]);
