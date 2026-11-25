@@ -34,7 +34,10 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
         abort_unless(app()->environment('local'), 404);
         abort_unless(app(\App\Services\RuangBidaPeruntukan::class)->canUse(auth()->user()), 403);
 
-        return view('abm.estimates.gaji-preview', ['year' => \App\Models\Kitaran::max('tahun') ?? now()->year]);
+        return view('abm.estimates.gaji-preview', [
+            'year' => \App\Models\Kitaran::max('tahun') ?? now()->year,
+            'jawatan' => app(\App\Services\RujukanJawatan::class)->names(),
+        ]);
     })->name('gaji.preview');
 
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
