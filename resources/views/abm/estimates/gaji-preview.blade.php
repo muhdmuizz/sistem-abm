@@ -58,19 +58,21 @@
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS11000">
             <table class="anggaran-grid gaji-wizard-grid">
                 <colgroup>
-                    @foreach ([280, 90, 230, 145, 105] as $width)
-                        <col style="width: {{ $width }}px">
+                    @foreach (['number', 'position', 'officer', 'grade'] as $column)
+                        <col style="width: var(--gaji-{{ $column }}-width)">
                     @endforeach
+                    <col style="width: 105px">
                 </colgroup>
                 <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
                 <colgroup><col style="width: 105px"></colgroup>
                 <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
-                <colgroup><col style="width: 130px"></colgroup>
+                <colgroup><col></colgroup>
                 <thead>
                     <tr>
-                        @foreach (['Jawatan', 'Status', 'Nama Pegawai', 'Gred', 'TPG '.$year] as $label)
-                            <th scope="col" rowspan="2">{{ $label }}</th>
+                        @foreach (['number' => '#', 'position' => 'Jawatan', 'officer' => 'Nama Pegawai', 'grade' => 'Gred'] as $column => $label)
+                            <th scope="col" rowspan="2" class="gaji-frozen gaji-frozen-{{ $column }}">{{ $label }}</th>
                         @endforeach
+                        <th scope="col" rowspan="2">TPG {{ $year }}</th>
                         <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Asal</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start">KGT (RM)</th>
                         <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Baharu</th>
@@ -107,10 +109,13 @@
         <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
     </tr></template>
     <template data-wizard-template><tr>
-        <th scope="row" data-position></th>
-        <td><span class="gaji-position-status" data-status></span></td>
-        <td><input aria-label="Nama Pegawai" maxlength="100"></td>
-        <td><select aria-label="Gred contoh"><option value="">Pilih gred</option><option value="A">Gred Contoh A</option><option value="B">Gred Contoh B</option></select></td>
+        <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
+        <td class="gaji-frozen gaji-frozen-position" data-position></td>
+        <td class="gaji-frozen gaji-frozen-officer">
+            <input aria-label="Nama Pegawai" maxlength="100">
+            <strong class="gaji-position-status" data-vacancy hidden>Kosong</strong>
+        </td>
+        <td class="gaji-frozen gaji-frozen-grade"><select aria-label="Gred contoh"><option value="">Pilih gred</option><option value="A">Gred Contoh A</option><option value="B">Gred Contoh B</option></select></td>
         <td><select aria-label="Tarikh Pergerakan Gaji"><option value="1">01/01</option><option value="4">01/04</option><option value="7">01/07</option><option value="10">01/10</option></select></td>
         <td class="gaji-group-start"><input aria-label="Gaji Asal (RM)" inputmode="decimal" maxlength="16" placeholder="0.00"></td>
         @foreach (['asal-months', 'asal-subtotal', 'kgt', 'baharu', 'baharu-months', 'baharu-subtotal', 'total'] as $field)
