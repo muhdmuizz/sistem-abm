@@ -110,6 +110,8 @@
     let saving = false;
     let conflict = false;
     let timer;
+    let ownsEditorLock = false;
+    let leaving = false;
 
     function captureDraft() {
         const workplaces = Object.fromEntries([...drafts, ...(current ? [[current, {
@@ -130,7 +132,7 @@
     }
 
     async function saveDraft() {
-        if (saving || !pending || conflict) return;
+        if (!ownsEditorLock || leaving || document.hidden || saving || !pending || conflict) return;
         saving = true;
         pending = false;
         saveRetry.hidden = true;
@@ -716,6 +718,7 @@
 
     let previousSnapshot = captureDraft();
     function checkForEdits() {
+        if (!ownsEditorLock || leaving || document.hidden) return;
         const snapshot = captureDraft();
         if (snapshot === previousSnapshot) return;
         previousSnapshot = snapshot;
@@ -731,6 +734,68 @@
     });
     saveStatus.textContent = revision ? 'Draf dimuatkan.' : 'Tiada draf disimpan.';
     saveRetry.addEventListener('click', saveDraft);
+
+    const lockNotice = preview.querySelector('[data-editor-lock]');
+    const reloadButton = preview.querySelector('[data-editor-reload]');
+    const editingSections = workplaceField ? [...panels, workplaceField] : panels;
+    let releaseEditorLock;
+
+    function setEditing(enabled) {
+        for (const section of editingSections) section.inert = !enabled;
+    }
+
+    function showLocked(message, reload = false) {
+        setEditing(false);
+        lockNotice.hidden = false;
+        lockNotice.textContent = message;
+        reloadButton.hidden = !reload;
+    }
+
+    reloadButton.addEventListener('click', () => window.location.reload());
+
+    async function openEditor() {
+        if (!navigator.locks) {
+            showLocked('Pelayar ini tidak menyokong penyuntingan draf yang selamat.');
+            return;
+        }
+
+        const lockKey = 'abm-payroll-editor:' + preview.dataset.editorAccount + ':' + preview.dataset.saveUrl;
+        try {
+            await navigator.locks.request(lockKey, { ifAvailable: true }, async lock => {
+                if (leaving) return;
+                if (!lock) {
+                    showLocked('Draf ini sedang disunting di tab lain. Tutup tab tersebut, kemudian muat semula untuk menyunting di sini.', true);
+                    return;
+                }
+
+                ownsEditorLock = true;
+                lockNotice.hidden = true;
+                setEditing(!document.hidden);
+                await new Promise(resolve => { releaseEditorLock = resolve; });
+                ownsEditorLock = false;
+            });
+        } catch {
+            showLocked('Akses penyuntingan tidak dapat disahkan. Muat semula untuk mencuba lagi.', true);
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (!ownsEditorLock || leaving) return;
+        setEditing(!document.hidden);
+        if (!document.hidden && pending) saveDraft();
+    });
+
+    window.addEventListener('pagehide', () => {
+        leaving = true;
+        setEditing(false);
+        clearTimeout(timer);
+        releaseEditorLock?.();
+    });
+    window.addEventListener('pageshow', event => {
+        if (event.persisted) window.location.reload();
+    });
+
+    openEditor();
     window.addEventListener('beforeunload', event => {
         if (!pending && !saving) return;
         event.preventDefault();
