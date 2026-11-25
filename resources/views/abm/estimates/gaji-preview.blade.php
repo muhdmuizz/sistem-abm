@@ -17,7 +17,7 @@
 
 <div data-gaji-preview data-year="{{ $year }}">
     @if($workplaces !== [])
-        <div class="action-field">
+        <div class="action-field" data-gaji-workplace-field hidden>
             <label for="gaji-workplace">Tempat Bertugas</label>
             <select id="gaji-workplace" data-gaji-workplace>
                 @foreach($workplaces as $id => $name)
@@ -27,10 +27,36 @@
         </div>
     @endif
     <div class="grid-toolbar" role="tablist" aria-label="Gaji dan Emolumen">
-        <button type="button" class="button primary" id="gaji-jik-tab" role="tab" aria-selected="true" aria-controls="gaji-jik-panel">JIK</button>
+        <button type="button" class="button primary" id="gaji-summary-tab" role="tab" aria-selected="true" aria-controls="gaji-summary-panel">Rumusan</button>
+        <button type="button" class="button" id="gaji-jik-tab" role="tab" aria-selected="false" aria-controls="gaji-jik-panel" tabindex="-1">JIK</button>
         <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
     </div>
-    <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0">
+    <section class="section" id="gaji-summary-panel" role="tabpanel" aria-labelledby="gaji-summary-tab" tabindex="0">
+        <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
+            <table class="anggaran-grid gaji-summary-grid">
+                <colgroup><col style="width: 52px"><col><col span="7" style="width: 125px"></colgroup>
+                <thead>
+                    <tr>
+                        @foreach (['#', 'Tempat Bertugas', 'Bil. Perjawatan', 'Bil. Pengisian', 'Bil. Kekosongan', 'OS11000 (RM)', 'OS12000 (RM)', 'OS13000 (RM)', 'Jumlah (RM)'] as $heading)
+                            <th scope="col">{{ $heading }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($workplaces ?: ['default' => ($bid->ptj->kategori === 'JPNT' ? 'Pejabat JPNT' : $bid->ptj->nama)] as $id => $name)
+                        <tr data-payroll-summary="{{ $id }}">
+                            <td>{{ $loop->iteration }}</td>
+                            <th scope="row">{{ $name }}</th>
+                            @foreach (['0', '0', '0', '0.00', '0.00', '0.00', '0.00'] as $value)
+                                <td class="grid-numeric" data-summary-value>{{ $value }}</td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0" hidden>
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
         <dl class="jik-totals" aria-label="Jumlah JIK" aria-live="polite">
             <div><dt>Perjawatan</dt><dd data-jik-total="establishment">0</dd></div>
