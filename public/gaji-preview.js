@@ -31,6 +31,7 @@
     const wizardRows = preview.querySelector('[data-wizard-rows]');
     const ketua = preview.querySelector('[data-ketua]');
     const error = preview.querySelector('[data-jik-error]');
+    const addButton = preview.querySelector('[data-jik-add]');
     const rates = {
         A: { median: 320000n, kgt: 15000n },
         B: { median: 480000n, kgt: 20000n },
@@ -138,7 +139,15 @@
         event.preventDefault();
         if (generate()) selectTab(1, true);
     });
-    preview.querySelector('[data-jik-add]').addEventListener('click', addJik);
+    jikRows.addEventListener('click', event => {
+        const button = event.target.closest('[data-jik-remove]');
+        if (!button) return;
+        const row = button.closest('tr');
+        const neighbor = row.nextElementSibling ?? row.previousElementSibling;
+        row.remove();
+        (neighbor?.querySelector('[data-jik-remove]') ?? addButton).focus();
+    });
+    addButton.addEventListener('click', addJik);
     addJik();
     generate();
 })();
