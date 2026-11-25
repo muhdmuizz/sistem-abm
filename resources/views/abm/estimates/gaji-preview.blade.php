@@ -14,7 +14,11 @@
 <p class="notice">Gunakan data contoh sahaja. Nama, gred dan kadar dalam pratonton ini tidak disimpan.</p>
 
 <div data-gaji-preview data-year="{{ $year }}">
-    <section class="section" aria-labelledby="jik-title">
+    <div class="grid-toolbar" role="tablist" aria-label="Gaji dan Emolumen">
+        <button type="button" class="button primary" id="gaji-jik-tab" role="tab" aria-selected="true" aria-controls="gaji-jik-panel">JIK</button>
+        <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Wizard</button>
+    </div>
+    <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0">
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
         <form data-jik>
             <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual JIK">
@@ -31,7 +35,7 @@
         </form>
     </section>
 
-    <section class="section" aria-labelledby="wizard-title">
+    <section class="section" id="gaji-wizard-panel" role="tabpanel" aria-labelledby="gaji-wizard-tab" tabindex="0" hidden>
         <h2 id="wizard-title">Wizard Gaji &amp; Emolumen</h2>
         <div class="grid-toolbar">
             <label>Ketua Jabatan <select data-ketua><option value="">Pilih pegawai</option></select></label>
