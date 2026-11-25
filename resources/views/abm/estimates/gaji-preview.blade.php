@@ -103,10 +103,10 @@
                             <th scope="col" class="grid-numeric gaji-group-start">{{ $allowance }}/ Bulan</th>
                             <th scope="col" class="grid-numeric">{{ $allowance }}/ Tahun</th>
                         @endforeach
-                        <th scope="col" class="grid-numeric gaji-group-start">Elaun-elaun Lain / Bulan</th>
-                        <th scope="col" class="grid-numeric">Elaun-elaun Lain / Tahun</th>
-                        <th scope="col" class="grid-numeric gaji-group-start">OS13000 / Bulan</th>
-                        <th scope="col" class="grid-numeric gaji-total">OS13000 / Tahun</th>
+                        <th scope="col" class="grid-numeric gaji-group-start">Elaun-elaun Lain/ Bulan</th>
+                        <th scope="col" class="grid-numeric">Elaun-elaun Lain/ Tahun</th>
+                        <th scope="col" class="grid-numeric gaji-group-start">OS13000/ Bulan</th>
+                        <th scope="col" class="grid-numeric gaji-total">OS13000/ Tahun</th>
                     </tr>
                 </thead>
                 <tbody data-wizard-rows></tbody>
@@ -134,9 +134,9 @@
     <template data-other-allowance-template>
         <div class="gaji-other-item" data-other-item>
             <label>Nama Elaun<input data-other-name maxlength="120"></label>
-            <label>/ Bulan (RM)<input data-other-monthly inputmode="decimal" maxlength="16" placeholder="0.00"></label>
+            <label>Kadar/ Bulan (RM)<input data-other-monthly inputmode="decimal" maxlength="16" placeholder="0.00"></label>
             <div class="gaji-other-item-footer">
-                <span>/ Tahun: <output data-other-item-annual>—</output></span>
+                <span>Jumlah/ Tahun: <output data-other-item-annual>—</output></span>
                 <button type="button" class="button danger" data-other-remove>Padam Elaun</button>
             </div>
         </div>
