@@ -16,6 +16,16 @@
 <p class="notice">Gunakan data contoh sahaja. Nama, gred dan kadar dalam pratonton ini tidak disimpan.</p>
 
 <div data-gaji-preview data-year="{{ $year }}">
+    @if($workplaces !== [])
+        <div class="action-field">
+            <label for="gaji-workplace">Tempat Bertugas (Pusat Kos)</label>
+            <select id="gaji-workplace" data-gaji-workplace>
+                @foreach($workplaces as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+    @endif
     <div class="grid-toolbar" role="tablist" aria-label="Gaji dan Emolumen">
         <button type="button" class="button primary" id="gaji-jik-tab" role="tab" aria-selected="true" aria-controls="gaji-jik-panel">JIK</button>
         <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
