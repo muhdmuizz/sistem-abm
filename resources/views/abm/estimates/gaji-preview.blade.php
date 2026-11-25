@@ -17,6 +17,7 @@
 
 <div data-gaji-preview data-year="{{ $year }}" data-salary-rates="{{ json_encode($salaryRates, JSON_THROW_ON_ERROR) }}"
     data-allowance-rates="{{ json_encode($allowanceRows, JSON_THROW_ON_ERROR) }}"
+    data-workplace-district="{{ $workplaceDistrict }}"
     data-draft="{{ json_encode($draft, JSON_THROW_ON_ERROR) }}" data-draft-revision="{{ $draftVersion }}"
     data-save-url="{{ route('gaji.preview-save', $bid->id) }}" data-csrf="{{ csrf_token() }}">
     <div class="grid-toolbar">
@@ -247,9 +248,7 @@
                         <select data-housing-allowance aria-label="Jenis dan kawasan imbuhan perumahan">
                             <option value="">Pilih imbuhan</option>
                             <option value="ITP">ITP</option>
-                            <option value="Kuala Terengganu">BIPW · Kuala Terengganu</option>
-                            <option value="Dungun">BIPW · Dungun</option>
-                            <option value="Kawasan lain">BIPW · Kawasan lain</option>
+                            <option value="BIPW">BIPW</option>
                         </select>
                         <output aria-label="Kadar perumahan sebulan (RM)" data-housing-rate>—</output>
                     </div>
@@ -257,10 +256,7 @@
                     <div class="gaji-housing">
                         <select data-living-allowance aria-label="Jenis dan kawasan imbuhan sara hidup">
                             <option value="">Pilih imbuhan</option>
-                            <option value="Kuala Terengganu">BISH · Kuala Terengganu</option>
-                            <option value="Dungun">BISH · Dungun</option>
-                            <option value="Kemaman">BISH · Kemaman</option>
-                            <option value="Kawasan lain">BISH · Kawasan lain</option>
+                            <option value="BISH">BISH</option>
                             <option value="BIW">BIW</option>
                         </select>
                         <output aria-label="Kadar imbuhan sara hidup sebulan (RM)" data-living-rate>—</output>
