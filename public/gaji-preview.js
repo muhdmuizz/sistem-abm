@@ -43,19 +43,22 @@
     ]);
 
     const itkItkaRates = new Map();
+    const housingRates = new Map();
     for (const row of preview.querySelectorAll('[aria-label="Jadual kadar elaun REF-08"] tbody tr')) {
-        const [allowance, grade, , , rate] = [...row.cells].map(cell => cell.textContent.trim());
+        const [allowance, grade, location, , rate] = [...row.cells].map(cell => cell.textContent.trim());
         if (allowance === 'Imbuhan Tetap Keraian' || allowance === 'Imbuhan Tetap Khidmat Awam') {
             itkItkaRates.set(grade, rate.replaceAll(',', ''));
+        } else if (allowance === 'Imbuhan Tetap Perumahan') {
+            housingRates.set('ITP:' + grade, rate.replaceAll(',', ''));
+        } else if (allowance === 'Bayaran Imbuhan Perumahan Wilayah') {
+            housingRates.set(location + ':' + grade, rate.replaceAll(',', ''));
         }
     }
 
-    function itkItkaGrade(code) {
+    function allowanceGrade(code) {
         const executiveGrade = /^(?:VU|VK)(\d+)$/.exec(code);
         if (executiveGrade) return { '5': 'A', '6': 'B', '7': 'C' }[executiveGrade[1]];
-        const level = /^[A-Z]*(\d+)$/.exec(code)?.[1];
-        // Grade 11 ITK requires university lecturer status and qualifying service.
-        return level === '11' ? undefined : level;
+        return /^[A-Z]*(\d+)$/.exec(code)?.[1];
     }
 
     function parseMoney(value) {
@@ -260,7 +263,10 @@
             grade.add(new Option(code, code));
         }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
-        const [itjuMonthly, itkItkaMonthly] = allowances;
+        const [itjuMonthly, itkItkaMonthly, housingMonthly] = allowances;
+        const housingAllowance = row.querySelector('[data-housing-allowance]');
+        housingMonthly.readOnly = true;
+        housingMonthly.placeholder = '—';
         itjuMonthly.readOnly = true;
         itkItkaMonthly.readOnly = true;
         itkItkaMonthly.placeholder = '—';
@@ -331,7 +337,10 @@
                 ? (itjuMonthly.value ? 'Kadar ITJU mengikut gred.' : 'Kadar ITJU belum tersedia untuk gred ini.')
                 : 'ITJU hanya untuk Gred VU atau VK.';
 
-            itkItkaMonthly.value = itkItkaRates.get(itkItkaGrade(grade.value)) ?? '';
+            const referenceGrade = allowanceGrade(grade.value);
+            // Grade 11 ITK requires university lecturer status and qualifying service.
+            itkItkaMonthly.value = referenceGrade === '11' ? '' : (itkItkaRates.get(referenceGrade) ?? '');
+            housingMonthly.value = housingRates.get(housingAllowance.value + ':' + referenceGrade) ?? '';
             itkItkaMonthly.title = itkItkaMonthly.value
                 ? 'Kadar ITK/ ITKA mengikut gred (REF-08).'
                 : 'Tiada kadar ITK/ ITKA yang boleh diisi secara automatik.';
@@ -396,6 +405,7 @@
             otherAdd.focus();
         });
         grade.addEventListener('change', recalculateAllowances);
+        housingAllowance.addEventListener('change', recalculateAllowances);
         officer.addEventListener('input', updateKetua);
         wizardRows.append(row);
         recalculate();
