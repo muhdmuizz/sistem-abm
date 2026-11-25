@@ -441,15 +441,6 @@
         if (!workplace || current) addJik();
     });
 
-    function initialiseWorkplace() {
-        addJik();
-        const firstPosition = positions.values().next().value;
-        if (firstPosition) {
-            jikRows.rows[0].querySelector('input').value = firstPosition;
-            generate();
-        }
-    }
-
     if (workplace) {
         const available = preview.querySelector('[data-available-workplace]');
         const include = preview.querySelector('[data-include-workplace]');
@@ -536,7 +527,7 @@
         workplace.addEventListener('change', () => switchWorkplace(workplace.value));
         renderWorkplaces();
     } else {
-        initialiseWorkplace();
+        addJik();
     }
     updateSummary();
 })();
