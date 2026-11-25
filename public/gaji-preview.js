@@ -619,8 +619,25 @@
 
     function moveJikRow(row, target) {
         if (!row || !target || row === target || row.parentNode !== jikRows || target.parentNode !== jikRows) return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const firstIndex = Math.min(row.sectionRowIndex, target.sectionRowIndex);
+        const lastIndex = Math.max(row.sectionRowIndex, target.sectionRowIndex);
+        const movedRows = reduceMotion ? [] : [...jikRows.rows].slice(firstIndex, lastIndex + 1);
+        const before = movedRows.map(item => item.getBoundingClientRect().top);
+        for (const item of movedRows) {
+            item.getAnimations().forEach(animation => animation.cancel());
+        }
         if (row.sectionRowIndex < target.sectionRowIndex) target.after(row);
         else target.before(row);
+
+        const offsets = movedRows.map((item, index) => before[index] - item.getBoundingClientRect().top);
+        movedRows.forEach((item, index) => {
+            if (!offsets[index]) return;
+            item.animate([
+                { transform: 'translateY(' + offsets[index] + 'px)' },
+                { transform: 'translateY(0)' },
+            ], { duration: 150, easing: 'ease-out' });
+        });
 
         const order = new Map([...jikRows.rows].map((jikRow, index) => [jikRow.dataset.jikId, index]));
         const details = [...wizardRows.rows];
@@ -644,6 +661,7 @@
         if (!handle || !event.isPrimary || event.button !== 0) return;
         handle.setPointerCapture(event.pointerId);
         dragging = handle.closest('tr');
+        dragging.setAttribute('data-jik-dragging', '');
     });
     jikRows.addEventListener('pointermove', event => {
         if (!dragging || !event.isPrimary) return;
@@ -656,6 +674,7 @@
     });
     function finishJikDrag(event) {
         if (!event.isPrimary || !dragging) return;
+        dragging.removeAttribute('data-jik-dragging');
         if (event.type === 'pointerup') moveJikRow(dragging, dropTarget);
         dropTarget?.removeAttribute('data-jik-drop-target');
         dropTarget = null;
