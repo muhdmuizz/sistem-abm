@@ -22,8 +22,21 @@
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
         <form data-jik>
             <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual JIK">
-                <table class="anggaran-grid">
-                    <thead><tr><th scope="col">Jawatan</th><th scope="col">Bil. Perjawatan</th><th scope="col">Pengisian</th><th scope="col">Kekosongan</th></tr></thead>
+                <table class="anggaran-grid jik-grid">
+                    <colgroup>
+                        <col>
+                        <col span="3" class="jik-count-column">
+                        <col class="jik-action-column">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">Jawatan</th>
+                            <th scope="col" class="grid-numeric">Bil. Perjawatan</th>
+                            <th scope="col" class="grid-numeric">Bil. Pengisian</th>
+                            <th scope="col" class="grid-numeric">Bil. Kekosongan</th>
+                            <th scope="col">Tindakan</th>
+                        </tr>
+                    </thead>
                     <tbody data-jik-rows></tbody>
                 </table>
             </div>
@@ -57,8 +70,9 @@
     <template data-jik-template><tr>
         <td><input aria-label="Jawatan" value="Jawatan Contoh" required maxlength="100"></td>
         <td><input aria-label="Bil. Perjawatan" type="number" min="1" max="100" value="3" required></td>
-        <td><input aria-label="Pengisian" type="number" min="0" value="2" required></td>
-        <td><output aria-label="Kekosongan">1</output></td>
+        <td><input aria-label="Bil. Pengisian" type="number" min="0" value="2" required></td>
+        <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
+        <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
     </tr></template>
     <template data-wizard-template><tr>
         <th scope="row" data-position></th>
