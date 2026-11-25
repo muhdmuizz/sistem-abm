@@ -43,6 +43,11 @@
         @if($workplaces !== [])
             <details class="gaji-workplace-picker" data-workplace-picker>
                 <summary>Pilih Tempat Bertugas</summary>
+                <label class="gaji-workplace-search">
+                    Cari Tempat Bertugas
+                    <input type="search" data-workplace-search autocomplete="off">
+                </label>
+                <p class="small" data-workplace-empty role="status" hidden></p>
                 <fieldset class="gaji-workplace-options" data-available-workplace>
                     <legend class="sr-only">Tempat Bertugas yang tersedia</legend>
                     @foreach($workplaces as $id => $name)
