@@ -80,7 +80,7 @@ The owner confirmed the following read-only month allocations for a full Kitaran
 | 1 July | 6 | 6 |
 | 1 October | 9 | 3 |
 
-For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. The exact reference dataset and handling of any missing rate remain to be verified.
+For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. Draft PR #118 now uses [Reference 07](jawatan-gred-gaji-kgt.csv) for the dependent Jawatan → Gred SSPA selector, Gaji Median and read-only KGT. Pengarah Pendidikan Negeri (VU7) has no KGT in that reference. The preview leaves KGT and its dependent salary amounts blank for that grade; the budgeting policy for a missing KGT remains open.
 
 ## OS12000 — fixed-allowance columns
 
