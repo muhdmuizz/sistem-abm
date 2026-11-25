@@ -80,7 +80,7 @@ The owner confirmed the following read-only month allocations for a full Kitaran
 | 1 July | 6 | 6 |
 | 1 October | 9 | 3 |
 
-For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. Draft PR #118 now uses [Reference 07](jawatan-gred-gaji-kgt.csv) for the dependent Jawatan → Gred SSPA selector, Gaji Median and read-only KGT. Pengarah Pendidikan Negeri (VU7) has no KGT in that reference. The preview leaves KGT and its dependent salary amounts blank for that grade; the budgeting policy for a missing KGT remains open.
+For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. Draft PR #118 now uses [Reference 07](jawatan-gred-gaji-kgt.csv) for the dependent Jawatan → Gred SSPA selector, Gaji Median and read-only KGT. For Pengarah Pendidikan Negeri (VU7), [Reference 07](REF-07-jawatan-gred-gaji-kgt.md#3-pengarah-pendidikan-negeri--vu7) specifies a **calculated KGT of 9% × the applicable salary basis**. The CSV fixed-RM KGT cell is intentionally blank. The preview leaves the calculated KGT and dependent salary amounts blank until the applicable OS11000 salary basis, rounding and ceiling treatment are confirmed.
 
 ## OS12000 — fixed-allowance columns
 
