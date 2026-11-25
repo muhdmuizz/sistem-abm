@@ -29,6 +29,13 @@ The owner confirmed that Ketua Jabatan identifies the individual officer holding
 
 The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Gaji & Emolumen group. Under [AD-005](../architecture/AD-005-identity-roles-organisation.md), an SMK PTJ can also be its own Tempat Bertugas. The confirmed office workplaces each have one Ketua Jabatan, as does each school workplace. Whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent also remain open.
 
+## OS11000 — confirmed vacant-post salary basis
+
+- Each **Kosong** row carries an OS11000 salary estimate. Use **Gaji Median** for the row's Jawatan and Gred as the monthly salary basis.
+- Jawatan is inherited from JIK. For now, the Penyedia Anggaran selects the Gred in the wizard. The system resolves Gaji Median using the selected Gred and inherited Jawatan.
+- Visually distinguish Kosong rows in the wizard and retain the visible **Kosong** status label so vacancy remains identifiable without relying on colour.
+- The number of months to budget and whether it is entered or derived remain open.
+
 ## Decisions that follow
 
 - Confirm who prepares each office and school JIK under the applicable access rules.
