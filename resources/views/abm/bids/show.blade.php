@@ -6,32 +6,37 @@
 @include('abm.bids.feedback')
 <dl class="bid-context-facts"><div><dt>Kitaran ABM</dt><dd>{{ $bid->kitaran->tahun }}</dd></div><div><dt>PTJ</dt><dd>{{ $bid->ptj->nama }}</dd></div><div><dt>Status Bidaan</dt><dd>{{ \App\Services\RuangBidaPeruntukan::STATUS[$bid->status->value] }}</dd></div><div><dt>Tempoh penyediaan</dt><dd>{{ $open ? 'Fasa dibuka dalam tempoh' : 'Tiada Fasa dibuka dalam tempoh' }}</dd></div></dl>
 <div class="bid-section-heading"><h2>Program/ Aktiviti</h2><a class="button" href="{{ route('programs.index',$bid->id) }}">Buka Program/ Aktiviti</a></div>
-@if(app()->environment('local'))
-<div class="bid-catalogue">
-    <article class="bid-card">
-        <div class="bid-card-heading"><h2>Gaji &amp; Emolumen</h2></div>
-        <p class="small">OS11000, OS12000 dan OS13000</p>
-        <div class="bid-card-actions">
-            <a class="button" href="{{ route('gaji.preview', $bid->id) }}">Buka Pratonton<x-abm-icon name="chevron"/></a>
-        </div>
-    </article>
-</div>
-@endif
 <div class="bid-section-heading"><h2>OS tersedia</h2><p class="small">{{ $cards->count() }} OS</p></div>
 @if(! $bid->diaktifkan)<p class="notice">Bidaan belum diaktifkan. Pengaktifan OS belum tersedia.</p>@endif
 @if($cards->isEmpty())
 <section class="empty-state"><h2>Tiada OS tersedia dalam skop anda.</h2><p>Hubungi pentadbir untuk menyemak kebenaran OS bagi Aktiviti Kewangan ini.</p></section>
 @else
 <div class="bid-catalogue os-catalogue">
-@foreach($cards as $card)
+@if($payrollCards->isNotEmpty())
+    <article class="bid-card">
+        <div class="bid-card-heading">
+            <div>
+                <p class="os-reference">{{ $payrollCards->pluck('os.kod_objek')->unique()->map(fn ($code) => 'OS'.$code)->implode(' · ') }}</p>
+                <h3>Gaji &amp; Emolumen</h3>
+            </div>
+        </div>
+        <div class="bid-card-actions">
+            <a class="button" href="{{ route('gaji.preview', $bid->id) }}">Buka Pratonton<x-abm-icon name="chevron"/></a>
+        </div>
+        <details>
+            <summary>Status dan tindakan OS</summary>
+            @foreach($payrollCards as $payrollCard)
+                <div class="section" id="os-{{ $payrollCard['os']->id }}">
+                    @include('abm.bids.os-card-details', ['card' => $payrollCard])
+                </div>
+            @endforeach
+        </details>
+    </article>
+@endif
+@foreach($otherCards as $card)
 @php($estimate=$card['estimate'])
 <article id="os-{{ $card['os']->id }}" @class(['bid-card','inactive'=>!$estimate?->diaktifkan])>
-<div class="bid-card-heading"><div><p class="os-reference">OS{{ $card['os']->kod_objek }}</p><h3>{{ $card['os']->butiran_perbelanjaan }}</h3></div><span class="status-pill {{ $estimate?->diaktifkan ? 'positive' : '' }}">{{ $estimate?->diaktifkan ? 'Diaktifkan' : 'Belum Aktif' }}</span></div>
-@if($estimate?->diaktifkan)<p class="small">{{ app(\App\Services\KatalogDefinisiAnggaran::class)->untuk($card['os'],$bid) !== null ? 'Sediakan butiran melalui jadual draf.' : 'Penyediaan butiran OS ini belum dibuka.' }}</p><div class="bid-card-actions"><a class="button" href="{{ route('estimates.show',[$bid->id,$estimate->id]) }}"><x-abm-icon name="chevron"/>Buka<span class="sr-only"> OS{{ $card['os']->kod_objek }} {{ $card['os']->butiran_perbelanjaan }}</span></a></div>
-@elseif($card['activation']['allowed'])
-<div class="bid-card-actions"><a class="button primary" href="{{ route('bids.os-form',[$bid->id,$card['os']->id]) }}"><x-abm-icon name="plus"/>Aktifkan OS<span class="sr-only"> OS{{ $card['os']->kod_objek }} {{ $card['os']->butiran_perbelanjaan }}</span></a></div>
-@if($card['activation']['needs_reason'])<p class="small">Alasan pintasan Superadmin diperlukan.</p>@endif
-@else<p class="small">{{ $card['activation']['explanation'] }}</p>@endif
+@include('abm.bids.os-card-details', ['card' => $card])
 </article>
 @endforeach
 </div>
