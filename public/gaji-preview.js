@@ -49,6 +49,28 @@
         return AbmMoney.format(digits.slice(0, -2) + '.' + digits.slice(-2));
     }
 
+    const totalCells = [...preview.querySelectorAll('[data-jik-total]')];
+    const countFormat = new Intl.NumberFormat('en-MY');
+
+    function updateJikTotals() {
+        const totals = { establishment: 0, filled: 0, vacant: 0 };
+        for (const row of jikRows.rows) {
+            const [, establishment, occupancy] = row.querySelectorAll('input');
+            const posts = Math.max(0, establishment.valueAsNumber || 0);
+            const filled = Math.max(0, occupancy.valueAsNumber || 0);
+            const vacant = Math.max(0, posts - filled);
+            occupancy.max = establishment.value;
+            row.querySelector('output').value = String(vacant);
+            totals.establishment += posts;
+            totals.filled += filled;
+            totals.vacant += vacant;
+        }
+        for (const cell of totalCells) {
+            const value = countFormat.format(totals[cell.dataset.jikTotal]);
+            if (cell.textContent !== value) cell.textContent = value;
+        }
+    }
+
     let nextSuggestionId = 0;
 
     function addJik() {
@@ -118,6 +140,7 @@
             if (option) choose(option);
         });
         jikRows.append(row);
+        updateJikTotals();
     }
 
     function updateKetua() {
@@ -200,13 +223,7 @@
         return true;
     }
 
-    jik.addEventListener('input', event => {
-        const row = event.target.closest('tr');
-        if (!row) return;
-        const [, establishment, occupancy] = row.querySelectorAll('input');
-        occupancy.max = establishment.value;
-        row.querySelector('output').value = String(Math.max(0, (establishment.valueAsNumber || 0) - (occupancy.valueAsNumber || 0)));
-    });
+    jik.addEventListener('input', updateJikTotals);
     jik.addEventListener('submit', event => {
         event.preventDefault();
         if (generate()) selectTab(1, true);
@@ -217,6 +234,7 @@
         const row = button.closest('tr');
         const neighbor = row.nextElementSibling ?? row.previousElementSibling;
         row.remove();
+        updateJikTotals();
         (neighbor?.querySelector('[data-jik-remove]') ?? addButton).focus();
     });
     addButton.addEventListener('click', addJik);
