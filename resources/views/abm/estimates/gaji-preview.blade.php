@@ -74,7 +74,7 @@
                 <colgroup><col style="width: 105px"></colgroup>
                 <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
                 <colgroup><col style="width: 130px"></colgroup>
-                <colgroup><col span="8" style="width: 130px"></colgroup>
+                <colgroup><col span="8" style="width: 130px"><col style="width: 300px"><col style="width: 155px"></colgroup>
                 <colgroup><col></colgroup>
                 <thead>
                     <tr>
@@ -86,7 +86,7 @@
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start">KGT (RM)</th>
                         <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Baharu</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS11000 (RM)</th>
-                        <th scope="colgroup" colspan="8" class="gaji-group-start">OS12000 — Elaun/ Imbuhan Tetap</th>
+                        <th scope="colgroup" colspan="10" class="gaji-group-start">OS12000 — Elaun/ Imbuhan Tetap</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
                     </tr>
                     <tr>
@@ -99,6 +99,8 @@
                             <th scope="col" class="grid-numeric gaji-group-start">{{ $allowance }}/ Bulan</th>
                             <th scope="col" class="grid-numeric">{{ $allowance }}/ Tahun</th>
                         @endforeach
+                        <th scope="col" class="grid-numeric gaji-group-start">Elaun-elaun Lain / Bulan</th>
+                        <th scope="col" class="grid-numeric">Elaun-elaun Lain / Tahun</th>
                     </tr>
                 </thead>
                 <tbody data-wizard-rows></tbody>
@@ -125,6 +127,16 @@
         <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
         <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
     </tr></template>
+    <template data-other-allowance-template>
+        <div class="gaji-other-item" data-other-item>
+            <label>Nama Elaun<input data-other-name maxlength="120"></label>
+            <label>/ Bulan (RM)<input data-other-monthly inputmode="decimal" maxlength="16" placeholder="0.00"></label>
+            <div class="gaji-other-item-footer">
+                <span>/ Tahun: <output data-other-item-annual>—</output></span>
+                <button type="button" class="button danger" data-other-remove>Padam Elaun</button>
+            </div>
+        </div>
+    </template>
     <template data-wizard-template><tr>
         <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
         <td class="gaji-frozen gaji-frozen-position" data-position></td>
@@ -144,6 +156,15 @@
             </td>
             <td class="grid-numeric" data-annual>—</td>
         @endforeach
+        <td class="gaji-group-start gaji-other-cell">
+            <output class="grid-numeric" aria-label="Elaun-elaun Lain sebulan (RM)" data-other-month-total>—</output>
+            <details data-other-allowances>
+                <summary>Elaun-elaun Lain</summary>
+                <div data-other-items></div>
+                <button type="button" class="button" data-other-add>Tambah Elaun</button>
+            </details>
+        </td>
+        <td class="grid-numeric" data-other-year-total>—</td>
         <td class="grid-numeric gaji-group-start gaji-total" data-allowance-total>—</td>
     </tr></template>
 </div>
