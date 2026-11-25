@@ -235,7 +235,6 @@
     }
 
     function updateSummary() {
-        const exportRows = [];
         const grandCounts = [0, 0, 0];
         const grandAmounts = [0n, 0n, 0n];
         for (const summaryRow of summaryRows.rows) {
@@ -255,16 +254,9 @@
             counts.forEach((count, index) => { grandCounts[index] += count; });
             amounts.forEach((amount, index) => { grandAmounts[index] += amount; });
             writeSummary(summaryRow, counts, amounts);
-            exportRows.push({ id, counts, amounts: amounts.map(String) });
         }
         writeSummary(summaryTotal, grandCounts, grandAmounts);
-        return exportRows;
     }
-
-    const rumusanExport = preview.querySelector('[data-rumusan-export]');
-    rumusanExport.addEventListener('submit', () => {
-        rumusanExport.elements.rumusan.value = JSON.stringify(updateSummary());
-    });
 
     function updateJikTotals() {
         jikEmpty.hidden = jikRows.rows.length > 0;

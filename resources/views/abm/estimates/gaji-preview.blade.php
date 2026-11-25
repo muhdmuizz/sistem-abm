@@ -55,11 +55,6 @@
                 <button type="button" class="button primary" data-include-workplace disabled>Tambah Tempat Bertugas</button>
             </details>
         @endif
-        <form class="grid-toolbar" method="post" action="{{ route('gaji.preview-rumusan', $bid->id) }}" data-rumusan-export>
-            @csrf
-            <input type="hidden" name="rumusan" value="[]">
-            <button class="button" type="submit">Muat Turun Rumusan (Excel)</button>
-        </form>
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
             <table class="anggaran-grid gaji-summary-grid">
                 <colgroup><col style="width: 52px"><col><col span="7" style="width: 125px"></colgroup>

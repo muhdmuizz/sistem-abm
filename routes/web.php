@@ -32,8 +32,6 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
     Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
     Route::get('/bida-peruntukan/{bid}/gaji-emolumen/pratonton', [BidaPeruntukanController::class, 'gajiPreview'])
         ->whereNumber('bid')->name('gaji.preview');
-    Route::post('/bida-peruntukan/{bid}/gaji-emolumen/pratonton/rumusan/excel', [BidaPeruntukanController::class, 'exportGajiRumusan'])
-        ->whereNumber('bid')->middleware('throttle:15,1')->name('gaji.preview-rumusan');
     Route::put('/bida-peruntukan/{bid}/gaji-emolumen/pratonton/draf', [BidaPeruntukanController::class, 'saveGajiPreview'])
         ->whereNumber('bid')->middleware('throttle:60,1')->name('gaji.preview-save');
 

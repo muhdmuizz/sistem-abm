@@ -7,7 +7,6 @@ use App\Models\Bidaan;
 use App\Models\Kitaran;
 use App\Models\Ptj;
 use App\Models\TempatBertugas;
-use App\Services\EksportRumusanGaji;
 use App\Services\PengaktifanKewangan;
 use App\Services\RuangBidaPeruntukan;
 use App\Services\SkopPeranan;
@@ -164,31 +163,6 @@ class BidaPeruntukanController extends Controller
             'workplaces' => $workplaces,
             'year' => $record->kitaran->tahun,
             'salaryRates' => $jawatan->salaryRates(),
-        ]);
-    }
-
-    public function exportGajiRumusan(Request $request, int $bid, RuangBidaPeruntukan $workspace, EksportRumusanGaji $export)
-    {
-        [$record, $workplaces] = $this->payrollPreviewContext($request, $bid, $workspace);
-        $workplaces = $workplaces ?: [
-            'default' => $record->ptj->kategori === 'JPNT' ? 'Pejabat JPNT' : $record->ptj->nama,
-        ];
-        $input = $request->validate(['rumusan' => 'required|json|max:200000']);
-        $rows = json_decode($input['rumusan'], true, flags: JSON_THROW_ON_ERROR);
-        $data = Validator::make(['rows' => $rows], [
-            'rows' => ['present', 'array', 'list', 'max:'.count($workplaces)],
-            'rows.*' => 'required|array:id,counts,amounts',
-            'rows.*.id' => 'required|string|distinct',
-            'rows.*.counts' => 'required|array|list|size:3',
-            'rows.*.counts.*' => 'required|integer|min:0|max:999999999',
-            'rows.*.amounts' => 'required|array|list|size:3',
-            'rows.*.amounts.*' => 'required|string|regex:/^\d{1,15}$/',
-        ])->validate();
-        abort_if(array_diff(array_column($data['rows'], 'id'), array_keys($workplaces)), 403);
-
-        return response($export->workbook($workplaces, $data['rows']), 200, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="rumusan-gaji-'.$record->kitaran->tahun.'.xlsx"',
         ]);
     }
 
