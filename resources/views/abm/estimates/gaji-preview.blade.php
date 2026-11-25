@@ -1,5 +1,6 @@
 @extends('abm.layout')
 @section('title', 'Gaji & Emolumen')
+@section('cycle-context', 'Kitaran ABM '.$year)
 @section('content')
 <link rel="stylesheet" href="{{ asset('anggaran-grid.css') }}">
 <script src="{{ asset('abm-money.js') }}" defer></script>
@@ -8,9 +9,9 @@
 <div class="page-heading">
     <div>
         <h1>Gaji &amp; Emolumen</h1>
-        <p class="intro">Pratonton · Pejabat JPNT · Kitaran {{ $year }}</p>
+        <p class="intro">Pratonton · {{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · Kitaran {{ $year }}</p>
     </div>
-    <a class="button" href="{{ route('bids.index') }}">Kembali ke Bida Peruntukan</a>
+    <a class="button" href="{{ route('bids.show', $bid->id) }}">Kembali ke Aktiviti Kewangan</a>
 </div>
 <p class="notice">Gunakan data contoh sahaja. Nama, gred dan kadar dalam pratonton ini tidak disimpan.</p>
 
