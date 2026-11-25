@@ -54,6 +54,18 @@ class BidaPeruntukanController extends Controller
         return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open]);
     }
 
+    public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
+    {
+        abort_unless(app()->environment('local'), 404);
+        $record = $this->bidContext($request, $bid, $workspace);
+
+        return view('abm.estimates.gaji-preview', [
+            'bid' => $record,
+            'year' => $record->kitaran->tahun,
+            'jawatan' => $jawatan->names(),
+        ]);
+    }
+
     public function bidForm(Request $request, int $cycle, int $ptj, int $activity, RuangBidaPeruntukan $workspace)
     {
         $record = Kitaran::findOrFail($cycle);
