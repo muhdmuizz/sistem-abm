@@ -57,12 +57,12 @@
 
     <section class="section" id="gaji-wizard-panel" role="tabpanel" aria-labelledby="gaji-wizard-tab" tabindex="0" hidden>
         <div class="gaji-wizard-heading">
-            <h2>OS11000 — Gaji dan Upahan</h2>
+            <h2>OS11000 dan OS12000</h2>
             <label>Ketua Jabatan
                 <select data-ketua><option value="">Pilih pegawai</option></select>
             </label>
         </div>
-        <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS11000">
+        <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS11000 dan OS12000">
             <table class="anggaran-grid gaji-wizard-grid">
                 <colgroup>
                     @foreach (['number', 'position', 'officer', 'grade'] as $column)
@@ -73,6 +73,8 @@
                 <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
                 <colgroup><col style="width: 105px"></colgroup>
                 <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
+                <colgroup><col style="width: 130px"></colgroup>
+                <colgroup><col span="8" style="width: 130px"></colgroup>
                 <colgroup><col></colgroup>
                 <thead>
                     <tr>
@@ -84,12 +86,18 @@
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start">KGT (RM)</th>
                         <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Baharu</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS11000 (RM)</th>
+                        <th scope="colgroup" colspan="8" class="gaji-group-start">OS12000 — Elaun/ Imbuhan Tetap</th>
+                        <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
                     </tr>
                     <tr>
                         @foreach (['Gaji Asal', 'Gaji Baharu'] as $salaryGroup)
                             <th scope="col" class="grid-numeric gaji-group-start" aria-label="{{ $salaryGroup }} — Kadar (RM)">Kadar (RM)</th>
                             <th scope="col" class="grid-numeric" aria-label="{{ $salaryGroup }} — Bil. Bulan">Bil. Bulan</th>
                             <th scope="col" class="grid-numeric" aria-label="{{ $salaryGroup }} — Jumlah Kecil (RM)">Jumlah Kecil (RM)</th>
+                        @endforeach
+                        @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
+                            <th scope="col" class="grid-numeric gaji-group-start">{{ $allowance }}/ Bulan</th>
+                            <th scope="col" class="grid-numeric">{{ $allowance }}/ Tahun</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -98,36 +106,7 @@
         </div>
         <p class="small">Baris Kosong menggunakan Gaji Median × 3 bulan.</p>
 
-        <div class="section">
-            <h2>OS12000 — Elaun/ Imbuhan Tetap</h2>
-            <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS12000">
-                <table class="anggaran-grid gaji-wizard-grid gaji-allowance-grid">
-                    <colgroup>
-                        @foreach (['number', 'position', 'officer', 'grade'] as $column)
-                            <col style="width: var(--gaji-{{ $column }}-width)">
-                        @endforeach
-                        @foreach (range(1, 8) as $column)
-                            <col style="width: 130px">
-                        @endforeach
-                        <col>
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            @foreach (['number' => '#', 'position' => 'Jawatan', 'officer' => 'Nama Pegawai', 'grade' => 'Gred'] as $column => $label)
-                                <th scope="col" class="gaji-frozen gaji-frozen-{{ $column }}">{{ $label }}</th>
-                            @endforeach
-                            @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
-                                <th scope="col" class="grid-numeric gaji-group-start">{{ $allowance }}/ Bulan</th>
-                                <th scope="col" class="grid-numeric">{{ $allowance }}/ Tahun</th>
-                            @endforeach
-                            <th scope="col" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
-                        </tr>
-                    </thead>
-                    <tbody data-allowance-rows></tbody>
-                </table>
-            </div>
-            <p class="small">Kadar bulanan dalam RM. Amaun tahunan dikira × 12. Kelayakan bagi jawatan Kosong belum ditetapkan.</p>
-        </div>
+        <p class="small">Elaun OS12000 dikira daripada kadar bulanan × 12. Kelayakan bagi jawatan Kosong belum ditetapkan.</p>
     </section>
 
     <datalist id="jik-jawatan-options">
@@ -146,19 +125,6 @@
         <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
         <td><button type="button" class="button danger" data-jik-remove>Padam</button></td>
     </tr></template>
-    <template data-allowance-template><tr>
-        <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
-        <td class="gaji-frozen gaji-frozen-position" data-position></td>
-        <td class="gaji-frozen gaji-frozen-officer" data-officer></td>
-        <td class="gaji-frozen gaji-frozen-grade" data-grade></td>
-        @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
-            <td class="gaji-group-start">
-                <input aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
-            </td>
-            <td class="grid-numeric" data-annual>—</td>
-        @endforeach
-        <td class="grid-numeric gaji-group-start gaji-total" data-allowance-total>—</td>
-    </tr></template>
     <template data-wizard-template><tr>
         <th scope="row" class="gaji-frozen gaji-frozen-number" data-row-number></th>
         <td class="gaji-frozen gaji-frozen-position" data-position></td>
@@ -172,6 +138,13 @@
         @foreach (['asal-months', 'asal-subtotal', 'kgt', 'baharu', 'baharu-months', 'baharu-subtotal', 'total'] as $field)
             <td @class(['grid-numeric', 'gaji-group-start' => in_array($field, ['kgt', 'baharu', 'total'], true), 'gaji-total' => $field === 'total']) data-value="{{ $field }}">—</td>
         @endforeach
+        @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
+            <td class="gaji-group-start">
+                <input data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
+            </td>
+            <td class="grid-numeric" data-annual>—</td>
+        @endforeach
+        <td class="grid-numeric gaji-group-start gaji-total" data-allowance-total>—</td>
     </tr></template>
 </div>
 @endsection
