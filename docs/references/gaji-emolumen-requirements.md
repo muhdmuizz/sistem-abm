@@ -40,7 +40,8 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 
 - For an **Isi** row, the salary input is the officer's **Gaji Pokok Terakhir**.
 - Only a **Penyedia Anggaran** authorised for the applicable workplace may enter this value in the Gaji & Emolumen wizard.
-- The salary reference date and how to apply salary changes during the budget year remain open.
+- Use **Gaji Pokok Terakhir as at 31 December of the calendar year immediately preceding the Kitaran year**. For Kitaran 2028, use 31 December 2027. The reference date is determined from the Kitaran year.
+- How to apply salary changes during the Kitaran year remains open.
 
 ## Decisions that follow
 
