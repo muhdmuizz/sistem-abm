@@ -34,7 +34,7 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 - Each **Kosong** row carries an OS11000 salary estimate. Use **Gaji Median** for the row's Jawatan and Gred as the monthly salary basis.
 - Jawatan is inherited from JIK. For now, the Penyedia Anggaran selects the Gred in the wizard. The system resolves Gaji Median using the selected Gred and inherited Jawatan.
 - Visually distinguish Kosong rows in the wizard and retain the visible **Kosong** status label so vacancy remains identifiable without relying on colour.
-- **Bilangan Bulan defaults to 3** for each Kosong row. The default OS11000 estimate per vacant post is **Gaji Median × 3**. Whether Penyedia Anggaran may override the default remains open.
+- **Bilangan Bulan is fixed at 3** for every Kosong row and is read-only in the wizard. The OS11000 estimate per vacant post is **Gaji Median × 3**.
 
 ## Decisions that follow
 
