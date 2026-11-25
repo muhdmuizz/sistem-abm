@@ -13,13 +13,15 @@
             tab.classList.toggle('primary', selected);
             panels[position].hidden = !selected;
         });
+        if (workplaceField) workplaceField.hidden = index === 0;
+        if (index === 0) updateSummary();
         if (focus) tabs[index].focus();
     }
 
     tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => selectTab(index));
         tab.addEventListener('keydown', event => {
-            const targets = { ArrowLeft: 1 - index, ArrowRight: 1 - index, Home: 0, End: tabs.length - 1 };
+            const targets = { ArrowLeft: (index + tabs.length - 1) % tabs.length, ArrowRight: (index + 1) % tabs.length, Home: 0, End: tabs.length - 1 };
             if (!Object.hasOwn(targets, event.key)) return;
             event.preventDefault();
             selectTab(targets[event.key], true);
@@ -50,19 +52,52 @@
     }
 
     const workplace = preview.querySelector('[data-gaji-workplace]');
+    const workplaceField = preview.querySelector('[data-gaji-workplace-field]');
+    const summaryRows = [...preview.querySelectorAll('[data-payroll-summary]')];
+    const drafts = new Map();
+    const rowAmounts = new WeakMap();
+    let current = workplace?.value ?? 'default';
     const jikEmpty = preview.querySelector('[data-jik-empty]');
     const wizardEmpty = preview.querySelector('[data-wizard-empty]');
     const totalCells = [...preview.querySelectorAll('[data-jik-total]')];
     const countFormat = new Intl.NumberFormat('en-MY');
+
+    function jikCounts(row) {
+        const [, establishment, occupancy] = row.querySelectorAll('input');
+        const posts = Math.max(0, establishment.valueAsNumber || 0);
+        const filled = Math.max(0, occupancy.valueAsNumber || 0);
+        return [posts, filled, Math.max(0, posts - filled)];
+    }
+
+    function updateSummary() {
+        for (const summaryRow of summaryRows) {
+            const id = summaryRow.dataset.payrollSummary;
+            const draft = id === current ? { jik: jikRows.rows, wizard: wizardRows.rows } : drafts.get(id);
+            const counts = [0, 0, 0];
+            const amounts = [0n, 0n, 0n];
+            for (const row of draft?.jik ?? []) {
+                jikCounts(row).forEach((count, index) => { counts[index] += count; });
+            }
+            for (const row of draft?.wizard ?? []) {
+                const totals = rowAmounts.get(row);
+                amounts[0] += totals.salary ?? 0n;
+                amounts[1] += totals.allowances ?? 0n;
+                amounts[2] += totals.contributions ?? 0n;
+            }
+            const total = amounts.reduce((sum, value) => sum + value, 0n);
+            const values = [...counts.map(count => countFormat.format(count)), ...amounts.map(money), money(total)];
+            summaryRow.querySelectorAll('[data-summary-value]').forEach((cell, index) => {
+                cell.textContent = values[index];
+            });
+        }
+    }
 
     function updateJikTotals() {
         jikEmpty.hidden = jikRows.rows.length > 0;
         const totals = { establishment: 0, filled: 0, vacant: 0 };
         for (const row of jikRows.rows) {
             const [, establishment, occupancy] = row.querySelectorAll('input');
-            const posts = Math.max(0, establishment.valueAsNumber || 0);
-            const filled = Math.max(0, occupancy.valueAsNumber || 0);
-            const vacant = Math.max(0, posts - filled);
+            const [posts, filled, vacant] = jikCounts(row);
             occupancy.max = establishment.value;
             row.querySelector('output').value = String(vacant);
             totals.establishment += posts;
@@ -189,6 +224,7 @@
         const os13000Annual = row.querySelector('[data-os13000-annual]');
         const payrollTotal = row.querySelector('[data-payroll-total]');
         const totals = { salary: null, allowances: null, contributions: null };
+        rowAmounts.set(row, totals);
 
         function setTotal(key, amount) {
             totals[key] = amount;
@@ -326,7 +362,7 @@
     jik.addEventListener('input', updateJikTotals);
     jik.addEventListener('submit', event => {
         event.preventDefault();
-        if (generate()) selectTab(1, true);
+        if (generate()) selectTab(2, true);
     });
     jikRows.addEventListener('click', event => {
         const button = event.target.closest('[data-jik-remove]');
@@ -349,8 +385,6 @@
     }
 
     if (workplace) {
-        const drafts = new Map();
-        let current = workplace.value;
         workplace.addEventListener('change', () => {
             const next = workplace.value;
             if (next === current) return;
@@ -378,4 +412,5 @@
     } else {
         initialiseWorkplace();
     }
+    updateSummary();
 })();
