@@ -53,7 +53,7 @@
 
     const workplace = preview.querySelector('[data-gaji-workplace]');
     const workplaceField = preview.querySelector('[data-gaji-workplace-field]');
-    const summaryRows = [...preview.querySelectorAll('[data-payroll-summary]')];
+    const summaryRows = preview.querySelector('[data-summary-rows]');
     const summaryTotal = preview.querySelector('[data-payroll-summary-total]');
     const drafts = new Map();
     const rowAmounts = new WeakMap();
@@ -81,7 +81,7 @@
     function updateSummary() {
         const grandCounts = [0, 0, 0];
         const grandAmounts = [0n, 0n, 0n];
-        for (const summaryRow of summaryRows) {
+        for (const summaryRow of summaryRows.rows) {
             const id = summaryRow.dataset.payrollSummary;
             const draft = id === current ? { jik: jikRows.rows, wizard: wizardRows.rows } : drafts.get(id);
             const counts = [0, 0, 0];
@@ -372,7 +372,7 @@
     jik.addEventListener('input', updateJikTotals);
     jik.addEventListener('submit', event => {
         event.preventDefault();
-        if (generate()) selectTab(2, true);
+        if ((!workplace || current) && generate()) selectTab(2, true);
     });
     jikRows.addEventListener('click', event => {
         const button = event.target.closest('[data-jik-remove]');
@@ -383,7 +383,9 @@
         updateJikTotals();
         (neighbor?.querySelector('[data-jik-remove]') ?? addButton).focus();
     });
-    addButton.addEventListener('click', addJik);
+    addButton.addEventListener('click', () => {
+        if (!workplace || current) addJik();
+    });
 
     function initialiseWorkplace() {
         addJik();
@@ -395,30 +397,82 @@
     }
 
     if (workplace) {
-        workplace.addEventListener('change', () => {
-            const next = workplace.value;
-            if (next === current) return;
+        const available = preview.querySelector('[data-available-workplace]');
+        const include = preview.querySelector('[data-include-workplace]');
+        const candidates = [...available.options].filter(option => option.value);
+        const included = new Set();
+        const generateButton = jik.querySelector('button[type="submit"]');
 
-            drafts.set(current, {
-                jik: [...jikRows.rows],
-                wizard: [...wizardRows.rows],
-                ketua: ketua.value,
-            });
-            current = next;
-            const draft = drafts.get(current);
-            drafts.delete(current);
-            jikRows.replaceChildren(...(draft?.jik ?? []));
-            wizardRows.replaceChildren(...(draft?.wizard ?? []));
-            ketua.value = '';
-            error.hidden = true;
-
+        function switchWorkplace(next) {
+            if (next !== current) {
+                if (current) {
+                    drafts.set(current, {
+                        jik: [...jikRows.rows],
+                        wizard: [...wizardRows.rows],
+                        ketua: ketua.value,
+                    });
+                }
+                current = next;
+                const draft = drafts.get(current);
+                drafts.delete(current);
+                jikRows.replaceChildren(...(draft?.jik ?? []));
+                wizardRows.replaceChildren(...(draft?.wizard ?? []));
+                ketua.value = '';
+                error.hidden = true;
+                updateKetua();
+                if (draft) ketua.value = draft.ketua;
+                wizardRows.closest('.anggaran-grid-scroll').scrollLeft = 0;
+            }
             updateJikTotals();
             updateKetua();
-            if (draft) ketua.value = draft.ketua;
-            wizardRows.closest('.anggaran-grid-scroll').scrollLeft = 0;
+            addButton.disabled = !current;
+            generateButton.disabled = !current;
+        }
+
+        function renderWorkplaces() {
+            const selected = candidates.filter(option => included.has(option.value));
+            const rows = selected.map((option, index) => {
+                const row = preview.querySelector('[data-summary-workplace-template]').content.firstElementChild.cloneNode(true);
+                row.dataset.payrollSummary = option.value;
+                row.querySelector('[data-summary-number]').textContent = String(index + 1);
+                row.querySelector('[data-summary-name]').textContent = option.text;
+                row.querySelector('[data-exclude-workplace]').setAttribute('aria-label', 'Keluarkan ' + option.text);
+                return row;
+            });
+            summaryRows.replaceChildren(...rows);
+            workplace.replaceChildren(...(selected.length
+                ? selected.map(option => new Option(option.text, option.value))
+                : [new Option('Tambah Tempat Bertugas di Rumusan', '')]));
+            workplace.value = included.has(current) ? current : (selected[0]?.value ?? '');
+            workplace.disabled = !selected.length;
+            for (const option of candidates) option.disabled = included.has(option.value);
+            available.value = '';
+            include.disabled = true;
+            switchWorkplace(workplace.value);
+            updateSummary();
+        }
+
+        available.addEventListener('change', () => { include.disabled = !available.value; });
+        include.addEventListener('click', () => {
+            if (!available.value || available.selectedOptions[0]?.disabled) return;
+            included.add(available.value);
+            renderWorkplaces();
+            available.focus();
         });
-        updateJikTotals();
-        updateKetua();
+        summaryRows.addEventListener('click', event => {
+            const button = event.target.closest('[data-exclude-workplace]');
+            if (!button) return;
+            const row = button.closest('[data-payroll-summary]');
+            const id = row.dataset.payrollSummary;
+            const hasEntries = id === current ? jikRows.rows.length || wizardRows.rows.length
+                : drafts.get(id)?.jik.length || drafts.get(id)?.wizard.length;
+            if (hasEntries && !window.confirm('Keluarkan tempat bertugas daripada Rumusan? Butiran pratonton kekal sehingga halaman dimuat semula.')) return;
+            included.delete(id);
+            renderWorkplaces();
+            available.focus();
+        });
+        workplace.addEventListener('change', () => switchWorkplace(workplace.value));
+        renderWorkplaces();
     } else {
         initialiseWorkplace();
     }
