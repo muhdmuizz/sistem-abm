@@ -168,7 +168,9 @@
                 <button type="button" class="button" data-other-add>Tambah Elaun</button>
             </details>
         </td>
-        <td class="grid-numeric" data-other-year-total>—</td>
+        <td class="gaji-other-year-cell grid-numeric">
+            <output aria-label="Elaun-elaun Lain setahun (RM)" data-other-year-total>—</output>
+        </td>
         <td class="grid-numeric gaji-group-start gaji-total" data-allowance-total>—</td>
         <td class="gaji-group-start">
             <input data-os13000-monthly aria-label="OS13000 sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
