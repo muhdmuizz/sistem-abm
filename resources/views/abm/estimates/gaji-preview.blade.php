@@ -120,6 +120,17 @@
                 <select data-ketua><option value="">Pilih pegawai</option></select>
             </label>
         </div>
+        <details class="section">
+            <summary>REF-08 · Kadar Elaun dan Imbuhan Tetap</summary>
+            <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual kadar elaun REF-08">
+                @php
+                    $reference = \Illuminate\Support\Facades\File::get(base_path('docs/references/REF-08-kadar-elaun-imbuhan-tetap.md'));
+                    $table = \Illuminate\Support\Str::afterLast(trim($reference), "\n\n");
+                @endphp
+                {!! \Illuminate\Support\Str::markdown($table, ['html_input' => 'strip', 'allow_unsafe_links' => false]) !!}
+            </div>
+        </details>
+
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual Gaji dan Emolumen">
             <table class="anggaran-grid gaji-wizard-grid">
                 <colgroup>
