@@ -654,31 +654,81 @@
         checkForEdits();
     }
 
-    let dragging = null;
+    let drag = null;
     let dropTarget = null;
+
+    function updateDropTarget(x, y) {
+        const target = document.elementFromPoint(x, y)?.closest('tr');
+        const next = target?.parentNode === jikRows && target !== drag.row ? target : null;
+        if (next === dropTarget) return;
+        dropTarget?.removeAttribute('data-jik-drop-target');
+        dropTarget = next;
+        if (dropTarget) {
+            dropTarget.setAttribute('data-jik-drop-target', drag.row.sectionRowIndex < dropTarget.sectionRowIndex ? 'after' : 'before');
+        }
+    }
+
     jikRows.addEventListener('pointerdown', event => {
         const handle = event.target.closest('[data-jik-drag]');
-        if (!handle || !event.isPrimary || event.button !== 0) return;
+        if (!handle || !event.isPrimary || event.button !== 0 || drag) return;
         handle.setPointerCapture(event.pointerId);
-        dragging = handle.closest('tr');
-        dragging.setAttribute('data-jik-dragging', '');
+        drag = { row: handle.closest('tr'), pointerId: event.pointerId, x: event.clientX, y: event.clientY, frame: 0 };
     });
+
     jikRows.addEventListener('pointermove', event => {
-        if (!dragging || !event.isPrimary) return;
-        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('tr');
-        dropTarget?.removeAttribute('data-jik-drop-target');
-        dropTarget = target?.parentNode === jikRows && target !== dragging ? target : null;
-        if (dropTarget) {
-            dropTarget.setAttribute('data-jik-drop-target', dragging.sectionRowIndex < dropTarget.sectionRowIndex ? 'after' : 'before');
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        const dx = event.clientX - drag.x;
+        const dy = event.clientY - drag.y;
+        if (!drag.preview) {
+            if (Math.hypot(dx, dy) < 4) return;
+            const bounds = drag.row.getBoundingClientRect();
+            const widths = [...drag.row.cells].map(cell => cell.getBoundingClientRect().width);
+            const copy = drag.row.cloneNode(true);
+            copy.querySelector('[role="listbox"]')?.remove();
+            const sourceInputs = drag.row.querySelectorAll('input');
+            copy.querySelectorAll('input').forEach((input, index) => {
+                input.value = sourceInputs[index].value;
+            });
+            const table = document.createElement('table');
+            table.className = 'anggaran-grid jik-drag-preview';
+            table.inert = true;
+            table.setAttribute('aria-hidden', 'true');
+            Object.assign(table.style, { left: bounds.left + 'px', top: bounds.top + 'px', width: bounds.width + 'px' });
+            const columns = document.createElement('colgroup');
+            for (const width of widths) {
+                const column = document.createElement('col');
+                column.style.width = width + 'px';
+                columns.append(column);
+            }
+            table.append(columns);
+            table.createTBody().append(copy);
+            document.body.append(table);
+            drag.preview = table;
+            drag.row.setAttribute('data-jik-dragging', '');
+        }
+        drag.dx = dx;
+        drag.dy = dy;
+        if (!drag.frame) {
+            drag.frame = requestAnimationFrame(() => {
+                drag.frame = 0;
+                drag.preview.style.transform = 'translate3d(' + drag.dx + 'px, ' + drag.dy + 'px, 0)';
+                updateDropTarget(drag.x + drag.dx, drag.y + drag.dy);
+            });
         }
     });
+
     function finishJikDrag(event) {
-        if (!event.isPrimary || !dragging) return;
-        dragging.removeAttribute('data-jik-dragging');
-        if (event.type === 'pointerup') moveJikRow(dragging, dropTarget);
-        dropTarget?.removeAttribute('data-jik-drop-target');
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        if (event.type === 'pointerup' && drag.preview) updateDropTarget(event.clientX, event.clientY);
+        const { row, preview: floatingRow, frame } = drag;
+        const target = dropTarget;
+        drag = null;
         dropTarget = null;
-        dragging = null;
+        cancelAnimationFrame(frame);
+        floatingRow?.remove();
+        row.removeAttribute('data-jik-dragging');
+        target?.removeAttribute('data-jik-drop-target');
+        if (event.type === 'pointerup' && floatingRow) moveJikRow(row, target);
     }
     for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
         jikRows.addEventListener(type, finishJikDrag);
