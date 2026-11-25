@@ -54,7 +54,13 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 8. Jumlah Kecil (Gaji Baharu)
 9. Jumlah OS11000
 
-Confirm the month allocation, the KGT rate source and how to handle a 1 January TPG when the entered Gaji Asal may already include that year's KGT.
+### TPG and 1 January calculation
+
+TPG options within the Kitaran year are **1 January, 1 April, 1 July and 1 October**.
+
+For **TPG 1 January**, enter Gaji Asal as the 1 January salary basis before applying that year's KGT in the estimate. The wizard sets Bil. Bulan (Gaji Asal) to zero, with no Gaji Asal subtotal. It calculates **Gaji Baharu = Gaji Asal + KGT**, sets Bil. Bulan (Gaji Baharu) to **12**, and calculates **Jumlah Kecil (Gaji Baharu) = (Gaji Asal + KGT) × 12**. Jumlah OS11000 equals that subtotal. Zero-month and zero-subtotal cells may display blank or zero.
+
+Confirm the month allocation for the other TPG options and the KGT rate source.
 
 ## Decisions that follow
 
