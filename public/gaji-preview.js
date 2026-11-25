@@ -2,6 +2,30 @@
     const preview = document.querySelector('[data-gaji-preview]');
     if (!preview) return;
 
+    const tabs = [...preview.querySelectorAll('[role="tab"]')];
+    const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
+
+    function selectTab(index, focus = false) {
+        tabs.forEach((tab, position) => {
+            const selected = position === index;
+            tab.setAttribute('aria-selected', String(selected));
+            tab.tabIndex = selected ? 0 : -1;
+            tab.classList.toggle('primary', selected);
+            panels[position].hidden = !selected;
+        });
+        if (focus) tabs[index].focus();
+    }
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => selectTab(index));
+        tab.addEventListener('keydown', event => {
+            const targets = { ArrowLeft: 1 - index, ArrowRight: 1 - index, Home: 0, End: tabs.length - 1 };
+            if (!Object.hasOwn(targets, event.key)) return;
+            event.preventDefault();
+            selectTab(targets[event.key], true);
+        });
+    });
+
     const jik = preview.querySelector('[data-jik]');
     const jikRows = preview.querySelector('[data-jik-rows]');
     const wizardRows = preview.querySelector('[data-wizard-rows]');
@@ -100,6 +124,7 @@
             }
         }
         updateKetua();
+        return true;
     }
 
     jik.addEventListener('input', event => {
@@ -111,7 +136,7 @@
     });
     jik.addEventListener('submit', event => {
         event.preventDefault();
-        generate();
+        if (generate()) selectTab(1, true);
     });
     preview.querySelector('[data-jik-add]').addEventListener('click', addJik);
     addJik();
