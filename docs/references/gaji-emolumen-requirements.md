@@ -6,7 +6,7 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 | --- | --- | --- |
 | OS11000 | Gaji dan Upahan | Current worksheet or sample for salary base, employee or position counts, periods, adjustments and annual total. |
 | OS12000 | Elaun/Imbuhan Tetap | Eligible allowance components, their rates and effective periods, and how they are entered today. |
-| OS13000 | Emolumen Lain | Components actually bid under this OS, calculation basis and whether each uses recurring periods or a one-off amount. |
+| OS13000 | Sumbangan Berkanun | Confirm the source of each monthly contribution amount. |
 
 ## Confirmed JIK workflow
 
@@ -84,7 +84,7 @@ Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong
 
 **Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12 for Isi or × 3 for Kosong**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the existing Gaji & Emolumen worksheet. Export two numeric summary columns: **Elaun-elaun Lain / Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain / Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
 
-## OS13000 — monthly and annual amounts
+## OS13000 — Sumbangan Berkanun
 
 The Terperinci grid places **OS13000 / Bulan** and **OS13000 / Tahun** after Jumlah OS12000. The annual amount is the monthly amount × 12 for Isi or × 3 for Kosong. The local preview uses manual monthly entry.
 
