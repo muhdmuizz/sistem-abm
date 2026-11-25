@@ -32,6 +32,7 @@
     const ketua = preview.querySelector('[data-ketua]');
     const error = preview.querySelector('[data-jik-error]');
     const addButton = preview.querySelector('[data-jik-add]');
+    const positions = new Set([...preview.querySelectorAll('#jik-jawatan-options option')].map(option => option.value));
     const rates = {
         A: { median: 320000n, kgt: 15000n },
         B: { median: 480000n, kgt: 20000n },
@@ -112,8 +113,8 @@
             const [name, establishment, occupancy] = row.querySelectorAll('input');
             return { name: name.value.trim(), total: establishment.valueAsNumber, filled: occupancy.valueAsNumber };
         });
-        if (entries.some(entry => !entry.name || entry.filled > entry.total)) {
-            error.textContent = 'Isi Jawatan dan pastikan Pengisian tidak melebihi Bil. Perjawatan.';
+        if (entries.some(entry => !positions.has(entry.name) || entry.filled > entry.total)) {
+            error.textContent = 'Pilih Jawatan daripada senarai dan pastikan Bil. Pengisian tidak melebihi Bil. Perjawatan.';
             error.hidden = false;
             return;
         }
@@ -149,5 +150,9 @@
     });
     addButton.addEventListener('click', addJik);
     addJik();
-    generate();
+    const firstPosition = positions.values().next().value;
+    if (firstPosition) {
+        jikRows.rows[0].querySelector('input').value = firstPosition;
+        generate();
+    }
 })();
