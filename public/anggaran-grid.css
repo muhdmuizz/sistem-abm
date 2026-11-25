@@ -69,7 +69,7 @@
     min-width: 3618px;
 }
 .gaji-wizard-grid .gaji-amount-column { width: 130px; }
-.gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
+.gaji-wizard-grid thead { position: sticky; top: 0; z-index: 3; }
 .gaji-wizard-grid :is(th, td) { vertical-align: middle; }
 .gaji-wizard-grid th:nth-child(n) { position: static; top: auto; width: auto; }
 .gaji-wizard-grid thead th { font-weight: 600; }
