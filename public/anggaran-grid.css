@@ -159,39 +159,66 @@
 .gaji-workplace-row { align-items: center; justify-content: space-between; }
 .gaji-workplace-row button { flex-shrink: 0; }
 
-.gaji-workplace-picker {
-    max-width: 36rem;
-    padding: var(--space-3);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: #fff;
+.gaji-summary-grid tbody .gaji-workplace-picker-cell {
+    padding: 0;
+    text-align: start;
+    background: #f7faff;
 }
-.gaji-workplace-picker summary { cursor: pointer; font-weight: 600; }
-.gaji-workplace-search {
-    display: block;
-    margin-block-start: var(--space-3);
+.gaji-workplace-picker summary {
+    padding: var(--space-3) var(--space-4);
+    color: #215787;
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
 }
-.gaji-workplace-search input { display: block; width: min(100%, 24rem); }
-.gaji-workplace-options[hidden],
-.gaji-workplace-options label[hidden] { display: none; }
-
-.gaji-workplace-options {
-    max-height: 16rem;
-    overflow-y: auto;
+.gaji-workplace-picker summary::-webkit-details-marker { display: none; }
+.gaji-workplace-picker summary::before {
+    content: '+';
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline-end: var(--space-2);
+    border-radius: 4px;
+    background: #e7f0fa;
+}
+.gaji-workplace-picker[open] summary::before { content: '−'; }
+.gaji-workplace-picker[open] summary { border-block-end: 1px solid var(--line); }
+.gaji-workplace-picker-content {
+    width: min(100%, 30rem, calc(100vw - 4rem));
+    padding: var(--space-3) var(--space-4);
+}
+.gaji-workplace-search, .gaji-workplace-search input { display: block; width: 100%; }
+.gaji-workplace-choices {
     margin: var(--space-3) 0;
-    padding: var(--space-1);
     border: 1px solid var(--line);
     border-radius: 4px;
+    background: #fff;
 }
-.gaji-workplace-options label {
+.gaji-workplace-choices[hidden],
+.gaji-workplace-options label[hidden] { display: none; }
+.gaji-workplace-options {
+    min-width: 0;
+    max-height: 16rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.gaji-workplace-select-all, .gaji-workplace-options label {
     display: flex;
     align-items: flex-start;
     gap: var(--space-2);
     margin: 0;
     padding: var(--space-2);
+    cursor: pointer;
 }
-.gaji-workplace-options input { flex: 0 0 auto; width: auto; margin: 0.2em 0 0; }
-.gaji-workplace-options input:disabled + span { color: var(--muted); }
+.gaji-workplace-select-all {
+    background: #edf4fc;
+    border-block-end: 1px solid var(--line);
+    font-weight: 600;
+}
+.gaji-workplace-choices input { flex: 0 0 auto; width: auto; margin: 0.2em 0 0; }
 
 .gaji-housing {
     display: grid;
