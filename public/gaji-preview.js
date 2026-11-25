@@ -29,7 +29,6 @@
     const jik = preview.querySelector('[data-jik]');
     const jikRows = preview.querySelector('[data-jik-rows]');
     const wizardRows = preview.querySelector('[data-wizard-rows]');
-    const allowanceRows = preview.querySelector('[data-allowance-rows]');
     const ketua = preview.querySelector('[data-ketua]');
     const error = preview.querySelector('[data-jik-error]');
     const addButton = preview.querySelector('[data-jik-add]');
@@ -169,48 +168,13 @@
         return { annual, total };
     }
 
-    function addAllowancePosition(position, vacant, number, officer, grade) {
-        const row = preview.querySelector('[data-allowance-template]').content.firstElementChild.cloneNode(true);
-        const inputs = [...row.querySelectorAll('input')];
-        const annualCells = [...row.querySelectorAll('[data-annual]')];
-        const totalCell = row.querySelector('[data-allowance-total]');
-        const officerCell = row.querySelector('[data-officer]');
-        const gradeCell = row.querySelector('[data-grade]');
-        row.querySelector('[data-row-number]').textContent = number;
-        row.querySelector('[data-position]').textContent = position;
-        if (vacant) {
-            row.classList.add('gaji-vacant');
-            for (const input of inputs) {
-                input.disabled = true;
-                input.hidden = true;
-                input.parentElement.append('—');
-            }
-        }
-
-        function updateIdentity() {
-            officerCell.textContent = vacant ? 'Kosong' : officer.value.trim() || '—';
-            gradeCell.textContent = grade.value ? grade.selectedOptions[0].text : '—';
-        }
-
-        row.addEventListener('input', () => {
-            const values = inputs.map(input => input.value);
-            const { annual, total } = annualAllowances(values);
-            annual.forEach((amount, index) => {
-                annualCells[index].textContent = amount === null ? '—' : money(amount);
-                inputs[index].setAttribute('aria-invalid', String(Boolean(values[index].trim()) && amount === null));
-            });
-            totalCell.textContent = total === null ? '—' : money(total);
-        });
-        officer.addEventListener('input', updateIdentity);
-        grade.addEventListener('input', updateIdentity);
-        updateIdentity();
-        allowanceRows.append(row);
-    }
-
     function addPosition(position, vacant) {
         const row = preview.querySelector('[data-wizard-template]').content.firstElementChild.cloneNode(true);
         const [officer, salary] = row.querySelectorAll('input');
         const [grade, tpg] = row.querySelectorAll('select');
+        const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
+        const annualCells = [...row.querySelectorAll('[data-annual]')];
+        const allowanceTotal = row.querySelector('[data-allowance-total]');
         const cells = Object.fromEntries([...row.querySelectorAll('[data-value]')].map(cell => [cell.dataset.value, cell]));
         row.dataset.positionId = String(wizardRows.rows.length + 1);
         row.querySelector('[data-row-number]').textContent = row.dataset.positionId;
@@ -224,6 +188,11 @@
             tpg.hidden = true;
             salary.readOnly = true;
             salary.placeholder = '—';
+            for (const input of allowances) {
+                input.disabled = true;
+                input.hidden = true;
+                input.parentElement.append('—');
+            }
         }
 
         function recalculate() {
@@ -247,10 +216,22 @@
             };
             for (const [key, value] of Object.entries(values)) cells[key].textContent = value ?? '—';
         }
-        row.addEventListener('input', recalculate);
+        row.addEventListener('input', event => {
+            if (!event.target.matches('[data-allowance-monthly]')) {
+                recalculate();
+                return;
+            }
+
+            const values = allowances.map(input => input.value);
+            const { annual, total } = annualAllowances(values);
+            annual.forEach((amount, index) => {
+                annualCells[index].textContent = amount === null ? '—' : money(amount);
+                allowances[index].setAttribute('aria-invalid', String(Boolean(values[index].trim()) && amount === null));
+            });
+            allowanceTotal.textContent = total === null ? '—' : money(total);
+        });
         officer.addEventListener('input', updateKetua);
         wizardRows.append(row);
-        addAllowancePosition(position, vacant, row.dataset.positionId, officer, grade);
         recalculate();
     }
 
@@ -266,7 +247,6 @@
         }
         error.hidden = true;
         wizardRows.replaceChildren();
-        allowanceRows.replaceChildren();
         for (const entry of entries) {
             for (let index = 0; index < entry.total; index++) {
                 addPosition(entry.name, index >= entry.filled);
