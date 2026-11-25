@@ -23,9 +23,16 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 - Schools remain distinct workplaces, with their staff recorded separately from office JIKs.
 - The office workplaces are specific to Gaji & Emolumen. Perbelanjaan continues to use the AD-005 workplace rules.
 
-## PPD preparation by Pusat Kos
+## PPD preparation — workplace inclusion in Rumusan
 
-A Penyedia Anggaran preparing Gaji & Emolumen for a PPD can switch between the permitted **Tempat Bertugas (Pusat Kos)** under that PPD. Provide a shared workplace selector above JIK and Terperinci. Show the JIK and generated Butiran Anggaran for one selected workplace at a time so the PPD does not need to work in a single combined table. Pejabat PPD is one workplace; schools or other assigned Pusat Kos remain distinct. Switching workplaces changes the displayed workplace and keeps each workplace's JIK, payroll details and Ketua Jabatan separate within the selected Kitaran, PTJ and Aktiviti. Only workplaces within the user's authorised PPD and preparation scope are selectable.
+Only PPDs use **Rumusan** to choose which Tempat Bertugas to include for the selected Kitaran, PTJ and Aktiviti Kewangan. Offer **Tambah Tempat Bertugas** from the existing workplace references, restricted to the user's authorised workplaces and those applicable to the selected activity. The included workplaces determine the available choices in JIK and Terperinci, and the rows in the Rumusan worksheet for that extraction scope. Each workplace has separate JIK, Butiran Anggaran and Ketua Jabatan; JIK determines its Terperinci rows as before.
+
+| Selected Aktiviti Kewangan | Confirmed workplace applicability |
+| --- | --- |
+| Pengurusan Pentadbiran Negeri (PPN) | Pejabat PPD is eligible and optional. If included, it appears first in Rumusan. |
+| Pendidikan Rendah | Eligible sekolah rendah under the selected PPD. |
+
+Pejabat PPD belongs to PPN and is excluded from school activities. Current non-PTJ school reference records identify the parent PPD and workplace name. Confirm an authoritative school-to-Aktiviti mapping before implementing the full eligible selection list, including any school or workplace cases outside the table above. JPNT and SMK PTJ do not use a selectable Pusat Kos inclusion list.
 
 ## Ketua Jabatan — individual officer confirmed
 
