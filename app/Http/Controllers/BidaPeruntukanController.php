@@ -42,24 +42,48 @@ class BidaPeruntukanController extends Controller
         return $record->load(['ptj', 'aktivitiKewangan', 'kitaran']);
     }
 
-    private const PAYROLL_OS = ['11000', '12000', '13000'];
+
 
     public function show(Request $request, int $bid, RuangBidaPeruntukan $workspace)
     {
         $record = $this->bidContext($request, $bid, $workspace);
-        $catalogue = $workspace->catalogue($request->user(), $record);
-        $estimates = $record->anggaran()->whereIn('rujukan_os_id', $catalogue->pluck('id'))->get()->keyBy('rujukan_os_id');
-        $cards = $catalogue->map(fn ($os) => ['os' => $os, 'estimate' => $estimates->get($os->id),
-            'activation' => $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
-                $record->aktiviti_kewangan_id, $record, $os, $estimates->get($os->id))]);
+        $cards = $this->osCards($request, $record, $workspace);
         $open = $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id);
         [$payrollCards, $otherCards] = $cards->partition(fn ($card) =>
-            app()->environment('local') && in_array($card['os']->kod_objek, self::PAYROLL_OS, true));
+            app()->environment('local') && in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
 
         return view('abm.bids.show', [
             'bid' => $record, 'cards' => $cards, 'open' => $open,
             'payrollCards' => $payrollCards, 'otherCards' => $otherCards,
+            'payrollActivation' => $this->payrollActivation($payrollCards),
         ]);
+    }
+
+    private function osCards(Request $request, Bidaan $bid, RuangBidaPeruntukan $workspace): \Illuminate\Support\Collection
+    {
+        $catalogue = $workspace->catalogue($request->user(), $bid);
+        $estimates = $bid->anggaran()->whereIn('rujukan_os_id', $catalogue->pluck('id'))->get()->keyBy('rujukan_os_id');
+
+        return $catalogue->map(fn ($os) => ['os' => $os, 'estimate' => $estimates->get($os->id),
+            'activation' => $workspace->activation($request->user(), $bid->kitaran_id, $bid->ptj_id,
+                $bid->aktiviti_kewangan_id, $bid, $os, $estimates->get($os->id))]);
+    }
+
+    private function payrollActivation(\Illuminate\Support\Collection $cards): array
+    {
+        $mapped = $cards->pluck('os.kod_objek')->values()->all() === PengaktifanKewangan::PAYROLL_OS;
+        $pending = $cards->reject(fn ($card) => $card['estimate']?->diaktifkan);
+        $blocked = $pending->first(fn ($card) => ! $card['activation']['allowed']);
+
+        return [
+            'active' => $mapped && $pending->isEmpty(),
+            'allowed' => $mapped && $pending->isNotEmpty() && $blocked === null,
+            'selector' => $pending->first()['os']->id ?? null,
+            'explanation' => $mapped ? ($blocked['activation']['explanation'] ?? null) : 'Pemetaan atau akses bagi ketiga-tiga OS belum tersedia.',
+            'needs_reason' => $cards->contains(fn ($card) => $card['activation']['needs_reason']),
+            'central' => $cards->every(fn ($card) => $card['activation']['central']),
+            'open' => $cards->every(fn ($card) => $card['activation']['open']),
+        ];
     }
 
     public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
@@ -67,8 +91,10 @@ class BidaPeruntukanController extends Controller
         abort_unless(app()->environment('local'), 404);
         $record = $this->bidContext($request, $bid, $workspace);
 
-        abort_unless($workspace->catalogue($request->user(), $record)
-            ->contains(fn ($os) => in_array($os->kod_objek, self::PAYROLL_OS, true)), 404);
+        $cards = $this->osCards($request, $record, $workspace)
+            ->filter(fn ($card) => in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
+        abort_unless($cards->isNotEmpty(), 404);
+        abort_unless($this->payrollActivation($cards)['active'], 409, 'Aktifkan OS Gaji & Emolumen terlebih dahulu.');
 
         return view('abm.estimates.gaji-preview', [
             'bid' => $record,
@@ -101,8 +127,14 @@ class BidaPeruntukanController extends Controller
         $estimate = $record->anggaran()->where('rujukan_os_id', $os)->first();
         $activation = $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
             $record->aktiviti_kewangan_id, $record, $reference, $estimate);
+        $payrollGroup = app()->environment('local') && in_array($reference->kod_objek, PengaktifanKewangan::PAYROLL_OS, true);
+        if ($payrollGroup) {
+            $cards = $this->osCards($request, $record, $workspace)
+                ->filter(fn ($card) => in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
+            $activation = $this->payrollActivation($cards);
+        }
         abort_unless($activation['allowed'], 403);
-        return view('abm.bids.activate', ['cycle' => $record->kitaran, 'ptj' => $record->ptj,
+        return view('abm.bids.activate', ['payrollGroup' => $payrollGroup, 'cycle' => $record->kitaran, 'ptj' => $record->ptj,
             'activity' => $record->aktivitiKewangan, 'bid' => $record, 'os' => $reference,
             'activation' => $activation, 'context' => 'os/'.$bid.'/'.$os,
             'postUrl' => route('bids.os-activate', [$bid, $os]), 'backUrl' => route('bids.show', $bid)]);
@@ -133,10 +165,16 @@ class BidaPeruntukanController extends Controller
     public function activateOs(Request $request, int $bid, int $os, RuangBidaPeruntukan $workspace, PengaktifanKewangan $service)
     {
         $record = $this->bidContext($request, $bid, $workspace);
-        abort_unless($workspace->catalogue($request->user(), $record)->contains('id', $os), 404);
+        $reference = $workspace->catalogue($request->user(), $record)->firstWhere('id', $os);
+        abort_unless($reference, 404);
+        $payrollGroup = app()->environment('local') && in_array($reference->kod_objek, PengaktifanKewangan::PAYROLL_OS, true);
         $data = $request->validate(['semakan' => 'required|integer|min:0', 'reason' => 'nullable|string|max:1000']);
         try {
-            $service->aktifkanOs($bid, $os, (int) $data['semakan'], $data['reason'] ?? null);
+            if ($payrollGroup) {
+                $service->aktifkanGaji($bid, (int) $data['semakan'], $data['reason'] ?? null);
+            } else {
+                $service->aktifkanOs($bid, $os, (int) $data['semakan'], $data['reason'] ?? null);
+            }
         } catch (QueryException $exception) {
             Log::notice('abm.os.activation_failed', ['exception_type' => get_class($exception)]);
             return $this->failure($request, 'OS tidak diaktifkan. Muat semula dan cuba lagi.');
@@ -144,6 +182,6 @@ class BidaPeruntukanController extends Controller
             if ($exception->getStatusCode() !== 409) { throw $exception; }
             return $this->failure($request, 'Bidaan atau OS telah berubah. Muat semula dan semak status semasa.');
         }
-        return redirect()->route('bids.show', $bid)->with('status', 'OS diaktifkan.');
+        return redirect()->route('bids.show', $bid)->with('status', $payrollGroup ? 'OS Gaji & Emolumen diaktifkan.' : 'OS diaktifkan.');
     }
 }
