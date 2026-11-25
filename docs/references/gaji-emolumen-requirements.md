@@ -30,9 +30,9 @@ Only PPDs use **Rumusan** to choose which Tempat Bertugas to include for the sel
 | Selected Aktiviti Kewangan | Confirmed workplace applicability |
 | --- | --- |
 | Pengurusan Pentadbiran Negeri (PPN) | Pejabat PPD is eligible and optional. If included, it appears first in Rumusan. |
-| Pendidikan Rendah | Eligible sekolah rendah under the selected PPD. |
+| Pendidikan Rendah | Penyedia Anggaran selects the relevant sekolah rendah from the authorised workplace list. |
 
-Pejabat PPD belongs to PPN and is excluded from school activities. Current non-PTJ school reference records identify the parent PPD and workplace name. Confirm an authoritative school-to-Aktiviti mapping before implementing the full eligible selection list, including any school or workplace cases outside the table above. JPNT and SMK PTJ do not use a selectable Pusat Kos inclusion list.
+Pejabat PPD belongs to PPN and is excluded from other activities. The available list uses the existing authorised non-sector workplace references for the selected PPD. The Penyedia Anggaran determines which schools or other workplaces are relevant to the selected activity; Sistem ABM does not automatically classify schools by activity. Each PPD activity starts with no workplaces included. JPNT and SMK PTJ do not use a selectable Pusat Kos inclusion list.
 
 ## Ketua Jabatan — individual officer confirmed
 
