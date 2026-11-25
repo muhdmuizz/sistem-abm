@@ -44,8 +44,7 @@
 
     const itkItkaRates = new Map();
     const housingRates = new Map();
-    for (const row of preview.querySelectorAll('[aria-label="Jadual kadar elaun REF-08"] tbody tr')) {
-        const [allowance, grade, location, , rate] = [...row.cells].map(cell => cell.textContent.trim());
+    for (const [allowance, grade, location, , rate] of JSON.parse(preview.dataset.allowanceRates)) {
         if (allowance === 'Imbuhan Tetap Keraian' || allowance === 'Imbuhan Tetap Khidmat Awam') {
             itkItkaRates.set(grade, rate.replaceAll(',', ''));
         } else if (allowance === 'Imbuhan Tetap Perumahan') {
@@ -89,6 +88,72 @@
     const summaryRows = preview.querySelector('[data-summary-rows]');
     const summaryTotal = preview.querySelector('[data-payroll-summary-total]');
     const drafts = new Map();
+    const wizardDrafts = new WeakMap();
+    const savedDraft = JSON.parse(preview.dataset.draft);
+    const included = new Set(savedDraft?.included ?? []);
+    let revision = Number(preview.dataset.draftRevision);
+    const saveStatus = preview.querySelector('[data-save-status]');
+    const saveRetry = preview.querySelector('[data-save-retry]');
+    let pending = false;
+    let saving = false;
+    let conflict = false;
+    let timer;
+
+    function captureDraft() {
+        const workplaces = Object.fromEntries([...drafts, ...(current ? [[current, {
+            jik: [...jikRows.rows], wizard: [...wizardRows.rows], ketua: ketua.value,
+        }]] : [])].map(([id, draft]) => [id, {
+            jik: draft.jik.map(row => [...row.querySelectorAll('input')].map(field => field.value)),
+            wizard: draft.wizard.map(row => wizardDrafts.get(row)()),
+            ketua: draft.ketua,
+        }]));
+        return JSON.stringify({ included: [...included], workplaces });
+    }
+
+    function restoreDraft(saved) {
+        saved.jik.forEach(addJik);
+        saved.wizard.forEach(row => addPosition(row.position, row.vacant, row));
+        updateKetua();
+        ketua.value = saved.ketua ?? '';
+    }
+
+    async function saveDraft() {
+        if (saving || !pending || conflict) return;
+        saving = true;
+        pending = false;
+        saveRetry.hidden = true;
+        saveStatus.textContent = 'Menyimpan draf…';
+        let success = false;
+        try {
+            const response = await fetch(preview.dataset.saveUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': preview.dataset.csrf },
+                body: JSON.stringify({ revision, snapshot: captureDraft() }),
+            });
+            conflict = response.status === 409;
+            if (!response.ok) throw new Error('Autosave failed');
+            ({ revision } = await response.json());
+            success = true;
+            saveStatus.textContent = pending ? 'Perubahan belum disimpan.' : 'Draf disimpan.';
+        } catch {
+            pending = true;
+            saveStatus.textContent = conflict
+                ? 'Draf telah berubah di tab lain. Perubahan di tab ini belum disimpan.'
+                : 'Draf belum disimpan. Cuba simpan semula.';
+            saveRetry.hidden = conflict;
+        } finally {
+            saving = false;
+            if (success && pending) queueSave();
+        }
+    }
+
+    function queueSave() {
+        pending = true;
+        if (conflict) return;
+        saveStatus.textContent = 'Perubahan belum disimpan.';
+        clearTimeout(timer);
+        timer = setTimeout(saveDraft, 750);
+    }
     const rowAmounts = new WeakMap();
     let current = workplace?.value ?? 'default';
     const jikEmpty = preview.querySelector('[data-jik-empty]');
@@ -183,7 +248,7 @@
 
     let nextSuggestionId = 0;
 
-    function addJik() {
+    function addJik(values = null) {
         const row = preview.querySelector('[data-jik-template]').content.firstElementChild.cloneNode(true);
         const input = row.querySelector('[role="combobox"]');
         const list = row.querySelector('[role="listbox"]');
@@ -200,6 +265,7 @@
 
         function choose(option) {
             input.value = option.textContent;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
             close();
             input.focus();
         }
@@ -249,9 +315,7 @@
             const option = event.target.closest('[role="option"]');
             if (option) choose(option);
         });
-        if (workplace) {
-            for (const count of row.querySelectorAll('input[type="number"]')) count.value = '';
-        }
+        if (values) row.querySelectorAll('input').forEach((field, index) => { field.value = values[index] ?? ''; });
         jikRows.append(row);
         updateJikTotals();
     }
@@ -282,7 +346,7 @@
         return { annual, total };
     }
 
-    function addPosition(position, vacant) {
+    function addPosition(position, vacant, saved = null) {
         const row = preview.querySelector('[data-wizard-template]').content.firstElementChild.cloneNode(true);
         const [officer, salary] = row.querySelectorAll('input');
         const [grade, tpg] = row.querySelectorAll('select');
@@ -291,8 +355,9 @@
             grade.add(new Option(code, code));
         }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
-        const [itjuMonthly, itkItkaMonthly, housingMonthly] = allowances;
+        const [itjuMonthly, itkItkaMonthly, housingMonthly, livingMonthly] = allowances;
         const housingAllowance = row.querySelector('[data-housing-allowance]');
+        const housingRate = row.querySelector('[data-housing-rate]');
         housingMonthly.readOnly = true;
         housingMonthly.placeholder = '—';
         itjuMonthly.readOnly = true;
@@ -369,6 +434,8 @@
             // Grade 11 ITK requires university lecturer status and qualifying service.
             itkItkaMonthly.value = referenceGrade === '11' ? '' : (itkItkaRates.get(referenceGrade) ?? '');
             housingMonthly.value = housingRates.get(housingAllowance.value + ':' + referenceGrade) ?? '';
+            const housingCents = parseMoney(housingMonthly.value);
+            housingRate.textContent = housingCents === null ? '—' : money(housingCents);
             itkItkaMonthly.title = itkItkaMonthly.value
                 ? 'Kadar ITK/ ITKA mengikut gred (REF-08).'
                 : 'Tiada kadar ITK/ ITKA yang boleh diisi secara automatik.';
@@ -421,26 +488,32 @@
             return changed;
         }
 
+        function recalculateContributions() {
+            const value = os13000Monthly.value.trim();
+            const monthly = parseMoney(value);
+            os13000Monthly.setAttribute('aria-invalid', String(Boolean(value) && monthly === null));
+            const annual = monthly === null ? null : monthly * annualMultiplier;
+            os13000Annual.textContent = annual === null ? '—' : money(annual);
+            setTotal('contributions', annual);
+        }
+
         row.addEventListener('input', event => {
             if (event.target.matches('[data-allowance-monthly], [data-other-name], [data-other-monthly]')) {
                 recalculateAllowances();
             } else if (event.target === os13000Monthly) {
-                const value = os13000Monthly.value.trim();
-                const monthly = parseMoney(value);
-                os13000Monthly.setAttribute('aria-invalid', String(Boolean(value) && monthly === null));
-                const annual = monthly === null ? null : monthly * annualMultiplier;
-                os13000Annual.textContent = annual === null ? '—' : money(annual);
-                setTotal('contributions', annual);
+                recalculateContributions();
             } else {
                 recalculate();
             }
             if (checkIncompleteRow()) updateIncompleteRows();
         });
-        otherAdd.addEventListener('click', () => {
+        function addOtherItem(values = ['', '']) {
             const item = preview.querySelector('[data-other-allowance-template]').content.firstElementChild.cloneNode(true);
+            item.querySelectorAll('input').forEach((field, index) => { field.value = values[index] ?? ''; });
             otherItems.append(item);
-            item.querySelector('[data-other-name]').focus();
-        });
+            return item;
+        }
+        otherAdd.addEventListener('click', () => addOtherItem().querySelector('[data-other-name]').focus());
         otherItems.addEventListener('click', event => {
             const remove = event.target.closest('[data-other-remove]');
             if (!remove) return;
@@ -452,6 +525,17 @@
         grade.addEventListener('change', recalculateAllowances);
         housingAllowance.addEventListener('change', recalculateAllowances);
         officer.addEventListener('input', updateKetua);
+        const fields = [officer, salary, grade, tpg, housingAllowance, livingMonthly, os13000Monthly];
+        wizardDrafts.set(row, () => ({
+            position, vacant,
+            fields: fields.map(field => field === salary && vacant ? '' : field.value),
+            other: [...otherItems.children].map(item => [...item.querySelectorAll('input')].map(field => field.value)),
+        }));
+        if (saved) {
+            fields.forEach((field, index) => { field.value = saved.fields[index] ?? ''; });
+            saved.other.forEach(addOtherItem);
+            recalculateContributions();
+        }
         wizardRows.append(row);
         recalculate();
         recalculateAllowances();
@@ -469,6 +553,7 @@
             return;
         }
         error.hidden = true;
+        if (wizardRows.rows.length && !window.confirm('Jana semula dan ganti semua butiran sedia ada untuk tempat ini?')) return false;
         wizardRows.replaceChildren();
         for (const entry of entries) {
             for (let index = 0; index < entry.total; index++) {
@@ -505,7 +590,6 @@
         const pickerToggle = picker.querySelector('summary');
         const candidates = [...available.querySelectorAll('input[type="checkbox"]')];
         const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !choice.disabled);
-        const included = new Set();
         const generateButton = jik.querySelector('button[type="submit"]');
 
         function switchWorkplace(next) {
@@ -584,8 +668,40 @@
         });
         workplace.addEventListener('change', () => switchWorkplace(workplace.value));
         renderWorkplaces();
+        const first = current;
+        for (const [id, saved] of Object.entries(savedDraft?.workplaces ?? {})) {
+            switchWorkplace(id);
+            restoreDraft(saved);
+        }
+        switchWorkplace(first);
+    } else if (savedDraft?.workplaces.default) {
+        restoreDraft(savedDraft.workplaces.default);
     } else {
         addJik();
     }
+    updateIncompleteRows();
     updateSummary();
+
+    let previousSnapshot = captureDraft();
+    function checkForEdits() {
+        const snapshot = captureDraft();
+        if (snapshot === previousSnapshot) return;
+        previousSnapshot = snapshot;
+        queueSave();
+    }
+    for (const type of ['input', 'change', 'submit']) {
+        preview.addEventListener(type, () => queueMicrotask(checkForEdits));
+    }
+    preview.addEventListener('click', event => {
+        if (event.target.closest('[data-jik-add], [data-jik-remove], [data-other-add], [data-other-remove], [data-include-workplace], [data-exclude-workplace]')) {
+            queueMicrotask(checkForEdits);
+        }
+    });
+    saveStatus.textContent = revision ? 'Draf dimuatkan.' : 'Tiada draf disimpan.';
+    saveRetry.addEventListener('click', saveDraft);
+    window.addEventListener('beforeunload', event => {
+        if (!pending && !saving) return;
+        event.preventDefault();
+        event.returnValue = '';
+    });
 })();

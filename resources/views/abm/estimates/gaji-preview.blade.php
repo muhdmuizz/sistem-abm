@@ -13,9 +13,16 @@
     </div>
     <a class="button" href="{{ route('bids.show', $bid->id) }}">Kembali ke Aktiviti Kewangan</a>
 </div>
-<p class="notice">Gunakan data contoh sahaja. Nama, gred dan amaun yang dimasukkan dalam pratonton ini tidak disimpan.</p>
+<p class="notice">Gunakan data contoh sahaja. Draf pratonton disimpan secara automatik untuk akaun anda.</p>
 
-<div data-gaji-preview data-year="{{ $year }}" data-salary-rates="{{ json_encode($salaryRates, JSON_THROW_ON_ERROR) }}">
+<div data-gaji-preview data-year="{{ $year }}" data-salary-rates="{{ json_encode($salaryRates, JSON_THROW_ON_ERROR) }}"
+    data-allowance-rates="{{ json_encode($allowanceRows, JSON_THROW_ON_ERROR) }}"
+    data-draft="{{ json_encode($draft, JSON_THROW_ON_ERROR) }}" data-draft-revision="{{ $draftVersion }}"
+    data-save-url="{{ route('gaji.preview-save', $bid->id) }}" data-csrf="{{ csrf_token() }}">
+    <div class="grid-toolbar">
+        <p class="small" role="status" data-save-status></p>
+        <button class="button" type="button" data-save-retry hidden>Cuba Simpan Semula</button>
+    </div>
     @if($workplaces !== [])
         <div class="action-field" data-gaji-workplace-field hidden>
             <label for="gaji-workplace">Tempat Bertugas</label>
@@ -126,17 +133,6 @@
                 <select data-incomplete-picker></select>
             </label>
         </div>
-        <details class="section">
-            <summary>REF-08 · Kadar Elaun dan Imbuhan Tetap</summary>
-            <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual kadar elaun REF-08">
-                @php
-                    $reference = \Illuminate\Support\Facades\File::get(base_path('docs/references/REF-08-kadar-elaun-imbuhan-tetap.md'));
-                    $table = \Illuminate\Support\Str::afterLast(trim($reference), "\n\n");
-                @endphp
-                {!! \Illuminate\Support\Str::markdown($table, ['html_input' => 'strip', 'allow_unsafe_links' => false]) !!}
-            </div>
-        </details>
-
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual Gaji dan Emolumen">
             <table class="anggaran-grid gaji-wizard-grid">
                 <colgroup>
@@ -149,7 +145,7 @@
                 <colgroup><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"><col style="width: 85px"><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
-                <colgroup><col span="8" class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
+                <colgroup><col span="4" class="gaji-amount-column"><col style="width: 260px"><col span="3" class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
                 <colgroup><col span="2" class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
@@ -247,15 +243,18 @@
         @foreach (['ITJU', 'ITK @ ITKA', 'ITP @ BIPW', 'BISH @ BIW'] as $allowance)
             <td class="gaji-group-start">
                 @if ($allowance === 'ITP @ BIPW')
-                    <select data-housing-allowance aria-label="Jenis dan kawasan imbuhan perumahan">
-                        <option value="">Pilih imbuhan</option>
-                        <option value="ITP">ITP</option>
-                        <option value="Kuala Terengganu">BIPW · Kuala Terengganu</option>
-                        <option value="Dungun">BIPW · Dungun</option>
-                        <option value="Kawasan lain">BIPW · Kawasan lain</option>
-                    </select>
+                    <div class="gaji-housing">
+                        <select data-housing-allowance aria-label="Jenis dan kawasan imbuhan perumahan">
+                            <option value="">Pilih imbuhan</option>
+                            <option value="ITP">ITP</option>
+                            <option value="Kuala Terengganu">BIPW · Kuala Terengganu</option>
+                            <option value="Dungun">BIPW · Dungun</option>
+                            <option value="Kawasan lain">BIPW · Kawasan lain</option>
+                        </select>
+                        <output aria-label="Kadar perumahan sebulan (RM)" data-housing-rate>—</output>
+                    </div>
                 @endif
-                <input data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
+                <input @if ($allowance === 'ITP @ BIPW') hidden @endif data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
             </td>
             <td class="grid-numeric" data-annual>—</td>
         @endforeach

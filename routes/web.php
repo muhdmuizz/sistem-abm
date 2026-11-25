@@ -32,6 +32,8 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
     Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
     Route::get('/bida-peruntukan/{bid}/gaji-emolumen/pratonton', [BidaPeruntukanController::class, 'gajiPreview'])
         ->whereNumber('bid')->name('gaji.preview');
+    Route::put('/bida-peruntukan/{bid}/gaji-emolumen/pratonton/draf', [BidaPeruntukanController::class, 'saveGajiPreview'])
+        ->whereNumber('bid')->middleware('throttle:60,1')->name('gaji.preview-save');
 
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
     Route::get('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'bidForm'])->whereNumber(['cycle','ptj','activity'])->name('bids.activate-form');

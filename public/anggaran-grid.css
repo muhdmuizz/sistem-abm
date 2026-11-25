@@ -184,3 +184,11 @@
 }
 .gaji-workplace-options input { flex: 0 0 auto; width: auto; margin: 0.2em 0 0; }
 .gaji-workplace-options input:disabled + span { color: var(--muted); }
+
+.gaji-housing {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+}
+.gaji-housing output { text-align: end; font-variant-numeric: tabular-nums; }

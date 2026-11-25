@@ -12,7 +12,10 @@ use App\Services\RuangBidaPeruntukan;
 use App\Services\SkopPeranan;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BidaPeruntukanController extends Controller
@@ -89,7 +92,7 @@ class BidaPeruntukanController extends Controller
         ];
     }
 
-    public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
+    private function payrollPreviewContext(Request $request, int $bid, RuangBidaPeruntukan $workspace): array
     {
         abort_unless(app()->environment('local'), 404);
         $record = $this->bidContext($request, $bid, $workspace);
@@ -125,12 +128,93 @@ class BidaPeruntukanController extends Controller
             abort_if($workplaces === [], 403);
         }
 
+        return [$record, $workplaces];
+    }
+
+    public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
+    {
+        [$record, $workplaces] = $this->payrollPreviewContext($request, $bid, $workspace);
+        $saved = DB::table('draf_pratonton_gaji')->where('bidaan_id', $bid)
+            ->where('user_id', $request->user()->id)->first();
+        $draft = $saved ? json_decode(Crypt::decryptString($saved->payload), true, flags: JSON_THROW_ON_ERROR) : null;
+        if ($draft !== null) {
+            $draft['workplaces'] = array_intersect_key($draft['workplaces'], $workplaces ?: ['default' => true]);
+            $draft['included'] = array_values(array_intersect($draft['included'], array_keys($workplaces)));
+        }
+
+        $allowanceRows = [];
+        $source = file(base_path('docs/references/REF-08-kadar-elaun-imbuhan-tetap.md'), FILE_IGNORE_NEW_LINES);
+        foreach ($source as $line) {
+            if (! str_starts_with($line, '| ')) {
+                continue;
+            }
+            $cells = array_map('trim', explode('|', trim($line, '| ')));
+            if (in_array($cells[0], ['Imbuhan Tetap Keraian', 'Imbuhan Tetap Khidmat Awam', 'Imbuhan Tetap Perumahan', 'Bayaran Imbuhan Perumahan Wilayah'], true)) {
+                $allowanceRows[] = $cells;
+            }
+        }
+
         return view('abm.estimates.gaji-preview', [
+            'allowanceRows' => $allowanceRows,
+            'draft' => $draft,
+            'draftVersion' => $saved->revision ?? 0,
             'bid' => $record,
             'workplaces' => $workplaces,
             'year' => $record->kitaran->tahun,
             'salaryRates' => $jawatan->salaryRates(),
         ]);
+    }
+
+    public function saveGajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace)
+    {
+        [, $workplaces] = $this->payrollPreviewContext($request, $bid, $workspace);
+        $data = $request->validate(['revision' => 'required|integer|min:0', 'snapshot' => 'required|json|max:2000000']);
+        $snapshot = json_decode($data['snapshot'], true, flags: JSON_THROW_ON_ERROR);
+        abort_unless(is_array($snapshot), 422);
+        Validator::make($snapshot, [
+            'included' => 'present|array|list',
+            'included.*' => 'required|string|distinct',
+            'workplaces' => 'present|array',
+            'workplaces.*' => 'required|array:jik,wizard,ketua',
+            'workplaces.*.ketua' => 'present|nullable|string|max:10',
+            'workplaces.*.jik' => 'present|array|list',
+            'workplaces.*.jik.*' => 'required|array|list|size:3',
+            'workplaces.*.jik.*.*' => 'present|nullable|string|max:200',
+            'workplaces.*.wizard' => 'present|array|list',
+            'workplaces.*.wizard.*' => 'required|array:position,vacant,fields,other',
+            'workplaces.*.wizard.*.position' => 'required|string|max:200',
+            'workplaces.*.wizard.*.vacant' => 'required|boolean',
+            'workplaces.*.wizard.*.fields' => 'required|array|list|size:7',
+            'workplaces.*.wizard.*.fields.*' => 'present|nullable|string|max:200',
+            'workplaces.*.wizard.*.other' => 'present|array|list',
+            'workplaces.*.wizard.*.other.*' => 'required|array|list|size:2',
+            'workplaces.*.wizard.*.other.*.*' => 'present|nullable|string|max:120',
+        ])->validate();
+
+        $allowed = array_keys($workplaces ?: ['default' => true]);
+        abort_if(array_diff(array_keys($snapshot['workplaces']), $allowed)
+            || array_diff($snapshot['included'], array_keys($workplaces)), 403);
+
+        $revision = DB::transaction(function () use ($bid, $request, $data) {
+            Bidaan::whereKey($bid)->lockForUpdate()->firstOrFail();
+            $key = ['bidaan_id' => $bid, 'user_id' => $request->user()->id];
+            $table = DB::table('draf_pratonton_gaji');
+            $saved = (clone $table)->where($key)->first();
+            $revision = (int) ($saved->revision ?? 0);
+            $expected = (int) $data['revision'];
+            if ($saved && $revision === $expected + 1 && Crypt::decryptString($saved->payload) === $data['snapshot']) {
+                return $revision;
+            }
+            abort_unless($revision === $expected, 409);
+            $table->updateOrInsert($key, [
+                'revision' => $revision + 1,
+                'payload' => Crypt::encryptString($data['snapshot']),
+            ]);
+
+            return $revision + 1;
+        });
+
+        return response()->json(['revision' => $revision]);
     }
 
     public function bidForm(Request $request, int $cycle, int $ptj, int $activity, RuangBidaPeruntukan $workspace)
