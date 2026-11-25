@@ -138,7 +138,7 @@
         }
 
         function choose(option) {
-            input.value = option.textContent;
+            input.value = option.dataset.workplaceNameContent;
             close();
             input.focus();
         }
@@ -154,7 +154,7 @@
                 option.id = list.id + '-' + index;
                 option.setAttribute('role', 'option');
                 option.setAttribute('aria-selected', 'false');
-                option.textContent = title;
+                option.dataset.workplaceNameContent = title;
                 return option;
             }));
             list.scrollTop = 0;
@@ -399,7 +399,10 @@
     if (workplace) {
         const available = preview.querySelector('[data-available-workplace]');
         const include = preview.querySelector('[data-include-workplace]');
-        const candidates = [...available.options].filter(option => option.value);
+        const picker = preview.querySelector('[data-workplace-picker]');
+        const pickerToggle = picker.querySelector('summary');
+        const candidates = [...available.querySelectorAll('input[type="checkbox"]')];
+        const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !choice.disabled);
         const included = new Set();
         const generateButton = jik.querySelector('button[type="submit"]');
 
@@ -435,29 +438,34 @@
                 const row = preview.querySelector('[data-summary-workplace-template]').content.firstElementChild.cloneNode(true);
                 row.dataset.payrollSummary = option.value;
                 row.querySelector('[data-summary-number]').textContent = String(index + 1);
-                row.querySelector('[data-summary-name]').textContent = option.text;
-                row.querySelector('[data-exclude-workplace]').setAttribute('aria-label', 'Keluarkan ' + option.text);
+                row.querySelector('[data-summary-name]').textContent = option.dataset.workplaceName;
+                row.querySelector('[data-exclude-workplace]').setAttribute('aria-label', 'Keluarkan ' + option.dataset.workplaceName);
                 return row;
             });
             summaryRows.replaceChildren(...rows);
             workplace.replaceChildren(...(selected.length
-                ? selected.map(option => new Option(option.text, option.value))
+                ? selected.map(option => new Option(option.dataset.workplaceName, option.value))
                 : [new Option('Tambah Tempat Bertugas di Rumusan', '')]));
             workplace.value = included.has(current) ? current : (selected[0]?.value ?? '');
             workplace.disabled = !selected.length;
-            for (const option of candidates) option.disabled = included.has(option.value);
-            available.value = '';
+            for (const option of candidates) {
+                option.disabled = included.has(option.value);
+                option.checked = false;
+            }
             include.disabled = true;
             switchWorkplace(workplace.value);
             updateSummary();
         }
 
-        available.addEventListener('change', () => { include.disabled = !available.value; });
+        available.addEventListener('change', () => { include.disabled = checkedWorkplaces().length === 0; });
         include.addEventListener('click', () => {
-            if (!available.value || available.selectedOptions[0]?.disabled) return;
-            included.add(available.value);
+            const checked = checkedWorkplaces();
+            if (!checked.length) return;
+
+            checked.forEach(choice => included.add(choice.value));
             renderWorkplaces();
-            available.focus();
+            picker.open = false;
+            pickerToggle.focus();
         });
         summaryRows.addEventListener('click', event => {
             const button = event.target.closest('[data-exclude-workplace]');
@@ -469,7 +477,7 @@
             if (hasEntries && !window.confirm('Keluarkan tempat bertugas daripada Rumusan? Butiran pratonton kekal sehingga halaman dimuat semula.')) return;
             included.delete(id);
             renderWorkplaces();
-            available.focus();
+            pickerToggle.focus();
         });
         workplace.addEventListener('change', () => switchWorkplace(workplace.value));
         renderWorkplaces();
