@@ -120,6 +120,12 @@
                 <select data-ketua><option value="">Pilih pegawai</option></select>
             </label>
         </div>
+        <div class="grid-toolbar" data-incomplete-rows hidden>
+            <p role="status" data-incomplete-count></p>
+            <label>Semak baris
+                <select data-incomplete-picker></select>
+            </label>
+        </div>
         <details class="section">
             <summary>REF-08 · Kadar Elaun dan Imbuhan Tetap</summary>
             <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual kadar elaun REF-08">
