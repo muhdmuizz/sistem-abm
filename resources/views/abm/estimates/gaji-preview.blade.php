@@ -233,7 +233,7 @@
             <strong class="gaji-position-status" data-vacancy hidden>Kosong</strong>
         </td>
         <td class="gaji-frozen gaji-frozen-grade"><select aria-label="Gred SSPA"><option value="">Pilih gred</option></select></td>
-        <td><select aria-label="Tarikh Pergerakan Gaji"><option value="1">01/01</option><option value="4">01/04</option><option value="7">01/07</option><option value="10">01/10</option></select></td>
+        <td><select aria-label="Tarikh Pergerakan Gaji"><option value="">Pilih TPG</option><option value="1">01/01</option><option value="4">01/04</option><option value="7">01/07</option><option value="10">01/10</option></select></td>
         <td class="gaji-group-start"><input aria-label="Gaji Asal (RM)" inputmode="decimal" maxlength="16" placeholder="0.00"></td>
         @foreach (['asal-months', 'asal-subtotal', 'kgt', 'baharu', 'baharu-months', 'baharu-subtotal', 'total'] as $field)
             <td @class(['grid-numeric', 'gaji-group-start' => in_array($field, ['kgt', 'baharu', 'total'], true), 'gaji-total' => $field === 'total']) data-value="{{ $field }}">—</td>
