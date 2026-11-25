@@ -145,7 +145,7 @@
                 <colgroup><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"><col style="width: 85px"><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
-                <colgroup><col span="4" class="gaji-amount-column"><col style="width: 260px"><col span="3" class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
+                <colgroup><col span="4" class="gaji-amount-column"><col style="width: 260px"><col class="gaji-amount-column"><col style="width: 260px"><col class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
                 <colgroup><col span="2" class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
@@ -253,8 +253,20 @@
                         </select>
                         <output aria-label="Kadar perumahan sebulan (RM)" data-housing-rate>—</output>
                     </div>
+                @elseif ($allowance === 'BISH @ BIW')
+                    <div class="gaji-housing">
+                        <select data-living-allowance aria-label="Jenis dan kawasan imbuhan sara hidup">
+                            <option value="">Pilih imbuhan</option>
+                            <option value="Kuala Terengganu">BISH · Kuala Terengganu</option>
+                            <option value="Dungun">BISH · Dungun</option>
+                            <option value="Kemaman">BISH · Kemaman</option>
+                            <option value="Kawasan lain">BISH · Kawasan lain</option>
+                            <option value="BIW">BIW</option>
+                        </select>
+                        <output aria-label="Kadar imbuhan sara hidup sebulan (RM)" data-living-rate>—</output>
+                    </div>
                 @endif
-                <input @if ($allowance === 'ITP @ BIPW') hidden @endif data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
+                <input @if (in_array($allowance, ['ITP @ BIPW', 'BISH @ BIW'], true)) hidden @endif data-allowance-monthly aria-label="{{ $allowance }} sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
             </td>
             <td class="grid-numeric" data-annual>—</td>
         @endforeach
