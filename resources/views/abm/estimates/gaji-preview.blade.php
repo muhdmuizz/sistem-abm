@@ -197,7 +197,10 @@
             <td data-summary-number></td>
             <th scope="row">
                 <div class="gaji-workplace-row">
-                    <span data-summary-name></span>
+                    <div class="gaji-workplace-order">
+                        <button type="button" class="gaji-drag-handle" data-gaji-drag aria-label="Susun Tempat Bertugas" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button>
+                        <span data-summary-name></span>
+                    </div>
                     <button type="button" class="button danger" data-exclude-workplace>Keluarkan</button>
                 </div>
             </th>
@@ -212,7 +215,7 @@
         @endforeach
     </datalist>
     <template data-jik-template><tr>
-        <td><button type="button" class="jik-drag-handle" data-jik-drag aria-label="Susun baris Jawatan" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button></td>
+        <td><button type="button" class="gaji-drag-handle" data-gaji-drag aria-label="Susun baris Jawatan" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button></td>
         <td>
             <input aria-label="Jawatan" role="combobox" aria-autocomplete="list" aria-expanded="false"
                 placeholder="Pilih Jawatan" autocomplete="off" required>
