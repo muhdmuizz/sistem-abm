@@ -24,3 +24,10 @@
 .grid-notes p {
     margin: 0;
 }
+
+.jik-grid { min-width: 680px; }
+.jik-grid .jik-count-column { width: 140px; }
+.jik-grid .jik-action-column { width: 105px; }
+.jik-grid th:nth-child(-n+2) { width: auto; }
+.jik-grid input { width: 100%; }
+.jik-grid input[type="number"] { text-align: right; font-variant-numeric: tabular-nums; }
