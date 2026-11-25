@@ -239,6 +239,8 @@
             grade.add(new Option(code, code));
         }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
+        const [itjuMonthly] = allowances;
+        itjuMonthly.title = 'ITJU hanya untuk Gred VU atau VK.';
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
         const monthsInYear = vacant ? 3 : 12;
@@ -298,6 +300,11 @@
             for (const [key, value] of Object.entries(values)) cells[key].textContent = value ?? '—';
         }
         function recalculateAllowances() {
+            const eligibleForItju = /^(?:VU|VK)\d+$/.test(grade.value);
+            itjuMonthly.disabled = !eligibleForItju;
+            itjuMonthly.placeholder = eligibleForItju ? '0.00' : '—';
+            if (!eligibleForItju) itjuMonthly.value = '';
+
             const values = allowances.map(input => input.value);
             const fixed = annualAllowances(values, annualMultiplier);
             fixed.annual.forEach((amount, index) => {
@@ -357,9 +364,11 @@
             recalculateAllowances();
             otherAdd.focus();
         });
+        grade.addEventListener('change', recalculateAllowances);
         officer.addEventListener('input', updateKetua);
         wizardRows.append(row);
         recalculate();
+        recalculateAllowances();
     }
 
     function generate() {
