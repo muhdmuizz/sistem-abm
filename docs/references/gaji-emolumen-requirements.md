@@ -15,9 +15,11 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 - Bil. Perjawatan determines the number of wizard rows for that Jawatan. For example, a Jawatan with 5 Perjawatan and 3 Pengisian yields 2 Kekosongan and 5 wizard rows.
 - The wizard cannot add or delete position rows or edit the Jawatan or row count. Add a Jawatan or amend Bil. Perjawatan in JIK to change the row structure. The editable payroll fields within each generated row remain to be specified.
 
-## Open decision — Ketua Jabatan
+## Ketua Jabatan — individual officer confirmed
 
-Confirm whether Ketua Jabatan is a designation on one of the filled positions or serves another purpose such as workflow approval, and confirm its organisational scope. If it is a designation on a filled position, consider setting it with JIK as part of the establishment details. If the designation needs a named incumbent first and names are entered only in the wizard, consider selecting it in the wizard from the relevant filled rows. No designation timing or approval authority has been decided.
+The owner confirmed that Ketua Jabatan identifies the individual officer holding the designation. Proposed placement: select the officer in the combined Gaji & Emolumen wizard after the named incumbents have been entered. The selector would offer only named officers attached to filled positions in the applicable organisational scope. JIK remains the source of Jawatan and establishment counts.
+
+The organisational scope, whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent remain open.
 
 ## Decisions that follow
 
