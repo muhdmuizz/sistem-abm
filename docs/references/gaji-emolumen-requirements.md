@@ -40,8 +40,21 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 
 - For an **Isi** row, the salary input is the officer's **Gaji Pokok Terakhir**.
 - Only a **Penyedia Anggaran** authorised for the applicable workplace may enter this value in the Gaji & Emolumen wizard.
-- Use **Gaji Pokok Terakhir as at 31 December of the calendar year immediately preceding the Kitaran year**. For Kitaran 2028, use 31 December 2027. The reference date is determined from the Kitaran year.
-- How to apply salary changes during the Kitaran year remains open.
+- **Gaji Asal** is the Gaji Pokok Terakhir as at **1 January of the Kitaran year**. For Kitaran 2028, use 1 January 2028.
+
+### OS11000 filled-post columns
+
+1. TPG 20XX, where 20XX is the Kitaran year
+2. Gaji Asal
+3. Bil. Bulan (Gaji Asal)
+4. Jumlah Kecil (Gaji Asal)
+5. KGT (Kenaikan Gaji Tahunan), the rate
+6. Gaji Baharu
+7. Bil. Bulan (Gaji Baharu)
+8. Jumlah Kecil (Gaji Baharu)
+9. Jumlah OS11000
+
+Confirm the month allocation, the KGT rate source and how to handle a 1 January TPG when the entered Gaji Asal may already include that year's KGT.
 
 ## Decisions that follow
 
