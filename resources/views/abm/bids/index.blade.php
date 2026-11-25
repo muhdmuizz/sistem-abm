@@ -15,17 +15,6 @@
 <div><label for="bid-ptj">PTJ <span class="required">*</span></label><div data-ptj-combobox><select id="bid-ptj" name="ptj_id" required><option value="">Pilih PTJ</option>@foreach($ptjs as $option)<option value="{{ $option->id }}" @selected($ptj?->id === $option->id)>{{ $option->nama }}</option>@endforeach</select></div></div>
 <div class="context-actions"><button class="button primary" type="submit">Papar Bidaan</button><a class="button subtle" href="{{ route('bids.index') }}">Set Semula</a></div>
 </form>
-@if(app()->environment('local'))
-<div class="bid-catalogue">
-    <article class="bid-card">
-        <div class="bid-card-heading"><h2>Gaji &amp; Emolumen</h2></div>
-        <p class="small">OS11000, OS12000 dan OS13000</p>
-        <div class="bid-card-actions">
-            <a class="button" href="{{ route('gaji.preview') }}">Buka Pratonton<x-abm-icon name="chevron"/></a>
-        </div>
-    </article>
-</div>
-@endif
 @if(! $cycle || ! $ptj)
 <section class="empty-state"><h2>Pilih Kitaran ABM dan PTJ.</h2><p>Aktiviti Kewangan yang dibenarkan akan dipaparkan di sini.</p></section>
 @elseif($cards->isEmpty())
