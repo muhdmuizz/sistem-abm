@@ -36,6 +36,11 @@
     const addButton = preview.querySelector('[data-jik-add]');
     const positions = new Set([...preview.querySelectorAll('#jik-jawatan-options option')].map(option => option.value));
     const rates = JSON.parse(preview.dataset.salaryRates);
+    // PP 9/1991 (Utama) and SPP 10/2008 (Khas), matched to the MOF grade codes.
+    const itjuRates = new Map([
+        ['VU5', '2500.00'], ['VU6', '1500.00'], ['VU7', '1000.00'],
+        ['VK5', '2500.00'], ['VK6', '1500.00'], ['VK7', '1000.00'],
+    ]);
 
     function parseMoney(value) {
         if (!/^\d+(?:\.\d{1,2})?$/.test(value)) return null;
@@ -240,7 +245,7 @@
         }
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
         const [itjuMonthly] = allowances;
-        itjuMonthly.title = 'ITJU hanya untuk Gred VU atau VK.';
+        itjuMonthly.readOnly = true;
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
         const monthsInYear = vacant ? 3 : 12;
@@ -302,8 +307,11 @@
         function recalculateAllowances() {
             const eligibleForItju = /^(?:VU|VK)\d+$/.test(grade.value);
             itjuMonthly.disabled = !eligibleForItju;
-            itjuMonthly.placeholder = eligibleForItju ? '0.00' : '—';
-            if (!eligibleForItju) itjuMonthly.value = '';
+            itjuMonthly.placeholder = '—';
+            itjuMonthly.value = itjuRates.get(grade.value) ?? '';
+            itjuMonthly.title = eligibleForItju
+                ? (itjuMonthly.value ? 'Kadar ITJU mengikut gred.' : 'Kadar ITJU belum tersedia untuk gred ini.')
+                : 'ITJU hanya untuk Gred VU atau VK.';
 
             const values = allowances.map(input => input.value);
             const fixed = annualAllowances(values, annualMultiplier);
