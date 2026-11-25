@@ -322,7 +322,16 @@ SQL);
     public function test_superadmin_override_requires_reason_and_preserves_actual_actor_and_scope(): void
     {
         $this->operator->penugasanPeranan()->delete();
+        $adminPtj = Ptj::create(['kod_ptj' => 'ACT-ADMIN', 'nama' => 'Admin PTJ', 'kategori' => 'JPNT']);
+        $adminWorkplace = TempatBertugas::create(['ptj_id' => $adminPtj->id, 'nama' => 'Admin sector', 'jenis' => 'sektor']);
+        $this->operator->forceFill(['ptj_id' => $adminPtj->id, 'tempat_bertugas_id' => $adminWorkplace->id])->save();
         $this->activationAssign(Peranan::Superadmin);
+        $this->activationSession();
+
+        $activation = app(\App\Services\RuangBidaPeruntukan::class)->activation(
+            $this->operator, $this->cycle->id, $this->owner->id, $this->activity->id, null,
+        );
+        $this->assertTrue($activation['allowed']);
         $this->phase->forceFill(['dibuka' => false])->save();
         TetapanAksesPtj::query()->update(['dibenarkan' => false]);
         try {
