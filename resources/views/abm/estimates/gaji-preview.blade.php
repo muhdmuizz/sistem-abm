@@ -77,6 +77,7 @@
                 <colgroup><col span="8" class="gaji-amount-column"><col style="width: 300px"><col class="gaji-amount-column"></colgroup>
                 <colgroup><col class="gaji-amount-column"></colgroup>
                 <colgroup><col span="2" class="gaji-amount-column"></colgroup>
+                <colgroup><col class="gaji-amount-column"></colgroup>
                 <thead>
                     <tr>
                         @foreach (['number' => '#', 'position' => 'Jawatan', 'officer' => 'Nama Pegawai', 'grade' => 'Gred'] as $column => $label)
@@ -90,6 +91,7 @@
                         <th scope="colgroup" colspan="10" class="gaji-group-start">OS12000 — Elaun/ Imbuhan Tetap</th>
                         <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS12000 (RM)</th>
                         <th scope="colgroup" colspan="2" class="gaji-group-start">OS13000 — Sumbangan Berkanun</th>
+                        <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah Setahun (RM)</th>
                     </tr>
                     <tr>
                         @foreach (['Gaji Asal', 'Gaji Baharu'] as $salaryGroup)
@@ -172,6 +174,7 @@
             <input data-os13000-monthly aria-label="OS13000 sebulan (RM)" inputmode="decimal" maxlength="16" placeholder="0.00">
         </td>
         <td class="grid-numeric gaji-total" data-os13000-annual>—</td>
+        <td class="grid-numeric gaji-group-start gaji-total" data-payroll-total>—</td>
     </tr></template>
 </div>
 @endsection
