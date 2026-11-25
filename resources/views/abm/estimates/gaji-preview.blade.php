@@ -18,7 +18,7 @@
 <div data-gaji-preview data-year="{{ $year }}">
     @if($workplaces !== [])
         <div class="action-field">
-            <label for="gaji-workplace">Tempat Bertugas (Pusat Kos)</label>
+            <label for="gaji-workplace">Tempat Bertugas</label>
             <select id="gaji-workplace" data-gaji-workplace>
                 @foreach($workplaces as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
@@ -57,6 +57,7 @@
                     <tbody data-jik-rows></tbody>
                 </table>
             </div>
+            <p class="empty-state" data-jik-empty hidden>Belum ada Jawatan. Klik Tambah Jawatan untuk mula.</p>
             <div class="grid-toolbar">
                 <button type="button" class="button" data-jik-add>Tambah Jawatan</button>
                 <button class="button primary" type="submit">Jana Baris Wizard</button>
@@ -122,6 +123,7 @@
                 <tbody data-wizard-rows></tbody>
             </table>
         </div>
+        <p class="empty-state" data-wizard-empty hidden>Belum ada butiran. Jana baris daripada tab JIK.</p>
         <p class="small">Bilangan bulan: 12 untuk Isi dan 3 untuk Kosong. Gaji OS11000 bagi jawatan Kosong menggunakan Gaji Median.</p>
     </section>
 
