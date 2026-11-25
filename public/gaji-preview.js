@@ -138,7 +138,7 @@
         }
 
         function choose(option) {
-            input.value = option.dataset.workplaceNameContent;
+            input.value = option.textContent;
             close();
             input.focus();
         }
@@ -154,7 +154,7 @@
                 option.id = list.id + '-' + index;
                 option.setAttribute('role', 'option');
                 option.setAttribute('aria-selected', 'false');
-                option.dataset.workplaceNameContent = title;
+                option.textContent = title;
                 return option;
             }));
             list.scrollTop = 0;
