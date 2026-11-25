@@ -67,8 +67,13 @@
         <p class="notice">Baris Kosong menggunakan Gaji Median × 3 bulan. OS12000 dan OS13000 menunggu penetapan butiran.</p>
     </section>
 
+    <datalist id="jik-jawatan-options">
+        @foreach ($jawatan as $namaJawatan)
+            <option value="{{ $namaJawatan }}"></option>
+        @endforeach
+    </datalist>
     <template data-jik-template><tr>
-        <td><input aria-label="Jawatan" value="Jawatan Contoh" required maxlength="100"></td>
+        <td><input aria-label="Jawatan" list="jik-jawatan-options" placeholder="Taip atau pilih Jawatan" autocomplete="off" required></td>
         <td><input aria-label="Bil. Perjawatan" type="number" min="1" max="100" value="3" required></td>
         <td><input aria-label="Bil. Pengisian" type="number" min="0" value="2" required></td>
         <td class="grid-numeric"><output aria-label="Bil. Kekosongan">1</output></td>
