@@ -192,3 +192,20 @@
     gap: var(--space-2);
 }
 .gaji-housing output { text-align: end; font-variant-numeric: tabular-nums; }
+
+.jik-drag-handle {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    color: inherit;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    cursor: grab;
+    touch-action: none;
+    font-size: 1.15rem;
+}
+.jik-drag-handle:active { cursor: grabbing; }
+.jik-grid tr[data-jik-drop-target="after"] > td { box-shadow: inset 0 -2px #315e89; }
+.jik-grid tr[data-jik-drop-target="before"] > td { box-shadow: inset 0 2px #315e89; }
