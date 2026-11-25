@@ -42,6 +42,8 @@ class BidaPeruntukanController extends Controller
         return $record->load(['ptj', 'aktivitiKewangan', 'kitaran']);
     }
 
+    private const PAYROLL_OS = ['11000', '12000', '13000'];
+
     public function show(Request $request, int $bid, RuangBidaPeruntukan $workspace)
     {
         $record = $this->bidContext($request, $bid, $workspace);
@@ -51,13 +53,22 @@ class BidaPeruntukanController extends Controller
             'activation' => $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
                 $record->aktiviti_kewangan_id, $record, $os, $estimates->get($os->id))]);
         $open = $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id);
-        return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open]);
+        [$payrollCards, $otherCards] = $cards->partition(fn ($card) =>
+            app()->environment('local') && in_array($card['os']->kod_objek, self::PAYROLL_OS, true));
+
+        return view('abm.bids.show', [
+            'bid' => $record, 'cards' => $cards, 'open' => $open,
+            'payrollCards' => $payrollCards, 'otherCards' => $otherCards,
+        ]);
     }
 
     public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
     {
         abort_unless(app()->environment('local'), 404);
         $record = $this->bidContext($request, $bid, $workspace);
+
+        abort_unless($workspace->catalogue($request->user(), $record)
+            ->contains(fn ($os) => in_array($os->kod_objek, self::PAYROLL_OS, true)), 404);
 
         return view('abm.estimates.gaji-preview', [
             'bid' => $record,
