@@ -19,13 +19,15 @@
     data-allowance-rates="{{ json_encode($allowanceRows, JSON_THROW_ON_ERROR) }}"
     data-workplace-district="{{ $workplaceDistrict }}"
     data-draft="{{ json_encode($draft, JSON_THROW_ON_ERROR) }}" data-draft-revision="{{ $draftVersion }}"
-    data-save-url="{{ route('gaji.preview-save', $bid->id) }}" data-csrf="{{ csrf_token() }}">
+    data-editor-account="{{ auth()->id() }}" data-save-url="{{ route('gaji.preview-save', $bid->id) }}" data-csrf="{{ csrf_token() }}">
     <div class="grid-toolbar">
         <p class="small" role="status" data-save-status></p>
         <button class="button" type="button" data-save-retry hidden>Cuba Simpan Semula</button>
     </div>
+    <div class="notice" data-editor-lock role="status">Menyemak akses penyuntingan…</div>
+    <button type="button" class="button" data-editor-reload hidden>Muat Semula</button>
     @if($workplaces !== [])
-        <div class="action-field" data-gaji-workplace-field hidden>
+        <div class="action-field" data-gaji-workplace-field hidden inert>
             <label for="gaji-workplace">Tempat Bertugas</label>
             <select id="gaji-workplace" data-gaji-workplace>
                 <option value="">Tambah Tempat Bertugas di Rumusan</option>
@@ -37,7 +39,7 @@
         <button type="button" class="button" id="gaji-jik-tab" role="tab" aria-selected="false" aria-controls="gaji-jik-panel" tabindex="-1">JIK</button>
         <button type="button" class="button" id="gaji-wizard-tab" role="tab" aria-selected="false" aria-controls="gaji-wizard-panel" tabindex="-1">Terperinci</button>
     </div>
-    <section class="section" id="gaji-summary-panel" role="tabpanel" aria-labelledby="gaji-summary-tab" tabindex="0">
+    <section class="section" id="gaji-summary-panel" role="tabpanel" inert aria-labelledby="gaji-summary-tab" tabindex="0">
         @if($workplaces !== [])
             <details class="gaji-workplace-picker" data-workplace-picker>
                 <summary>Pilih Tempat Bertugas</summary>
@@ -85,7 +87,7 @@
             </table>
         </div>
     </section>
-    <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0" hidden>
+    <section class="section" id="gaji-jik-panel" role="tabpanel" inert aria-labelledby="gaji-jik-tab" tabindex="0" hidden>
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
         <dl class="jik-totals" aria-label="Jumlah JIK" aria-live="polite">
             <div><dt>Perjawatan</dt><dd data-jik-total="establishment">0</dd></div>
@@ -121,7 +123,7 @@
         </form>
     </section>
 
-    <section class="section" id="gaji-wizard-panel" role="tabpanel" aria-labelledby="gaji-wizard-tab" tabindex="0" hidden>
+    <section class="section" id="gaji-wizard-panel" role="tabpanel" inert aria-labelledby="gaji-wizard-tab" tabindex="0" hidden>
         <div class="gaji-wizard-heading">
             <h2>Butiran Gaji &amp; Emolumen</h2>
             <label>Ketua Jabatan
