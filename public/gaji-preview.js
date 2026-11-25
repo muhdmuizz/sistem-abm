@@ -49,8 +49,74 @@
         return AbmMoney.format(digits.slice(0, -2) + '.' + digits.slice(-2));
     }
 
+    let nextSuggestionId = 0;
+
     function addJik() {
-        jikRows.append(preview.querySelector('[data-jik-template]').content.cloneNode(true));
+        const row = preview.querySelector('[data-jik-template]').content.firstElementChild.cloneNode(true);
+        const input = row.querySelector('[role="combobox"]');
+        const list = row.querySelector('[role="listbox"]');
+        list.id = 'jik-jawatan-suggestions-' + (++nextSuggestionId);
+        input.setAttribute('aria-controls', list.id);
+        let active = -1;
+
+        function close() {
+            list.hidden = true;
+            active = -1;
+            input.setAttribute('aria-expanded', 'false');
+            input.removeAttribute('aria-activedescendant');
+        }
+
+        function choose(option) {
+            input.value = option.textContent;
+            close();
+            input.focus();
+        }
+
+        input.addEventListener('input', () => {
+            close();
+            const query = input.value.trim().toLocaleLowerCase();
+            if (!query) return;
+
+            const matches = [...positions].filter(title => title.toLocaleLowerCase().includes(query));
+            list.replaceChildren(...matches.map((title, index) => {
+                const option = document.createElement('li');
+                option.id = list.id + '-' + index;
+                option.setAttribute('role', 'option');
+                option.setAttribute('aria-selected', 'false');
+                option.textContent = title;
+                return option;
+            }));
+            list.scrollTop = 0;
+            list.hidden = matches.length === 0;
+            input.setAttribute('aria-expanded', String(!list.hidden));
+        });
+        input.addEventListener('keydown', event => {
+            if (list.hidden) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                close();
+            } else if (event.key === 'Enter' && active >= 0) {
+                event.preventDefault();
+                choose(list.children[active]);
+            } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                list.children[active]?.setAttribute('aria-selected', 'false');
+                const last = list.children.length - 1;
+                active = event.key === 'ArrowDown' ? Math.min(last, active + 1) : active <= 0 ? last : active - 1;
+                const option = list.children[active];
+                option.setAttribute('aria-selected', 'true');
+                input.setAttribute('aria-activedescendant', option.id);
+                option.scrollIntoView({ block: 'nearest' });
+            }
+        });
+        input.addEventListener('blur', close);
+        list.addEventListener('pointerdown', event => {
+            const option = event.target.closest('[role="option"]');
+            if (!option) return;
+            event.preventDefault();
+            choose(option);
+        });
+        jikRows.append(row);
     }
 
     function updateKetua() {
