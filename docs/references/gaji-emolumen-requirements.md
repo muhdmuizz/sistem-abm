@@ -15,15 +15,22 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 - Bil. Perjawatan determines the number of wizard rows for that Jawatan. For example, a Jawatan with 5 Perjawatan and 3 Pengisian yields 2 Kekosongan and 5 wizard rows.
 - The wizard cannot add or delete position rows or edit the Jawatan or row count. Add a Jawatan or amend Bil. Perjawatan in JIK to change the row structure. The editable payroll fields within each generated row remain to be specified.
 
+## Confirmed JIK scope — offices and schools
+
+- Each PPD prepares one JIK for its own office staff across all its sectors. Use Pejabat PPD as the office's own Tempat Bertugas in Gaji & Emolumen.
+- JPNT prepares one JIK for its headquarters staff across all its sectors. Use Pejabat JPNT as the headquarters' own Tempat Bertugas in Gaji & Emolumen.
+- Schools remain distinct workplaces, with their staff recorded separately from office JIKs.
+- The office workplaces are specific to Gaji & Emolumen. Perbelanjaan continues to use the AD-005 workplace rules.
+
 ## Ketua Jabatan — individual officer confirmed
 
 The owner confirmed that Ketua Jabatan identifies the individual officer holding the designation. Proposed placement: select the officer in the combined Gaji & Emolumen wizard after the named incumbents have been entered. The selector would offer only named officers attached to filled positions in the applicable organisational scope. JIK remains the source of Jawatan and establishment counts.
 
-The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Gaji & Emolumen group. Under [AD-005](../architecture/AD-005-identity-roles-organisation.md), an SMK PTJ can also be its own Tempat Bertugas. JPNT and PPD are excluded as generic selectable workplaces under the existing model; whether Gaji & Emolumen needs a specific workplace for their own establishment remains open. Whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent also remain open.
+The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Gaji & Emolumen group. Under [AD-005](../architecture/AD-005-identity-roles-organisation.md), an SMK PTJ can also be its own Tempat Bertugas. The confirmed office workplaces each have one Ketua Jabatan, as does each school workplace. Whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent also remain open.
 
 ## Decisions that follow
 
-- Confirm who prepares estimates at PTJ, sector and school level. Record any school-level contribution and the responsible PTJ separately, with no implied expansion of access.
+- Confirm who prepares each office and school JIK under the applicable access rules.
 - Confirm the canonical field list and authority for rates, periods, eligibility and annual calculations for each OS, including changes within a year. The approved OS14000 overtime median formula is specific to that editor and supplies no payroll rule.
 - Confirm the official worksheet headers and mapping from the official template. Retain the existing Perbelanjaan dataset separately.
 - Specify completeness, examples and test cases per OS before implementation, then integrate applicable payroll estimates into Bidaan completeness.
