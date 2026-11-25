@@ -19,7 +19,7 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 
 The owner confirmed that Ketua Jabatan identifies the individual officer holding the designation. Proposed placement: select the officer in the combined Gaji & Emolumen wizard after the named incumbents have been entered. The selector would offer only named officers attached to filled positions in the applicable organisational scope. JIK remains the source of Jawatan and establishment counts.
 
-The organisational scope, whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent remain open.
+The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Gaji & Emolumen group. Under [AD-005](../architecture/AD-005-identity-roles-organisation.md), an SMK PTJ can also be its own Tempat Bertugas. JPNT and PPD are excluded as generic selectable workplaces under the existing model; whether Gaji & Emolumen needs a specific workplace for their own establishment remains open. Whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent also remain open.
 
 ## Decisions that follow
 
