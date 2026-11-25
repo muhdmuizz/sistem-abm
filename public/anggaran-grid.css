@@ -66,7 +66,7 @@
     --gaji-position-width: 280px;
     --gaji-officer-width: 230px;
     --gaji-grade-width: 145px;
-    min-width: 1713px;
+    min-width: 2753px;
 }
 .gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
 .gaji-wizard-grid :is(th, td) { vertical-align: middle; }
@@ -120,5 +120,3 @@
     .jik-totals > div { padding: var(--space-2); }
 }
 
-.gaji-allowance-grid { min-width: 1880px; }
-.gaji-allowance-grid [data-officer] { overflow-wrap: anywhere; }
