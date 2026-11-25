@@ -49,18 +49,41 @@
     </section>
 
     <section class="section" id="gaji-wizard-panel" role="tabpanel" aria-labelledby="gaji-wizard-tab" tabindex="0" hidden>
-        <h2 id="wizard-title">Wizard Gaji &amp; Emolumen</h2>
-        <div class="grid-toolbar">
-            <label>Ketua Jabatan <select data-ketua><option value="">Pilih pegawai</option></select></label>
+        <div class="gaji-wizard-heading">
+            <h2>OS11000 — Gaji dan Upahan</h2>
+            <label>Ketua Jabatan
+                <select data-ketua><option value="">Pilih pegawai</option></select>
+            </label>
         </div>
-        <h3>OS11000 — Gaji dan Upahan</h3>
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual OS11000">
-            <table class="anggaran-grid" style="min-width: 1550px">
-                <thead><tr>
-                    @foreach (['Jawatan', 'Status', 'Nama Pegawai', 'Gred', 'TPG '.$year, 'Gaji Asal (RM)', 'Bil. Bulan (Gaji Asal)', 'Jumlah Kecil (Gaji Asal) (RM)', 'KGT (RM)', 'Gaji Baharu (RM)', 'Bil. Bulan (Gaji Baharu)', 'Jumlah Kecil (Gaji Baharu) (RM)', 'Jumlah OS11000 (RM)'] as $label)
-                        <th scope="col">{{ $label }}</th>
+            <table class="anggaran-grid gaji-wizard-grid">
+                <colgroup>
+                    @foreach ([280, 90, 230, 145, 105] as $width)
+                        <col style="width: {{ $width }}px">
                     @endforeach
-                </tr></thead>
+                </colgroup>
+                <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
+                <colgroup><col style="width: 105px"></colgroup>
+                <colgroup><col style="width: 125px"><col style="width: 85px"><col style="width: 125px"></colgroup>
+                <colgroup><col style="width: 130px"></colgroup>
+                <thead>
+                    <tr>
+                        @foreach (['Jawatan', 'Status', 'Nama Pegawai', 'Gred', 'TPG '.$year] as $label)
+                            <th scope="col" rowspan="2">{{ $label }}</th>
+                        @endforeach
+                        <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Asal</th>
+                        <th scope="col" rowspan="2" class="grid-numeric gaji-group-start">KGT (RM)</th>
+                        <th scope="colgroup" colspan="3" class="gaji-group-start">Gaji Baharu</th>
+                        <th scope="col" rowspan="2" class="grid-numeric gaji-group-start gaji-total">Jumlah OS11000 (RM)</th>
+                    </tr>
+                    <tr>
+                        @foreach (['Gaji Asal', 'Gaji Baharu'] as $salaryGroup)
+                            <th scope="col" class="grid-numeric gaji-group-start" aria-label="{{ $salaryGroup }} — Kadar (RM)">Kadar (RM)</th>
+                            <th scope="col" class="grid-numeric" aria-label="{{ $salaryGroup }} — Bil. Bulan">Bil. Bulan</th>
+                            <th scope="col" class="grid-numeric" aria-label="{{ $salaryGroup }} — Jumlah Kecil (RM)">Jumlah Kecil (RM)</th>
+                        @endforeach
+                    </tr>
+                </thead>
                 <tbody data-wizard-rows></tbody>
             </table>
         </div>
@@ -85,13 +108,13 @@
     </tr></template>
     <template data-wizard-template><tr>
         <th scope="row" data-position></th>
-        <td><strong data-status></strong></td>
+        <td><span class="gaji-position-status" data-status></span></td>
         <td><input aria-label="Nama Pegawai" maxlength="100"></td>
         <td><select aria-label="Gred contoh"><option value="">Pilih gred</option><option value="A">Gred Contoh A</option><option value="B">Gred Contoh B</option></select></td>
         <td><select aria-label="Tarikh Pergerakan Gaji"><option value="1">01/01</option><option value="4">01/04</option><option value="7">01/07</option><option value="10">01/10</option></select></td>
-        <td><input aria-label="Gaji Asal (RM)" inputmode="decimal" maxlength="16" placeholder="0.00"></td>
+        <td class="gaji-group-start"><input aria-label="Gaji Asal (RM)" inputmode="decimal" maxlength="16" placeholder="0.00"></td>
         @foreach (['asal-months', 'asal-subtotal', 'kgt', 'baharu', 'baharu-months', 'baharu-subtotal', 'total'] as $field)
-            <td class="grid-numeric" data-value="{{ $field }}">—</td>
+            <td @class(['grid-numeric', 'gaji-group-start' => in_array($field, ['kgt', 'baharu', 'total'], true), 'gaji-total' => $field === 'total']) data-value="{{ $field }}">—</td>
         @endforeach
     </tr></template>
 </div>
