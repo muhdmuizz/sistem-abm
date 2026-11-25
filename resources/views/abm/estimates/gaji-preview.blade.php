@@ -31,17 +31,19 @@
     </div>
     <section class="section" id="gaji-summary-panel" role="tabpanel" aria-labelledby="gaji-summary-tab" tabindex="0">
         @if($workplaces !== [])
-            <div class="gaji-workplace-actions">
-                <label for="gaji-available-workplace">Tempat Bertugas
-                    <select id="gaji-available-workplace" data-available-workplace>
-                        <option value="">Pilih Tempat Bertugas</option>
-                        @foreach($workplaces as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <button type="button" class="button primary" data-include-workplace>Tambah Tempat Bertugas</button>
-            </div>
+            <details class="gaji-workplace-picker" data-workplace-picker>
+                <summary>Pilih Tempat Bertugas</summary>
+                <fieldset class="gaji-workplace-options" data-available-workplace>
+                    <legend class="sr-only">Tempat Bertugas yang tersedia</legend>
+                    @foreach($workplaces as $id => $name)
+                        <label>
+                            <input type="checkbox" value="{{ $id }}" data-workplace-name="{{ $name }}">
+                            <span>{{ $name }}</span>
+                        </label>
+                    @endforeach
+                </fieldset>
+                <button type="button" class="button primary" data-include-workplace disabled>Tambah Tempat Bertugas</button>
+            </details>
         @endif
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
             <table class="anggaran-grid gaji-summary-grid">
