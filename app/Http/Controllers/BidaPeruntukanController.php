@@ -129,7 +129,7 @@ class BidaPeruntukanController extends Controller
             'bid' => $record,
             'workplaces' => $workplaces,
             'year' => $record->kitaran->tahun,
-            'jawatan' => $jawatan->names(),
+            'salaryRates' => $jawatan->salaryRates(),
         ]);
     }
 
