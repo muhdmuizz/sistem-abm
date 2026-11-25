@@ -13,24 +13,26 @@
 @else
 <div class="bid-catalogue os-catalogue">
 @if($payrollCards->isNotEmpty())
-    <article class="bid-card">
+    <article @class(['bid-card', 'inactive' => ! $payrollActivation['active']])>
         <div class="bid-card-heading">
             <div>
-                <p class="os-reference">{{ $payrollCards->pluck('os.kod_objek')->unique()->map(fn ($code) => 'OS'.$code)->implode(' · ') }}</p>
+                <p class="os-reference">OS11000 · OS12000 · OS13000</p>
                 <h3>Gaji &amp; Emolumen</h3>
             </div>
+            <span class="status-pill {{ $payrollActivation['active'] ? 'positive' : '' }}">{{ $payrollActivation['active'] ? 'Diaktifkan' : 'Belum Aktif' }}</span>
         </div>
-        <div class="bid-card-actions">
-            <a class="button" href="{{ route('gaji.preview', $bid->id) }}">Buka Pratonton<x-abm-icon name="chevron"/></a>
-        </div>
-        <details>
-            <summary>Status dan tindakan OS</summary>
-            @foreach($payrollCards as $payrollCard)
-                <div class="section" id="os-{{ $payrollCard['os']->id }}">
-                    @include('abm.bids.os-card-details', ['card' => $payrollCard])
-                </div>
-            @endforeach
-        </details>
+        @if($payrollActivation['active'])
+            <div class="bid-card-actions">
+                <a class="button" href="{{ route('gaji.preview', $bid->id) }}"><x-abm-icon name="chevron"/>Buka<span class="sr-only"> Gaji &amp; Emolumen</span></a>
+            </div>
+        @elseif($payrollActivation['allowed'])
+            <div class="bid-card-actions">
+                <a class="button primary" href="{{ route('bids.os-form', [$bid->id, $payrollActivation['selector']]) }}"><x-abm-icon name="plus"/>Aktifkan OS<span class="sr-only"> Gaji &amp; Emolumen</span></a>
+            </div>
+            @if($payrollActivation['needs_reason'])<p class="small">Alasan pintasan Superadmin diperlukan.</p>@endif
+        @else
+            <p class="small">{{ $payrollActivation['explanation'] }}</p>
+        @endif
     </article>
 @endif
 @foreach($otherCards as $card)
