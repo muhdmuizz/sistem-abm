@@ -98,12 +98,14 @@
             <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual JIK">
                 <table class="anggaran-grid jik-grid">
                     <colgroup>
+                        <col style="width: 48px">
                         <col>
                         <col span="3" class="jik-count-column">
                         <col class="jik-action-column">
                     </colgroup>
                     <thead>
                         <tr>
+                            <th scope="col" aria-label="Susunan"></th>
                             <th scope="col">Jawatan</th>
                             <th scope="col" class="grid-numeric">Bil. Perjawatan</th>
                             <th scope="col" class="grid-numeric">Bil. Pengisian</th>
@@ -210,6 +212,7 @@
         @endforeach
     </datalist>
     <template data-jik-template><tr>
+        <td><button type="button" class="jik-drag-handle" data-jik-drag aria-label="Susun baris Jawatan" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button></td>
         <td>
             <input aria-label="Jawatan" role="combobox" aria-autocomplete="list" aria-expanded="false"
                 placeholder="Pilih Jawatan" autocomplete="off" required>
