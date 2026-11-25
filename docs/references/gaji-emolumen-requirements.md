@@ -82,7 +82,7 @@ For each TPG, multiply each salary by its allocated months to calculate its subt
 
 Each annual amount is its monthly amount × 12. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for filled positions under Terperinci using the same JIK rows as OS11000. Actual rate sourcing and vacant-post eligibility remain open.
 
-**Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12**. The Penyedia Anggaran types the allowance name as free text for each item. Excel presentation remains open. Preserve the individual name, monthly amount and annual amount for each item, and keep the official Gaji & Emolumen worksheet mapping pending until the template is confirmed.
+**Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the existing Gaji & Emolumen worksheet. Export two numeric summary columns: **Elaun-elaun Lain / Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain / Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
 
 ## Decisions that follow
 
