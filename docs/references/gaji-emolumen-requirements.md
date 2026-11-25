@@ -82,7 +82,7 @@ For each TPG, multiply each salary by its allocated months to calculate its subt
 
 Each annual amount is its monthly amount × 12. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for filled positions under Terperinci using the same JIK rows as OS11000. Actual rate sourcing and vacant-post eligibility remain open.
 
-**Elaun-elaun Lain, proposed:** add itemised allowance entries per officer from an approved allowance reference list. Show their annual subtotal separately. Confirm OS classification, calculation basis and whether the subtotal contributes to Jumlah OS12000 before implementation.
+**Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12**. The proposed itemised per-officer entry remains under discussion, including the allowance type list and how its subtotal is presented in the main grid.
 
 ## Decisions that follow
 
