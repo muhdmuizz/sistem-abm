@@ -282,13 +282,13 @@
 
         function recalculate() {
             const rate = jobRates[grade.value];
-            const months = Number(tpg.value) - 1;
+            const months = tpg.value === '' ? null : Number(tpg.value) - 1;
             const asal = vacant ? parseMoney(rate?.median ?? '') : parseMoney(salary.value);
             const kgt = vacant ? null : grade.value === 'VU7' ? vu7Increment(asal) : parseMoney(rate?.kgt ?? '');
             const originalMonths = vacant ? monthsInYear : months;
-            const newMonths = vacant ? 0 : monthsInYear - months;
-            const baharu = !vacant && asal !== null && kgt !== null ? asal + kgt : null;
-            const first = asal === null ? null : asal * BigInt(originalMonths);
+            const newMonths = vacant || months === null ? null : monthsInYear - months;
+            const baharu = newMonths !== null && asal !== null && kgt !== null ? asal + kgt : null;
+            const first = asal === null || originalMonths === null ? null : asal * BigInt(originalMonths);
             const second = baharu === null ? null : baharu * BigInt(newMonths);
             if (vacant) salary.value = asal === null ? '' : money(asal);
             const salaryTotal = first !== null && (vacant || second !== null) ? first + (second ?? 0n) : null;
