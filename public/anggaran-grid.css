@@ -119,3 +119,6 @@
     .jik-totals { gap: var(--space-2); }
     .jik-totals > div { padding: var(--space-2); }
 }
+
+.gaji-allowance-grid { min-width: 1880px; }
+.gaji-allowance-grid [data-officer] { overflow-wrap: anywhere; }
