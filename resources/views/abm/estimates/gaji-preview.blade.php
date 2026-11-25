@@ -20,6 +20,11 @@
     </div>
     <section class="section" id="gaji-jik-panel" role="tabpanel" aria-labelledby="gaji-jik-tab" tabindex="0">
         <h2 id="jik-title">Jawatan, Isi, Kosong (JIK)</h2>
+        <dl class="jik-totals" aria-label="Jumlah JIK" aria-live="polite">
+            <div><dt>Perjawatan</dt><dd data-jik-total="establishment">0</dd></div>
+            <div><dt>Pengisian</dt><dd data-jik-total="filled">0</dd></div>
+            <div><dt>Kekosongan</dt><dd data-jik-total="vacant">0</dd></div>
+        </dl>
         <form data-jik>
             <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Jadual JIK">
                 <table class="anggaran-grid jik-grid">
