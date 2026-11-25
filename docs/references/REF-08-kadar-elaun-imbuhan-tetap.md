@@ -1,6 +1,6 @@
 # Reference 08 — Kadar Elaun dan Imbuhan Tetap
 
-Jadual kadar rujukan yang dibekalkan oleh pemilik Sistem ABM pada 25 November 2026. Jadual mengandungi 471 rekod bagi 20 jenis elaun, imbuhan dan bayaran insentif. Turutan rekod dan nilai sumber dikekalkan. Ruang kosong dikekalkan sebagaimana dibekalkan.
+Jadual kadar rujukan yang dibekalkan oleh pemilik Sistem ABM pada 25 November 2026. Jadual asal mengandungi 471 rekod bagi 20 jenis elaun, imbuhan dan bayaran insentif. Dengan tambahan ITJU, jadual ini mengandungi 477 rekod bagi 21 jenis. Turutan rekod dan nilai sumber dikekalkan. Ruang kosong dikekalkan sebagaimana dibekalkan.
 
 Gunakan [Reference 07 — Jawatan, Gred, Gaji dan KGT](REF-07-jawatan-gred-gaji-kgt.md) bagi rujukan gred pegawai. Label gred dalam jadual ini dikekalkan seperti dalam sumber. Enam kadar bulanan Imbuhan Tetap Jawatan Utama dan Gred Khas (ITJU) ditambah untuk Gred Utama dan Khas A–C. Sumber kadar ialah PP Bil. 9 Tahun 1991 untuk Gred Utama dan [SPP Bil. 10 Tahun 2008](https://docs.jpa.gov.my/docs/spp/2008/10/spp102008.pdf) untuk Gred Khas, seperti dihimpunkan dalam [jadual ITJU UTM](https://registrar.utm.my/bsm/imbuhan-tetap-vu-vk/). Pemetaan kod VU dan VK merujuk [Buku Senarai Perjawatan 2026, Lampiran A](https://belanjawan.mof.gov.my/pdf/belanjawan2026/sp/LAMPIRAN-A.pdf).
 
