@@ -207,7 +207,7 @@
     <template data-jik-template><tr>
         <td>
             <input aria-label="Jawatan" role="combobox" aria-autocomplete="list" aria-expanded="false"
-                placeholder="Taip nama Jawatan" autocomplete="off" required>
+                placeholder="Pilih Jawatan" autocomplete="off" required>
             <ul class="jik-jawatan-suggestions" role="listbox" aria-label="Cadangan Jawatan" hidden></ul>
         </td>
         <td><input aria-label="Bil. Perjawatan" type="number" min="0" max="100" value="0" required></td>
