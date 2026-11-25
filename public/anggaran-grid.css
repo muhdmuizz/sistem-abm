@@ -66,8 +66,9 @@
     --gaji-position-width: 280px;
     --gaji-officer-width: 230px;
     --gaji-grade-width: 145px;
-    min-width: 3468px;
+    min-width: 3488px;
 }
+.gaji-wizard-grid .gaji-amount-column { width: 130px; }
 .gaji-wizard-grid thead { position: sticky; top: 0; z-index: 1; }
 .gaji-wizard-grid :is(th, td) { vertical-align: middle; }
 .gaji-wizard-grid th:nth-child(n) { position: static; top: auto; width: auto; }
