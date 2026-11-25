@@ -6,6 +6,17 @@
 @include('abm.bids.feedback')
 <dl class="bid-context-facts"><div><dt>Kitaran ABM</dt><dd>{{ $bid->kitaran->tahun }}</dd></div><div><dt>PTJ</dt><dd>{{ $bid->ptj->nama }}</dd></div><div><dt>Status Bidaan</dt><dd>{{ \App\Services\RuangBidaPeruntukan::STATUS[$bid->status->value] }}</dd></div><div><dt>Tempoh penyediaan</dt><dd>{{ $open ? 'Fasa dibuka dalam tempoh' : 'Tiada Fasa dibuka dalam tempoh' }}</dd></div></dl>
 <div class="bid-section-heading"><h2>Program/ Aktiviti</h2><a class="button" href="{{ route('programs.index',$bid->id) }}">Buka Program/ Aktiviti</a></div>
+@if(app()->environment('local'))
+<div class="bid-catalogue">
+    <article class="bid-card">
+        <div class="bid-card-heading"><h2>Gaji &amp; Emolumen</h2></div>
+        <p class="small">OS11000, OS12000 dan OS13000</p>
+        <div class="bid-card-actions">
+            <a class="button" href="{{ route('gaji.preview', $bid->id) }}">Buka Pratonton<x-abm-icon name="chevron"/></a>
+        </div>
+    </article>
+</div>
+@endif
 <div class="bid-section-heading"><h2>OS tersedia</h2><p class="small">{{ $cards->count() }} OS</p></div>
 @if(! $bid->diaktifkan)<p class="notice">Bidaan belum diaktifkan. Pengaktifan OS belum tersedia.</p>@endif
 @if($cards->isEmpty())
