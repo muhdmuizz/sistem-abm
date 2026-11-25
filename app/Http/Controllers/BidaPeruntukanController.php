@@ -149,7 +149,7 @@ class BidaPeruntukanController extends Controller
                 continue;
             }
             $cells = array_map('trim', explode('|', trim($line, '| ')));
-            if (in_array($cells[0], ['Imbuhan Tetap Keraian', 'Imbuhan Tetap Khidmat Awam', 'Imbuhan Tetap Perumahan', 'Bayaran Imbuhan Perumahan Wilayah'], true)) {
+            if (in_array($cells[0], ['Imbuhan Tetap Keraian', 'Imbuhan Tetap Khidmat Awam', 'Imbuhan Tetap Perumahan', 'Bayaran Imbuhan Perumahan Wilayah', 'Bayaran Imbuhan Sara Hidup', 'Bayaran Imbuhan Wilayah'], true)) {
                 $allowanceRows[] = $cells;
             }
         }
@@ -184,7 +184,7 @@ class BidaPeruntukanController extends Controller
             'workplaces.*.wizard.*' => 'required|array:position,vacant,fields,other',
             'workplaces.*.wizard.*.position' => 'required|string|max:200',
             'workplaces.*.wizard.*.vacant' => 'required|boolean',
-            'workplaces.*.wizard.*.fields' => 'required|array|list|size:7',
+            'workplaces.*.wizard.*.fields' => 'required|array|list|min:7|max:8',
             'workplaces.*.wizard.*.fields.*' => 'present|nullable|string|max:200',
             'workplaces.*.wizard.*.other' => 'present|array|list',
             'workplaces.*.wizard.*.other.*' => 'required|array|list|size:2',
