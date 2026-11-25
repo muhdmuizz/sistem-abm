@@ -777,19 +777,26 @@
         const pickerToggle = picker.querySelector('summary');
         const search = picker.querySelector('[data-workplace-search]');
         const empty = picker.querySelector('[data-workplace-empty]');
+        const choices = picker.querySelector('[data-workplace-choices]');
+        const selectAll = picker.querySelector('[data-workplace-select-all]');
+        const selectAllLabel = picker.querySelector('[data-workplace-select-all-label]');
+        let visibleWorkplaces = [];
         const candidates = [...available.querySelectorAll('input[type="checkbox"]')];
         const candidateById = new Map(candidates.map(option => [option.value, option]));
         const checkedWorkplaces = () => candidates.filter(choice => choice.checked && !included.has(choice.value));
 
         function updateWorkplaceSelection() {
             const count = checkedWorkplaces().length;
+            const visibleChecked = visibleWorkplaces.filter(option => option.checked).length;
+            selectAll.checked = visibleWorkplaces.length > 0 && visibleChecked === visibleWorkplaces.length;
+            selectAll.indeterminate = visibleChecked > 0 && !selectAll.checked;
             include.disabled = count === 0;
             include.textContent = count ? 'Tambah ' + countFormat.format(count) + ' Tempat Bertugas' : 'Tambah Tempat Bertugas';
         }
 
         function filterWorkplaces() {
             const terms = search.value.trim().toLocaleLowerCase().split(/\s+/);
-            let visible = 0;
+            visibleWorkplaces = [];
             for (const option of candidates) {
                 const alreadyIncluded = included.has(option.value);
                 option.disabled = alreadyIncluded;
@@ -797,12 +804,13 @@
                 const name = option.dataset.workplaceName.toLocaleLowerCase();
                 const matches = !alreadyIncluded && terms.every(term => name.includes(term));
                 option.closest('label').hidden = !matches;
-                if (matches) visible++;
+                if (matches) visibleWorkplaces.push(option);
             }
 
-            available.hidden = visible === 0;
-            empty.hidden = visible > 0;
-            if (visible === 0) {
+            choices.hidden = visibleWorkplaces.length === 0;
+            empty.hidden = !choices.hidden;
+            selectAllLabel.textContent = 'Pilih semua hasil carian (' + countFormat.format(visibleWorkplaces.length) + ')';
+            if (choices.hidden) {
                 empty.textContent = candidates.every(option => included.has(option.value))
                     ? 'Semua Tempat Bertugas yang tersedia telah ditambah.'
                     : 'Tiada Tempat Bertugas sepadan dengan carian.';
@@ -878,6 +886,10 @@
         });
 
         available.addEventListener('change', updateWorkplaceSelection);
+        selectAll.addEventListener('change', () => {
+            for (const option of visibleWorkplaces) option.checked = selectAll.checked;
+            updateWorkplaceSelection();
+        });
         search.addEventListener('input', filterWorkplaces);
         include.addEventListener('click', () => {
             const checked = checkedWorkplaces();
