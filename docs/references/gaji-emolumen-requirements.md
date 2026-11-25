@@ -36,6 +36,12 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 - Visually distinguish Kosong rows in the wizard and retain the visible **Kosong** status label so vacancy remains identifiable without relying on colour.
 - **Bilangan Bulan is fixed at 3** for every Kosong row and is read-only in the wizard. The OS11000 estimate per vacant post is **Gaji Median × 3**.
 
+## OS11000 — confirmed filled-post salary input
+
+- For an **Isi** row, the salary input is the officer's **Gaji Pokok Terakhir**.
+- Only a **Penyedia Anggaran** authorised for the applicable workplace may enter this value in the Gaji & Emolumen wizard.
+- The salary reference date and how to apply salary changes during the budget year remain open.
+
 ## Decisions that follow
 
 - Confirm who prepares each office and school JIK under the applicable access rules.
