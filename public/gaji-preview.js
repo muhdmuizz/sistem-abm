@@ -175,6 +175,11 @@
         const allowances = [...row.querySelectorAll('[data-allowance-monthly]')];
         const annualCells = [...row.querySelectorAll('[data-annual]')];
         const allowanceTotal = row.querySelector('[data-allowance-total]');
+        const otherDetails = row.querySelector('[data-other-allowances]');
+        const otherItems = row.querySelector('[data-other-items]');
+        const otherAdd = row.querySelector('[data-other-add]');
+        const otherMonthTotal = row.querySelector('[data-other-month-total]');
+        const otherYearTotal = row.querySelector('[data-other-year-total]');
         const cells = Object.fromEntries([...row.querySelectorAll('[data-value]')].map(cell => [cell.dataset.value, cell]));
         row.dataset.positionId = String(wizardRows.rows.length + 1);
         row.querySelector('[data-row-number]').textContent = row.dataset.positionId;
@@ -188,6 +193,7 @@
             tpg.hidden = true;
             salary.readOnly = true;
             salary.placeholder = '—';
+            otherDetails.hidden = true;
             for (const input of allowances) {
                 input.disabled = true;
                 input.hidden = true;
@@ -216,19 +222,56 @@
             };
             for (const [key, value] of Object.entries(values)) cells[key].textContent = value ?? '—';
         }
-        row.addEventListener('input', event => {
-            if (!event.target.matches('[data-allowance-monthly]')) {
-                recalculate();
-                return;
-            }
-
+        function recalculateAllowances() {
             const values = allowances.map(input => input.value);
-            const { annual, total } = annualAllowances(values);
-            annual.forEach((amount, index) => {
+            const fixed = annualAllowances(values);
+            fixed.annual.forEach((amount, index) => {
                 annualCells[index].textContent = amount === null ? '—' : money(amount);
                 allowances[index].setAttribute('aria-invalid', String(Boolean(values[index].trim()) && amount === null));
             });
-            allowanceTotal.textContent = total === null ? '—' : money(total);
+
+            let otherMonthly = null;
+            let otherInvalid = false;
+            for (const item of otherItems.children) {
+                const name = item.querySelector('[data-other-name]');
+                const monthly = item.querySelector('[data-other-monthly]');
+                const started = Boolean(name.value.trim() || monthly.value.trim());
+                const amount = parseMoney(monthly.value.trim());
+                const valid = Boolean(name.value.trim()) && amount !== null;
+                name.setAttribute('aria-invalid', String(started && !name.value.trim()));
+                monthly.setAttribute('aria-invalid', String(started && amount === null));
+                item.querySelector('[data-other-item-annual]').textContent = valid ? money(amount * 12n) : '—';
+                if (valid) otherMonthly = (otherMonthly ?? 0n) + amount;
+                if (started && !valid) otherInvalid = true;
+            }
+
+            const otherYearly = otherMonthly === null ? null : otherMonthly * 12n;
+            otherMonthTotal.textContent = otherInvalid || otherMonthly === null ? '—' : money(otherMonthly);
+            otherYearTotal.textContent = otherInvalid || otherYearly === null ? '—' : money(otherYearly);
+            const fixedInvalid = values.some((value, index) => value.trim() && fixed.annual[index] === null);
+            allowanceTotal.textContent = fixedInvalid || otherInvalid || (fixed.total === null && otherYearly === null)
+                ? '—'
+                : money((fixed.total ?? 0n) + (otherYearly ?? 0n));
+        }
+
+        row.addEventListener('input', event => {
+            if (event.target.matches('[data-allowance-monthly], [data-other-name], [data-other-monthly]')) {
+                recalculateAllowances();
+            } else {
+                recalculate();
+            }
+        });
+        otherAdd.addEventListener('click', () => {
+            const item = preview.querySelector('[data-other-allowance-template]').content.firstElementChild.cloneNode(true);
+            otherItems.append(item);
+            item.querySelector('[data-other-name]').focus();
+        });
+        otherItems.addEventListener('click', event => {
+            const remove = event.target.closest('[data-other-remove]');
+            if (!remove) return;
+            remove.closest('[data-other-item]').remove();
+            recalculateAllowances();
+            otherAdd.focus();
         });
         officer.addEventListener('input', updateKetua);
         wizardRows.append(row);
