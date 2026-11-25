@@ -80,9 +80,15 @@ For each TPG, multiply each salary by its allocated months to calculate its subt
 | ITP @ BIPW/ Bulan | ITP @ BIPW/ Tahun |
 | BISH @ BIW/ Bulan | BISH @ BIW/ Tahun |
 
-Each annual amount is its monthly amount × 12. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for filled positions under Terperinci using the same JIK rows as OS11000. Actual rate sourcing and vacant-post eligibility remain open.
+Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong**. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for filled positions under Terperinci using the same JIK rows as OS11000. Actual monthly rate sourcing remains open.
 
-**Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the existing Gaji & Emolumen worksheet. Export two numeric summary columns: **Elaun-elaun Lain / Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain / Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
+**Elaun-elaun Lain:** The owner confirmed that each item has **/ Bulan** and **/ Tahun** amounts and follows the same calculation as the four fixed allowances: **/ Tahun = / Bulan × 12 for Isi or × 3 for Kosong**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the existing Gaji & Emolumen worksheet. Export two numeric summary columns: **Elaun-elaun Lain / Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain / Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
+
+## OS13000 — monthly and annual amounts
+
+The Terperinci grid places **OS13000 / Bulan** and **OS13000 / Tahun** after Jumlah OS12000. The annual amount is the monthly amount × 12 for Isi or × 3 for Kosong. The local preview uses manual monthly entry.
+
+All three OS apply a fixed three-month multiplier to Kosong rows. OS11000 uses the Gaji Median for the selected Jawatan and Gred. OS12000 applies the multiplier to the four fixed allowances and each Elaun Lain item. OS13000 applies the multiplier to its monthly amount.
 
 ## Decisions that follow
 
