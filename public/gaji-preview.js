@@ -330,10 +330,45 @@
         (neighbor?.querySelector('[data-jik-remove]') ?? addButton).focus();
     });
     addButton.addEventListener('click', addJik);
-    addJik();
-    const firstPosition = positions.values().next().value;
-    if (firstPosition) {
-        jikRows.rows[0].querySelector('input').value = firstPosition;
-        generate();
+
+    function initialiseWorkplace() {
+        addJik();
+        const firstPosition = positions.values().next().value;
+        if (firstPosition) {
+            jikRows.rows[0].querySelector('input').value = firstPosition;
+            generate();
+        }
     }
+
+    const workplace = preview.querySelector('[data-gaji-workplace]');
+    if (workplace) {
+        const drafts = new Map();
+        let current = workplace.value;
+        workplace.addEventListener('change', () => {
+            const next = workplace.value;
+            if (next === current) return;
+
+            drafts.set(current, {
+                jik: [...jikRows.rows],
+                wizard: [...wizardRows.rows],
+                ketua: ketua.value,
+            });
+            current = next;
+            const draft = drafts.get(current);
+            drafts.delete(current);
+            jikRows.replaceChildren(...(draft?.jik ?? []));
+            wizardRows.replaceChildren(...(draft?.wizard ?? []));
+            ketua.value = '';
+            error.hidden = true;
+
+            if (draft) {
+                updateJikTotals();
+                updateKetua();
+                ketua.value = draft.ketua;
+            } else {
+                initialiseWorkplace();
+            }
+        });
+    }
+    initialiseWorkplace();
 })();
