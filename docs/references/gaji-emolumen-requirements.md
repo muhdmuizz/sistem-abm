@@ -94,6 +94,15 @@ The Terperinci grid places **OS13000/ Bulan** and **OS13000/ Tahun** after Jumla
 
 All three OS apply a fixed three-month multiplier to Kosong rows. OS11000 uses the Gaji Median for the selected Jawatan and Gred. OS12000 applies the multiplier to the four fixed allowances and each Elaun Lain item. OS13000 applies the multiplier to its monthly amount.
 
+## Rumusan worksheet — confirmed for Excel extraction
+
+Include **Rumusan** as a separate worksheet in the future Excel extraction alongside **Gaji & Emolumen** and **Perbelanjaan**. Mirror the on-screen Rumusan for the extraction scope, with one row per included Tempat Bertugas and Pejabat PPD first when included in its PPD scope.
+
+| # | Tempat Bertugas | Bil. Perjawatan | Bil. Pengisian | Bil. Kekosongan | OS11000 (RM) | OS12000 (RM) | OS13000 (RM) | Jumlah (RM) |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+
+Place **Jumlah** in the final row and sum all seven numeric count and amount columns. Export count and monetary cells as numbers; display monetary amounts to two decimal places. The two numeric Elaun-elaun Lain columns remain on the Gaji & Emolumen detail worksheet. This records the export requirement, with implementation pending.
+
 ## Decisions that follow
 
 - Confirm who prepares each office and school JIK under the applicable access rules.
