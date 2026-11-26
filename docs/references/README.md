@@ -6,7 +6,7 @@
 
 ## Shared allowance-rate reference
 
-[Reference 08 — Kadar Elaun dan Imbuhan Tetap](REF-08-kadar-elaun-imbuhan-tetap.md) records the source table supplied by the owner on 25 November 2026, with 471 records across 20 types of allowances and incentives.
+[Reference 08 — Kadar Elaun dan Imbuhan Tetap](REF-08-kadar-elaun-imbuhan-tetap.md) records the source table supplied by the owner on 25 November 2026, with 471 source records and six additional ITJU rates. The reference contains 477 records across 21 types.
 
 ## Confirmed master inventory
 
