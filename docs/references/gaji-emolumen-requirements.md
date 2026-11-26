@@ -1,6 +1,6 @@
 # Gaji & Emolumen — OS11000, OS12000 and OS13000
 
-Status: requirements discovery. This note supports [AD-008](../architecture/AD-008-os-catalogue-calculation-framework.md) and [AD-010](../architecture/AD-010-analysis-reporting-and-excel.md). Gaji & Emolumen has a separate dataset with summary and detail worksheets in the planned combined extraction. Its official export template remains pending.
+Status: the local Gaji & Emolumen preview was merged into dev in [PR #118](https://github.com/muhdmuizz/sistem-abm/pull/118). This note supports [AD-008](../architecture/AD-008-os-catalogue-calculation-framework.md) and [AD-010](../architecture/AD-010-analysis-reporting-and-excel.md). Gaji & Emolumen has a separate dataset with summary and detail worksheets in the planned combined extraction. Its official export template remains pending.
 
 | OS | Scope | Evidence to obtain |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 - For each Jawatan, enter Bil. Perjawatan and Pengisian. Sistem ABM calculates **Kekosongan = Bil. Perjawatan − Pengisian**.
 - Bil. Perjawatan determines the number of wizard rows for that Jawatan. For example, a Jawatan with 5 Perjawatan and 3 Pengisian yields 2 Kekosongan and 5 wizard rows.
 - The wizard generates **Isi** rows equal to Pengisian and **Kosong** rows equal to Kekosongan for each Jawatan. Penyedia Anggaran enters officer names in the Isi rows. Change Pengisian in JIK to revise the Isi/Kosong counts.
-- The wizard cannot add or delete position rows or edit the Jawatan or row count. Add a Jawatan or amend Bil. Perjawatan in JIK to change the row structure. The editable payroll fields within each generated row remain to be specified.
+- The wizard cannot add or delete position rows or edit the Jawatan or row count. Add a Jawatan or amend Bil. Perjawatan in JIK to change the row structure.
 
 ## Confirmed JIK scope — offices and schools
 
@@ -25,7 +25,7 @@ Status: requirements discovery. This note supports [AD-008](../architecture/AD-0
 
 ## PPD preparation — workplace inclusion in Rumusan
 
-Only PPDs use **Rumusan** to choose which Tempat Bertugas to include for the selected Kitaran, PTJ and Aktiviti Kewangan. Offer **Tambah Tempat Bertugas** from the existing workplace references, restricted to the user's authorised workplaces and those applicable to the selected activity. The included workplaces determine the available choices in JIK and Terperinci, and the rows in the Rumusan worksheet for that extraction scope. Each workplace has separate JIK, Butiran Anggaran and Ketua Jabatan; JIK determines its Terperinci rows as before.
+Only PPDs use **Rumusan** to choose which Tempat Bertugas to include for the selected Kitaran, PTJ and Aktiviti Kewangan. The preview offers **Tambah Tempat Bertugas** inside Rumusan, with search and filtered bulk selection, from the existing workplace references, restricted to the user's authorised workplaces and those applicable to the selected activity. The included workplaces determine the available choices in JIK and Terperinci, and the rows in the Rumusan worksheet for that extraction scope. Each workplace has separate JIK, Butiran Anggaran and Ketua Jabatan; JIK determines its Terperinci rows as before.
 
 | Selected Aktiviti Kewangan | Confirmed workplace applicability |
 | --- | --- |
@@ -36,7 +36,7 @@ Pejabat PPD belongs to PPN and is excluded from other activities. The available 
 
 ## Ketua Jabatan — individual officer confirmed
 
-The owner confirmed that Ketua Jabatan identifies the individual officer holding the designation. Proposed placement: select the officer in the combined Gaji & Emolumen wizard after the named incumbents have been entered. The selector would offer only named officers attached to filled positions in the applicable organisational scope. JIK remains the source of Jawatan and establishment counts.
+The owner confirmed that Ketua Jabatan identifies the individual officer holding the designation. Select the officer in Terperinci after entering the named incumbents. The selector offers only named officers attached to filled positions in the applicable organisational scope. JIK remains the source of Jawatan and establishment counts.
 
 The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Gaji & Emolumen group. Under [AD-005](../architecture/AD-005-identity-roles-organisation.md), an SMK PTJ can also be its own Tempat Bertugas. The confirmed office workplaces each have one Ketua Jabatan, as does each school workplace. Whether selection is mandatory, its effect on calculations or workflow, and handling of a changed incumbent also remain open.
 
@@ -67,7 +67,7 @@ The owner confirmed one Ketua Jabatan per Tempat Bertugas across the combined Ga
 
 ### TPG and monthly salary allocation
 
-TPG options within the Kitaran year are **1 January, 1 April, 1 July and 1 October**.
+TPG starts unselected. Its options within the Kitaran year are **1 January, 1 April, 1 July and 1 October**.
 
 For **TPG 1 January**, enter Gaji Asal as the 1 January salary basis before applying that year's KGT in the estimate. The wizard sets Bil. Bulan (Gaji Asal) to zero, with no Gaji Asal subtotal. It calculates **Gaji Baharu = Gaji Asal + KGT**, sets Bil. Bulan (Gaji Baharu) to **12**, and calculates **Jumlah Kecil (Gaji Baharu) = (Gaji Asal + KGT) × 12**. Jumlah OS11000 equals that subtotal. Zero-month and zero-subtotal cells may display blank or zero.
 
@@ -80,7 +80,7 @@ The owner confirmed the following read-only month allocations for a full Kitaran
 | 1 July | 6 | 6 |
 | 1 October | 9 | 3 |
 
-For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. Draft PR #118 now uses [Reference 07](jawatan-gred-gaji-kgt.csv) for the dependent Jawatan → Gred SSPA selector, Gaji Median and read-only KGT. For Pengarah Pendidikan Negeri (VU7), [Reference 07](REF-07-jawatan-gred-gaji-kgt.md#3-pengarah-pendidikan-negeri--vu7) specifies a **calculated KGT of 9% × the applicable salary basis**. The CSV fixed-RM KGT cell is intentionally blank. In the OS11000 preview, an Isi row uses Gaji Asal (the basic salary as at 1 January of the Kitaran before the projected KGT). Calculate 9% and round to the nearest sen, with half a sen rounded up as an ABM budgeting convention. If the full KGT would exceed the VU7 JGMM maximum of RM22,040.00, use the greater of the remaining gap and KGM of RM437.63. Use KGM at or above the maximum, so Gaji Baharu may exceed the JGMM maximum. This projects normal eligible annual progression under PP Bil. 2 Tahun 2024, paragraphs 16–18. The rates are published in [Buku Senarai Perjawatan 2026, Lampiran A](https://belanjawan.mof.gov.my/pdf/belanjawan2026/sp/LAMPIRAN-A.pdf). A Kosong row uses Gaji Median × 3 months.
+For each TPG, multiply each salary by its allocated months to calculate its subtotal. **Jumlah OS11000** is the sum of the two subtotals. The wizard looks up the **KGT rate** from the salary reference for the selected **Gred** and displays it as a read-only value. The preview uses [Reference 07](jawatan-gred-gaji-kgt.csv) for the dependent Jawatan → Gred SSPA selector, Gaji Median and read-only KGT. For Pengarah Pendidikan Negeri (VU7), [Reference 07](REF-07-jawatan-gred-gaji-kgt.md#3-pengarah-pendidikan-negeri--vu7) specifies a **calculated KGT of 9% × the applicable salary basis**. The CSV fixed-RM KGT cell is intentionally blank. In the OS11000 preview, an Isi row uses Gaji Asal (the basic salary as at 1 January of the Kitaran before the projected KGT). Calculate 9% and round to the nearest sen, with half a sen rounded up as an ABM budgeting convention. If the full KGT would exceed the VU7 JGMM maximum of RM22,040.00, use the greater of the remaining gap and KGM of RM437.63. Use KGM at or above the maximum, so Gaji Baharu may exceed the JGMM maximum. This projects normal eligible annual progression under PP Bil. 2 Tahun 2024, paragraphs 16–18. The rates are published in [Buku Senarai Perjawatan 2026, Lampiran A](https://belanjawan.mof.gov.my/pdf/belanjawan2026/sp/LAMPIRAN-A.pdf). A Kosong row uses Gaji Median × 3 months.
 
 ## OS12000 — fixed-allowance columns
 
@@ -91,7 +91,7 @@ For each TPG, multiply each salary by its allocated months to calculate its subt
 | ITP @ BIPW/ Bulan | ITP @ BIPW/ Tahun |
 | BISH @ BIW/ Bulan | BISH @ BIW/ Tahun |
 
-Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong**. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for Isi and Kosong rows under Terperinci using the same JIK rows as OS11000. Actual monthly rate sourcing remains open.
+Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong**. **Jumlah OS12000** is the sum of those annual amounts. Terperinci uses the same JIK rows as OS11000 and looks up fixed monthly rates from [REF-08](REF-08-kadar-elaun-imbuhan-tetap.md). ITJU is populated for the documented VU and VK grades. ITK/ ITKA is based on Gred, with Gred 11 left unpopulated pending confirmation of its additional eligibility criteria. Penyedia Anggaran chooses ITP or BIPW and BISH or BIW. BIPW and BISH use the workplace district from its PTJ reference, with Pejabat JPNT mapped to Kuala Terengganu.
 
 **Elaun-elaun Lain:** The owner confirmed that each item has monthly and annual amounts and follows the same calculation as the four fixed allowances: **/ Tahun =/ Bulan × 12 for Isi or × 3 for Kosong**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the **Gaji & Emolumen Terperinci** worksheet. Export two numeric summary columns: **Elaun-elaun Lain/ Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain/ Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
 
@@ -100,6 +100,10 @@ Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong
 The Terperinci grid places **OS13000/ Bulan** and **OS13000/ Tahun** after Jumlah OS12000. The annual amount is the monthly amount × 12 for Isi or × 3 for Kosong. The local preview uses manual monthly entry.
 
 All three OS apply a fixed three-month multiplier to Kosong rows. OS11000 uses the Gaji Median for the selected Jawatan and Gred. OS12000 applies the multiplier to the four fixed allowances and each Elaun Lain item. OS13000 applies the multiplier to its monthly amount.
+
+## Preview drafts and row order
+
+Preview drafts are saved per account and Bidaan, with separate workplace entries. Autosave checks the draft revision, and the browser permits one editing tab per draft. Rumusan preserves the order of included workplaces. Reordering JIK moves the corresponding Terperinci rows and preserves entered details and the Ketua Jabatan selection.
 
 ## Planned combined Excel extraction
 
@@ -122,6 +126,6 @@ Place **Jumlah** in the final row and sum all seven numeric count and amount col
 - Confirm who prepares each office and school JIK under the applicable access rules.
 - Confirm the canonical field list and authority for rates, periods, eligibility and annual calculations for each OS, including changes within a year. The approved OS14000 overtime median formula is specific to that editor and supplies no payroll rule.
 - Confirm the official worksheet headers and mapping from the official template. Retain the existing Perbelanjaan dataset separately.
-- Specify completeness, examples and test cases per OS before implementation, then integrate applicable payroll estimates into Bidaan completeness.
+- Define production completeness and test cases, then integrate applicable payroll estimates into Bidaan completeness. The preview already flags incomplete Terperinci rows.
 
-The owner confirmed the JIK workflow above. Detailed payroll fields and calculation rules, reference mappings, access changes and implementation remain open.
+The merged implementation is a local preview. Production rules, shared preparation workflows and the combined workbook remain open.
