@@ -4,6 +4,10 @@
 
 **Authority:** user-supplied PTJ master list, JPNT/PPD Sektor list, complete school list and explicit reconciliations in the 12 November 2026 conversation. This is reference-data provenance and implementation tracking, **not an additional Architecture Decision**.
 
+## Shared allowance-rate reference
+
+[Reference 08 — Kadar Elaun dan Imbuhan Tetap](REF-08-kadar-elaun-imbuhan-tetap.md) records the source table supplied by the owner on 25 November 2026, with 471 source records and six additional ITJU rates. The reference contains 477 records across 21 types.
+
 ## Confirmed master inventory
 
 | Group | Count | Notes |
