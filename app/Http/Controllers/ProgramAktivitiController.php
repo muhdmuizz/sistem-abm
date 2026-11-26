@@ -45,7 +45,23 @@ class ProgramAktivitiController extends Controller
             in_array($bid->status, [StatusBidaan::DalamPenyediaan, StatusBidaan::Dikembalikan], true) &&
             ($workspace->admin($actor) || $open);
         return ['places' => $places, 'editable' => $editable,
+            'isSuperadmin' => $workspace->admin($actor),
             'needsReason' => $workspace->admin($actor) && (! $open || ! app(\App\Services\AksesPeruntukan::class)->bolehAksesAktiviti($bid->ptj_id, $bid->aktiviti_kewangan_id))];
+    }
+
+    private function fixedWorkplace(Request $request, array $access, ?int $existingId = null): ?TempatBertugas
+    {
+        if ($access['isSuperadmin']) {
+            return null;
+        }
+
+        if ($existingId !== null) {
+            return $access['places']->firstWhere('id', $existingId);
+        }
+
+        $own = $request->user()->tempat_bertugas_id;
+        return ($own ? $access['places']->firstWhere('id', $own) : null)
+            ?? ($access['places']->count() === 1 ? $access['places']->first() : null);
     }
 
     public function index(Request $request, int $bid, RuangProgramAktiviti $scope)
@@ -67,17 +83,21 @@ class ProgramAktivitiController extends Controller
         return view('abm.programs.form', ['bid' => $record, 'program' => $entry,
             'objectives' => TerasStrategik::orderBy('nombor')->with(['strategi' => fn ($q) => $q->orderBy('nombor'),
                 'strategi.prakarsa' => fn ($q) => $q->orderBy('nombor')])->get(),
-            'editable' => $editable] + $access);
+            'editable' => $editable, 'fixedWorkplace' => $this->fixedWorkplace($request, $access, $entry?->tempat_bertugas_id)] + $access);
     }
 
     public function save(Request $request, int $bid, DrafProgramAktiviti $service, ?int $program = null)
     {
         $record = $this->context($request, $bid);
         // Resolve the scoped URL identity before processing user-supplied metadata.
-        if ($program !== null) {
-            app(RuangProgramAktiviti::class)->query($request->user(), $record)->whereKey($program)->firstOrFail();
-        }
+        $entry = $program === null ? null : app(RuangProgramAktiviti::class)->query($request->user(), $record)->whereKey($program)->firstOrFail();
         $input = $request->except(['_token','_method']);
+        $fixed = $this->fixedWorkplace($request, $this->access($request, $record), $entry?->tempat_bertugas_id);
+        if ($fixed !== null) {
+            $submitted = $input['tempat_bertugas_id'] ?? $fixed->id;
+            abort_unless(is_scalar($submitted) && (string) $submitted === (string) $fixed->id, 403);
+            $input['tempat_bertugas_id'] = $fixed->id;
+        }
         // Unchecked/removed child rows are an explicit empty replacement, never a patch.
         if (isset($input['maklumat']) && is_array($input['maklumat'])) {
             foreach (['komponen','jemputan','peserta'] as $group) { $input['maklumat'][$group] ??= []; }
