@@ -122,7 +122,7 @@ class FotostatLinkTest extends TestCase
     {
         return ['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan,'rekod'=>$rows,'padam'=>$deleted];
     }
-    private function row($place,array $extra=[]): array {return array_replace(['tempat_bertugas_id'=>$place->id,'kategori1'=>'Berwarna','tarikh_mula'=>'2028-01-01','tarikh_tamat'=>'2028-12-31','tarikh_mula_kontrak'=>'2026-02-01','tarikh_tamat_kontrak'=>'2030-01-31','bil_unit'=>'2','lokasi'=>'Bilik Cetak','kadar'=>'180','bil_bulan'=>'12'],$extra);}
+    private function row($place,array $extra=[]): array {return array_replace(['tempat_bertugas_id'=>$place->id,'kategori1'=>'Berwarna','tarikh_mula'=>'2028-01-01','tarikh_tamat'=>'2028-12-31','tarikh_mula_kontrak'=>'2026-02-01','tarikh_tamat_kontrak'=>'2030-01-31','bil_unit'=>'2','nama'=>'Kontrak Baharu','lokasi'=>'Bilik Cetak','kadar'=>'180','bil_bulan'=>'12'],$extra);}
     private function gridCapture(string $name,$response): void
     {
         $this->workspaceCapture($name,$response);
@@ -153,10 +153,10 @@ class FotostatLinkTest extends TestCase
         $row=$this->row($place,['butiran_id'=>$r->id,'semakan_butiran'=>$r->semakan]);$count=RekodAudit::count();$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertSame($count,RekodAudit::count());
         $meter=$this->meterEstimate($bid);$meterRow=$this->row($place,['butiran_id'=>$m->id,'semakan_butiran'=>$m->semakan,'bil_unit'=>'12000','kadar'=>'0.03','bil_bulan'=>'12']);
         $this->postJson($this->gridUrl($bid,$meter),$this->payload($bid,$meter,[$meterRow]))->assertOk();
-        $row['semakan_butiran']=$r->fresh()->semakan;$row['lokasi']='Bilik Cetak Baharu';$row['tarikh_tamat_kontrak']='2032-01-31';$row['kadar']='999';
-        $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$m=$m->fresh();$this->assertSame('Bilik Cetak Baharu',$m->data_sumber->lokasi);$this->assertSame('2032-01-31',$m->data_sumber->tarikh_tamat_kontrak);
+        $row['semakan_butiran']=$r->fresh()->semakan;$row['nama']='Pembekal Contoh Sdn. Bhd.';$row['lokasi']='Bilik Cetak Baharu';$row['tarikh_tamat_kontrak']='2032-01-31';$row['kadar']='999';
+        $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$m=$m->fresh();$this->assertSame('Pembekal Contoh Sdn. Bhd.',$m->data_sumber->nama);$this->assertSame('Bilik Cetak Baharu',$m->data_sumber->lokasi);$this->assertSame('2032-01-31',$m->data_sumber->tarikh_tamat_kontrak);
         $this->assertSame('12000',$m->data_sumber->bil_unit);$this->assertSame('0.03',$m->data_sumber->kadar);$this->assertSame('12',$m->data_sumber->bil_bulan);
-        $response=$this->get($this->gridUrl($bid,$meter))->assertOk();$this->assertContains('kategori1',$response->viewData('records')[0]['readonly_fields']);$this->assertFalse($response->viewData('records')[0]['selectable']);
+        $response=$this->get($this->gridUrl($bid,$meter))->assertOk();$this->assertContains('kategori1',$response->viewData('records')[0]['readonly_fields']);$this->assertContains('nama',$response->viewData('records')[0]['readonly_fields']);$this->assertFalse($response->viewData('records')[0]['selectable']);
         $this->gridCapture('fotostat-linked-meter',$response);$this->gridCapture('fotostat-populated',$this->get($url)->assertOk());$this->assertDatabaseCount('butiran_anggaran',2);$this->assertDatabaseCount('hasil_pengiraan',0);
         $this->gridCapture('fotostat-links-empty',$this->get(route('fotostat.links',$bid->id))->assertOk());
         $this->gridCapture('fotostat-deactivate',$this->get(route('fotostat.deactivate-form',$bid->id))->assertOk());
@@ -164,6 +164,8 @@ class FotostatLinkTest extends TestCase
     public function test_linked_shared_field_overrides_and_direct_copy_delete_are_rejected(): void {
         [$bid,$estimate,$place]=$this->gridContext();$this->postJson($this->gridUrl($bid,$estimate),$this->payload($bid,$estimate,[$this->row($place)]))->assertOk();
         $m=$this->meterEstimate($bid)->butiran()->sole();$meter=$m->anggaran;$row=$this->row($place,['butiran_id'=>$m->id,'semakan_butiran'=>$m->semakan,'lokasi'=>'Override']);
+        $this->postJson($this->gridUrl($bid,$meter),$this->payload($bid,$meter,[$row]))->assertUnprocessable();
+        $row['lokasi']='Bilik Cetak';$row['nama']='Syarikat Lain';
         $this->postJson($this->gridUrl($bid,$meter),$this->payload($bid,$meter,[$row]))->assertUnprocessable();
         $this->postJson($this->gridUrl($bid,$meter),$this->payload($bid,$meter,[],[['butiran_id'=>$m->id,'semakan_butiran'=>$m->semakan]]))->assertConflict();
         $this->httpFailure(409,fn()=>app(\App\Services\DrafButiranAnggaran::class)->salin($meter->id,$m->id,['semakan_bidaan'=>$bid->fresh()->semakan,'semakan_anggaran'=>$meter->fresh()->semakan,'semakan_butiran'=>$m->semakan]));

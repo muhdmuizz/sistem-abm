@@ -14,7 +14,7 @@ use stdClass;
 class DefinisiBacaanMeter extends DefinisiAnggaran
 {
     public const VERSION = 'os29000.bacaan-meter.v1';
-    private const FIELDS = ['kategori1','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak','bil_unit','lokasi','kadar','bil_bulan'];
+    private const FIELDS = ['kategori1','nama','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak','bil_unit','lokasi','kadar','bil_bulan'];
 
     public function __construct(private int $year) {}
 
@@ -50,6 +50,7 @@ class DefinisiBacaanMeter extends DefinisiAnggaran
         return [
             ['key'=>'tempat_bertugas_id','context'=>true,'label'=>'Tempat Bertugas','type'=>'select','options'=>'places','width'=>230],
             ['key'=>'kategori1','label'=>'Kategori1 — Jenis Cetakan','type'=>'select','options'=>'references','width'=>220],
+            ['key'=>'nama','label'=>'Nama Syarikat','type'=>'text','maxLength'=>1000,'width'=>280],
             ['key'=>'tarikh_mula','label'=>'Tarikh Mula Kontrak Semasa','type'=>'date','min'=>$min,'max'=>$max,'width'=>190],
             ['key'=>'tarikh_tamat','label'=>'Tarikh Tamat Kontrak Semasa','type'=>'date','min'=>$min,'max'=>$max,'width'=>190],
             ['key'=>'tempoh','label'=>'Tempoh Kontrak Semasa','type'=>'output','formula'=>['operation'=>'inclusiveCalendar','inputs'=>['tarikh_mula','tarikh_tamat']],'width'=>200],
@@ -74,6 +75,7 @@ class DefinisiBacaanMeter extends DefinisiAnggaran
             'rekod.*.tempat_bertugas_id'=>'required|integer|min:1',
             'rekod.*.kategori1'=>['nullable','string',Rule::in(array_keys($this->references()))],
             'rekod.*.lokasi'=>'nullable|string|max:1000',
+            'rekod.*.nama'=>'nullable|string|max:1000',
             'rekod.*.bil_unit'=>$decimal,'rekod.*.kadar'=>$decimal,'rekod.*.bil_bulan'=>$decimal,
         ];
         foreach (['tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'] as $field) $rules['rekod.*.'.$field]='bail|nullable|string|date_format:Y-m-d';
@@ -108,7 +110,7 @@ class DefinisiBacaanMeter extends DefinisiAnggaran
     public function readable(mixed $source): bool
     {
         $keys=['definition',...self::FIELDS];
-        if(!$source instanceof stdClass||($source->definition ?? null)!==self::VERSION||array_diff($keys,array_keys(get_object_vars($source)))||array_diff(array_keys(get_object_vars($source)),$keys))return false;
+        if(!$source instanceof stdClass||($source->definition ?? null)!==self::VERSION||array_diff($keys,array_keys(get_object_vars($source)),['nama'])||array_diff(array_keys(get_object_vars($source)),$keys))return false;
         $row=get_object_vars($source);unset($row['definition']);$row['tempat_bertugas_id']=1;
         try{$this->validate([$row]);}catch(\Illuminate\Validation\ValidationException){return false;}
         return true;

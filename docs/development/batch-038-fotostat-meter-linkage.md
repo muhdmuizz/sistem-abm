@@ -36,3 +36,7 @@ Uninspected/limits: remaining screenshots, dedicated new loading/pending-save an
 [PR #87](https://github.com/muhdmuizz/sistem-abm/pull/87) merged into `dev` at `9f294dc9a33c6b6dbb544e0505fa7b0bfe83a42d`. Tested head remains `75809c99be402bf0d0805837286557e2519d247a`; pre-merge verification commit changes documentation only. One additive migration creates `pautan_fotostat`; use ordinary `php artisan migrate` against the verified development database, with no reset/seed. Local sync/migration/financial/device acceptance remains pending; earlier unconfirmed local statuses unchanged. Keep the development server running and refresh assets.
 
 No official calculation outputs, totals, completeness/submission changes, export-schema changes, reference/rate/catalogue/mapping reassignment or programme association implementation. AD-008 remains Draft; Steps 02/03 remain in progress. Complete remaining OS editors before consolidated UI refinement.
+
+## Nama Syarikat correction — 26 November 2026
+
+Owner approved use of the existing NAMA field for rental-company names in OS24000 and linked OS29000. The rental supplies the shared field; old source drafts lacking it remain readable. No database migration or new export column. The correction is in progress; cloud and local verification pending.
