@@ -5,3 +5,22 @@
 .program-section label{display:block}.program-section label>:is(input:not([type=checkbox]),select,textarea){display:block;margin-top:8px}.program-section label>.small[data-class-help]{display:block;margin-top:4px}.program-package label{display:inline-flex}
 
 .program-objective-description{display:none;overflow-wrap:anywhere}@media(max-width:767px){.program-objective-description{display:block;margin-top:8px}}
+
+.program-place-options {
+    max-height: 14rem;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: var(--space-1);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+}
+.program-place-options li {
+    padding: var(--space-2) var(--space-3);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+.program-place-options li:hover,
+.program-place-options [aria-selected="true"] { background: #e8f0f8; }
