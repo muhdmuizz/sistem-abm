@@ -5,3 +5,5 @@
 .program-section label{display:block}.program-section label>:is(input:not([type=checkbox]),select,textarea){display:block;margin-top:8px}.program-section label>.small[data-class-help]{display:block;margin-top:4px}.program-package label{display:inline-flex}
 
 .program-objective-description{display:none;overflow-wrap:anywhere}@media(max-width:767px){.program-objective-description{display:block;margin-top:8px}}
+
+.program-section .ptj-picker input { padding-inline-end: 42px; }

@@ -724,3 +724,7 @@ Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 4501
 ## Batch 051 merged checkpoint
 
 [PR #115](https://github.com/muhdmuizz/sistem-abm/pull/115) merged into `dev` at `6ee13ec72c5e7c54c060466b4407c9c06a1b3d41`. Final PR head `3dc55fbd0d4926b4d389b1ac7ea955eef335f3ed` passed [CI 45014622764](https://github.com/muhdmuizz/sistem-abm/actions/runs/45014622764). The user confirmed the OS27000 saved summary and that the local presentation follow-up worked on the PR checkout. Local acceptance was confirmed on the PR checkout; the date of local fast-forward to the Batch 051 merge was not separately recorded. No migration is required. Whole-Bidaan readiness and broader OS coverage remain pending.
+
+## Batch 052 programme scope — 26 November 2026
+
+[PR #119](https://github.com/muhdmuizz/sistem-abm/pull/119) contains programme workplace-picker refinements. The owner selected seven OS groups for programme linkage; see [Batch 052](batch-052-program-aktiviti-integration.md). Checklist persistence, inherited fields and calculations are pending.

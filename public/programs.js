@@ -48,16 +48,9 @@
         previousMode = mode.value; packageState();
     });
     packageState();
-    form.querySelectorAll('[data-program-search]').forEach(input => {
-        input.addEventListener('input', event => {
-            event.stopPropagation();
-            const select = document.getElementById(input.dataset.programSearch);
-            const query = input.value.toLocaleLowerCase();
-            for (const option of select.options) {
-                option.hidden = !!option.value && !option.selected && !option.text.toLocaleLowerCase().includes(query);
-            }
-        });
-    });
+    const place = form.querySelector('#program-place');
+    const placeInput = form.querySelector('#program-place-search');
+    place?.addEventListener('change', dirty);
     let nextRow = 1000000;
     function classify(row) {
         const category = row.querySelector('[data-person-category]').value;
@@ -115,7 +108,7 @@
         });
     });
     form.addEventListener('input', () => { if(status) status.textContent = 'Perubahan belum disimpan.'; });
-    form.addEventListener('submit', () => { if(status) status.textContent = 'Menyimpan draf…'; });
+    form.addEventListener('submit', event => { if (status && !event.defaultPrevented) status.textContent = 'Menyimpan draf…'; });
     const errors = document.querySelector('[data-program-errors]');
     if (errors) {
         if (status) dirty();
@@ -130,8 +123,10 @@
             const message = document.createElement('span');
             message.className = 'program-field-error'; message.id = `program-error-${number++}`;
             message.textContent = values.join(' ');
-            target.setAttribute('aria-invalid', 'true'); target.setAttribute('aria-describedby', message.id);
-            target.closest('label')?.append(message);
+            const control = target === place && placeInput ? placeInput : target;
+            control.setAttribute('aria-invalid', 'true'); control.setAttribute('aria-describedby', message.id);
+            if (control === placeInput) placeInput.after(message);
+            else control.closest('label')?.append(message);
         }
         errors.focus();
     }
