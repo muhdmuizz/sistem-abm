@@ -48,16 +48,117 @@
         previousMode = mode.value; packageState();
     });
     packageState();
-    form.querySelectorAll('[data-program-search]').forEach(input => {
-        input.addEventListener('input', event => {
+    const place = form.querySelector('#program-place');
+    let placeInput;
+    if (place) {
+        placeInput = document.createElement('input');
+        placeInput.id = 'program-place-search';
+        placeInput.type = 'text';
+        placeInput.placeholder = 'Pilih Tempat Bertugas';
+        placeInput.autocomplete = 'off';
+        placeInput.required = place.required;
+        placeInput.setAttribute('role', 'combobox');
+        placeInput.setAttribute('aria-autocomplete', 'list');
+        placeInput.setAttribute('aria-expanded', 'false');
+
+        const list = document.createElement('ul');
+        list.id = 'program-place-options';
+        list.className = 'program-place-options';
+        list.setAttribute('role', 'listbox');
+        list.setAttribute('aria-label', 'Tempat Bertugas');
+        list.hidden = true;
+        placeInput.setAttribute('aria-controls', list.id);
+        const label = form.querySelector('label[for="program-place"]');
+        label.htmlFor = placeInput.id;
+        place.before(placeInput, list);
+        place.hidden = true;
+        place.required = false;
+        const options = [...place.options].filter(option => option.value);
+        let active = -1;
+
+        function restoreLabel() {
+            placeInput.value = place.value ? place.selectedOptions[0].textContent.trim() : '';
+        }
+        function closePlaces() {
+            list.hidden = true;
+            active = -1;
+            placeInput.setAttribute('aria-expanded', 'false');
+            placeInput.removeAttribute('aria-activedescendant');
+        }
+        function choosePlace(option) {
+            if (place.value !== option.dataset.value) {
+                place.value = option.dataset.value;
+                place.dispatchEvent(new Event('change', { bubbles: true }));
+                dirty();
+            }
+            restoreLabel();
+            closePlaces();
+            placeInput.focus();
+        }
+        function searchPlaces(query) {
+            closePlaces();
+            const terms = query.trim().toLocaleLowerCase().split(/\s+/);
+            if (!query.trim()) return;
+            const matches = options.filter(option => terms.every(term => option.textContent.toLocaleLowerCase().includes(term)));
+            list.replaceChildren(...matches.map((option, index) => {
+                const item = document.createElement('li');
+                item.id = list.id + '-' + index;
+                item.dataset.value = option.value;
+                item.setAttribute('role', 'option');
+                item.setAttribute('aria-selected', 'false');
+                item.textContent = option.textContent.trim();
+                return item;
+            }));
+            list.hidden = matches.length === 0;
+            list.scrollTop = 0;
+            placeInput.setAttribute('aria-expanded', String(!list.hidden));
+        }
+
+        restoreLabel();
+        placeInput.addEventListener('input', event => {
             event.stopPropagation();
-            const select = document.getElementById(input.dataset.programSearch);
-            const query = input.value.toLocaleLowerCase();
-            for (const option of select.options) {
-                option.hidden = !!option.value && !option.selected && !option.text.toLocaleLowerCase().includes(query);
+            searchPlaces(placeInput.value);
+        });
+        placeInput.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closePlaces();
+                restoreLabel();
+            } else if (event.key === 'Enter' && active >= 0) {
+                event.preventDefault();
+                choosePlace(list.children[active]);
+            } else if (event.key === 'Enter' && placeInput.value !== (place.value ? place.selectedOptions[0].textContent.trim() : '')) {
+                event.preventDefault();
+                if (list.children.length === 1 && !list.hidden) choosePlace(list.children[0]);
+            } else if (!list.hidden && ['ArrowUp', 'ArrowDown'].includes(event.key)) {
+                event.preventDefault();
+                list.children[active]?.setAttribute('aria-selected', 'false');
+                const last = list.children.length - 1;
+                active = event.key === 'ArrowDown' ? Math.min(last, active + 1) : active <= 0 ? last : active - 1;
+                const item = list.children[active];
+                item.setAttribute('aria-selected', 'true');
+                placeInput.setAttribute('aria-activedescendant', item.id);
+                item.scrollIntoView({ block: 'nearest' });
             }
         });
-    });
+        placeInput.addEventListener('focus', () => placeInput.select());
+        placeInput.addEventListener('blur', () => { closePlaces(); restoreLabel(); });
+        list.addEventListener('pointerdown', event => {
+            if (event.target.closest('[role="option"]')) event.preventDefault();
+        });
+        list.addEventListener('click', event => {
+            const item = event.target.closest('[role="option"]');
+            if (item) choosePlace(item);
+        });
+        form.addEventListener('submit', event => {
+            if (!place.value) {
+                event.preventDefault();
+                restoreLabel();
+                placeInput.reportValidity();
+                placeInput.focus();
+            }
+        });
+    }
     let nextRow = 1000000;
     function classify(row) {
         const category = row.querySelector('[data-person-category]').value;
@@ -115,7 +216,7 @@
         });
     });
     form.addEventListener('input', () => { if(status) status.textContent = 'Perubahan belum disimpan.'; });
-    form.addEventListener('submit', () => { if(status) status.textContent = 'Menyimpan draf…'; });
+    form.addEventListener('submit', event => { if (status && !event.defaultPrevented) status.textContent = 'Menyimpan draf…'; });
     const errors = document.querySelector('[data-program-errors]');
     if (errors) {
         if (status) dirty();
@@ -130,8 +231,10 @@
             const message = document.createElement('span');
             message.className = 'program-field-error'; message.id = `program-error-${number++}`;
             message.textContent = values.join(' ');
-            target.setAttribute('aria-invalid', 'true'); target.setAttribute('aria-describedby', message.id);
-            target.closest('label')?.append(message);
+            const control = target === place && placeInput ? placeInput : target;
+            control.setAttribute('aria-invalid', 'true'); control.setAttribute('aria-describedby', message.id);
+            if (control === placeInput) placeInput.after(message);
+            else control.closest('label')?.append(message);
         }
         errors.focus();
     }
