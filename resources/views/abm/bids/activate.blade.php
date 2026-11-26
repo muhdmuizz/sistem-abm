@@ -7,8 +7,8 @@
 @include('abm.bids.feedback')
 <section class="activation-panel">
 <h2>{{ $activity->nama }}</h2>
-<dl class="bid-context-facts"><div><dt>Kitaran ABM</dt><dd>{{ $cycle->tahun }}</dd></div><div><dt>PTJ</dt><dd>{{ $ptj->nama }}</dd></div>@if($os)<div><dt>OS</dt><dd>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</dd></div>@endif</dl>
-<p class="activation-explanation">{{ $os ? 'OS akan ditambahkan pada Bidaan ini. Penyediaan butiran OS belum dibuka.' : 'Pengaktifan membolehkan Penyedia Anggaran mengaktifkan OS yang dibenarkan dalam Bidaan ini.' }}</p>
+<dl class="bid-context-facts"><div><dt>Kitaran ABM</dt><dd>{{ $cycle->tahun }}</dd></div><div><dt>PTJ</dt><dd>{{ $ptj->nama }}</dd></div>@if($os)<div><dt>OS</dt><dd>@if($payrollGroup ?? false) OS11000 · OS12000 · OS13000 — Gaji &amp; Emolumen @else OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }} @endif</dd></div>@endif</dl>
+<p class="activation-explanation">@if($payrollGroup ?? false) Ketiga-tiga OS akan diaktifkan bersama untuk membuka Gaji &amp; Emolumen. @else {{ $os ? 'OS akan ditambahkan pada Bidaan ini. Penyediaan butiran OS belum dibuka.' : 'Pengaktifan membolehkan Penyedia Anggaran mengaktifkan OS yang dibenarkan dalam Bidaan ini.' }} @endif</p>
 @if($activation['needs_reason'])<div class="notice caution"><p>Tindakan ini menggunakan pintasan Superadmin dan akan direkod dalam jejak audit.</p>@if(! $activation['central'])<p>Kebenaran pusat tidak membenarkan tindakan ini.</p>@endif @if(! $activation['open'])<p>Tiada Fasa dibuka dalam tempoh bagi konteks ini.</p>@endif</div>@endif
 <form method="post" action="{{ $postUrl }}" data-track-unsaved>@csrf
 <input type="hidden" name="activation_context" value="{{ $context }}"><input type="hidden" name="semakan" value="{{ $bid?->semakan ?? 0 }}">

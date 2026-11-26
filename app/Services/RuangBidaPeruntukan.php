@@ -55,8 +55,9 @@ class RuangBidaPeruntukan
 
     private function assigned(User $actor, Peranan $role, int $ptj, int $activity): bool
     {
-        $key = implode('/', [$actor->id, $role->value, $ptj, $activity, $actor->tempat_bertugas_id]);
-        return $this->eligibility[$key] ??= $this->roles->meliputi($actor->id, $role, $ptj, $activity, $actor->tempat_bertugas_id);
+        $workplaceId = $this->admin($actor) ? null : $actor->tempat_bertugas_id;
+        $key = implode('/', [$actor->id, $role->value, $ptj, $activity, $workplaceId]);
+        return $this->eligibility[$key] ??= $this->roles->meliputi($actor->id, $role, $ptj, $activity, $workplaceId);
     }
 
     public function open(int $cycle, int $ptj, int $activity): bool

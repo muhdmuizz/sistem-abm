@@ -59,7 +59,8 @@ class KawalanPenyediaanKewangan
     {
         $this->transaction();
         $admin = $actor->penugasanPeranan->contains('peranan', Peranan::Superadmin);
-        abort_unless($this->roles->meliputi($actor->id, $role, $ptj, $activity, $workplaceId ?? $actor->tempat_bertugas_id), 403);
+        $scopeWorkplace = $workplaceId ?? ($admin ? null : $actor->tempat_bertugas_id);
+        abort_unless($this->roles->meliputi($actor->id, $role, $ptj, $activity, $scopeWorkplace), 403);
         $central = $os === null
             ? $this->permissions->bolehAksesAktiviti($ptj, $activity)
             : $this->permissions->bolehAksesOs($ptj, $activity, $os);
