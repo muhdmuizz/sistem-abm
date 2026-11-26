@@ -1,6 +1,6 @@
 # Gaji & Emolumen — OS11000, OS12000 and OS13000
 
-Status: requirements discovery. This note supports [AD-008](../architecture/AD-008-os-catalogue-calculation-framework.md) and [AD-010](../architecture/AD-010-analysis-reporting-and-excel.md). Gaji & Emolumen has a separate dataset and worksheet. Its official export template remains pending.
+Status: requirements discovery. This note supports [AD-008](../architecture/AD-008-os-catalogue-calculation-framework.md) and [AD-010](../architecture/AD-010-analysis-reporting-and-excel.md). Gaji & Emolumen has a separate dataset with summary and detail worksheets in the planned combined extraction. Its official export template remains pending.
 
 | OS | Scope | Evidence to obtain |
 | --- | --- | --- |
@@ -93,7 +93,7 @@ For each TPG, multiply each salary by its allocated months to calculate its subt
 
 Each annual amount is its monthly amount × 12 for **Isi**, or × 3 for **Kosong**. **Jumlah OS12000** is the sum of those annual amounts. Draft PR #118 previews manual monthly entry for Isi and Kosong rows under Terperinci using the same JIK rows as OS11000. Actual monthly rate sourcing remains open.
 
-**Elaun-elaun Lain:** The owner confirmed that each item has monthly and annual amounts and follows the same calculation as the four fixed allowances: **/ Tahun =/ Bulan × 12 for Isi or × 3 for Kosong**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the existing Gaji & Emolumen worksheet. Export two numeric summary columns: **Elaun-elaun Lain/ Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain/ Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
+**Elaun-elaun Lain:** The owner confirmed that each item has monthly and annual amounts and follows the same calculation as the four fixed allowances: **/ Tahun =/ Bulan × 12 for Isi or × 3 for Kosong**. The Penyedia Anggaran types the allowance name as free text for each item. For Excel, retain one row per officer in the **Gaji & Emolumen Terperinci** worksheet. Export two numeric summary columns: **Elaun-elaun Lain/ Bulan**, the sum of item monthly amounts, and **Elaun-elaun Lain/ Tahun**, the sum of item annual amounts. No additional worksheet is needed for these items. Retain individual allowance names and amounts in Sistem ABM. Exact Excel column positions remain subject to the official template.
 
 ## OS13000 — Sumbangan Berkanun
 
@@ -101,14 +101,21 @@ The Terperinci grid places **OS13000/ Bulan** and **OS13000/ Tahun** after Jumla
 
 All three OS apply a fixed three-month multiplier to Kosong rows. OS11000 uses the Gaji Median for the selected Jawatan and Gred. OS12000 applies the multiplier to the four fixed allowances and each Elaun Lain item. OS13000 applies the multiplier to its monthly amount.
 
-## Rumusan worksheet — confirmed for Excel extraction
+## Planned combined Excel extraction
 
-Include **Rumusan** as a separate worksheet in the future Excel extraction alongside **Gaji & Emolumen** and **Perbelanjaan**. Mirror the on-screen Rumusan for the extraction scope, with one row per included Tempat Bertugas and Pejabat PPD first when included in its PPD scope.
+The owner proposed these four worksheets in order on 26 November 2026.
+
+1. **Rumusan Gaji & Emolumen**
+2. **Gaji & Emolumen Terperinci**
+3. **Senarai Program & Aktiviti**
+4. **Senarai Butiran Anggaran**
+
+**Rumusan Gaji & Emolumen** belongs in the combined workbook. Mirror the on-screen Rumusan for the extraction scope, with one row per included Tempat Bertugas, the saved workplace order, and Pejabat PPD first when included.
 
 | # | Tempat Bertugas | Bil. Perjawatan | Bil. Pengisian | Bil. Kekosongan | OS11000 (RM) | OS12000 (RM) | OS13000 (RM) | Jumlah (RM) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 
-Place **Jumlah** in the final row and sum all seven numeric count and amount columns. Export count and monetary cells as numbers; display monetary amounts to two decimal places. The two numeric Elaun-elaun Lain columns remain on the Gaji & Emolumen detail worksheet. This records the export requirement, with implementation pending.
+Place **Jumlah** in the final row and sum all seven numeric count and amount columns. Export count and monetary cells as numbers; display monetary amounts to two decimal places. The two numeric Elaun-elaun Lain columns remain on **Gaji & Emolumen Terperinci**. This records the export requirement, with implementation pending.
 
 ## Decisions that follow
 
