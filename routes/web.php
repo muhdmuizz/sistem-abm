@@ -30,6 +30,11 @@ Route::middleware(['auth', EnsureAbmSession::class])->group(function () {
     Route::post('/bida-peruntukan/{bid}/anggaran/{estimate}/jadual', [\App\Http\Controllers\EditorAnggaranController::class, 'save'])->whereNumber(['bid','estimate'])->middleware('throttle:30,1')->name('estimates.editor-save');
     Route::get('/bida-peruntukan/{bid}/anggaran/{estimate}', [AnggaranController::class, 'show'])->whereNumber(['bid','estimate'])->name('estimates.show');
     Route::get('/bida-peruntukan/{bid}/pilih-os', [AnggaranController::class, 'navigate'])->whereNumber('bid')->name('estimates.navigate');
+    Route::get('/bida-peruntukan/{bid}/gaji-emolumen/pratonton', [BidaPeruntukanController::class, 'gajiPreview'])
+        ->whereNumber('bid')->name('gaji.preview');
+    Route::put('/bida-peruntukan/{bid}/gaji-emolumen/pratonton/draf', [BidaPeruntukanController::class, 'saveGajiPreview'])
+        ->whereNumber('bid')->middleware('throttle:60,1')->name('gaji.preview-save');
+
     Route::get('/bida-peruntukan', [BidaPeruntukanController::class, 'index'])->name('bids.index');
     Route::get('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'bidForm'])->whereNumber(['cycle','ptj','activity'])->name('bids.activate-form');
     Route::post('/bida-peruntukan/kitaran/{cycle}/ptj/{ptj}/aktiviti/{activity}/aktifkan', [BidaPeruntukanController::class, 'activateBid'])->whereNumber(['cycle','ptj','activity'])->middleware('throttle:30,1')->name('bids.activate');

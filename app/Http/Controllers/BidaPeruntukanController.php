@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Peranan;
 use App\Models\Bidaan;
 use App\Models\Kitaran;
 use App\Models\Ptj;
+use App\Models\TempatBertugas;
 use App\Services\PengaktifanKewangan;
 use App\Services\RuangBidaPeruntukan;
+use App\Services\SkopPeranan;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BidaPeruntukanController extends Controller
@@ -42,16 +48,175 @@ class BidaPeruntukanController extends Controller
         return $record->load(['ptj', 'aktivitiKewangan', 'kitaran']);
     }
 
+
+
     public function show(Request $request, int $bid, RuangBidaPeruntukan $workspace)
     {
         $record = $this->bidContext($request, $bid, $workspace);
-        $catalogue = $workspace->catalogue($request->user(), $record);
-        $estimates = $record->anggaran()->whereIn('rujukan_os_id', $catalogue->pluck('id'))->get()->keyBy('rujukan_os_id');
-        $cards = $catalogue->map(fn ($os) => ['os' => $os, 'estimate' => $estimates->get($os->id),
-            'activation' => $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
-                $record->aktiviti_kewangan_id, $record, $os, $estimates->get($os->id))]);
+        $cards = $this->osCards($request, $record, $workspace);
         $open = $workspace->open($record->kitaran_id, $record->ptj_id, $record->aktiviti_kewangan_id);
-        return view('abm.bids.show', ['bid' => $record, 'cards' => $cards, 'open' => $open]);
+        [$payrollCards, $otherCards] = $cards->partition(fn ($card) =>
+            app()->environment('local') && in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
+
+        return view('abm.bids.show', [
+            'bid' => $record, 'cards' => $cards, 'open' => $open,
+            'payrollCards' => $payrollCards, 'otherCards' => $otherCards,
+            'payrollActivation' => $this->payrollActivation($payrollCards),
+        ]);
+    }
+
+    private function osCards(Request $request, Bidaan $bid, RuangBidaPeruntukan $workspace): \Illuminate\Support\Collection
+    {
+        $catalogue = $workspace->catalogue($request->user(), $bid);
+        $estimates = $bid->anggaran()->whereIn('rujukan_os_id', $catalogue->pluck('id'))->get()->keyBy('rujukan_os_id');
+
+        return $catalogue->map(fn ($os) => ['os' => $os, 'estimate' => $estimates->get($os->id),
+            'activation' => $workspace->activation($request->user(), $bid->kitaran_id, $bid->ptj_id,
+                $bid->aktiviti_kewangan_id, $bid, $os, $estimates->get($os->id))]);
+    }
+
+    private function payrollActivation(\Illuminate\Support\Collection $cards): array
+    {
+        $mapped = $cards->pluck('os.kod_objek')->values()->all() === PengaktifanKewangan::PAYROLL_OS;
+        $pending = $cards->reject(fn ($card) => $card['estimate']?->diaktifkan);
+        $blocked = $pending->first(fn ($card) => ! $card['activation']['allowed']);
+
+        return [
+            'active' => $mapped && $pending->isEmpty(),
+            'allowed' => $mapped && $pending->isNotEmpty() && $blocked === null,
+            'selector' => $pending->first()['os']->id ?? null,
+            'explanation' => $mapped ? ($blocked['activation']['explanation'] ?? null) : 'Pemetaan atau akses bagi ketiga-tiga OS belum tersedia.',
+            'needs_reason' => $cards->contains(fn ($card) => $card['activation']['needs_reason']),
+            'central' => $cards->every(fn ($card) => $card['activation']['central']),
+            'open' => $cards->every(fn ($card) => $card['activation']['open']),
+        ];
+    }
+
+    private function payrollPreviewContext(Request $request, int $bid, RuangBidaPeruntukan $workspace): array
+    {
+        abort_unless(app()->environment('local'), 404);
+        $record = $this->bidContext($request, $bid, $workspace);
+
+        $cards = $this->osCards($request, $record, $workspace)
+            ->filter(fn ($card) => in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
+        abort_unless($cards->isNotEmpty(), 404);
+        abort_unless($this->payrollActivation($cards)['active'], 409, 'Aktifkan OS Gaji & Emolumen terlebih dahulu.');
+
+        $workplaces = [];
+        if ($record->ptj->kategori === 'PPD') {
+            $actor = $request->user();
+            $roles = app(SkopPeranan::class);
+            $role = Peranan::PenyediaAnggaran;
+            $hasPpdScope = $roles->meliputi($actor->id, $role, $record->ptj_id, $record->aktiviti_kewangan_id);
+            $costCentres = TempatBertugas::where('ptj_id', $record->ptj_id)->where('jenis', '!=', 'sektor');
+
+            if ($hasPpdScope) {
+                if ($record->aktivitiKewangan->singkatan === 'PPN'
+                    || $record->aktivitiKewangan->nama === 'Pengurusan Pentadbiran Negeri') {
+                    $workplaces['office'] = 'Pejabat PPD';
+                }
+            } else {
+                abort_unless($actor->tempat_bertugas_id && $roles->meliputi(
+                    $actor->id, $role, $record->ptj_id, $record->aktiviti_kewangan_id, $actor->tempat_bertugas_id,
+                ), 403);
+                $costCentres->whereKey($actor->tempat_bertugas_id);
+            }
+
+            foreach ($costCentres->orderBy('nama')->orderBy('id')->get(['id', 'nama']) as $centre) {
+                $workplaces[$centre->id] = $centre->nama;
+            }
+            abort_if($workplaces === [], 403);
+        }
+
+        return [$record, $workplaces];
+    }
+
+    public function gajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace, \App\Services\RujukanJawatan $jawatan)
+    {
+        [$record, $workplaces] = $this->payrollPreviewContext($request, $bid, $workspace);
+        $saved = DB::table('draf_pratonton_gaji')->where('bidaan_id', $bid)
+            ->where('user_id', $request->user()->id)->first();
+        $draft = $saved ? json_decode(Crypt::decryptString($saved->payload), true, flags: JSON_THROW_ON_ERROR) : null;
+        if ($draft !== null) {
+            $draft['workplaces'] = array_intersect_key($draft['workplaces'], $workplaces ?: ['default' => true]);
+            $draft['included'] = array_values(array_intersect($draft['included'], array_keys($workplaces)));
+        }
+
+        $allowanceRows = [];
+        $source = file(base_path('docs/references/REF-08-kadar-elaun-imbuhan-tetap.md'), FILE_IGNORE_NEW_LINES);
+        foreach ($source as $line) {
+            if (! str_starts_with($line, '| ')) {
+                continue;
+            }
+            $cells = array_map('trim', explode('|', trim($line, '| ')));
+            if (in_array($cells[0], ['Imbuhan Tetap Keraian', 'Imbuhan Tetap Khidmat Awam', 'Imbuhan Tetap Perumahan', 'Bayaran Imbuhan Perumahan Wilayah', 'Bayaran Imbuhan Sara Hidup', 'Bayaran Imbuhan Wilayah'], true)) {
+                $allowanceRows[] = $cells;
+            }
+        }
+
+        return view('abm.estimates.gaji-preview', [
+            'allowanceRows' => $allowanceRows,
+            'workplaceDistrict' => $record->ptj->kategori === 'JPNT' ? 'Kuala Terengganu' : $record->ptj->daerah,
+            'draft' => $draft,
+            'draftVersion' => $saved->revision ?? 0,
+            'bid' => $record,
+            'workplaces' => $workplaces,
+            'year' => $record->kitaran->tahun,
+            'salaryRates' => $jawatan->salaryRates(),
+        ]);
+    }
+
+    public function saveGajiPreview(Request $request, int $bid, RuangBidaPeruntukan $workspace)
+    {
+        [, $workplaces] = $this->payrollPreviewContext($request, $bid, $workspace);
+        $data = $request->validate(['revision' => 'required|integer|min:0', 'snapshot' => 'required|json|max:2000000']);
+        $snapshot = json_decode($data['snapshot'], true, flags: JSON_THROW_ON_ERROR);
+        abort_unless(is_array($snapshot), 422);
+        Validator::make($snapshot, [
+            'included' => 'present|array|list',
+            'included.*' => 'required|string|distinct',
+            'workplaces' => 'present|array',
+            'workplaces.*' => 'required|array:jik,wizard,ketua',
+            'workplaces.*.ketua' => 'present|nullable|string|max:10',
+            'workplaces.*.jik' => 'present|array|list',
+            'workplaces.*.jik.*' => 'required|array|list|min:3|max:4',
+            'workplaces.*.jik.*.*' => 'present|nullable|string|max:200',
+            'workplaces.*.wizard' => 'present|array|list',
+            'workplaces.*.wizard.*' => 'required|array:position,vacant,fields,other,jikId',
+            'workplaces.*.wizard.*.jikId' => 'sometimes|nullable|uuid',
+            'workplaces.*.wizard.*.position' => 'required|string|max:200',
+            'workplaces.*.wizard.*.vacant' => 'required|boolean',
+            'workplaces.*.wizard.*.fields' => 'required|array|list|min:7|max:8',
+            'workplaces.*.wizard.*.fields.*' => 'present|nullable|string|max:200',
+            'workplaces.*.wizard.*.other' => 'present|array|list',
+            'workplaces.*.wizard.*.other.*' => 'required|array|list|size:2',
+            'workplaces.*.wizard.*.other.*.*' => 'present|nullable|string|max:120',
+        ])->validate();
+
+        $allowed = array_keys($workplaces ?: ['default' => true]);
+        abort_if(array_diff(array_keys($snapshot['workplaces']), $allowed)
+            || array_diff($snapshot['included'], array_keys($workplaces)), 403);
+
+        $revision = DB::transaction(function () use ($bid, $request, $data) {
+            Bidaan::whereKey($bid)->lockForUpdate()->firstOrFail();
+            $key = ['bidaan_id' => $bid, 'user_id' => $request->user()->id];
+            $table = DB::table('draf_pratonton_gaji');
+            $saved = (clone $table)->where($key)->first();
+            $revision = (int) ($saved->revision ?? 0);
+            $expected = (int) $data['revision'];
+            if ($saved && $revision === $expected + 1 && Crypt::decryptString($saved->payload) === $data['snapshot']) {
+                return $revision;
+            }
+            abort_unless($revision === $expected, 409);
+            $table->updateOrInsert($key, [
+                'revision' => $revision + 1,
+                'payload' => Crypt::encryptString($data['snapshot']),
+            ]);
+
+            return $revision + 1;
+        });
+
+        return response()->json(['revision' => $revision]);
     }
 
     public function bidForm(Request $request, int $cycle, int $ptj, int $activity, RuangBidaPeruntukan $workspace)
@@ -78,8 +243,14 @@ class BidaPeruntukanController extends Controller
         $estimate = $record->anggaran()->where('rujukan_os_id', $os)->first();
         $activation = $workspace->activation($request->user(), $record->kitaran_id, $record->ptj_id,
             $record->aktiviti_kewangan_id, $record, $reference, $estimate);
+        $payrollGroup = app()->environment('local') && in_array($reference->kod_objek, PengaktifanKewangan::PAYROLL_OS, true);
+        if ($payrollGroup) {
+            $cards = $this->osCards($request, $record, $workspace)
+                ->filter(fn ($card) => in_array($card['os']->kod_objek, PengaktifanKewangan::PAYROLL_OS, true));
+            $activation = $this->payrollActivation($cards);
+        }
         abort_unless($activation['allowed'], 403);
-        return view('abm.bids.activate', ['cycle' => $record->kitaran, 'ptj' => $record->ptj,
+        return view('abm.bids.activate', ['payrollGroup' => $payrollGroup, 'cycle' => $record->kitaran, 'ptj' => $record->ptj,
             'activity' => $record->aktivitiKewangan, 'bid' => $record, 'os' => $reference,
             'activation' => $activation, 'context' => 'os/'.$bid.'/'.$os,
             'postUrl' => route('bids.os-activate', [$bid, $os]), 'backUrl' => route('bids.show', $bid)]);
@@ -110,10 +281,16 @@ class BidaPeruntukanController extends Controller
     public function activateOs(Request $request, int $bid, int $os, RuangBidaPeruntukan $workspace, PengaktifanKewangan $service)
     {
         $record = $this->bidContext($request, $bid, $workspace);
-        abort_unless($workspace->catalogue($request->user(), $record)->contains('id', $os), 404);
+        $reference = $workspace->catalogue($request->user(), $record)->firstWhere('id', $os);
+        abort_unless($reference, 404);
+        $payrollGroup = app()->environment('local') && in_array($reference->kod_objek, PengaktifanKewangan::PAYROLL_OS, true);
         $data = $request->validate(['semakan' => 'required|integer|min:0', 'reason' => 'nullable|string|max:1000']);
         try {
-            $service->aktifkanOs($bid, $os, (int) $data['semakan'], $data['reason'] ?? null);
+            if ($payrollGroup) {
+                $service->aktifkanGaji($bid, (int) $data['semakan'], $data['reason'] ?? null);
+            } else {
+                $service->aktifkanOs($bid, $os, (int) $data['semakan'], $data['reason'] ?? null);
+            }
         } catch (QueryException $exception) {
             Log::notice('abm.os.activation_failed', ['exception_type' => get_class($exception)]);
             return $this->failure($request, 'OS tidak diaktifkan. Muat semula dan cuba lagi.');
@@ -121,6 +298,6 @@ class BidaPeruntukanController extends Controller
             if ($exception->getStatusCode() !== 409) { throw $exception; }
             return $this->failure($request, 'Bidaan atau OS telah berubah. Muat semula dan semak status semasa.');
         }
-        return redirect()->route('bids.show', $bid)->with('status', 'OS diaktifkan.');
+        return redirect()->route('bids.show', $bid)->with('status', $payrollGroup ? 'OS Gaji & Emolumen diaktifkan.' : 'OS diaktifkan.');
     }
 }

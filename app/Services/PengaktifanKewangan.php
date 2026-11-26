@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 /** Initial preparation only. No source writes, completeness, calculations or submission transitions. */
 class PengaktifanKewangan
 {
+    public const PAYROLL_OS = ['11000', '12000', '13000'];
+
     public function __construct(
         private JejakAudit $audit,
         private KawalanPenyediaanKewangan $guard,
@@ -81,6 +83,27 @@ class PengaktifanKewangan
             $rental=$this->aktifkanSatuOs($bidId,$r->id,$bid->semakan,$reason,true);
             $this->aktifkanSatuOs($bidId,$m->id,$bid->fresh()->semakan,$reason,true);
             return $rental->fresh();
+        });
+    }
+
+    public function aktifkanGaji(int $bidId, int $expectedRevision, ?string $reason = null): void
+    {
+        DB::transaction(function () use ($bidId, $expectedRevision, $reason) {
+            $this->guard->actor();
+            $context = Bidaan::findOrFail($bidId);
+            $this->guard->prepareLocks($context->kitaran_id);
+            $bid = Bidaan::whereKey($bidId)->lockForUpdate()->firstOrFail();
+            $this->guard->current($bid, $expectedRevision);
+            $references = \App\Models\RujukanOs::untukPelaksanaan()
+                ->whereIn('kod_objek', self::PAYROLL_OS)
+                ->whereHas('pemetaan', fn ($query) => $query->where('aktiviti_kewangan_id', $bid->aktiviti_kewangan_id))
+                ->orderBy('kod_objek')->get();
+            abort_unless($references->pluck('kod_objek')->all() === self::PAYROLL_OS, 409,
+                'Pemetaan OS Gaji & Emolumen belum lengkap.');
+
+            foreach ($references as $reference) {
+                $this->aktifkanSatuOs($bidId, $reference->id, $bid->refresh()->semakan, $reason);
+            }
         });
     }
 

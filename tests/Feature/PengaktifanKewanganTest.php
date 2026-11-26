@@ -119,6 +119,39 @@ FOR EACH ROW EXECUTE FUNCTION activation_test_audit_failure();
 SQL);
     }
 
+    public function test_payroll_activation_is_atomic_and_preserves_the_three_os_identities(): void
+    {
+        $this->activationAssign(Peranan::PenyediaAnggaran);
+        $bid = $this->activationBidFixture();
+        foreach (PengaktifanKewangan::PAYROLL_OS as $code) {
+            $os = RujukanOs::create(['kod_objek' => $code, 'butiran_perbelanjaan' => 'Payroll '.$code]);
+            PemetaanOs::create([
+                'aktiviti_kewangan_id' => $this->activity->id, 'rujukan_os_id' => $os->id,
+                'singkatan_sumber' => 'Fixture', 'butiran_asal' => 'Payroll '.$code, 'status_sumber' => 'Aktif',
+            ]);
+            TetapanAksesPtj::create([
+                'kategori_ptj' => 'PPD', 'aktiviti_kewangan_id' => $this->activity->id,
+                'rujukan_os_id' => $os->id, 'dibenarkan' => $code !== '13000',
+            ]);
+        }
+
+        $service = app(PengaktifanKewangan::class);
+        $this->activationDenied(fn () => $service->aktifkanGaji($bid->id, 1), 403);
+        $this->assertDatabaseCount('anggaran', 0);
+        $this->assertDatabaseCount('rekod_audit', 0);
+        $this->assertSame(1, $bid->fresh()->semakan);
+
+        TetapanAksesPtj::where('rujukan_os_id', $os->id)->update(['dibenarkan' => true]);
+        $service->aktifkanGaji($bid->id, 1);
+        $this->assertSame(3, $bid->anggaran()->where('diaktifkan', true)->count());
+        $this->assertDatabaseCount('rekod_audit', 3);
+        $this->assertSame(4, $bid->fresh()->semakan);
+
+        $service->aktifkanGaji($bid->id, 4);
+        $this->assertDatabaseCount('anggaran', 3);
+        $this->assertDatabaseCount('rekod_audit', 3);
+    }
+
     public function test_bid_activation_persists_canonical_identity_and_actual_role_audit(): void
     {
         $bid = $this->activateFixtureBid();
@@ -289,7 +322,16 @@ SQL);
     public function test_superadmin_override_requires_reason_and_preserves_actual_actor_and_scope(): void
     {
         $this->operator->penugasanPeranan()->delete();
+        $adminPtj = Ptj::create(['kod_ptj' => 'ACT-ADMIN', 'nama' => 'Admin PTJ', 'kategori' => 'JPNT']);
+        $adminWorkplace = TempatBertugas::create(['ptj_id' => $adminPtj->id, 'nama' => 'Admin sector', 'jenis' => 'sektor']);
+        $this->operator->forceFill(['ptj_id' => $adminPtj->id, 'tempat_bertugas_id' => $adminWorkplace->id])->save();
         $this->activationAssign(Peranan::Superadmin);
+        $this->activationSession();
+
+        $activation = app(\App\Services\RuangBidaPeruntukan::class)->activation(
+            $this->operator, $this->cycle->id, $this->owner->id, $this->activity->id, null,
+        );
+        $this->assertTrue($activation['allowed']);
         $this->phase->forceFill(['dibuka' => false])->save();
         TetapanAksesPtj::query()->update(['dibenarkan' => false]);
         try {
