@@ -42,12 +42,20 @@
     <section class="section" id="gaji-summary-panel" role="tabpanel" inert aria-labelledby="gaji-summary-tab" tabindex="0">
         <div class="anggaran-grid-scroll" tabindex="0" role="region" aria-label="Rumusan Gaji dan Emolumen">
             <table class="anggaran-grid gaji-summary-grid">
-                <colgroup><col style="width: 52px"><col><col span="7" style="width: 125px"></colgroup>
+                <colgroup>
+                    <col style="width: 52px"><col><col span="7" style="width: 125px">
+                    @if($workplaces !== [])
+                        <col style="width: 82px">
+                    @endif
+                </colgroup>
                 <thead>
                     <tr>
                         @foreach (['#', 'Tempat Bertugas', 'Bil. Perjawatan', 'Bil. Pengisian', 'Bil. Kekosongan', 'OS11000 (RM)', 'OS12000 (RM)', 'OS13000 (RM)', 'Jumlah (RM)'] as $heading)
                             <th scope="col">{{ $heading }}</th>
                         @endforeach
+                        @if($workplaces !== [])
+                            <th scope="col" class="gaji-summary-action">Tindakan</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody data-summary-rows>
@@ -64,7 +72,7 @@
                 @if($workplaces !== [])
                     <tbody>
                         <tr>
-                            <td class="gaji-workplace-picker-cell" colspan="9">
+                            <td class="gaji-workplace-picker-cell" colspan="10">
                                 <details class="gaji-workplace-picker" data-workplace-picker>
                                     <summary>Tambah Tempat Bertugas</summary>
                                     <div class="gaji-workplace-picker-content">
@@ -101,6 +109,9 @@
                         @foreach (['0', '0', '0', '0.00', '0.00', '0.00', '0.00'] as $value)
                             <td class="grid-numeric" data-summary-value>{{ $value }}</td>
                         @endforeach
+                        @if($workplaces !== [])
+                            <td class="gaji-summary-action"></td>
+                        @endif
                     </tr>
                 </tfoot>
             </table>
@@ -215,17 +226,20 @@
         <tr data-payroll-summary>
             <td data-summary-number></td>
             <th scope="row">
-                <div class="gaji-workplace-row">
-                    <div class="gaji-workplace-order">
-                        <button type="button" class="gaji-drag-handle" data-gaji-drag aria-label="Susun Tempat Bertugas" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button>
-                        <span data-summary-name></span>
-                    </div>
-                    <button type="button" class="button danger" data-exclude-workplace>Keluarkan</button>
+                <div class="gaji-workplace-order">
+                    <button type="button" class="gaji-drag-handle" data-gaji-drag aria-label="Susun Tempat Bertugas" aria-keyshortcuts="ArrowUp ArrowDown" title="Seret atau gunakan kekunci anak panah atas dan bawah">⠿</button>
+                    <span data-summary-name></span>
                 </div>
             </th>
             @foreach (range(1, 7) as $column)
                 <td class="grid-numeric" data-summary-value></td>
             @endforeach
+            <td class="gaji-summary-action">
+                <button type="button" class="gaji-remove-workplace" data-exclude-workplace
+                    title="Keluarkan daripada Rumusan" aria-label="Keluarkan daripada Rumusan">
+                    <span aria-hidden="true">−</span>
+                </button>
+            </td>
         </tr>
     </template>
     <datalist id="jik-jawatan-options">
