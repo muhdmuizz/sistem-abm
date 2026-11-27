@@ -102,3 +102,7 @@ The main Analisis table shows aggregated OS rows. Expanding an OS goes **directl
 - This is an architecture record, not evidence of completed code, testing, or deployment.
 
 **Reconciliation boundary:** Exclude unsolicited proposals made after the user's worksheet explanation. Any future change to an approved requirement must be separately and explicitly authorised.
+
+## Owner workbook refinement — November 2026
+
+The owner specified the complete consolidated workbook in this order: (1) Rumusan Gaji & Emolumen; (2) Gaji & Emolumen Terperinci; (3) Senarai Program & Aktiviti; (4) Senarai Butiran Anggaran. This supersedes the earlier complete-workbook two-sheet arrangement only. Rumusan is included in the consolidated workbook, not a standalone extraction. Preserve existing authorised export scopes, canonical 30-column expenditure field identities, and version/permission constraints. Exact payroll mappings and selected-OS sheet behaviour require implementation reconciliation; do not invent template columns.
