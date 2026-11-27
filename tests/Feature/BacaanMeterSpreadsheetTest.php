@@ -137,7 +137,8 @@ class BacaanMeterSpreadsheetTest extends TestCase
         $this->assertSame('Kadar (RM/ Salinan)',$columns['kadar']['label']);$this->assertSame('decimal',$columns['kadar']['type']);$this->assertTrue($columns['kadar']['money']);
         $this->assertSame('2028-01-01',$columns['tarikh_mula']['min']);$this->assertSame('2028-12-31',$columns['tarikh_tamat']['max']);
         $this->assertSame('0001-01-01',$columns['tarikh_mula_kontrak']['min']);$this->assertSame('9999-12-31',$columns['tarikh_tamat_kontrak']['max']);
-        foreach(['nama','tujuan','jawatan','gred','kategori2','kategori3','unit'] as $key)$this->assertFalse($columns->has($key));
+        $this->assertSame('Nama Syarikat',$columns['nama']['label']);
+        foreach(['tujuan','jawatan','gred','kategori2','kategori3','unit'] as $key)$this->assertFalse($columns->has($key));
         $this->gridCapture('meter-empty',$response);$this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
     }
 
@@ -154,8 +155,12 @@ class BacaanMeterSpreadsheetTest extends TestCase
         $this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$fresh=$first->fresh();$this->assertSame('1800',$definition->preview($fresh->data_sumber));$this->assertSame('5',$fresh->data_sumber->bil_bulan);
         $row['semakan_butiran']=$fresh->semakan;$count=RekodAudit::count();$this->postJson($url,$this->payload($bid,$estimate,[$row]))->assertOk();$this->assertSame($count,RekodAudit::count());
         $this->assertDatabaseCount('hasil_pengiraan',0);
-        $this->assertEqualsCanonicalizing(['definition','kategori1','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak','bil_unit','lokasi','kadar','bil_bulan'],array_keys(get_object_vars($fresh->data_sumber)));
-        $this->assertTrue($definition->readable($fresh->data_sumber));$bad=clone $fresh->data_sumber;$bad->tempoh='injected';$this->assertFalse($definition->readable($bad));
+        $this->assertEqualsCanonicalizing(['definition','kategori1','nama','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak','bil_unit','lokasi','kadar','bil_bulan'],array_keys(get_object_vars($fresh->data_sumber)));
+        $this->assertTrue($definition->readable($fresh->data_sumber));
+        $historical = clone $fresh->data_sumber; unset($historical->nama);
+        $this->assertTrue($definition->readable($historical));
+        $this->assertNull($definition->project($historical)['nama']);
+        $bad=clone $fresh->data_sumber;$bad->tempoh='injected';$this->assertFalse($definition->readable($bad));
     }
 
     public function test_only_four_existing_meter_mappings_are_supported_and_rental_stays_separate(): void
@@ -175,7 +180,7 @@ class BacaanMeterSpreadsheetTest extends TestCase
     public function test_invalid_dates_inactive_fields_and_derived_injections_reject_the_entire_save(): void
     {
         [$bid,$estimate,$place]=$this->gridContext();$url=$this->gridUrl($bid,$estimate);
-        foreach([['kategori1'=>'Tidak Berwarna'],['kategori2'=>'Other'],['unit'=>'Salinan'],['tempoh'=>'12'],['tempoh_kontrak'=>'4 tahun'],['preview'=>'4320'],['nama'=>'Someone'],['tarikh_mula'=>'2027-12-31'],['tarikh_tamat'=>'2029-01-01'],['tarikh_mula'=>'2028-02-30'],['tarikh_tamat'=>'2028-01-00'],['tarikh_mula_kontrak'=>'2027-02-29'],['tarikh_mula_kontrak'=>'0000-01-01'],['tarikh_tamat_kontrak'=>'2025-01-01'],['bil_unit'=>'12,000'],['kadar'=>'0,03'],['bil_bulan'=>'1e2'],['lokasi'=>str_repeat('x',1001)]] as $extra){
+        foreach([['kategori1'=>'Tidak Berwarna'],['kategori2'=>'Other'],['unit'=>'Salinan'],['tempoh'=>'12'],['tempoh_kontrak'=>'4 tahun'],['preview'=>'4320'],['nama'=>str_repeat('x',1001)],['tarikh_mula'=>'2027-12-31'],['tarikh_tamat'=>'2029-01-01'],['tarikh_mula'=>'2028-02-30'],['tarikh_tamat'=>'2028-01-00'],['tarikh_mula_kontrak'=>'2027-02-29'],['tarikh_mula_kontrak'=>'0000-01-01'],['tarikh_tamat_kontrak'=>'2025-01-01'],['bil_unit'=>'12,000'],['kadar'=>'0,03'],['bil_bulan'=>'1e2'],['lokasi'=>str_repeat('x',1001)]] as $extra){
             $this->postJson($url,$this->payload($bid,$estimate,[$this->row($place),$this->row($place,$extra)]))->assertUnprocessable();
             $this->assertDatabaseCount('butiran_anggaran',0);$this->assertDatabaseCount('rekod_audit',0);
         }

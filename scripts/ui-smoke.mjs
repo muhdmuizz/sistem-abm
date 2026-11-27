@@ -1053,7 +1053,8 @@ for(const fixture of ['fotostat-activation','fotostat-links-empty','fotostat-dea
 await page.setViewportSize({width:1440,height:900});await page.goto('http://127.0.0.1:4173/fotostat-linked-meter.html');
 {
  const row=page.locator('[data-grid-body] tr').first();
- for(const key of ['tempat_bertugas_id','kategori1','lokasi','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'])if(await row.locator('[data-field='+key+']').count())throw Error('Linked meter shared input editable '+key);
+ for(const key of ['tempat_bertugas_id','kategori1','nama','lokasi','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'])if(await row.locator('[data-field='+key+']').count())throw Error('Linked meter shared input editable '+key);
+ if(!await row.getByText('Pembekal Contoh Sdn. Bhd.',{exact:true}).count())throw Error('Linked meter company name is missing');
  if(await row.locator('[data-row-select]').count())throw Error('Linked meter independently selectable');
  if(await row.locator('[data-output=preview]').textContent()!=='4,320.00')throw Error('Linked meter financial preview');
  await row.locator('[data-field=kadar]').focus();await row.locator('[data-field=kadar]').fill('0.012345');await row.locator('[data-field=bil_bulan]').fill('7');

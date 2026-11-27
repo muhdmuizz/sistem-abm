@@ -11,7 +11,7 @@ use stdClass;
 /** All linked writes remain under the existing actor/cycle/Bidaan transaction locks. */
 class PautanFotostat
 {
- public const SHARED=['kategori1','lokasi','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'];
+ public const SHARED=['kategori1','nama','lokasi','tarikh_mula','tarikh_tamat','tarikh_mula_kontrak','tarikh_tamat_kontrak'];
  public const FINANCIAL=['bil_unit','kadar','bil_bulan'];
  private bool $internal=false;
  public function __construct(private KawalanPenyediaanKewangan $guard,private JejakAudit $audit){}
