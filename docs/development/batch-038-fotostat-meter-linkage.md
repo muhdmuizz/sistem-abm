@@ -39,6 +39,6 @@ No official calculation outputs, totals, completeness/submission changes, export
 
 ## Nama Syarikat correction — 26 November 2026
 
-Owner approved use of the existing NAMA field for rental-company names in OS24000 and linked OS29000. The rental supplies the shared field; old source drafts lacking it remain readable. No database migration or new export column. The correction is in progress; cloud and local verification pending.
+Owner approved use of the existing NAMA field for rental-company names in OS24000 and linked OS29000. The rental supplies the shared field; old source drafts lacking it remain readable. No database migration or new export column. The correction is merged; local verification pending.
 
-Verification: application head `89d565b7a75bc3c0b0110e0404ed787c48dff166` passed [PostgreSQL tests, Vite build and Chromium checks](https://github.com/muhdmuizz/sistem-abm/actions/runs/45777274252). Local acceptance and merge checkpoint pending. No new migration.
+Verification: application head `89d565b7a75bc3c0b0110e0404ed787c48dff166` passed [PostgreSQL tests, Vite build and Chromium checks](https://github.com/muhdmuizz/sistem-abm/actions/runs/45777274252). Merged via [PR #120](https://github.com/muhdmuizz/sistem-abm/pull/120) at `4305ade17379e7be546357905be4322828022c06`; local acceptance pending. No new migration.
