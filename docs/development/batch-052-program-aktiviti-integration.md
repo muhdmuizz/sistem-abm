@@ -39,3 +39,7 @@ For programme-linked OS14000 only, generate exactly one row per Urus Setia (AKP)
 ## Owner-approved OS21000 inheritance — 28 November 2026
 
 Applies to Perjalanan Sara Hidup (Umum), (Sukan) and (Kokurikulum). Generate one row per eligible person from both Section D Jemputan/ Urus Setia and Peserta breakdowns. Include Pegawai, Guru and AKP only, respecting the existing categories available in each group; exclude Murid Rendah, Murid Menengah and Lain-lain. Each generated row inherits its originating numeric Gred level, restricting Jawatan and dependent SSPA Gred codes to matching REF-07 entries exactly as for OS14000. Change the grade through Section D, not the linked editor. Existing travel components, rates and calculation rules remain unchanged; component-level additional row requirements are not amended by this decision. Design approved, implementation pending.
+
+## OS29000 Iktisas (Umum) — owner decision, 28 November 2026
+
+For selected Makan Minum services (Mesyuarat, Program, Majlis Persaraan), inherit Bil. Orang from the combined Jemputan/ Urus Setia and Peserta headcounts in Section D. Keep the respective approved reference rates and Bil. Unit × Kadar formula; no additional duration multiplier. Other Iktisas service generation rules remain under discussion. OS24000 and OS25000 inheritance discussion deferred by owner. Design only; not implemented.
