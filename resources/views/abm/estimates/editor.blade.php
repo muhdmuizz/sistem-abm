@@ -5,7 +5,8 @@
 <link rel="stylesheet" href="{{ asset('anggaran-grid.css') }}">
 <script src="{{ asset('abm-money.js') }}" defer></script>
 <script src="{{ asset('anggaran-grid.js') }}" defer></script>
-<div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ route('estimates.show',[$bid->id,$estimate->id]) }}">Kembali ke Anggaran</a></div>
+<div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ $program ? route('programs.edit',[$bid->id,$program->id]) : route('estimates.show',[$bid->id,$estimate->id]) }}">{{ $program ? 'Kembali ke Program/ Aktiviti' : 'Kembali ke Anggaran' }}</a></div>
+@if($program)<p class="notice">Program/ Aktiviti: {{ $program->nama ?? '—' }}</p>@endif
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
 @if($completeness ?? null)
 <section class="notice" aria-label="Ringkasan butiran tersimpan">
@@ -30,7 +31,7 @@
 @if($editable)<div class="grid-toolbar"><a class="button" href="{{ route('fotostat.links',$bid->id) }}">Pautan Bacaan Meter</a><a class="button" href="{{ route('fotostat.deactivate-form',$bid->id) }}">Nyahaktifkan Pasangan</a></div>@endif
 @endif
 @if(($dependentMeter ?? false) && !($pairActive ?? true))<p class="notice">Aktifkan pasangan melalui OS24000 Sewaan Mesin Fotostat dan Riso sebelum menyediakan Bacaan Meter.</p>@endif
-<form data-anggaran-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id]) }}"
+<form data-anggaran-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id] + ($program ? ['program'=>$program->id] : [])) }}"
  data-records="{{ json_encode($records) }}" data-places="{{ json_encode($places) }}" data-references="{{ json_encode($references) }}"
  data-columns="{{ json_encode($columns) }}" data-reference-selector="{{ $referenceSelector }}" data-reference-child-selector="{{ $referenceChildSelector }}"
  data-editable="{{ $editable ? 'yes' : 'no' }}" data-bid-revision="{{ $bid->semakan }}" data-estimate-revision="{{ $estimate->semakan }}">

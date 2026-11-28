@@ -51,11 +51,24 @@ class DrafProgramAktiviti
             abort_if($program && $program->semakan !== (int) $data['semakan_program'], 409, 'Program/ Aktiviti telah berubah. Muat semula.');
             TempatBertugas::whereKey($place)->where('ptj_id', $bid->ptj_id)->sharedLock()->firstOrFail();
             $metadata = $data['maklumat'];
+            $previous = $program?->os_terpilih ?? [];
+            $selected = array_key_exists('os_terpilih', $data) ? array_values(array_unique(array_map('intval', $data['os_terpilih']))) : $previous;
+            sort($selected);
+            foreach (array_diff($selected, $previous) as $id) {
+                $os = $this->guard->catalogue($bid, $id);
+                abort_unless(PilihanOsProgram::supports($os) && app(KatalogDefinisiAnggaran::class)->untuk($os, $bid), 422);
+                $this->guard->authorise($actor, Peranan::PenyediaAnggaran, $cycle->id, $bid->ptj_id, $bid->aktiviti_kewangan_id, $id, $data['reason'] ?? null, $place);
+            }
+            if ($program) {
+                $linked = \App\Models\ButiranAnggaran::where('program_aktiviti_id', $program->id);
+                abort_if($program->tempat_bertugas_id !== $place && (clone $linked)->exists(), 409, 'Tempat Bertugas mempunyai Butiran Anggaran.');
+                abort_if((clone $linked)->whereHas('anggaran', fn ($q) => $q->whereNotIn('rujukan_os_id', $selected))->exists(), 409, 'Padam Butiran Anggaran berkaitan sebelum mengeluarkan OS.');
+            }
             $before = $program ? $this->snapshot($program) : ['exists' => false];
-            if ($program && $this->values($program) === $metadata && $program->tempat_bertugas_id === $place) {
+            if ($program && $this->values($program) === $metadata && $program->tempat_bertugas_id === $place && $previous === $selected) {
                 return $program;
             }
-            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$program, $actor, $bid, $cycle, $place, $metadata, $before, $authority) {
+            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$program, $actor, $bid, $cycle, $place, $metadata, $before, $authority, $selected) {
                 $created = $program === null;
                 if ($created) {
                     $program = new ProgramAktiviti;
@@ -63,7 +76,7 @@ class DrafProgramAktiviti
                         'kitaran_id' => $cycle->id, 'tahun_kitaran' => $cycle->tahun, 'created_by' => $actor->id, 'semakan' => 0]);
                 }
                 $fields = array_intersect_key($metadata, array_flip(self::FIELDS));
-                $program->forceFill($fields + ['tempat_bertugas_id' => $place]);
+                $program->forceFill($fields + ['tempat_bertugas_id' => $place, 'os_terpilih' => $selected]);
                 $program->semakan++;
                 $program->save();
                 $this->saveChildren($program, $metadata);
@@ -91,10 +104,12 @@ class DrafProgramAktiviti
             }
         }
         $rules = [
-            'rekod' => 'required|array:tempat_bertugas_id,semakan_bidaan,semakan_program,maklumat,reason',
+            'rekod' => 'required|array:tempat_bertugas_id,semakan_bidaan,semakan_program,maklumat,reason,os_terpilih',
             'rekod.tempat_bertugas_id' => ['bail','required','integer','min:1',$this->integerTypeRule()],
             'rekod.semakan_bidaan' => ['bail','required','integer','min:0',$this->integerTypeRule()],
             'rekod.semakan_program' => $editing ? ['bail','required','integer','min:0',$this->integerTypeRule()] : 'prohibited',
+            'rekod.os_terpilih' => ['sometimes','array','max:9',$this->listRule()],
+            'rekod.os_terpilih.*' => 'required|integer|min:1|distinct',
             'rekod.reason' => 'bail|nullable|string|max:1000',
             'rekod.maklumat' => 'required|array:teras_strategik_id,strategi_id,prakarsa_id,nama,jenis,kategori,peringkat,kaedah,tarikh_mula,tarikh_tamat,komponen,jemputan,peserta',
             'rekod.maklumat.teras_strategik_id' => ['bail','required','integer','min:1',$this->integerTypeRule(),'exists:teras_strategik,id'],
@@ -230,7 +245,7 @@ class DrafProgramAktiviti
     {
         return ['program_id' => $program->id, 'bidaan_id' => $program->bidaan_id, 'ptj_id' => $program->ptj_id,
             'kitaran_id' => $program->kitaran_id, 'tempat_bertugas_id' => $program->tempat_bertugas_id,
-            'created_by' => $program->created_by, 'semakan_program' => $program->semakan, 'maklumat' => $this->values($program)];
+            'created_by' => $program->created_by, 'os_terpilih' => $program->os_terpilih ?? [], 'semakan_program' => $program->semakan, 'maklumat' => $this->values($program)];
     }
 
     private function saveChildren(ProgramAktiviti $program, array $metadata): void

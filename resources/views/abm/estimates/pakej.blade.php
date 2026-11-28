@@ -6,11 +6,12 @@
 <link rel="stylesheet" href="{{ asset('pakej-grid.css') }}">
 <script src="{{ asset('abm-money.js') }}" defer></script>
 <script src="{{ asset('pakej-grid.js') }}" defer></script>
-<div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ route('estimates.show',[$bid->id,$estimate->id]) }}">Kembali ke Anggaran</a></div>
+<div class="page-heading"><div><p class="eyebrow">Anggaran</p><h1>OS{{ $os->kod_objek }} — {{ $os->butiran_perbelanjaan }}</h1><p class="intro">{{ $bid->ptj->nama }} · {{ $bid->aktivitiKewangan->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ $program ? route('programs.edit',[$bid->id,$program->id]) : route('estimates.show',[$bid->id,$estimate->id]) }}">{{ $program ? 'Kembali ke Program/ Aktiviti' : 'Kembali ke Anggaran' }}</a></div>
+@if($program)<p class="notice">Program/ Aktiviti: {{ $program->nama ?? '—' }}</p>@endif
 @if(session('status'))<p class="notice success" role="status">{{ session('status') }}</p>@endif
 <p class="notice">Simpan Draf untuk menyimpan aktiviti dan komponennya. Jumlah ialah pratonton; jumlah rasmi dan kelengkapan Anggaran belum diaktifkan.</p>
 @if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tertakluk pada peranan, kebenaran OS, status Bidaan dan Fasa semasa.</p>@endif
-<form data-pakej-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id]) }}"
+<form data-pakej-grid data-track-unsaved method="post" action="{{ route('estimates.editor-save',[$bid->id,$estimate->id] + ($program ? ['program'=>$program->id] : [])) }}"
  data-columns="{{ json_encode($columns) }}" data-reference-selector="{{ $referenceSelector }}" data-reference-child-selector="{{ $referenceChildSelector }}" data-group-label="{{ $groupLabel }}" data-total-label="{{ $groupLabel==='Umum' ? 'Jumlah Aktiviti' : 'Jumlah Pakej' }} — Pratonton" data-records="{{ json_encode($records) }}" data-places="{{ json_encode($places) }}" data-references="{{ json_encode($references) }}" data-year="{{ $bid->kitaran->tahun }}"
  data-editable="{{ $editable ? 'yes' : 'no' }}" data-bid-revision="{{ $bid->semakan }}" data-estimate-revision="{{ $estimate->semakan }}">
 @csrf

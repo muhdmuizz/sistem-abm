@@ -83,6 +83,8 @@ class ProgramAktivitiController extends Controller
         return view('abm.programs.form', ['bid' => $record, 'program' => $entry,
             'objectives' => TerasStrategik::orderBy('nombor')->with(['strategi' => fn ($q) => $q->orderBy('nombor'),
                 'strategi.prakarsa' => fn ($q) => $q->orderBy('nombor')])->get(),
+            'osChoices' => app(\App\Services\PilihanOsProgram::class)->choices($request->user(), $record),
+            'estimates' => $record->anggaran()->get()->keyBy('rujukan_os_id'),
             'editable' => $editable, 'fixedWorkplace' => $this->fixedWorkplace($request, $access, $entry?->tempat_bertugas_id)] + $access);
     }
 
@@ -91,7 +93,8 @@ class ProgramAktivitiController extends Controller
         $record = $this->context($request, $bid);
         // Resolve the scoped URL identity before processing user-supplied metadata.
         $entry = $program === null ? null : app(RuangProgramAktiviti::class)->query($request->user(), $record)->whereKey($program)->firstOrFail();
-        $input = $request->except(['_token','_method']);
+        $input = $request->except(['_token','_method','os_checklist']);
+        if ($request->has('os_checklist')) { $input['os_terpilih'] ??= []; }
         $fixed = $this->fixedWorkplace($request, $this->access($request, $record), $entry?->tempat_bertugas_id);
         if ($fixed !== null) {
             $submitted = $input['tempat_bertugas_id'] ?? $fixed->id;

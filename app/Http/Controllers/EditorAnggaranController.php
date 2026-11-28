@@ -29,11 +29,22 @@ class EditorAnggaranController extends Controller
         return [$record,$entry,$os,$definition];
     }
 
+    private function programme(Request $request, Bidaan $bid, $estimate, $os): ?\App\Models\ProgramAktiviti
+    {
+        if (! $request->query->has('program')) { return null; }
+        $id = $request->validate(['program' => 'required|integer|min:1'])['program'];
+        $program = app(\App\Services\RuangProgramAktiviti::class)->query($request->user(), $bid)->whereKey($id)->firstOrFail();
+        abort_unless(\App\Services\PilihanOsProgram::supports($os) && in_array($estimate->rujukan_os_id, $program->os_terpilih ?? [], true), 404);
+        return $program;
+    }
+
     public function show(Request $request,int $bid,int $estimate,EditorAnggaran $editor,RuangAnggaran $scope)
     {
         [$record,$entry,$os,$definition]=$this->context($request,$bid,$estimate);
+        $program = $this->programme($request,$record,$entry,$os);
         $request->validate(['page'=>'nullable|integer|min:1']);
         $query = $scope->sources($request->user(), $record, $entry)->addSelect(['semakan', 'data_sumber'])->orderBy('id');
+        if ($program) { $query->where('program_aktiviti_id', $program->id); }
         $sources = (clone $query)->paginate(25)->withQueryString();
         $references = $definition->references();
         $completeness = null;
@@ -46,6 +57,7 @@ class EditorAnggaranController extends Controller
             );
         }
         $access=$editor->access($request->user(),$record,$entry);
+        if ($program) { $access['places'] = $access['places']->where('id',$program->tempat_bertugas_id)->values(); $access['editable'] = $access['editable'] && $access['places']->isNotEmpty(); }
         $links=app(\App\Services\PautanFotostat::class);
         $photocopier=$links->rental($os);$meter=$links->meter($os);$pairVisible=true;$pairActive=true;
         if($photocopier||$meter){
@@ -75,8 +87,8 @@ class EditorAnggaranController extends Controller
                 'editable'=>$valid && $access['editable'] && $access['places']->contains('id',$source->tempat_bertugas_id),
                 'compatible'=>$valid,...$meta];
         })->values();
-        return view(($definition instanceof \App\Services\DefinisiPakejBerkumpulan || $definition instanceof \App\Services\DefinisiUmumBerkumpulan) ? 'abm.estimates.pakej' : 'abm.estimates.editor',['photocopier'=>$photocopier,'dependentMeter'=>$meter,'pairActive'=>$pairActive,'pairVisible'=>$pairVisible,'groupLabel'=>$definition instanceof \App\Services\DefinisiUmumBerkumpulan ? 'Umum' : 'Pakej','bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
-            'canPropose'=>$access['editable'] && app(\App\Services\UrusCadanganItem::class)->categories($definition) !== [], 'records'=>$visible,'references'=>$references,'completeness'=>$completeness,'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
+        return view(($definition instanceof \App\Services\DefinisiPakejBerkumpulan || $definition instanceof \App\Services\DefinisiUmumBerkumpulan) ? 'abm.estimates.pakej' : 'abm.estimates.editor',['program'=>$program,'photocopier'=>$photocopier,'dependentMeter'=>$meter,'pairActive'=>$pairActive,'pairVisible'=>$pairVisible,'groupLabel'=>$definition instanceof \App\Services\DefinisiUmumBerkumpulan ? 'Umum' : 'Pakej','bid'=>$record,'estimate'=>$entry,'os'=>$os,'sources'=>$sources,
+            'canPropose'=>!$program && $access['editable'] && app(\App\Services\UrusCadanganItem::class)->categories($definition) !== [], 'records'=>$visible,'references'=>$references,'completeness'=>$completeness,'columns'=>$definition->displayColumns(),'referenceSelector'=>$definition->selector(),'referenceChildSelector'=>$definition->childSelector(),'inputHelp'=>$definition->inputHelp(),'inputLabels'=>array_column(array_filter($definition->displayColumns(),fn($c)=>$c['type']!=='output'),'label')] + $access);
     }
 
     public function cadangan(Request $request, int $bid, int $estimate, EditorAnggaran $editor, \App\Services\UrusCadanganItem $items)
@@ -106,13 +118,14 @@ class EditorAnggaranController extends Controller
 
     public function save(Request $request,int $bid,int $estimate,EditorAnggaran $editor)
     {
-        $this->context($request,$bid,$estimate);
-        try { $editor->save($estimate,$request->except(['_token','_method'])); }
+        [$record,$entry,$os] = $this->context($request,$bid,$estimate);
+        $program = $this->programme($request,$record,$entry,$os);
+        try { $editor->save($estimate,$request->except(['_token','_method','program']),$program?->id); }
         catch(QueryException $exception) {
             Log::notice('abm.grid.save_failed',['exception_type'=>get_class($exception)]);
             return response()->json(['message'=>'Draf tidak disimpan. Perubahan anda dikekalkan; cuba lagi.'],503);
         }
         session()->flash('status','Draf Butiran Anggaran disimpan.');
-        return response()->json(['url'=>route('estimates.editor',[$bid,$estimate])]);
+        return response()->json(['url'=>route('estimates.editor',[$bid,$estimate] + ($program ? ['program'=>$program->id] : []))]);
     }
 }

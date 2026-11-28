@@ -728,3 +728,7 @@ Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 4501
 ## Batch 052 programme scope — 26 November 2026
 
 [PR #119](https://github.com/muhdmuizz/sistem-abm/pull/119) contains programme workplace-picker refinements. The owner selected seven OS groups for programme linkage; see [Batch 052](batch-052-program-aktiviti-integration.md). Checklist persistence, inherited fields and calculations are pending.
+
+## Batch 052 — 28 November 2026 (draft PR #119)
+
+Owner authorised checklist and existing editor linkage only. See [Batch 052](batch-052-program-aktiviti-integration.md). Additive migration for selections and stable draft programme ID; automatic generation, programme inheritance, calculations and completeness deferred. CI and local acceptance pending. Owner confirmed database dump/list and complete Git bundle; encrypted backup and isolated restore remain unverified.

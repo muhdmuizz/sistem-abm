@@ -32,7 +32,8 @@ class DrafButiranAnggaran
             $cycleId = $bid->kitaran_id;
 
             $data = Validator::make(['rekod' => $input], [
-                'rekod' => 'required|array:tempat_bertugas_id,data_sumber,semakan_bidaan,semakan_anggaran,semakan_butiran,reason',
+                'rekod' => 'required|array:tempat_bertugas_id,data_sumber,semakan_bidaan,semakan_anggaran,semakan_butiran,reason,program_aktiviti_id',
+                'rekod.program_aktiviti_id' => 'sometimes|required|integer|min:1',
                 'rekod.tempat_bertugas_id' => 'required|integer|min:1',
                 'rekod.data_sumber' => ['present', function ($attribute, $value, $fail) {
                     if (! $value instanceof stdClass) {
@@ -46,6 +47,13 @@ class DrafButiranAnggaran
             ])->validate()['rekod'];
 
             $workplaceId = (int) $data['tempat_bertugas_id'];
+            $programId = isset($data['program_aktiviti_id']) ? (int)$data['program_aktiviti_id'] : $source?->program_aktiviti_id;
+            if ($source) { abort_unless($source->program_aktiviti_id === $programId,409); }
+            if ($programId !== null) {
+                $program = $bid->programAktiviti()->whereKey($programId)->lockForUpdate()->firstOrFail();
+                $os = $this->guard->catalogue($bid,$estimate->rujukan_os_id);
+                abort_unless(PilihanOsProgram::supports($os) && in_array($estimate->rujukan_os_id,$program->os_terpilih ?? [],true) && $program->tempat_bertugas_id === $workplaceId,422);
+            }
             $authority = $this->guard->authorise($actor, Peranan::PenyediaAnggaran, $cycleId,
                 $bid->ptj_id, $bid->aktiviti_kewangan_id, $estimate->rujukan_os_id, $data['reason'] ?? null, $workplaceId);
             // Do not allow a workplace-limited user to take another workplace's source.
@@ -69,11 +77,11 @@ class DrafButiranAnggaran
                 'Butiran berpengiraan memerlukan pengiraan semula yang diluluskan; rekod asal dikekalkan.');
             $before = $source ? $this->snapshot($source, $bid, $estimate) : ['exists' => false,
                 'semakan_bidaan' => $bid->semakan, 'semakan_anggaran' => $estimate->semakan];
-            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$source, $bid, $estimate, $workplaceId, $encoded, $before, $authority) {
+            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$source, $bid, $estimate, $workplaceId, $encoded, $before, $authority, $programId) {
                 $created = $source === null;
                 if ($created) {
                     $source = new ButiranAnggaran;
-                    $source->forceFill(['anggaran_id' => $estimate->id, 'ptj_id' => $bid->ptj_id, 'semakan' => 0]);
+                    $source->forceFill(['anggaran_id' => $estimate->id, 'ptj_id' => $bid->ptj_id, 'semakan' => 0, 'program_aktiviti_id' => $programId]);
                 }
                 $source->forceFill(['tempat_bertugas_id' => $workplaceId,
                     'data_sumber' => json_decode($encoded, false, 512, JSON_THROW_ON_ERROR)]);
@@ -117,7 +125,7 @@ class DrafButiranAnggaran
                         $fail('Rekod mesti senarai baris yang tersusun.');
                     }
                 }],
-                'kelompok.rekod.*' => 'required|array:butiran_id,tempat_bertugas_id,data_sumber,semakan_butiran',
+                'kelompok.rekod.*' => 'required|array:butiran_id,tempat_bertugas_id,data_sumber,semakan_butiran,program_aktiviti_id',
                 'kelompok.rekod.*.butiran_id' => 'sometimes|required|integer|min:1|distinct',
             ])->validate()['kelompok'];
 
@@ -183,7 +191,7 @@ class DrafButiranAnggaran
             $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$copy, $source, $bid, $estimate, $workplaceId, $encoded, $before, $authority) {
                 $copy = new ButiranAnggaran;
                 $copy->forceFill(['anggaran_id' => $estimate->id, 'ptj_id' => $bid->ptj_id,
-                    'tempat_bertugas_id' => $workplaceId, 'semakan' => 1,
+                    'tempat_bertugas_id' => $workplaceId, 'semakan' => 1, 'program_aktiviti_id' => $source->program_aktiviti_id,
                     'data_sumber' => json_decode($encoded, false, 512, JSON_THROW_ON_ERROR)]);
                 $copy->save();
                 $estimate->semakan++;
@@ -263,6 +271,7 @@ class DrafButiranAnggaran
         return ['butiran_id' => $source->id, 'anggaran_id' => $estimate->id, 'bidaan_id' => $bid->id,
             'tempat_bertugas_id' => $source->tempat_bertugas_id,
             // Explicit validated source representation preserves JSON object/list and decimal text types.
+            ...($source->program_aktiviti_id ? ['program_aktiviti_id' => $source->program_aktiviti_id] : []),
             'data_sumber_json' => $this->sourceJson($source->data_sumber),
             'semakan_butiran' => $source->semakan, 'semakan_anggaran' => $estimate->semakan, 'semakan_bidaan' => $bid->semakan];
     }

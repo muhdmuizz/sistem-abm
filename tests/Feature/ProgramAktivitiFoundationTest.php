@@ -166,6 +166,27 @@ SQL);
         $this->assertSame($expected, $actual);
     }
 
+    public function test_programme_checklist_and_scoped_financial_source_link(): void
+    {
+        $os = \App\Models\RujukanOs::create(['kod_objek'=>'25000','butiran_perbelanjaan'=>'Bahan-bahan Makanan dan Minuman']);
+        $code = \App\Models\KodAktiviti::create(['aktiviti_kewangan_id'=>$this->activity->id,'kod_aktiviti'=>'010801']);
+        \App\Models\PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,
+            'kod_aktiviti_id'=>$code->id,'singkatan_sumber'=>'PPN','butiran_asal'=>$os->butiran_perbelanjaan,'status_sumber'=>'Aktif']);
+        TetapanAksesPtj::create(['kategori_ptj'=>'PPD','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'dibenarkan'=>true]);
+        $program = $this->programSave(null,null,['os_terpilih'=>[$os->id]]);
+        $this->assertSame([$os->id],$program->os_terpilih);
+        $this->assertDatabaseCount('butiran_anggaran',0);
+        $estimate = app(\App\Services\PengaktifanKewangan::class)->aktifkanOs($this->bid->id,$os->id,$this->bid->fresh()->semakan);
+        $drafts = app(\App\Services\DrafButiranAnggaran::class);
+        $source = $drafts->simpan($estimate->id,null,['tempat_bertugas_id'=>$this->place->id,
+            'program_aktiviti_id'=>$program->id,'data_sumber'=>(object)[],
+            'semakan_bidaan'=>$this->bid->fresh()->semakan,'semakan_anggaran'=>$estimate->fresh()->semakan]);
+        $this->assertSame($program->id,$source->program_aktiviti_id);
+        $this->programDenied(fn () => $this->programSave(null,$program,['os_terpilih'=>[]]),409);
+        $this->get(route('programs.edit',[$this->bid->id,$program->id]))->assertOk()->assertSee('E. Butiran Anggaran')->assertSee('Buka');
+        $this->get(route('estimates.editor',[$this->bid->id,$estimate->id,'program'=>$program->id]))->assertOk()->assertSee('Kembali ke Program/ Aktiviti');
+    }
+
     public function test_programme_stores_four_sections_and_exact_derived_headcounts_without_financial_records(): void
     {
         $program = $this->programSave();
@@ -542,10 +563,13 @@ SQL);
     public function test_foundation_migration_down_up_preserves_existing_bid_and_other_financial_tables(): void
     {
         $migration=require database_path('migrations/2026_11_14_050000_create_program_aktiviti_foundation.php');
+        $financialLinks=require database_path('migrations/2026_11_28_000001_add_programme_financial_links.php');
+        $financialLinks->down();
         $migration->down();
         $this->assertDatabaseCount('bidaan',1);
         $this->assertDatabaseCount('anggaran',0);
         $migration->up();
+        $financialLinks->up();
         $this->seed(RpmReferenceSeeder::class);
         $this->assertDatabaseCount('teras_strategik',7);
         $this->assertDatabaseCount('strategi_rpm',25);

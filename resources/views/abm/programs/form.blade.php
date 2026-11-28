@@ -14,8 +14,8 @@ $selectedComponents = is_array($selectedComponents) ? $selectedComponents : [];
 <div class="page-heading"><div><p class="eyebrow">Bida Peruntukan</p><h1>{{ $program ? 'Program/ Aktiviti' : 'Tambah Program/ Aktiviti' }}</h1><p class="intro">{{ $bid->aktivitiKewangan->nama }} · {{ $bid->ptj->nama }} · {{ $bid->kitaran->tahun }}</p></div><a class="button" href="{{ route('programs.index',$bid->id) }}">Kembali ke Senarai</a></div>
 @if(session('status'))<p class="notice" role="status">{{ session('status') }}</p>@endif
 @if($errors->any())<div class="notice error" role="alert" tabindex="-1" data-program-errors data-messages="{{ json_encode($errors->getMessages()) }}"><h2>Draf belum disimpan</h2><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul><a href="{{ $program ? route('programs.edit',[$bid->id,$program->id]) : route('programs.create',$bid->id) }}">Muat semula halaman</a><p>Salin perubahan anda sebelum memuat semula.</p></div>@endif
-@if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tidak tersedia untuk skop atau status semasa.</p>@else<p class="small">Objektif diperlukan untuk menyimpan draf. Maklumat lain boleh dilengkapkan kemudian. Penyediaan butiran anggaran belum dibuka.</p>@endif
-<nav class="program-section-nav" aria-label="Bahagian Program/ Aktiviti"><a href="#program-objectives">A. Objektif</a><a href="#program-details">B. Maklumat</a><a href="#program-implementation">C. Pelaksanaan</a><a href="#program-headcounts">D. Bilangan</a></nav>
+@if(!$editable)<p class="notice">Paparan sahaja. Penyediaan tidak tersedia untuk skop atau status semasa.</p>@else<p class="small">Objektif diperlukan untuk menyimpan draf. Maklumat lain boleh dilengkapkan kemudian.</p>@endif
+<nav class="program-section-nav" aria-label="Bahagian Program/ Aktiviti"><a href="#program-objectives">A. Objektif</a><a href="#program-details">B. Maklumat</a><a href="#program-implementation">C. Pelaksanaan</a><a href="#program-headcounts">D. Bilangan</a><a href="#program-budget">E. Butiran Anggaran</a></nav>
 <form method="post" action="{{ $program ? route('programs.update',[$bid->id,$program->id]) : route('programs.store',$bid->id) }}" class="program-form" data-program-form data-track-unsaved>
 @csrf @if($program) @method('PUT') @endif
 <input type="hidden" name="semakan_bidaan" value="{{ $scalar(old('semakan_bidaan',$bid->semakan)) }}">
@@ -43,6 +43,30 @@ $rows = is_array($rows) ? array_values($rows) : [];
 @endphp
 <div class="program-people" data-person-group="{{ $group }}"><div class="bid-section-heading"><h3>{{ $label }}</h3><p>Jumlah: <output data-person-total>{{ $program?->jumlah($group) ?? '0' }}</output></p></div><div data-person-rows>@foreach($rows as $index=>$row)@include('abm.programs.headcount-row')@endforeach</div><p class="small" data-no-person>Belum ada baris.</p>@if($editable)<button type="button" class="button" data-add-person>Tambah {{ $label }}</button>@endif<template>@include('abm.programs.headcount-row',['index'=>'NEWROW','row'=>[]])</template></div>
 @endforeach
+</section>
+<section class="program-section" id="program-budget">
+<h2>E. Butiran Anggaran</h2>
+<p class="small">Pilih OS dan simpan draf sebelum membuka jadual Butiran Anggaran.</p>
+<input type="hidden" name="os_checklist" value="1">
+@php
+$savedOs = $program?->os_terpilih ?? [];
+$checkedOs = array_filter(old('os_checklist') ? (array) old('os_terpilih', []) : $savedOs, 'is_scalar');
+@endphp
+<div class="data-table"><table><thead><tr><th>Pilih</th><th>OS</th><th>Butiran Perbelanjaan</th><th>Tindakan</th></tr></thead><tbody>
+@foreach($osChoices as $choice)
+@php $estimate = $estimates->get($choice->id); @endphp
+<tr><td><input type="checkbox" name="os_terpilih[]" value="{{ $choice->id }}" aria-label="OS{{ $choice->kod_objek }} {{ $choice->butiran_perbelanjaan }}" @checked(in_array((string)$choice->id, array_map('strval', $checkedOs), true))></td><td>OS{{ $choice->kod_objek }}</td><td>{{ $choice->butiran_perbelanjaan }}</td><td>
+@if($program && in_array($choice->id, $savedOs, true))
+@if($estimate?->diaktifkan)<a class="button" href="{{ route('estimates.editor', [$bid->id, $estimate->id, 'program' => $program->id]) }}">Buka</a>
+@else<a class="button" href="{{ route('bids.show', $bid->id) }}">Aktifkan OS</a>@endif
+@else — @endif
+</td></tr>
+@endforeach
+</tbody></table></div>
+@foreach(array_diff($savedOs, $osChoices->pluck('id')->all()) as $retained)
+<input type="hidden" name="os_terpilih[]" value="{{ $retained }}">
+@endforeach
+@if($osChoices->isEmpty())<p class="small">Tiada OS tersedia dalam skop ini.</p>@endif
 </section>
 @if($editable)<section class="program-section">@if($needsReason)<label for="program-reason">Alasan pintasan Superadmin (wajib)<textarea id="program-reason" name="reason" required maxlength="1000">{{ $scalar(old('reason')) }}</textarea></label>@endif<div class="program-save"><button class="button primary" type="submit"><x-abm-icon name="save"/>Simpan Draf</button><p class="small" role="status" data-program-save-status>{{ $errors->any() ? 'Perubahan belum disimpan.' : 'Tiada perubahan belum disimpan.' }}</p></div></section>@endif
 </fieldset></form>

@@ -35,9 +35,9 @@ class EditorAnggaran
             'needsReason'=>$admin && (!$open || !$central)];
     }
 
-    public function save(int $estimateId, array $input): void
+    public function save(int $estimateId, array $input, ?int $programId = null): void
     {
-        DB::transaction(function () use ($estimateId,$input) {
+        DB::transaction(function () use ($estimateId,$input,$programId) {
             $actor=$this->guard->actor();
             $estimateContext=Anggaran::findOrFail($estimateId);
             $bidContext=Bidaan::findOrFail($estimateContext->bidaan_id);
@@ -58,6 +58,11 @@ class EditorAnggaran
             ])->validate()['editor'];
             $this->guard->current($bid,(int)$data['semakan_bidaan'],[StatusBidaan::DalamPenyediaan,StatusBidaan::Dikembalikan]);
             abort_unless($estimate->semakan===(int)$data['semakan_anggaran'] && $bid->diaktifkan && $estimate->diaktifkan,409);
+            $program = $programId === null ? null : $bid->programAktiviti()->whereKey($programId)->lockForUpdate()->firstOrFail();
+            if ($program) {
+                abort_unless(PilihanOsProgram::supports($os) && in_array($estimate->rujukan_os_id,$program->os_terpilih ?? [],true),404);
+                $this->guard->authorise($actor,Peranan::PenyediaAnggaran,$bid->kitaran_id,$bid->ptj_id,$bid->aktiviti_kewangan_id,$estimate->rujukan_os_id,$data['reason'] ?? null,$program->tempat_bertugas_id);
+            }
             $rows=$definition->validate($data['rekod']);
             $ids=array_map('intval',array_column($rows,'butiran_id'));
             abort_if(array_intersect($ids,array_map('intval',array_column($data['padam'],'butiran_id'))),422);
@@ -67,6 +72,7 @@ class EditorAnggaran
             foreach (array_merge($rows,$data['padam']) as $row) {
                 if (!isset($row['butiran_id'])) { continue; }
                 $existing=$estimate->butiran()->whereKey($row['butiran_id'])->lockForUpdate()->firstOrFail();
+                abort_if($program && $existing->program_aktiviti_id !== $program->id,404);
                 $this->guard->authorise($actor,Peranan::PenyediaAnggaran,$bid->kitaran_id,$bid->ptj_id,
                     $bid->aktiviti_kewangan_id,$estimate->rujukan_os_id,$data['reason'] ?? null,$existing->tempat_bertugas_id);
                 abort_unless($definition->readable($existing->data_sumber),409,'Rekod asal memerlukan penyesuaian; tiada perubahan disimpan.');
@@ -80,6 +86,10 @@ class EditorAnggaran
                 } else {
                     abort_if(isset($row['semakan_butiran']),422);
                     if(!$definition->hasInput($row)) { continue; }
+                }
+                if ($program) {
+                    abort_unless((int)$entry['tempat_bertugas_id'] === $program->tempat_bertugas_id,422);
+                    $entry['program_aktiviti_id'] = $program->id;
                 }
                 $save[]=$entry;
             }

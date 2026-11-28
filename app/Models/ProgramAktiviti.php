@@ -13,7 +13,7 @@ class ProgramAktiviti extends Model
     protected $guarded = ['*'];
     protected function casts(): array
     {
-        return ['semakan' => 'integer', 'tahun_kitaran' => 'integer',
+        return ['os_terpilih' => 'array', 'semakan' => 'integer', 'tahun_kitaran' => 'integer',
             'tarikh_mula' => 'immutable_date', 'tarikh_tamat' => 'immutable_date'];
     }
     public function bidaan(): BelongsTo { return $this->belongsTo(Bidaan::class); }
