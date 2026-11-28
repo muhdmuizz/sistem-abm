@@ -37,6 +37,16 @@ class DrafProgramAktiviti
             $cycle = $this->guard->prepareLocks($cycleId);
             $bid = Bidaan::whereKey($bidId)->where('kitaran_id', $cycle->id)->lockForUpdate()->firstOrFail();
             $program = $programId === null ? null : $bid->programAktiviti()->whereKey($programId)->lockForUpdate()->firstOrFail();
+            if ($program && array_key_exists('os_terpilih', $input) && is_array($input['os_terpilih']) && is_array($input['maklumat'] ?? null)) {
+                $choices = app(PilihanOsProgram::class)->choices($actor, $bid);
+                $hidden = array_diff($program->os_terpilih ?? [], $choices->pluck('id')->all());
+                $hiddenLabels = \App\Models\RujukanOs::whereIn('id',$hidden)->pluck('butiran_perbelanjaan')->all();
+                if (in_array(PilihanOsProgram::PAKEJ,$hiddenLabels,true)) { $input['maklumat']['komponen'] = $program->komponen()->pluck('komponen')->all(); }
+                if (in_array(PilihanOsProgram::IKTISAS,$hiddenLabels,true)) { $input['perkhidmatan_terpilih'] = $program->perkhidmatan_terpilih ?? []; }
+                if ($program->kaedah === 'Pakej' && !$choices->contains('butiran_perbelanjaan',PilihanOsProgram::PAKEJ) && !in_array(PilihanOsProgram::PAKEJ,$hiddenLabels,true)) {
+                    throw ValidationException::withMessages(['rekod.os_terpilih'=>'Pilihan Pakej sedia ada tidak tersedia dalam skop ini.']);
+                }
+            }
             $data = $this->validate($input, $program !== null, $cycle->tahun);
             $place = $data['tempat_bertugas_id'];
             $authority = $this->guard->authorise($actor, Peranan::PenyediaAnggaran, $cycle->id,
@@ -52,6 +62,8 @@ class DrafProgramAktiviti
             TempatBertugas::whereKey($place)->where('ptj_id', $bid->ptj_id)->sharedLock()->firstOrFail();
             $metadata = $data['maklumat'];
             $previous = $program?->os_terpilih ?? [];
+            $previousServices = $program?->perkhidmatan_terpilih ?? [];
+            $services = $data['perkhidmatan_terpilih'] ?? $previousServices;
             $selected = array_key_exists('os_terpilih', $data) ? array_values(array_unique(array_map('intval', $data['os_terpilih']))) : $previous;
             sort($selected);
             foreach (array_diff($selected, $previous) as $id) {
@@ -65,10 +77,10 @@ class DrafProgramAktiviti
                 abort_if((clone $linked)->whereHas('anggaran', fn ($q) => $q->whereNotIn('rujukan_os_id', $selected))->exists(), 409, 'Padam Butiran Anggaran berkaitan sebelum mengeluarkan OS.');
             }
             $before = $program ? $this->snapshot($program) : ['exists' => false];
-            if ($program && $this->values($program) === $metadata && $program->tempat_bertugas_id === $place && $previous === $selected) {
+            if ($program && $this->values($program) === $metadata && $program->tempat_bertugas_id === $place && $previous === $selected && $previousServices === $services) {
                 return $program;
             }
-            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$program, $actor, $bid, $cycle, $place, $metadata, $before, $authority, $selected) {
+            $this->audit->jalankan(Peranan::PenyediaAnggaran, function () use (&$program, $actor, $bid, $cycle, $place, $metadata, $before, $authority, $selected, $services) {
                 $created = $program === null;
                 if ($created) {
                     $program = new ProgramAktiviti;
@@ -76,7 +88,7 @@ class DrafProgramAktiviti
                         'kitaran_id' => $cycle->id, 'tahun_kitaran' => $cycle->tahun, 'created_by' => $actor->id, 'semakan' => 0]);
                 }
                 $fields = array_intersect_key($metadata, array_flip(self::FIELDS));
-                $program->forceFill($fields + ['tempat_bertugas_id' => $place, 'os_terpilih' => $selected]);
+                $program->forceFill($fields + ['tempat_bertugas_id' => $place, 'os_terpilih' => $selected, 'perkhidmatan_terpilih' => $services]);
                 $program->semakan++;
                 $program->save();
                 $this->saveChildren($program, $metadata);
@@ -104,12 +116,14 @@ class DrafProgramAktiviti
             }
         }
         $rules = [
-            'rekod' => 'required|array:tempat_bertugas_id,semakan_bidaan,semakan_program,maklumat,reason,os_terpilih',
+            'rekod' => 'required|array:tempat_bertugas_id,semakan_bidaan,semakan_program,maklumat,reason,os_terpilih,perkhidmatan_terpilih',
             'rekod.tempat_bertugas_id' => ['bail','required','integer','min:1',$this->integerTypeRule()],
             'rekod.semakan_bidaan' => ['bail','required','integer','min:0',$this->integerTypeRule()],
             'rekod.semakan_program' => $editing ? ['bail','required','integer','min:0',$this->integerTypeRule()] : 'prohibited',
             'rekod.os_terpilih' => ['sometimes','array','max:9',$this->listRule()],
             'rekod.os_terpilih.*' => 'required|integer|min:1|distinct',
+            'rekod.perkhidmatan_terpilih' => ['sometimes','array','max:13',$this->listRule()],
+            'rekod.perkhidmatan_terpilih.*' => ['required','string','distinct',Rule::in(array_merge(...array_values(PilihanOsProgram::services())))],
             'rekod.reason' => 'bail|nullable|string|max:1000',
             'rekod.maklumat' => 'required|array:teras_strategik_id,strategi_id,prakarsa_id,nama,jenis,kategori,peringkat,kaedah,tarikh_mula,tarikh_tamat,komponen,jemputan,peserta',
             'rekod.maklumat.teras_strategik_id' => ['bail','required','integer','min:1',$this->integerTypeRule(),'exists:teras_strategik,id'],
@@ -162,6 +176,15 @@ class DrafProgramAktiviti
             'date_format' => ':attribute mesti tarikh yang sah.',
         ], $attributes)->validate()['rekod'];
         $m = $data['maklumat'];
+        if (array_key_exists('os_terpilih', $data)) {
+            $labels = \App\Models\RujukanOs::whereIn('id', $data['os_terpilih'])->where('kod_objek','29000')->pluck('butiran_perbelanjaan')->all();
+            $m['kaedah'] = in_array(PilihanOsProgram::PAKEJ, $labels, true) ? 'Pakej' : 'Bukan Pakej';
+            $services = $data['perkhidmatan_terpilih'] ?? [];
+            if ($services && !in_array(PilihanOsProgram::IKTISAS, $labels, true)) {
+                throw ValidationException::withMessages(['rekod.perkhidmatan_terpilih' => 'Pilih OS29000 Iktisas terlebih dahulu.']);
+            }
+            $data['perkhidmatan_terpilih'] = array_values(array_intersect(array_merge(...array_values(PilihanOsProgram::services())), $services));
+        }
         $error = fn ($field, $message) => throw ValidationException::withMessages(['rekod.maklumat.'.$field => $message]);
         TerasStrategik::whereKey($m['teras_strategik_id'])->sharedLock()->firstOrFail();
         if (! StrategiRpm::whereKey($m['strategi_id'])->where('teras_strategik_id', $m['teras_strategik_id'])->sharedLock()->first()) {
@@ -245,7 +268,7 @@ class DrafProgramAktiviti
     {
         return ['program_id' => $program->id, 'bidaan_id' => $program->bidaan_id, 'ptj_id' => $program->ptj_id,
             'kitaran_id' => $program->kitaran_id, 'tempat_bertugas_id' => $program->tempat_bertugas_id,
-            'created_by' => $program->created_by, 'os_terpilih' => $program->os_terpilih ?? [], 'semakan_program' => $program->semakan, 'maklumat' => $this->values($program)];
+            'created_by' => $program->created_by, 'os_terpilih' => $program->os_terpilih ?? [], 'perkhidmatan_terpilih' => $program->perkhidmatan_terpilih ?? [], 'semakan_program' => $program->semakan, 'maklumat' => $this->values($program)];
     }
 
     private function saveChildren(ProgramAktiviti $program, array $metadata): void

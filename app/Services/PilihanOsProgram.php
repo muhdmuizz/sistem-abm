@@ -9,6 +9,15 @@ use Illuminate\Support\Collection;
 
 class PilihanOsProgram
 {
+    public const PAKEJ = 'Pakej (Mesyuarat/ Bengkel/ Kursus)';
+    public const IKTISAS = 'Perkhidmatan Iktisas dan Perkhidmatan Lain Yang Dibeli dan Hospitaliti';
+
+    public static function services(): array
+    {
+        $definition = new DefinisiUmum((int) now()->year);
+        return array_map('array_keys', $definition->references());
+    }
+
     public const LABELS = [
         '14000' => ['Bayaran Lebih Masa'],
         '21000' => DefinisiPerjalanan::LABELS,

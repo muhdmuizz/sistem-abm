@@ -732,3 +732,5 @@ Verified application head `c0c064e72839c1a51d88afd852e548751af151b9` in [CI 4501
 ## Batch 052 — 28 November 2026 (draft PR #119)
 
 Owner authorised checklist and existing editor linkage only. See [Batch 052](batch-052-program-aktiviti-integration.md). Additive migration for selections and stable draft programme ID; automatic generation, programme inheritance, calculations and completeness deferred. CI and local acceptance pending. Owner confirmed database dump/list and complete Git bundle; encrypted backup and isolated restore remain unverified.
+
+Batch 052 refinement (28 November): owner approved deriving Kaedah Pelaksanaan from Section E and moving the Pakej and Iktisas detail selections there. See AD-007 and Batch 052. Additive service-choice migration; draft, not merged, verification/local acceptance pending.

@@ -94,7 +94,7 @@ class ProgramAktivitiController extends Controller
         // Resolve the scoped URL identity before processing user-supplied metadata.
         $entry = $program === null ? null : app(RuangProgramAktiviti::class)->query($request->user(), $record)->whereKey($program)->firstOrFail();
         $input = $request->except(['_token','_method','os_checklist']);
-        if ($request->has('os_checklist')) { $input['os_terpilih'] ??= []; }
+        if ($request->has('os_checklist')) { $input['os_terpilih'] ??= []; $input['perkhidmatan_terpilih'] ??= []; }
         $fixed = $this->fixedWorkplace($request, $this->access($request, $record), $entry?->tempat_bertugas_id);
         if ($fixed !== null) {
             $submitted = $input['tempat_bertugas_id'] ?? $fixed->id;

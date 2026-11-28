@@ -355,6 +355,8 @@ class CanonicalFinancialStorageTest extends TestCase
         $workflow = require database_path('migrations/2026_11_14_030000_add_bidaan_workflow_state.php');
         $migration = require database_path('migrations/2026_11_14_020000_create_canonical_financial_storage.php');
         // Roll dependent modules back before the parent, preserving restrictive FKs.
+        $serviceChoices = require database_path('migrations/2026_11_28_000002_add_programme_service_choices.php');
+        $serviceChoices->down();
         $programmeLinks->down();
         $payrollDrafts->down();
         $proposals->down();
@@ -372,6 +374,7 @@ class CanonicalFinancialStorageTest extends TestCase
         $proposals->up();
         $payrollDrafts->up();
         $programmeLinks->up();
+        $serviceChoices->up();
         $this->assertDatabaseCount('draf_pratonton_gaji', 0);
         $this->assertDatabaseCount('cadangan_item_anggaran', 0);
         $this->assertDatabaseCount('pautan_fotostat', 0);

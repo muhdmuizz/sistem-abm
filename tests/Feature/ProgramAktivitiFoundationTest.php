@@ -564,12 +564,15 @@ SQL);
     {
         $migration=require database_path('migrations/2026_11_14_050000_create_program_aktiviti_foundation.php');
         $financialLinks=require database_path('migrations/2026_11_28_000001_add_programme_financial_links.php');
+        $serviceChoices = require database_path('migrations/2026_11_28_000002_add_programme_service_choices.php');
+        $serviceChoices->down();
         $financialLinks->down();
         $migration->down();
         $this->assertDatabaseCount('bidaan',1);
         $this->assertDatabaseCount('anggaran',0);
         $migration->up();
         $financialLinks->up();
+        $serviceChoices->up();
         $this->seed(RpmReferenceSeeder::class);
         $this->assertDatabaseCount('teras_strategik',7);
         $this->assertDatabaseCount('strategi_rpm',25);

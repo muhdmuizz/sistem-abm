@@ -31,9 +31,9 @@ $selectedComponents = is_array($selectedComponents) ? $selectedComponents : [];
 @foreach(['jenis'=>'Jenis Program/ Aktiviti','kategori'=>'Kategori Program/ Aktiviti'] as $field=>$label)<label for="program-{{ $field }}">{{ $label }}<select id="program-{{ $field }}" name="maklumat[{{ $field }}]"><option value="">Pilih {{ $label }}</option>@foreach($field==='jenis' ? \App\Services\DrafProgramAktiviti::JENIS : \App\Services\DrafProgramAktiviti::KATEGORI as $choice)<option @selected($value($field)===$choice)>{{ $choice }}</option>@endforeach</select></label>@endforeach
 </div></section>
 <section class="program-section" id="program-implementation"><h2>C. Pelaksanaan</h2><div class="program-grid">
-@foreach(['peringkat'=>'Peringkat','kaedah'=>'Kaedah Pelaksanaan'] as $field=>$label)<label for="program-{{ $field }}">{{ $label }}<select id="program-{{ $field }}" name="maklumat[{{ $field }}]"><option value="">Pilih {{ $label }}</option>@foreach($field==='peringkat' ? \App\Services\DrafProgramAktiviti::PERINGKAT : \App\Services\DrafProgramAktiviti::KAEDAH as $choice)<option @selected($value($field)===$choice)>{{ $choice }}</option>@endforeach</select></label>@endforeach
+@foreach(['peringkat'=>'Peringkat'] as $field=>$label)<label for="program-{{ $field }}">{{ $label }}<select id="program-{{ $field }}" name="maklumat[{{ $field }}]"><option value="">Pilih {{ $label }}</option>@foreach(\App\Services\DrafProgramAktiviti::PERINGKAT as $choice)<option @selected($value($field)===$choice)>{{ $choice }}</option>@endforeach</select></label>@endforeach
 @foreach(['tarikh_mula'=>'Tarikh Mula','tarikh_tamat'=>'Tarikh Tamat'] as $field=>$label)<label for="program-{{ $field }}">{{ $label }}<input type="date" id="program-{{ $field }}" name="maklumat[{{ $field }}]" min="{{ $bid->kitaran->tahun }}-01-01" max="{{ $bid->kitaran->tahun }}-12-31" value="{{ $value($field) }}"></label>@endforeach
-</div><p class="small">Tarikh Program/ Aktiviti mesti dalam tahun {{ $bid->kitaran->tahun }}.</p><fieldset class="program-package" data-program-package><legend>Komponen Pakej — pilih sekurang-kurangnya satu</legend>@foreach(\App\Services\DrafProgramAktiviti::KOMPONEN as $choice)<label><input type="checkbox" name="maklumat[komponen][]" value="{{ $choice }}" @checked(in_array($choice,$selectedComponents,true))> {{ $choice }}</label>@endforeach</fieldset>
+</div><p class="small">Tarikh Program/ Aktiviti mesti dalam tahun {{ $bid->kitaran->tahun }}.</p>
 </section>
 <section class="program-section" id="program-headcounts"><h2>D. Bilangan Jemputan/ Urus Setia dan Peserta</h2><p class="small">Jumlah dikira daripada baris. Setiap baris memerlukan klasifikasi dan bilangan bulat positif. Kedua-dua kumpulan perlu dilengkapkan sebelum maklumat program lengkap.</p>
 @foreach(['jemputan'=>'Jemputan/ Urus Setia','peserta'=>'Peserta'] as $group=>$label)
@@ -50,22 +50,48 @@ $rows = is_array($rows) ? array_values($rows) : [];
 <input type="hidden" name="os_checklist" value="1">
 @php
 $savedOs = $program?->os_terpilih ?? [];
-$checkedOs = array_filter(old('os_checklist') ? (array) old('os_terpilih', []) : $savedOs, 'is_scalar');
+$packageOs = $osChoices->first(fn($os) => $os->kod_objek === '29000' && $os->butiran_perbelanjaan === \App\Services\PilihanOsProgram::PAKEJ);
+$defaultOs = $savedOs;
+if ($program?->kaedah === 'Pakej' && $packageOs && !in_array($packageOs->id,$defaultOs,true)) { $defaultOs[] = $packageOs->id; }
+$services = old('os_checklist') ? old('perkhidmatan_terpilih',[]) : ($program?->perkhidmatan_terpilih ?? []);
+$services = is_array($services) ? $services : [];
+$checkedOs = array_filter(old('os_checklist') ? (array) old('os_terpilih', []) : $defaultOs, 'is_scalar');
 @endphp
 <div class="data-table"><table><thead><tr><th>Pilih</th><th>OS</th><th>Butiran Perbelanjaan</th><th>Tindakan</th></tr></thead><tbody>
 @foreach($osChoices as $choice)
-@php $estimate = $estimates->get($choice->id); @endphp
-<tr><td><input type="checkbox" name="os_terpilih[]" value="{{ $choice->id }}" aria-label="OS{{ $choice->kod_objek }} {{ $choice->butiran_perbelanjaan }}" @checked(in_array((string)$choice->id, array_map('strval', $checkedOs), true))></td><td>OS{{ $choice->kod_objek }}</td><td>{{ $choice->butiran_perbelanjaan }}</td><td>
+@php
+$estimate = $estimates->get($choice->id);
+$isPackage = $choice->kod_objek === '29000' && $choice->butiran_perbelanjaan === \App\Services\PilihanOsProgram::PAKEJ;
+$isIktisas = $choice->kod_objek === '29000' && $choice->butiran_perbelanjaan === \App\Services\PilihanOsProgram::IKTISAS;
+$isChecked = in_array((string)$choice->id, array_map('strval', $checkedOs), true);
+@endphp
+<tr><td><input type="checkbox" name="os_terpilih[]" value="{{ $choice->id }}" @if($isPackage || $isIktisas) data-os-component="{{ $isPackage ? 'pakej' : 'iktisas' }}" @endif aria-label="OS{{ $choice->kod_objek }} {{ $choice->butiran_perbelanjaan }}" @checked($isChecked)></td><td>OS{{ $choice->kod_objek }}</td><td>{{ $choice->butiran_perbelanjaan }}</td><td>
 @if($program && in_array($choice->id, $savedOs, true))
 @if($estimate?->diaktifkan)<a class="button" href="{{ route('estimates.editor', [$bid->id, $estimate->id, 'program' => $program->id]) }}">Buka</a>
 @else<a class="button" href="{{ route('bids.show', $bid->id) }}">Aktifkan OS</a>@endif
 @else — @endif
 </td></tr>
+@if($isPackage || $isIktisas)
+<tr data-os-details="{{ $isPackage ? 'pakej' : 'iktisas' }}" @if(!$isChecked) hidden @endif><td></td><td colspan="3">
+@if($isPackage)
+<fieldset class="program-package" data-program-package @disabled(!$isChecked)><legend>Komponen Pakej</legend>
+@foreach(\App\Services\DrafProgramAktiviti::KOMPONEN as $component)<label><input type="checkbox" name="maklumat[komponen][]" value="{{ $component }}" @checked(in_array($component,$selectedComponents,true))> {{ $component }}</label>@endforeach
+</fieldset>
+@else
+<fieldset class="program-package" @disabled(!$isChecked)><legend>Perkhidmatan Iktisas</legend>
+@foreach(\App\Services\PilihanOsProgram::services() as $category => $options)
+<div class="program-service-group"><strong>{{ $category }}</strong><div>@foreach($options as $service)<label><input type="checkbox" name="perkhidmatan_terpilih[]" value="{{ $service }}" @checked(in_array($service,$services,true))> {{ $service }}</label>@endforeach</div></div>
+@endforeach
+</fieldset>
+@endif
+</td></tr>
+@endif
 @endforeach
 </tbody></table></div>
 @foreach(array_diff($savedOs, $osChoices->pluck('id')->all()) as $retained)
 <input type="hidden" name="os_terpilih[]" value="{{ $retained }}">
 @endforeach
+<p class="small">Kaedah Pelaksanaan: <strong data-derived-mode>{{ $packageOs && in_array((string)$packageOs->id,array_map('strval',$checkedOs),true) ? 'Pakej' : 'Bukan Pakej' }}</strong></p>
 @if($osChoices->isEmpty())<p class="small">Tiada OS tersedia dalam skop ini.</p>@endif
 </section>
 @if($editable)<section class="program-section">@if($needsReason)<label for="program-reason">Alasan pintasan Superadmin (wajib)<textarea id="program-reason" name="reason" required maxlength="1000">{{ $scalar(old('reason')) }}</textarea></label>@endif<div class="program-save"><button class="button primary" type="submit"><x-abm-icon name="save"/>Simpan Draf</button><p class="small" role="status" data-program-save-status>{{ $errors->any() ? 'Perubahan belum disimpan.' : 'Tiada perubahan belum disimpan.' }}</p></div></section>@endif

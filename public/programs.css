@@ -7,3 +7,7 @@
 .program-objective-description{display:none;overflow-wrap:anywhere}@media(max-width:767px){.program-objective-description{display:block;margin-top:8px}}
 
 .program-section .ptj-picker input { padding-inline-end: 42px; }
+
+[data-os-details] .program-package{margin:0 0 8px;min-width:0}
+.program-service-group+ .program-service-group{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.program-service-group strong{font-size:13px;font-weight:500}

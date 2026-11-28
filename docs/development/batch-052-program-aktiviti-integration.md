@@ -27,3 +27,7 @@ Use one consistent checklist workflow; checking an OS should generate actual pro
 ## Owner-authorised implementation slice — 28 November 2026
 
 Steps 1–2 only: persistent programme OS checklist, scoped links into existing editors, and stable nullable programme identity on manually saved Butiran. Direct editor entry remains available; no programme registration prerequisite or automatic name matching. Existing rows remain unlinked. Existing OS activation workflow remains separate; selected inactive OS must be activated before opening. No row generation, inheritance mapping, new rates, totals or programme completeness automation. Programme workplace changes and removing a selected OS are blocked when linked drafts would be affected. Additive migration; CI and local acceptance pending. Backup: owner confirmed PostgreSQL dump/list and Git bundle verification on 27 November; encryption verification and isolated restore remain pending under AD-012.
+
+## Section E consolidation — 28 November 2026
+
+Owner approved one selection point: move package components out of C, derive Kaedah Pelaksanaan from OS29000 Pakej selection, and reveal Pakej or Iktisas detail options beneath selected OS29000 rows using existing references. Persist programme service choices and existing package components; no financial row generation or recalculation. New additive migration adds service selections. Existing package drafts are offered their prior selection when eligible. Verification and local acceptance pending.

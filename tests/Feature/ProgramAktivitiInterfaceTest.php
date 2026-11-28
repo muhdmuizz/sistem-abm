@@ -64,6 +64,13 @@ class ProgramAktivitiInterfaceTest extends TestCase
         $this->phase->skop()->create(['jenis_skop' => 'global']);
         TetapanAksesPtj::create(['kategori_ptj' => 'PPD', 'aktiviti_kewangan_id' => $this->activity->id,
             'rujukan_os_id' => null, 'dibenarkan' => true]);
+        foreach ([\App\Services\PilihanOsProgram::PAKEJ=>'010810',\App\Services\PilihanOsProgram::IKTISAS=>'010801'] as $label=>$code) {
+            $os = \App\Models\RujukanOs::create(['kod_objek'=>'29000','butiran_perbelanjaan'=>$label]);
+            \App\Models\PemetaanOs::create(['aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,
+                'kod_aktiviti_id'=>\App\Models\KodAktiviti::where('kod_aktiviti',$code)->sole()->id,
+                'singkatan_sumber'=>'PPN','butiran_asal'=>$label,'status_sumber'=>'Aktif']);
+            TetapanAksesPtj::create(['kategori_ptj'=>'PPD','aktiviti_kewangan_id'=>$this->activity->id,'rujukan_os_id'=>$os->id,'dibenarkan'=>true]);
+        }
         $this->actor = User::factory()->create(['name'=>'Penyedia Anggaran']);
         $this->actor->forceFill(['is_active' => true, 'ptj_id' => $this->ptj->id,
             'tempat_bertugas_id' => $this->place->id, 'google_subject' => 'verified-program-fixture'])->save();
@@ -215,6 +222,20 @@ SQL);
         $this->capture('program-conflict',$response);
         $this->assertSame('Current saved',$program->fresh()->nama);
         $this->assertDatabaseCount('rekod_audit',2);
+    }
+
+    public function test_section_e_derives_package_mode_and_saves_service_choices(): void
+    {
+        $package = \App\Models\RujukanOs::where('butiran_perbelanjaan',\App\Services\PilihanOsProgram::PAKEJ)->sole();
+        $iktisas = \App\Models\RujukanOs::where('butiran_perbelanjaan',\App\Services\PilihanOsProgram::IKTISAS)->sole();
+        $data = $this->programInput($this->programMetadata(['komponen'=>['Penginapan']]),null,[
+            'os_checklist'=>'1','os_terpilih'=>[$package->id,$iktisas->id],'perkhidmatan_terpilih'=>['Percetakan (Banner)']]);
+        $this->post($this->url('store'),$data)->assertRedirect();
+        $program = ProgramAktiviti::sole();
+        $this->assertSame('Pakej',$program->kaedah);
+        $this->assertSame(['Penginapan'],$program->komponen()->pluck('komponen')->all());
+        $this->assertSame(['Percetakan (Banner)'],$program->perkhidmatan_terpilih);
+        $this->assertDatabaseCount('butiran_anggaran',0);
     }
 
     public function test_removed_child_lists_are_full_replacements_and_same_names_stay_independent(): void

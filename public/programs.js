@@ -30,24 +30,21 @@
     };
     form.addEventListener('change', showObjectiveDescriptions);
     showObjectiveDescriptions();
-    const mode = form.querySelector('#program-kaedah');
-    const packageFields = form.querySelector('[data-program-package]');
-    let previousMode = mode.value;
-    function packageState() {
-        packageFields.hidden = mode.value !== 'Pakej';
-        packageFields.disabled = mode.value !== 'Pakej';
+    function syncOsDetails() {
+        form.querySelectorAll('[data-os-component]').forEach(input => {
+            const row = form.querySelector('[data-os-details="'+input.dataset.osComponent+'"]');
+            row.hidden = !input.checked;
+            row.querySelector('fieldset').disabled = !input.checked;
+        });
+        const output = form.querySelector('[data-derived-mode]');
+        if (output) output.textContent = form.querySelector('[data-os-component="pakej"]')?.checked ? 'Pakej' : 'Bukan Pakej';
     }
-    mode.addEventListener('change', () => {
-        const checked = [...packageFields.querySelectorAll('input:checked')];
-        if (mode.value !== 'Pakej' && checked.length) {
-            if (!window.confirm('Komponen Pakej akan dikosongkan dalam draf apabila disimpan. Teruskan?')) {
-                mode.value = previousMode; return;
-            }
-            checked.forEach(input => { input.checked = false; });
-        }
-        previousMode = mode.value; packageState();
-    });
-    packageState();
+    form.querySelectorAll('[data-os-component]').forEach(input => input.addEventListener('change', () => {
+        const row = form.querySelector('[data-os-details="'+input.dataset.osComponent+'"]');
+        if (!input.checked) row.querySelectorAll('input:checked').forEach(child => child.checked = false);
+        syncOsDetails();
+    }));
+    syncOsDetails();
     const place = form.querySelector('#program-place');
     const placeInput = form.querySelector('#program-place-search');
     place?.addEventListener('change', dirty);
